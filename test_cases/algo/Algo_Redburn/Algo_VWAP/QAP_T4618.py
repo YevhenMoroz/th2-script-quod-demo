@@ -23,7 +23,7 @@ from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApi
 from test_framework.ssh_wrappers.ssh_client import SshClient
 
 
-class QAP_T4623(TestCase):
+class QAP_T4618(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -50,21 +50,22 @@ class QAP_T4623(TestCase):
         self.last_trade_price = 20
         self.last_trade_qty = 100
         self.historical_volume = 15.0
+        self.day_lowest = 19.995
         # endregion
 
         # order params
         self.qty = 45
         self.price = 30
         self.qty_child = 15
-        self.price_child = 29.99
+        self.price_child = 19.99
         self.waves = 3
         # endregion
 
         # region Algo params
         self.passive_reference_price = Reference.Market.value
-        self.passive_offset = -1
-        self.limit_price_reference = Reference.Market.value
-        self.limit_price_offset = 2
+        self.passive_offset = 0
+        self.limit_price_reference = Reference.DayLow.value
+        self.limit_price_offset = 1
         # endregion
 
         # region Venue params
@@ -117,7 +118,7 @@ class QAP_T4623(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         self.now = datetime.utcnow()
-        self.end_date = (self.now + timedelta(minutes=3)).strftime("%Y%m%d-%H:%M:%S")
+        self.end_date = (self.now + timedelta(minutes=5)).strftime("%Y%m%d-%H:%M:%S")
         self.start_date = self.now.strftime("%Y%m%d-%H:%M:%S")
 
         # # region precondition: Prepare SATS configuration
@@ -155,6 +156,12 @@ class QAP_T4623(TestCase):
         # region send trading phase
         self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send trading phase", self.test_id))
         self.incremental_refresh = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id, self.fix_env1.feed_handler).update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.last_trade_qty).update_value_in_repeating_group('NoMDEntriesIR', 'MDEntryPx', self.last_trade_price)
+        self.fix_manager_feed_handler.send_message(fix_message=self.incremental_refresh)
+        # endregion
+
+        # region send day lowest
+        self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send trading phase", self.test_id))
+        self.incremental_refresh = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_low_px().update_MDReqID(self.listing_id, self.fix_env1.feed_handler).update_value_in_repeating_group('NoMDEntriesIR', 'MDEntryPx', self.day_lowest)
         self.fix_manager_feed_handler.send_message(fix_message=self.incremental_refresh)
         # endregion
 
@@ -228,7 +235,6 @@ class QAP_T4623(TestCase):
         # time.sleep(35)
         # self.ssh_client.close()
         # # endregion
-
 
         self.fix_verifier_buy.set_case_id(self.case_id_cancel)
         cancel_vwap_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.vwap_child, self.gateway_side_buy, self.status_cancel)

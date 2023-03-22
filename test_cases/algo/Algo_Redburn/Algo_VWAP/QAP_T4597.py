@@ -23,7 +23,7 @@ from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApi
 from test_framework.ssh_wrappers.ssh_client import SshClient
 
 
-class QAP_T4623(TestCase):
+class QAP_T4597(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -54,17 +54,17 @@ class QAP_T4623(TestCase):
 
         # order params
         self.qty = 45
-        self.price = 30
+        self.price = 20
         self.qty_child = 15
-        self.price_child = 29.99
+        self.price_child = 19.995
         self.waves = 3
         # endregion
 
         # region Algo params
-        self.passive_reference_price = Reference.Market.value
-        self.passive_offset = -1
-        self.limit_price_reference = Reference.Market.value
-        self.limit_price_offset = 2
+        self.passive_reference_price = Reference.Primary.value
+        self.passive_offset = 0
+        self.limit_price_reference = Reference.Primary.value
+        self.limit_price_offset = 1
         # endregion
 
         # region Venue params
@@ -117,7 +117,7 @@ class QAP_T4623(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         self.now = datetime.utcnow()
-        self.end_date = (self.now + timedelta(minutes=3)).strftime("%Y%m%d-%H:%M:%S")
+        self.end_date = (self.now + timedelta(minutes=5)).strftime("%Y%m%d-%H:%M:%S")
         self.start_date = self.now.strftime("%Y%m%d-%H:%M:%S")
 
         # # region precondition: Prepare SATS configuration
@@ -181,13 +181,13 @@ class QAP_T4623(TestCase):
         self.fix_verifier_sell.check_fix_message(new_vwap_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
 
-        # region Check vwap child
-        self.case_id_2 = bca.create_event("vwap DMA child order", self.test_id)
+        # region Check VWAP child
+        self.case_id_2 = bca.create_event("VWAP DMA child order", self.test_id)
         self.fix_verifier_buy.set_case_id(self.case_id_2)
 
         self.vwap_child = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()
         self.vwap_child.change_parameters(dict(OrderQty=self.qty_child, Price=self.price_child, Account=self.account, Instrument='*', ExDestination=self.ex_destination_1))
-        self.fix_verifier_buy.check_fix_message(self.vwap_child, key_parameters=self.key_params, message_name='Buy side NewOrderSingle vwap child')
+        self.fix_verifier_buy.check_fix_message(self.vwap_child, key_parameters=self.key_params, message_name='Buy side NewOrderSingle VWAP child')
 
         pending_vwap_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.vwap_child, self.gateway_side_buy, self.status_pending)
         self.fix_verifier_buy.check_fix_message(pending_vwap_child_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew vwap child')

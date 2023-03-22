@@ -23,7 +23,7 @@ from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApi
 from test_framework.ssh_wrappers.ssh_client import SshClient
 
 
-class QAP_T4623(TestCase):
+class QAP_T4625(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -54,16 +54,14 @@ class QAP_T4623(TestCase):
 
         # order params
         self.qty = 45
-        self.price = 30
+        self.price = 20
         self.qty_child = 15
-        self.price_child = 29.99
+        self.price_child = 19.99
         self.waves = 3
         # endregion
 
         # region Algo params
-        self.passive_reference_price = Reference.Market.value
-        self.passive_offset = -1
-        self.limit_price_reference = Reference.Market.value
+        self.limit_price_reference = Reference.Primary.value
         self.limit_price_offset = 2
         # endregion
 
@@ -165,7 +163,7 @@ class QAP_T4623(TestCase):
         self.vwap_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_VWAP_Redburn_params()
         self.vwap_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.vwap_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.ex_destination_1))
-        self.vwap_order.update_fields_in_component('QuodFlatParameters', dict(Waves=self.waves, LimitPriceReference=self.limit_price_reference, LimitPriceOffset=self.limit_price_offset, Passive=self.passive_reference_price, PassiveOffset=self.passive_offset, StartDate2=self.start_date, EndDate2=self.end_date))
+        self.vwap_order.update_fields_in_component('QuodFlatParameters', dict(Waves=self.waves, LimitPriceReference=self.limit_price_reference, LimitPriceOffset=self.limit_price_offset, StartDate2=self.start_date, EndDate2=self.end_date))
 
         self.fix_manager_sell.send_message_and_receive_response(self.vwap_order, self.case_id_1)
         # endregion

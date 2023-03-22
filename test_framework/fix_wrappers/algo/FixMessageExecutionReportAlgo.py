@@ -642,6 +642,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         temp = dict()
         if new_order_single.is_parameter_exist("Price"):
             temp.update(Price=new_order_single.get_parameter("Price"))
+        if new_order_single.is_parameter_exist("StopPx"):
+            temp.update(StopPx=new_order_single.get_parameter("StopPx"))
         if new_order_single.is_parameter_exist('ExpireDate'):
             temp.update(ExpireDate=new_order_single.get_parameter('ExpireDate'))
         temp.update(
@@ -653,7 +655,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             TimeInForce=new_order_single.get_parameter("TimeInForce"),
             ExecType="5",
             OrdStatus="0",
-            CumQty='0',
+            CumQty='*',
             ExecID='*',
             OrderID='*',
             LeavesQty='*',
@@ -2221,7 +2223,6 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             OrdStatus=2,
             OrdType=order_cancel_replace.get_parameter('OrdType'),
             Side=order_cancel_replace.get_parameter('Side'),
-            Text='*',
             TimeInForce=order_cancel_replace.get_parameter('TimeInForce'),
             TransactTime='*',
             SettlDate='*',
@@ -2277,7 +2278,6 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             OrdStatus=1,
             OrdType=order_cancel_replace.get_parameter('OrdType'),
             Side=order_cancel_replace.get_parameter('Side'),
-            Text='*',
             TimeInForce=order_cancel_replace.get_parameter('TimeInForce'),
             TransactTime='*',
             SettlDate='*',

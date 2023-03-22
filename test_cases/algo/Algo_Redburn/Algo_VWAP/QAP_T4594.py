@@ -9,6 +9,7 @@ from test_framework.algo_formulas_manager import AlgoFormulasManager as AFM
 from test_framework.algo_mongo_manager import AlgoMongoManager as AMM
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets import constants
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, TradingPhases, Reference
 from test_framework.db_wrapper.db_manager import DBManager
 from test_framework.fix_wrappers.FixManager import FixManager
@@ -23,7 +24,7 @@ from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApi
 from test_framework.ssh_wrappers.ssh_client import SshClient
 
 
-class QAP_T4623(TestCase):
+class QAP_T4594(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -56,15 +57,16 @@ class QAP_T4623(TestCase):
         self.qty = 45
         self.price = 30
         self.qty_child = 15
-        self.price_child = 29.99
+        self.price_child = 24.995
         self.waves = 3
+        self.aggressivity = constants.Aggressivity.Neutral.value
         # endregion
 
         # region Algo params
-        self.passive_reference_price = Reference.Market.value
-        self.passive_offset = -1
-        self.limit_price_reference = Reference.Market.value
-        self.limit_price_offset = 2
+        self.neutral_reference_price = Reference.Mid.value
+        self.neutral_offset = 0
+        self.limit_price_reference = Reference.Mid.value
+        self.limit_price_offset = 1
         # endregion
 
         # region Venue params
@@ -77,8 +79,7 @@ class QAP_T4623(TestCase):
 
         # Key parameters
         self.key_params_cl = self.data_set.get_verifier_key_parameters_by_name('verifier_key_parameters_1')
-        self.key_params = self.data_set.get_verifier_key_parameters_by_name('verifier_key_parameters_3')
-        self.key_params_mkt = self.data_set.get_verifier_key_parameters_by_name('verifier_key_parameters_4')
+        self.key_params = self.data_set.get_verifier_key_parameters_by_name('verifier_key_parameters_2')
         # endregion
 
         # region Gateway Side
@@ -117,7 +118,7 @@ class QAP_T4623(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         self.now = datetime.utcnow()
-        self.end_date = (self.now + timedelta(minutes=3)).strftime("%Y%m%d-%H:%M:%S")
+        self.end_date = (self.now + timedelta(minutes=5)).strftime("%Y%m%d-%H:%M:%S")
         self.start_date = self.now.strftime("%Y%m%d-%H:%M:%S")
 
         # # region precondition: Prepare SATS configuration
@@ -165,7 +166,7 @@ class QAP_T4623(TestCase):
         self.vwap_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_VWAP_Redburn_params()
         self.vwap_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.vwap_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.ex_destination_1))
-        self.vwap_order.update_fields_in_component('QuodFlatParameters', dict(Waves=self.waves, LimitPriceReference=self.limit_price_reference, LimitPriceOffset=self.limit_price_offset, Passive=self.passive_reference_price, PassiveOffset=self.passive_offset, StartDate2=self.start_date, EndDate2=self.end_date))
+        self.vwap_order.update_fields_in_component('QuodFlatParameters', dict(Waves=self.waves, LimitPriceReference=self.limit_price_reference, LimitPriceOffset=self.limit_price_offset, Neutral=self.neutral_reference_price, NeutralOffset=self.neutral_offset, StartDate2=self.start_date, EndDate2=self.end_date, Aggressivity=self.aggressivity))
 
         self.fix_manager_sell.send_message_and_receive_response(self.vwap_order, self.case_id_1)
         # endregion
@@ -181,13 +182,13 @@ class QAP_T4623(TestCase):
         self.fix_verifier_sell.check_fix_message(new_vwap_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
 
-        # region Check vwap child
-        self.case_id_2 = bca.create_event("vwap DMA child order", self.test_id)
+        # region Check VWAP child
+        self.case_id_2 = bca.create_event("VWAP DMA child order", self.test_id)
         self.fix_verifier_buy.set_case_id(self.case_id_2)
 
         self.vwap_child = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()
         self.vwap_child.change_parameters(dict(OrderQty=self.qty_child, Price=self.price_child, Account=self.account, Instrument='*', ExDestination=self.ex_destination_1))
-        self.fix_verifier_buy.check_fix_message(self.vwap_child, key_parameters=self.key_params, message_name='Buy side NewOrderSingle vwap child')
+        self.fix_verifier_buy.check_fix_message(self.vwap_child, key_parameters=self.key_params, message_name='Buy side NewOrderSingle VWAP child')
 
         pending_vwap_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.vwap_child, self.gateway_side_buy, self.status_pending)
         self.fix_verifier_buy.check_fix_message(pending_vwap_child_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew vwap child')
