@@ -642,6 +642,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         temp = dict()
         if new_order_single.is_parameter_exist("Price"):
             temp.update(Price=new_order_single.get_parameter("Price"))
+        if new_order_single.is_parameter_exist("StopPx"):
+            temp.update(StopPx=new_order_single.get_parameter("StopPx"))
         if new_order_single.is_parameter_exist('ExpireDate'):
             temp.update(ExpireDate=new_order_single.get_parameter('ExpireDate'))
         temp.update(
