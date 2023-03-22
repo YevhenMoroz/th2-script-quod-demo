@@ -126,6 +126,7 @@ class QAP_T9038(TestCase):
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl2)
 
         time.sleep(3)
+
         # endregion
 
         # region Send NewOrderSingle (35=D) for SORPING order
