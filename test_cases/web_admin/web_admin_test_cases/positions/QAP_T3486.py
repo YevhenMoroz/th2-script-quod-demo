@@ -3,8 +3,8 @@ import time
 import traceback
 
 from custom import basic_custom_actions
-from test_framework.web_admin_core.pages.positions.cash_positions.cash_postitions_page import CashPositionsPage
-from test_framework.web_admin_core.pages.positions.cash_positions.cash_positions_wizard import CashPositionsWizard
+from test_framework.web_admin_core.pages.positions.cash_positions.main_page import *
+from test_framework.web_admin_core.pages.positions.cash_positions.wizards import *
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -36,11 +36,11 @@ class QAP_T3486(CommonTestCase):
         try:
             self.precondition()
 
-            cash_positions_page = CashPositionsPage(self.web_driver_container)
+            cash_positions_page = MainPage(self.web_driver_container)
             cash_positions_page.click_on_more_actions()
             cash_positions_page.click_on_edit()
 
-            wizard = CashPositionsWizard(self.web_driver_container)
+            wizard = MainWizard(self.web_driver_container)
             self.verify("PDF file contains correct names of labels and corresponded values like in 'self.labels'", True,
                         wizard.click_download_pdf_entity_button_and_check_pdf(self.labels["values_tab"]))
             self.verify("PDF file contains correct names of labels and corresponded values like in 'self.labels'", True,
