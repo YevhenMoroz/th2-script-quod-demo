@@ -155,7 +155,6 @@ class QAP_T4191(TestCase):
 
         # region Check partial fill parent order
         er_partial_fill_iceberg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.iceberg_order, self.gateway_side_sell, self.status_partial_fill)
-        er_partial_fill_iceberg_order_params.remove_parameters(['SecAltIDGrp', 'SettlType', 'SecondaryClOrdID'])
         er_partial_fill_iceberg_order_params.change_parameters(dict(ReplyReceivedTime='*', ExDestination='*', TradeReportingIndicator='*', LastExecutionPolicy='*'))
         self.fix_verifier_sell.check_fix_message(er_partial_fill_iceberg_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell Side ExecReport PartialFill')
         # endregion
