@@ -78,6 +78,7 @@ class QAP_T4991(TestCase):
         self.key_params_NOS_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_child")
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
         self.key_params_ER_eliminate_or_cancel_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_2_child")
+        self.key_params_OCRR_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_OCR_child")
         # endregion
 
         self.rule_list = []
@@ -157,10 +158,11 @@ class QAP_T4991(TestCase):
 
         # region Check replace first dma child order
         ocrr_dma_xpar_order = FixMessageOrderCancelReplaceRequestAlgo(self.dma_xpar_order)
-        ocrr_dma_xpar_order.change_parameters(dict(OrderQty=self.inc_qty)).add_tag(misc5='*')
+        ocrr_dma_xpar_order.change_parameters(dict(OrderQty=self.inc_qty)).add_tag(dict(misc5='*'))
+        self.fix_verifier_buy.check_fix_message(ocrr_dma_xpar_order, key_parameters=self.key_params_OCRR_child, message_name='Buy side OrderCancelReplaceRequest Child DMA order')
 
         er_replaced_dma_xpar_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_xpar_order, self.gateway_side_buy, self.status_cancel_replace)
-        er_replaced_dma_xpar_order_params.change_parameters(dict(OrderQty=self.inc_qty)).add_tag(misc5='*')
+        er_replaced_dma_xpar_order_params.change_parameters(dict(OrderQty=self.inc_qty)).add_tag(dict(misc5='*'))
         self.fix_verifier_buy.check_fix_message(er_replaced_dma_xpar_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Replace Child DMA 1 order')
         # endregion
         

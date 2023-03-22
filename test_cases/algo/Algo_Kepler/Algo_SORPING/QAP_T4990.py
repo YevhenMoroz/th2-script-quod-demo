@@ -155,11 +155,11 @@ class QAP_T4990(TestCase):
 
         # region check cancel dma child order
         order_cancel_request_dma_xpar_order = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child_kepler(self.dma_xpar_order)
-        order_cancel_request_dma_xpar_order.add_tag(misc5='*')
-        self.fix_verifier_buy.check_fix_message(order_cancel_request_dma_xpar_order, key_parameters=self.key_params_OCR_child, message_name='Buy side OrderCancelRequest Child DMA 1 order')
+        order_cancel_request_dma_xpar_order.add_tag(dict(misc5='*'))
+        self.fix_verifier_buy.check_fix_message(order_cancel_request_dma_xpar_order, key_parameters=self.key_params_OCR_child, message_name='Buy side OrderCancelRequest Child DMA order')
 
         er_cancel_dma_xpar_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_xpar_order, self.gateway_side_buy, self.status_cancel)
-        er_cancel_dma_xpar_order.add_tag(misc5='*')
+        er_cancel_dma_xpar_order.add_tag(dict(misc5='*'))
         self.fix_verifier_buy.check_fix_message(er_cancel_dma_xpar_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel child DMA 1 order")
         # endregion
 
