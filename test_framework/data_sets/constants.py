@@ -382,8 +382,8 @@ class WebTradingURL(Enum):
 class SshClientEnv(Enum):
     HOST_317 = "10.0.22.35"
     PORT_317 = 22
-    USER_317 = ""
-    PASSWORD_317 = ""
+    USER_317 = "ymoroz"
+    PASSWORD_317 = "1DfXtWYOF9"
     SU_USER_317 = "quod317"
     SU_PASSWORD_317 = "quod317"
 
