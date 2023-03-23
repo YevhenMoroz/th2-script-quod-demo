@@ -204,7 +204,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(NoStrategyParameters='*')
         if new_order_single.get_parameter('TargetStrategy') != '1020':
             temp.update(TargetStrategy=new_order_single.get_parameter("TargetStrategy"))
-        if new_order_single.get_parameter('TargetStrategy') in ['1010', '1011', '1004', '1003', '1020', '1009'] or (new_order_single.get_parameter('TargetStrategy') == '1008' and new_order_single.is_parameter_exist('MinQty')):
+        if new_order_single.get_parameter('TargetStrategy') in ['1010', '1011', '1004', '1003', '1020', '1009', '2'] or (new_order_single.get_parameter('TargetStrategy') == '1008' and new_order_single.is_parameter_exist('MinQty')):
             temp.update(
                 NoParty='*'
             )
@@ -764,11 +764,11 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(StopPx=new_order_single.get_parameter('StopPx'))
         if 'DisplayInstruction' in new_order_single.get_parameters():
             temp.update(DisplayInstruction=new_order_single.get_parameter('DisplayInstruction'))
-        if new_order_single.is_parameter_exist('NoStrategyParameters') and new_order_single.get_parameter('TargetStrategy') not in ['1004', '1003', '1001', '1008', '1001']:
+        if new_order_single.is_parameter_exist('NoStrategyParameters') and new_order_single.get_parameter('TargetStrategy') not in ['1004', '1003', '1001']:
             temp.update(NoStrategyParameters='*')
         if new_order_single.is_parameter_exist('MinQty'):
             temp.update(MinQty=new_order_single.get_parameter('MinQty'))
-        if new_order_single.get_parameter('TargetStrategy') in ['1010', '1011', '1004', '1003', '1009', '1020'] or (new_order_single.get_parameter('TargetStrategy') == '1008' and new_order_single.is_parameter_exist('MinQty')):
+        if new_order_single.get_parameter('TargetStrategy') in ['1010', '1011', '1004', '1003', '1009', '1020', '2'] or (new_order_single.get_parameter('TargetStrategy') == '1008' and new_order_single.is_parameter_exist('MinQty')):
             temp.update(NoParty='*')
         if new_order_single.is_parameter_exist('ExpireDate'):
             temp.update(ExpireDate=new_order_single.get_parameter('ExpireDate'))
@@ -1234,10 +1234,12 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         temp = dict()
         if str(new_order_single.get_parameter('OrdType')) == '2':
             temp.update(Price = new_order_single.get_parameter("Price"))
-        if new_order_single.is_parameter_exist("NoStrategyParameters") or new_order_single.get_parameter('TargetStrategy') == '1008':
-            temp.update(NoStrategyParameters='*')
-        if new_order_single.get_parameter('TargetStrategy') == '1020':
-            temp.update(NoParty='*')
+        if new_order_single.is_parameter_exist("NoStrategyParameters") or new_order_single.get_parameter('TargetStrategy') in ['2', '1008']:
+            temp.update(
+                NoStrategyParameters='*',
+                NoParty='*',
+                TargetStrategy=new_order_single.get_parameter('TargetStrategy')
+            )
         if new_order_single.get_parameter('Account') == 'KEPLER':
             temp.update(
                 Account='*',
@@ -1268,7 +1270,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             LastQty='*',
             Text='*'
         )
-        if new_order_single.is_parameter_exist('ExDestination'):
+        if new_order_single.is_parameter_exist('ExDestination') and new_order_single.get_parameter('TargetStrategy') not in ['2']:
             temp.update(ExDestination=new_order_single.get_parameter('ExDestination'))
         if new_order_single.is_parameter_exist('MinQty'):
             temp.update(MinQty=new_order_single.get_parameter('MinQty'))
