@@ -16,6 +16,7 @@ from test_framework.core.test_case import TestCase
 from test_framework.fix_wrappers.algo.FixMessageOrderCancelReplaceRequestAlgo import FixMessageOrderCancelReplaceRequestAlgo
 
 
+# Warning! This is the manual test case. It needs to do manual and doesn`t include in regression script
 class QAP_T5054(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
