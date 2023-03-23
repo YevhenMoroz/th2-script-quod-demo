@@ -42,12 +42,10 @@ class AlgoFormulasManager:
 
     @staticmethod
     def get_all_twap_slices(remaining_ord_qty: int, remaining_waves: int) -> list:
-        used_qty = 0
         twap_slices = []
         for i in range(remaining_waves):
-            temp = AlgoFormulasManager.get_next_twap_slice(remaining_ord_qty - used_qty, remaining_waves - i)
-            used_qty += temp
-            twap_slices.append(used_qty)
+            temp = AlgoFormulasManager.get_next_twap_slice(remaining_ord_qty, remaining_waves - i)
+            twap_slices.append(temp)
         return twap_slices
 
     @staticmethod
