@@ -22,7 +22,7 @@ class QAP_T7932(CommonTestCase):
 
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.description = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.venue_list = ["BATS", "BINANCE"]
+        self.venue_list = "BINANCE"
         self.basic_fields = ["Name", 'Description']
 
     def precondition(self):

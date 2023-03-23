@@ -15,6 +15,7 @@ class CommonConstants:
     HELP_ICON_AT_LOGIN_PAGE_XPATH = '//*[@icon="question-mark-circle-outline"]'
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     USER_NAME_XPATH = '//*[@class="logged-in-user ng-star-inserted"]'
+    SITE_NAME_XPATH = '//span[@class="site-name"]'
     FULL_SCREEN_BUTTON_XPATH = '//*[@nbtooltip="Full Screen"]'
     EXIT_FULL_SCREEN_BUTTON_XPATH = '//*[@nbtooltip="Exit Full Screen"]'
     DARK_THEME_XPATH = '//a[@title="Dark Theme"]'

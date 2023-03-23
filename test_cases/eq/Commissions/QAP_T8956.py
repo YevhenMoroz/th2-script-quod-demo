@@ -81,7 +81,7 @@ class QAP_T8956(TestCase):
         self.__send_fix_orders()
         order_id = self.response[0].get_parameter("OrderID")
         cl_order_id = self.response[0].get_parameter("ClOrdID")
-        exec_id = self._get_fix_message({'ExecType': '2'})[JavaApiFields.ExecID.value]
+        exec_id = self._get_fix_message({'ExecType': 'F'})[JavaApiFields.ExecID.value]
         # endregion
 
         # region check order is create

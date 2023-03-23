@@ -50,14 +50,14 @@ class ValuesTab(CommonPage):
     def get_description(self):
         return self.get_text_by_xpath(Constants.Wizard.ValuesTab.DESCRIPTION)
 
-    def set_trading_limits(self, values: list):
-        self.set_checkbox_list(Constants.Wizard.ValuesTab.TRADING_LIMITS, values)
+    def set_trading_limits(self, values):
+        self.set_multiselect_field_value(Constants.Wizard.ValuesTab.TRADING_LIMITS, values)
 
     def get_trading_limits(self):
         return self.get_text_by_xpath(Constants.Wizard.ValuesTab.TRADING_LIMITS)
 
-    def set_cum_trading_limits(self, values: list):
-        self.set_checkbox_list(Constants.Wizard.ValuesTab.CUM_TRADING_LIMITS, values)
+    def set_cum_trading_limits(self, values):
+        self.set_multiselect_field_value(Constants.Wizard.ValuesTab.CUM_TRADING_LIMITS, values)
 
     def get_cum_trading_limits(self):
         return self.get_text_by_xpath(Constants.Wizard.ValuesTab.CUM_TRADING_LIMITS)
@@ -68,8 +68,8 @@ class ValuesTab(CommonPage):
         time.sleep(1)
         return self.get_all_items_from_drop_down(Constants.Wizard.CHECKBOX_DROP_DOWN_MENU)
 
-    def set_position_limits(self, values: list):
-        self.set_checkbox_list(Constants.Wizard.ValuesTab.POSITION_LIMITS, values)
+    def set_position_limits(self, values):
+        self.set_multiselect_field_value(Constants.Wizard.ValuesTab.POSITION_LIMITS, values)
 
     def get_position_limits(self):
         return self.get_text_by_xpath(Constants.Wizard.ValuesTab.POSITION_LIMITS)
@@ -83,8 +83,8 @@ class ValuesTab(CommonPage):
     def is_position_limit_field_displayed(self):
         return self.is_element_present(Constants.Wizard.DimensionsTab.POSITION_LIMITS)
 
-    def set_buying_powers(self, values: list):
-        self.set_checkbox_list(Constants.Wizard.ValuesTab.BUYING_POWERS, values)
+    def set_buying_powers(self, values):
+        self.set_multiselect_field_value(Constants.Wizard.ValuesTab.BUYING_POWERS, values)
 
     def get_buying_powers(self):
         return self.get_text_by_xpath(Constants.Wizard.ValuesTab.BUYING_POWERS)
@@ -106,11 +106,22 @@ class DimensionsTab(CommonPage):
     def is_accounts_dimension_enabled(self):
         return self.is_field_enabled(Constants.Wizard.DimensionsTab.ACCOUNT_DIMENSIONS)
 
-    def set_accounts(self, value: list):
-        self.set_checkbox_list(Constants.Wizard.DimensionsTab.ACCOUNTS, value)
+    def set_accounts(self, value):
+        self.set_multiselect_field_value(Constants.Wizard.DimensionsTab.ACCOUNTS, value)
 
     def get_accounts(self):
         return self.get_text_by_xpath(Constants.Wizard.DimensionsTab.ACCOUNTS)
+
+    def select_all_accounts_by_pattern(self, pattern=None):
+        if not self.is_element_present(Constants.Wizard.MULTISELECT_FRAME_FILTER):
+            self.find_by_xpath(Constants.Wizard.DimensionsTab.ACCOUNTS).click()
+        time.sleep(0.5)
+        if pattern is not None:
+            self.set_text_by_xpath(Constants.Wizard.MULTISELECT_FRAME_FILTER, pattern)
+            time.sleep(0.5)
+        self.find_by_xpath(Constants.Wizard.MULTISELECT_FRAME_SELECT_ALL_CHECKBOX).click()
+        time.sleep(0.5)
+        self.find_by_xpath(Constants.Wizard.DimensionsTab.ACCOUNTS).click()
 
     def get_all_accounts_from_drop_menu(self):
         if not self.is_element_present(Constants.Wizard.CHECKBOX_DROP_DOWN_MENU):
@@ -122,10 +133,21 @@ class DimensionsTab(CommonPage):
         return self.is_field_enabled(Constants.Wizard.DimensionsTab.ACCOUNTS)
 
     def set_clients(self, value):
-        self.set_checkbox_list(Constants.Wizard.DimensionsTab.CLIENTS, value)
+        self.set_multiselect_field_value(Constants.Wizard.DimensionsTab.CLIENTS, value)
 
     def get_clients(self):
         return self.get_text_by_xpath(Constants.Wizard.DimensionsTab.CLIENTS)
+
+    def select_all_clients_by_pattern(self, pattern=None):
+        if not self.is_element_present(Constants.Wizard.MULTISELECT_FRAME_FILTER):
+            self.find_by_xpath(Constants.Wizard.DimensionsTab.CLIENTS).click()
+        time.sleep(0.5)
+        if pattern is not None:
+            self.set_text_by_xpath(Constants.Wizard.MULTISELECT_FRAME_FILTER, pattern)
+            time.sleep(0.5)
+        self.find_by_xpath(Constants.Wizard.MULTISELECT_FRAME_SELECT_ALL_CHECKBOX).click()
+        time.sleep(0.5)
+        self.find_by_xpath(Constants.Wizard.DimensionsTab.CLIENTS).click()
 
     def get_all_clients_from_drop_menu(self):
         if not self.is_element_present(Constants.Wizard.CHECKBOX_DROP_DOWN_MENU):
@@ -161,7 +183,7 @@ class DimensionsTab(CommonPage):
         return self.is_field_enabled(Constants.Wizard.DimensionsTab.USER_DIMENSIONS)
 
     def set_desks(self, value):
-        self.set_checkbox_list(Constants.Wizard.DimensionsTab.DESKS, value)
+        self.set_multiselect_field_value(Constants.Wizard.DimensionsTab.DESKS, value)
 
     def get_desks(self):
         return self.get_text_by_xpath(Constants.Wizard.DimensionsTab.DESKS)
@@ -172,11 +194,22 @@ class DimensionsTab(CommonPage):
         time.sleep(1)
         return self.get_all_items_from_drop_down(Constants.Wizard.CHECKBOX_DROP_DOWN_MENU)
 
+    def select_all_desks_by_pattern(self, pattern=None):
+        if not self.is_element_present(Constants.Wizard.MULTISELECT_FRAME_FILTER):
+            self.find_by_xpath(Constants.Wizard.DimensionsTab.DESKS).click()
+        time.sleep(0.5)
+        if pattern is not None:
+            self.set_text_by_xpath(Constants.Wizard.MULTISELECT_FRAME_FILTER, pattern)
+            time.sleep(0.5)
+        self.find_by_xpath(Constants.Wizard.MULTISELECT_FRAME_SELECT_ALL_CHECKBOX).click()
+        time.sleep(0.5)
+        self.find_by_xpath(Constants.Wizard.DimensionsTab.DESKS).click()
+
     def is_desks_enabled(self):
         return self.is_field_enabled(Constants.Wizard.DimensionsTab.DESKS)
 
-    def set_user(self, value: list):
-        self.set_checkbox_list(Constants.Wizard.DimensionsTab.USERS, value)
+    def set_user(self, value):
+        self.set_multiselect_field_value(Constants.Wizard.DimensionsTab.USERS, value)
 
     def get_user(self):
         return self.get_text_by_xpath(Constants.Wizard.DimensionsTab.USERS)
@@ -186,6 +219,17 @@ class DimensionsTab(CommonPage):
             self.find_by_xpath(Constants.Wizard.DimensionsTab.USERS).click()
         time.sleep(1)
         return self.get_all_items_from_drop_down(Constants.Wizard.CHECKBOX_DROP_DOWN_MENU)
+
+    def select_all_users_by_pattern(self, pattern=None):
+        if not self.is_element_present(Constants.Wizard.MULTISELECT_FRAME_FILTER):
+            self.find_by_xpath(Constants.Wizard.DimensionsTab.USERS).click()
+        time.sleep(0.5)
+        if pattern is not None:
+            self.set_text_by_xpath(Constants.Wizard.MULTISELECT_FRAME_FILTER, pattern)
+            time.sleep(0.5)
+        self.find_by_xpath(Constants.Wizard.MULTISELECT_FRAME_SELECT_ALL_CHECKBOX).click()
+        time.sleep(0.5)
+        self.find_by_xpath(Constants.Wizard.DimensionsTab.USERS).click()
 
     def is_user_enabled(self):
         return self.is_field_enabled(Constants.Wizard.DimensionsTab.USERS)

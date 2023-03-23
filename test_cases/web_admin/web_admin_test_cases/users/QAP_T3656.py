@@ -24,10 +24,10 @@ class QAP_T3656(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
 
-        self.user_id = 'QAP5282'
+        self.user_id = 'QAP-T3656'
         self.ext_id_client = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.email = '2@2'
-        self.institution = 'QUOD FINANCIAL'
+        self.institution = self.data_set.get_institution("institution_1")
         self.desks = [self.data_set.get_desk("desk_1")]
 
     def precondition(self):

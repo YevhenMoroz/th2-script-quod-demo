@@ -34,7 +34,7 @@ class QAP_T3828(CommonTestCase):
         self.venue = self.data_set.get_venue_by_name("venue_10")
         self.side = "Buy"
         self.execution_policy = self.data_set.get_exec_policy("exec_policy_2")
-        self.client_list = self.data_set.get_client_list("client_list_1")
+        self.client_list = ''
         self.commission_amount_type = self.data_set.get_commission_amount_type("commission_amount_type_1")
 
     def precondition(self):
@@ -49,6 +49,7 @@ class QAP_T3828(CommonTestCase):
         dimensions_tab.set_venue(self.venue)
         dimensions_tab.set_side(self.side)
         dimensions_tab.set_execution_policy(self.execution_policy)
+        self.client_list = random.choice(dimensions_tab.get_all_client_list_from_drop_menu())
         dimensions_tab.set_client_list(self.client_list)
         values_tab = CommissionsValuesSubWizard(self.web_driver_container)
         values_tab.set_commission_amount_type(self.commission_amount_type)

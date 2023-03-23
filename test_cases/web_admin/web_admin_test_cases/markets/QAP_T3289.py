@@ -24,7 +24,7 @@ class QAP_T3289(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.name = "QAP7293"
+        self.name = "QAP-T3289"
         self.id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.type = "DarkPool"
         self.client_venue_id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))

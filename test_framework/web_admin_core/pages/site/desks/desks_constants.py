@@ -1,5 +1,5 @@
 class DesksConstants:
-    DESKS_PAGE_TITLE_XPATH = "//*[@class='entity-title left']//*[text()='Desks']"
+    DESKS_PAGE_TITLE_XPATH = "//*[@class='entity-title left'][normalize-space()='Desks']"
     NEW_BUTTON_XPATH = '//button[text()="New"]'
     REFRESH_BUTTON_XPATH = '//*[@data-name="refresh"]'
     MORE_ACTIONS_XPATH = "//*[@row-index = '0']//*[@data-name = 'more-vertical']"

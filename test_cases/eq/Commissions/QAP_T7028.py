@@ -107,13 +107,13 @@ class QAP_T7028(TestCase):
         exec_report = self.__get_fix_message({'ExecType': 'F'})
         order_id = exec_report["OrderID"]
         cl_order_id = exec_report['ClOrdID']
-        vat_amt = str(float(self.qty)/10000)
+        vat_amt = str(float(self.qty) / 10000)
         stamp_rate = str(5)
         stamp_amount = str(int((float(self.qty) * float(self.price) * float(stamp_rate) / 10000)))
         exec_id = exec_report["ExecID"]
         self.java_api_manager.compare_values(
             {'ExecType': exec_report["ExecType"], 'OrdStatus': exec_report["OrdStatus"],
-             'NoMiscFees': {'NoMiscFees': [{'MiscFeeAmt': stamp_amount, 'MiscFeeCurr': 'GBP', 'MiscFeeType': '5'}]}},
+             'MiscFeesGrp': {'NoMiscFees': [{'MiscFeeAmt': stamp_amount, 'MiscFeeCurr': 'GBP', 'MiscFeeType': '5'}]}},
             exec_report,
             "Check the execution of order")
         # endregion
@@ -167,19 +167,28 @@ class QAP_T7028(TestCase):
         alloc_report = self.result.get_parameter('AllocationReportBlock')
         total_fee = {'RootCommission': common_fee_amount, 'RootCommCurrency': 'GBP'}
         self.java_api_manager.compare_values(
-            {JavaApiFields.RootMiscFeesList.value: fee_list_exp, 'RootCommissionDataBlock': total_fee}, alloc_report,
-            "Check values in the Alloc Report")
+            {'RootCommissionDataBlock': total_fee}, alloc_report,
+            "Check values in the Alloc Report (TotalFees)")
+        for fee in fee_list_exp[JavaApiFields.RootMiscFeesBlock.value]:
+            self.java_api_manager.compare_values({
+                'IsMiscFeeValuesPresent': True},
+                {'IsMiscFeeValuesPresent': fee in alloc_report[JavaApiFields.RootMiscFeesList.value][
+                    JavaApiFields.RootMiscFeesBlock.value]},
+                f"Check values in the Alloc Report {fee}")
         # endregion
 
         # region check 35=J message
         no_misc_list = {'NoRootMiscFeesList': [
-            {'RootMiscFeeCurr': self.currency, 'RootMiscFeeType': '22', 'RootMiscFeeRate': '1',
+            { 'RootMiscFeeBasis':'3',
+             'RootMiscFeeCurr': self.currency,
+             'RootMiscFeeType': '22', 'RootMiscFeeRate': '1',
              'RootMiscFeeAmt': vat_amt},
-            {'RootMiscFeeBasis': '2', 'RootMiscFeeCurr': self.currency, 'RootMiscFeeType': '5', 'RootMiscFeeRate': stamp_rate,
+            {'RootMiscFeeBasis': '2', 'RootMiscFeeCurr': self.currency, 'RootMiscFeeType': '5',
+             'RootMiscFeeRate': stamp_rate,
              'RootMiscFeeAmt': stamp_amount}]}
         ignored_list = ["AvgPx", "Currency", 'tag5120', 'RootSettlCurrAmt', 'RootOrClientCommission',
                         'RootOrClientCommissionCurrency', 'RootCommTypeClCommBasis', "AllocInstructionMiscBlock1",
-                        'RootSettlCurrAmt', 'SettlType', 'Account','OrderAvgPx']
+                        'RootSettlCurrAmt', 'SettlType', 'Account', 'OrderAvgPx']
         allocation_report = FixMessageAllocationInstructionReportOMS()
         allocation_report.set_default_ready_to_book(self.fix_message)
         allocation_report.change_parameters({'NoRootMiscFeesList': no_misc_list})

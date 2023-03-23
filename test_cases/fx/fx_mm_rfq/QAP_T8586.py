@@ -4,6 +4,7 @@ from pathlib import Path
 from datetime import datetime
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
+from test_cases.fx.fx_wrapper.common_tools import check_quote_request_id, extract_automatic_quoting
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
@@ -18,6 +19,9 @@ from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBu
 from test_framework.fix_wrappers.forex.FixMessageNewOrderSinglePrevQuotedFX import FixMessageNewOrderSinglePrevQuotedFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.fx.OrderQuoteFX import OrderQuoteFX
+from test_framework.java_api_wrappers.fx.QuoteRequestActionRequestFX import QuoteRequestActionRequestFX
 from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, QuoteRequestBookColumns
 from test_framework.win_gui_wrappers.forex.fx_dealer_intervention import FXDealerIntervention
 
@@ -28,11 +32,14 @@ class QAP_T8586(TestCase):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
-
         self.ss_rfq_connectivity = self.environment.get_list_fix_environment()[0].sell_side_rfq
+        self.java_api_env = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.fix_manager = FixManager(self.ss_rfq_connectivity, self.test_id)
+        self.java_api_manager = JavaApiManager(self.java_api_env, self.test_id)
+        self.java_quote = OrderQuoteFX()
         self.fix_verifier = FixVerifier(self.ss_rfq_connectivity, self.test_id)
         self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
+        self.action_request = QuoteRequestActionRequestFX()
         self.quote = FixMessageQuoteFX()
         self.platinum = self.data_set.get_client_by_name("client_mm_11")
         self.settle_date_wk1 = self.data_set.get_settle_date_by_name("wk1")
@@ -58,11 +65,12 @@ class QAP_T8586(TestCase):
 
         self.settle_date_spot = self.data_set.get_settle_date_by_name("spot")
         self.zar_mxn = self.data_set.get_symbol_by_name("symbol_19")
-        self.sek = self.data_set.get_currency_by_name("currency_sek")
+        self.mxn = self.data_set.get_currency_by_name("currency_mxn")
         self.usd_zar = self.data_set.get_symbol_by_name("symbol_20")
         self.eur_mxn = self.data_set.get_symbol_by_name("symbol_21")
         self.hsbc = self.data_set.get_venue_by_name("venue_2")
         self.sec_type_spot = self.data_set.get_security_type_by_name("fx_spot")
+        self.sec_type_fwd = self.data_set.get_security_type_by_name("fx_spot")
         self.choice = randint(1, 2)
         self.instrument_zar_mxn = {"Symbol": self.zar_mxn,
                                    "SecurityType": self.sec_type_spot}
@@ -107,37 +115,35 @@ class QAP_T8586(TestCase):
         self.fix_md.set_market_data()
         self.fix_md.update_fields_in_component("Instrument", self.instrument_spot)
         self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
+        self.fix_md.set_market_data().update_repeating_group("NoMDEntries", self.no_md_entries)
         self.fix_manager_fh_314.send_message(self.fix_md)
+        self.sleep(2)
         # endregion
         # region Step 3
-        self.quote_request.set_rfq_params_fwd()
-
+        self.quote_request.set_rfq_params()
         self.quote_request.update_repeating_group_by_index("NoRelatedSymbols", 0, Account=self.platinum,
-                                                           Currency=self.sek, Instrument=self.instrument_zar_mxn,
-                                                           SettlDate=self.settle_date_wk1,
-                                                           SettlType=self.settle_type_wk1, OrderQty=self.qty_6m)
+                                                           Currency=self.mxn, Instrument=self.instrument_zar_mxn,
+                                                           OrderQty=self.qty_6m, Side="2")
         response: list = self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
         self.quote.set_params_for_quote_fwd_ccy2(quote_request=self.quote_request)
         self.fix_verifier.check_fix_message(fix_message=self.quote)
         # endregion
         # region Step 4
-        self.new_order_single.set_default_prev_quoted(self.quote_request, response[0])
+        self.new_order_single.set_default_prev_quoted_ccy2(self.quote_request, response[0])
         self.fix_manager.send_message_and_receive_response(self.new_order_single)
-        self.execution_report.set_params_from_new_order_single(self.new_order_single, self.status_filled)
+        self.execution_report.set_params_from_new_order_single_ccy2(self.new_order_single, self.status_filled)
         self.fix_verifier.check_fix_message(self.execution_report)
         # endregion
         # region Step 5
-        self.quote_request.set_rfq_params_fwd()
+        self.quote_request.set_rfq_params()
         self.quote_request.update_repeating_group_by_index("NoRelatedSymbols", 0, Account=self.platinum,
-                                                           Currency=self.sek, Instrument=self.instrument_zar_mxn,
-                                                           SettlDate=self.settle_date_wk1,
-                                                           SettlType=self.settle_type_wk1, OrderQty=self.qty_10m)
-        self.fix_manager.send_message(self.quote_request, self.test_id)
-
-        self.dealer_intervention.set_list_filter(
-            [self.qty_column, self.qty_10m, self.client_column, self.platinum])
-        actual_free_notes = self.dealer_intervention.extract_field_from_unassigned(self.free_notes_column)
-        self.dealer_intervention.compare_values(self.expected_free_notes, actual_free_notes, self.presence_event)
+                                                           Currency=self.mxn, Instrument=self.instrument_zar_mxn,
+                                                           OrderQty=self.qty_10m, Side="2")
+        self.fix_manager.send_message(self.quote_request)
+        automatic_quoting = extract_automatic_quoting(self.quote_request)
+        self.verifier.set_event_name("Check quote presence in DI")
+        self.verifier.compare_values("Check quote presence in DI", "N",  automatic_quoting)
+        self.verifier.verify()
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

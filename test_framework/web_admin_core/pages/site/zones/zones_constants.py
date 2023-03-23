@@ -1,5 +1,5 @@
 class ZonesConstants:
-    ZONES_PAGE_TITLE_XPATH = "//span[@class= 'entity-title left']//*[text()='Zones']"
+    ZONES_PAGE_TITLE_XPATH = '//span[@class="entity-title left"][normalize-space()="Zones"]'
     ZONES_WIZARD_PAGE_TITLE_XPATH = '//div[@class="breadcrumbs entity-title"]//*[text()="Zones"]'
     DISPLAYED_ENTITY_XPATH = "//*[text()='{}']"
     INSTITUTIONS_COLUMN_XPATH = '//*[@col-id="institution.institutionName"][@tabindex="-1"]//span[@ref="eValue"]'

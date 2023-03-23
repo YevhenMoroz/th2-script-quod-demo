@@ -54,5 +54,6 @@ class QAP_T8636(TestCase):
         quote_req_id = response[0].get_parameter("QuoteReqID")
         self.execution_report.set_params_from_new_order_single_synergy(self.order)
         self.execution_report.add_tag({"SecondaryClOrdID": quote_req_id})
+        self.execution_report.remove_fields_from_component("Instrument", ["SymbolSfx"])
         self.fix_verifier.check_fix_message(self.execution_report)
         # endregion

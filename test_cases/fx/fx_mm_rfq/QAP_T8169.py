@@ -4,6 +4,7 @@ from pathlib import Path
 from datetime import datetime
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
+from test_cases.fx.fx_wrapper.common_tools import extract_automatic_quoting
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
@@ -135,12 +136,11 @@ class QAP_T8169(TestCase):
                                                            SettlDate=self.settle_date_wk1,
                                                            SettlType=self.settle_type_wk1, OrderQty=self.qty_10m,
                                                            Side=self.bid)
-        self.fix_manager.send_message(self.quote_request, self.test_id)
-
-        self.dealer_intervention.set_list_filter(
-            [self.qty_column, self.qty_10m, self.client_column, self.platinum])
-        actual_free_notes = self.dealer_intervention.extract_field_from_unassigned(self.free_notes_column)
-        self.dealer_intervention.compare_values(self.expected_free_notes, actual_free_notes, self.presence_event)
+        self.fix_manager.send_message(self.quote_request)
+        automatic_quoting = extract_automatic_quoting(self.quote_request)
+        self.verifier.set_event_name("Check quote presence in DI")
+        self.verifier.compare_values("Check quote presence in DI", "N",  automatic_quoting)
+        self.verifier.verify()
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

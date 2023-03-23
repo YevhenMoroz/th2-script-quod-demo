@@ -23,7 +23,7 @@ class QAP_T3660(CommonTestCase):
         self.password = self.data_set.get_password("password_1")
         self.name = "Default"
         self.verification_name = "test"
-        self.description = "Quod VWAP Default"
+        self.description = "Quod TWAP Default"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

@@ -16,10 +16,10 @@ class QAP_T3694(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
-        self.login = "adm03"
-        self.password = "adm03"
-        self.zone = "WEST-ZONE"
-        self.institution = "QUOD FINANCIAL"
+        self.login = self.data_set.get_user("user_1")
+        self.password = self.data_set.get_password("password_1")
+        self.zone = self.data_set.get_zone("zone_1")
+        self.institution = self.data_set.get_institution("institution_1")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

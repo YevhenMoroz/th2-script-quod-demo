@@ -7,6 +7,8 @@ import string
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_values_sub_wizard import \
     ClientsValuesSubWizard
+from test_framework.web_admin_core.pages.clients_accounts.clients.clients_assignments_sub_wizard \
+    import ClientsAssignmentsSubWizard
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_wizard import ClientsWizard
 
@@ -29,6 +31,7 @@ class QAP_T8508(CommonTestCase):
         self.description = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.disclose_exec = 'Manual'
         self.order_attributes = ['SubjectToEUSTO', 'SubjectToUKSTO', 'ExemptFromSTO']
+        self.desk = self.data_set.get_desk("desk_1")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -45,6 +48,8 @@ class QAP_T8508(CommonTestCase):
             values_tab.set_name(self.name)
             values_tab.set_ext_id_client(self.ext_id_client)
             values_tab.set_disclose_exec(self.disclose_exec)
+            assignments_tab = ClientsAssignmentsSubWizard(self.web_driver_container)
+            assignments_tab.set_desk(self.desk)
             wizard = ClientsWizard(self.web_driver_container)
             wizard.click_on_save_changes()
             page.set_name(self.name)

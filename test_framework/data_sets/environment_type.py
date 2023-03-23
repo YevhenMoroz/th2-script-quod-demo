@@ -32,6 +32,7 @@ class EnvironmentType(Enum):
     # region web admin
     quod306_web_admin_saturn_chrome = "quod306_web_admin_saturn_chrome"
     quod306_web_admin_saturn_firefox = "quod306_web_admin_saturn_firefox"
+    test_site_web_admin_chrome = "test_site_web_admin_chrome"
     quod315_luna_web_admin = "quod315_luna_web_admin"
     quod315_luna_web_admin_site = "quod315_luna_web_admin_site"
     quod320_kuiper_web_admin_site = "quod320_kuiper_web_admin_site"

@@ -86,7 +86,7 @@ class QAP_T2966(TestCase):
             {"Tenor": self.settle_type_1w_java})
         self.manual_settings_request.set_executable_off()
         self.java_manager.send_message(self.manual_settings_request)
-        time.sleep(2)
+        time.sleep(4)
         # endregion
 
         # region Step 2
@@ -125,7 +125,7 @@ class QAP_T2966(TestCase):
              "QuoteAdjustmentEntryList": self.quote_adj_entry,
              "Tenor": self.tenor_1w_java})
         self.java_manager.send_message(self.quote_adjustment)
-        time.sleep(2)
+        time.sleep(4)
         # endregion
 
         # region Step 2
@@ -188,4 +188,4 @@ class QAP_T2966(TestCase):
             {"Tenor": self.settle_type_1w_java})
         self.java_manager.send_message(self.manual_settings_request)
         # endregion
-        self.sleep(2)
+        self.sleep(4)

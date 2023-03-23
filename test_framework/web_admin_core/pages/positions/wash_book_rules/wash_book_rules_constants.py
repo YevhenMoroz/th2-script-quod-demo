@@ -1,5 +1,5 @@
 class WashBookRulesConstants:
-    WASH_BOOK_RULES_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Wash Book Rules ']"
+    WASH_BOOK_RULES_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][normalize-space()='Wash Book Rules']"
     DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span'
     SEARCHED_ENTITY_XPATH = '//*[text()="{}"]'
 
@@ -29,11 +29,11 @@ class WashBookRulesConstants:
     MAIN_PAGE_DESK_FILTER_XPATH = "//*[@class='ag-header-container']/div[2]//div[7]//input"
 
     MAIN_PAGE_NAME_XPATH = "//*[@col-id='washBookRuleName']//*[@ref='eValue']"
-    MAIN_PAGE_CLIENT_XPATH = "//*[@col-id='accountGroup.accountGroupName']//*[@ref='eValue']"
+    MAIN_PAGE_CLIENT_XPATH = "//*[@col-id='accountGroupID']//*[@ref='eValue']"
     MAIN_PAGE_INSTR_TYPE_XPATH = "//*[@col-id='instrType']//*[@ref='eValue']"
     MAIN_PAGE_EXECUTION_POLICY_XPATH = "//*[@col-id='executionPolicy']//*[@ref='eValue']"
-    MAIN_PAGE_WASH_BOOK_ACCOUNT_XPATH = "//*[@col-id='washBookAccount.accountID']//*[@ref='eValue']"
-    MAIN_PAGE_USER_XPATH = "//*[@col-id='user.userID']//*[@ref='eValue']"
+    MAIN_PAGE_WASH_BOOK_ACCOUNT_XPATH = "//*[@col-id='washBookAccountID']//*[@ref='eValue']"
+    MAIN_PAGE_USER_XPATH = "//*[@col-id='userID']//*[@ref='eValue']"
     MAIN_PAGE_DESK_XPATH = "//*[@col-id='desk.deskName']//*[@ref='eValue']"
 
     # wizard

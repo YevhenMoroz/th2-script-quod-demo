@@ -93,7 +93,7 @@ class QAP_T7048(TestCase):
         response = self.__send_fix_orders()
         order_id = response[0].get_parameter("OrderID")
         cl_order_id = response[0].get_parameter("ClOrdID")
-        exec_id = _get_fix_message({'ExecType': '2'}, response)[JavaApiFields.ExecID.value]
+        exec_id = _get_fix_message({'ExecType': 'F'}, response)[JavaApiFields.ExecID.value]
         # endregion
 
         # region get values from booking ticket

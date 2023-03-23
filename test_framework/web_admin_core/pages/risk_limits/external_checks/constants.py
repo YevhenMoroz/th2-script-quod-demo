@@ -26,11 +26,11 @@ class ExternalChecksConstants:
     MAIN_PAGE_INSTR_TYPE_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[3]//input'
     MAIN_PAGE_VENUE_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[4]//input'
     MAIN_PAGE_CLIENT_GROUP_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[5]//input'
-    MAIN_PAGE_NAME_XPATH = '//*[@col-id="externalOrderValidationName"]//span/span[4]'
-    MAIN_PAGE_CLIENT_XPATH = '//*[@col-id="accountGroup.accountGroupName"]//span/span[4]'
-    MAIN_PAGE_INSTR_TYPE_XPATH = '//*[@col-id="instrType"]//span/span[4]'
-    MAIN_PAGE_VENUE_XPATH = '//*[@col-id="venue.venueID"]//span/span[4]'
-    MAIN_PAGE_CLIENT_GROUP_XPATH = '//*[@col-id="clientGroup.clientGroupName"]//span/span[4]'
+    MAIN_PAGE_NAME_XPATH = '//*[@col-id="externalOrderValidationName"]//span[@ref="eValue"]'
+    MAIN_PAGE_CLIENT_XPATH = '//*[@col-id="accountGroupID"]//span[@ref="eValue"]'
+    MAIN_PAGE_INSTR_TYPE_XPATH = '//*[@col-id="instrType"]//span[@ref="eValue"]'
+    MAIN_PAGE_VENUE_XPATH = '//*[@col-id="venue.venueID"]//span[@ref="eValue"]'
+    MAIN_PAGE_CLIENT_GROUP_XPATH = '//*[@col-id="clientGroup.clientGroupName"]//span[@ref="eValue"]'
 
 
 
