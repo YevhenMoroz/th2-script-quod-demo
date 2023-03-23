@@ -4,6 +4,7 @@ import time
 from stubs import ROOT_DIR
 from appium import webdriver
 from appium.webdriver.appium_service import AppiumService
+import time
 
 class AppiumDriver:
 
@@ -13,15 +14,15 @@ class AppiumDriver:
 
     def start_appium_service(self):
         global appium_service
-        appium_service = AppiumService()
-        appium_service.start()
         # region of starting configured device with configured application
         with open(f'{ROOT_DIR}\\test_framework\\mobile_android_core\\utils\\mobile_configs\\mobile_config_app.json') as json_file:
             app_data = json.load(json_file)
         with open(f'{ROOT_DIR}\\test_framework\\mobile_android_core\\utils\\mobile_configs\\mobile_config_device.json') as json_file:
             device_data = json.load(json_file)
-        desired_cap = {**device_data[device_data['currentDevice']], **app_data[app_data['currentApp']]}
-        self.appium_driver = webdriver.Remote('http://127.0.0.1:4723/wd/hub', desired_cap)
+        desired_cap = {**device_data[device_data['currentDevice']], **app_data[app_data['currentApp']], "automationName": "flutter", "retryBackoffTime": 5000}
+        self.appium_driver = webdriver.Remote('http://127.0.0.1:4723', desired_cap)
+        # self.appium_driver.implicitly_wait(5)
+        time.sleep(5)
         self.wait_time(5)
         # endregion
 

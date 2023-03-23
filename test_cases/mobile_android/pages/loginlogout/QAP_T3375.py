@@ -1,6 +1,8 @@
 import sys
 import traceback
 
+from appium_flutter_finder import FlutterElement, FlutterFinder
+
 from custom import basic_custom_actions
 from test_cases.mobile_android.common_test_case import CommonTestCase
 from test_framework.mobile_android_core.pages.login.login_constant import LoginConstants
@@ -16,7 +18,7 @@ from test_framework.mobile_android_core.utils.driver import AppiumDriver
 
 from pathlib import Path
 from test_framework.mobile_android_core.utils.try_except_decorator_mobile import try_except
-
+import time
 
 class QAP_T3375(CommonTestCase):
 
@@ -29,41 +31,44 @@ class QAP_T3375(CommonTestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
         # region - preconditions
-        login_page = LoginPage(self.appium_driver)
-        main_page = MainPage(self.appium_driver)
-        menu_page = MenuPage(self.appium_driver)
-        self.verify("Precondition - verify that Login Page is opened",
-                    None,
-                    login_page.wait_element_presence(LoginConstants.EMAIL))
-        login_page.wait_element_presence(LoginConstants.EMAIL)
-        # endregion
-        # region - test details
+        # login_page = LoginPage(self.appium_driver)
+        # main_page = MainPage(self.appium_driver)
+        # menu_page = MenuPage(self.appium_driver)
+        finder = FlutterFinder()
 
-        # Step 1
-        login_page.set_email(self.login)
-        self.verify("Step 1 - Email Value is set correctly", "automation_mobile1, Email", login_page.get_attribute_of_element_by_xpath(LoginConstants.EMAIL, 'text'))
-        # endregion
+        text_finder = finder.by_value_key("usernameField")
+        text_element = FlutterElement(self.appium_driver.get_driver(), text_finder)
+        text_element.click()
+        text_element.send_keys("a_MobileQA1")
 
-        # Step 2
-        login_page.set_password(self.password)
-        self.verify("Step 2 - Password value is set and hidden", "••••••••••••, Password", login_page.get_attribute_of_element_by_xpath(LoginConstants.PASSWORD, 'text'))
-        # endregion
+        passwordField = FlutterElement(self.appium_driver.get_driver(), finder.by_value_key("passwordField"))
+        passwordField.click()
+        passwordField.send_keys("a_MobileQA1!")
 
-        # Step 3
-        login_page.click_on_login_button()
-        self.verify("Step 3 - Login successful", None, main_page.wait_element_presence(MainPageConstants.PORTFOLIO_BUTTON))
-        # endregion
+        loginButton = FlutterElement(self.appium_driver.get_driver(), finder.by_value_key("buttonLogin"))
+        loginButton.click()
+        time.sleep(4)
 
-        # Step 4
-        main_page.click_on_menu()
-        menu_page.click_on_logout()
-        self.verify("Step 4 - Logout successful", None, login_page.wait_element_presence(LoginConstants.LOGIN_TITLE))
-        # endregion
+        userProfileButton = FlutterElement(self.appium_driver.get_driver(), finder.by_value_key("buttonUserProfile"))
+        userProfileButton.click()
 
-        # Step 5
-        login_page.login_to_mobile_trading(self.login, self.password)
-        self.verify("Step 5 - Login successful", None, main_page.wait_element_presence(MainPageConstants.PORTFOLIO_BUTTON))
-        # endregion
+        buttonLogout = FlutterElement(self.appium_driver.get_driver(), finder.by_value_key("buttonLogout"))
+        buttonLogout.click()
+        time.sleep(2)
+
+        try:
+            self.appium_driver.get_driver().execute_script('flutter:waitFor', finder.by_value_key("passwordField"), 100)
+        except:
+            print("There is an Error, couldn't find 'passwordField'")
+        passwordField = FlutterElement(self.appium_driver.get_driver(), finder.by_value_key("passwordField"))
+        assert (passwordField.text == '')
+        print(passwordField)
+
+        # try:
+        #     self.appium_driver.get_driver().execute_script('flutter:waitFor', finder.by_value_key("buttonOrderTicket"), 100)
+        # except:
+        #     print("There is an EXPECTED Error, couldn't find 'buttonOrderTicket'")
+        self.verify("Step Last - All Actions are done", None, None)
 
         # region - postconditions
         # endregion

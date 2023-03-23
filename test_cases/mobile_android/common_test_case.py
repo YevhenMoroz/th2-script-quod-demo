@@ -19,7 +19,7 @@ class CommonTestCase:
     def run(self):
         self.__start_driver()
         self.test_context()
-        self.__stop_driver()
+        # self.__stop_driver()
 
     @abc.abstractmethod
     def test_context(self):
