@@ -7,7 +7,9 @@ from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T4593 import QAP_T4593
 from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T4594 import QAP_T4594
 from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T4595 import QAP_T4595
 from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T4596 import QAP_T4596
+from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T4597 import QAP_T4597
 from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T4602 import QAP_T4602
+from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T4617 import QAP_T4617
 from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T4618 import QAP_T4618
 from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T4619 import QAP_T4619
 from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T4620 import QAP_T4620
@@ -47,20 +49,22 @@ def test_run(parent_id=None, version=None):
         time.sleep(35)
         # endregion
 
-        QAP_T4620(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4622(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4623(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4624(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4618(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4619(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4621(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4625(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4592(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4593(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4594(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4595(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4596(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4597(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4602(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4617(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4618(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4619(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4620(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4621(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4622(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4623(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4624(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4625(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
         # region config reset
         default_config_value = ssh_client.get_and_update_file(config_file, {xpath: new_config_value})
