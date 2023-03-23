@@ -76,7 +76,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             elif status is Status.PartialFill:
                 self.__set_partial_fill_buy(new_order_single)
             elif status is Status.CancelReplace:
-                self.__set_cancel_replace_buy(new_order_single)
+                self.__set_cancel_replace_rb_buy(new_order_single)
             elif status is Status.Cancel:
                 self.__set_cancel_rb_buy(new_order_single)
             elif status is Status.Eliminate:
@@ -653,6 +653,29 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             Text='*',
             Side=new_order_single.get_parameter("Side"),
             TimeInForce=new_order_single.get_parameter("TimeInForce"),
+            ExecType="5",
+            OrdStatus="0",
+            CumQty='*',
+            ExecID='*',
+            OrderID='*',
+            LeavesQty='*',
+            TransactTime='*',
+            AvgPx='*',
+            OrigClOrdID='*',
+        )
+        super().change_parameters(temp)
+        return self
+
+    def __set_cancel_replace_rb_buy(self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict()
+        temp.update(
+            ClOrdID='*',
+            OrdType=new_order_single.get_parameter('OrdType'),
+            OrderQty=new_order_single.get_parameter("OrderQty"),
+            Text='order replaced',
+            Side=new_order_single.get_parameter("Side"),
+            TimeInForce=new_order_single.get_parameter("TimeInForce"),
+            Price=new_order_single.get_parameter('Price'),
             ExecType="5",
             OrdStatus="0",
             CumQty='*',
