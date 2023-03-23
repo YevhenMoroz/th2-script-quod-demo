@@ -17,7 +17,7 @@ from test_framework.fix_wrappers.algo.FixMessageOrderCancelReplaceRequestAlgo im
 
 
 # Warning! This is the manual test case. It needs to do manual and doesn`t include in regression script
-class QAP_T5054(TestCase):
+class QAP_T5055(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -34,10 +34,10 @@ class QAP_T5054(TestCase):
 
         # region order parameters
         self.qty = 400
-        self.inc_qty = 500
         self.price = 20
+        self.inc_price = 25
         self.display_qty = 50
-        self.dec_price = 15
+        self.dec_display_qty = 45
         self.price_ask = 40
         self.price_bid = 30
         self.qty_bid = self.qty_ask = 1000000
@@ -89,7 +89,7 @@ class QAP_T5054(TestCase):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
         nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_qdl6, self.price)
-        nos_2_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_qdl6, self.dec_price)
+        nos_2_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_qdl6, self.inc_price)
         ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_qdl6, True)
         self.rule_list = [nos_1_rule, nos_2_rule, ocr_rule]
         # endregion
@@ -146,12 +146,12 @@ class QAP_T5054(TestCase):
         self.fix_verifier_buy.check_fix_message(er_new_dma_1_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 1 order')
         # endregion
 
-        # region Modify parent LitDark order
+        # region 1st Modify parent LitDark order
         case_id_2 = bca.create_event("Replace LitDark Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_2)
 
         self.Iceberg_order_replace_params = FixMessageOrderCancelReplaceRequestAlgo(self.Iceberg_order)
-        self.Iceberg_order_replace_params.change_parameters(dict(Price=self.dec_price, OrderQty=self.inc_qty))
+        self.Iceberg_order_replace_params.change_parameters(dict(Price=self.inc_price, DisplayInstruction=dict(DisplayQty=self.dec_display_qty)))
         self.fix_manager_sell.send_message_and_receive_response(self.Iceberg_order_replace_params, case_id_2)
 
         er_replaced_Iceberg_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.Iceberg_order_replace_params, self.gateway_side_sell, self.status_cancel_replace)
@@ -162,14 +162,14 @@ class QAP_T5054(TestCase):
 
         # region check cancel 1st child DMA order
         er_cancel_dma_1_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message(er_cancel_dma_1_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel child Iceberg order")
+        self.fix_verifier_buy.check_fix_message(er_cancel_dma_1_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel child DMA 1 order")
         # endregion
 
-        # region Check 2nd child DMA order
+        # region Check 2nd child DMA order for low liquidity
         self.fix_verifier_buy.set_case_id(bca.create_event("New child DMA order after the replace", self.test_id))
 
         self.dma_2_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_child_of_Iceberg_Kepler_params()
-        self.dma_2_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_qdl6, OrderQty=self.display_qty, Price=self.dec_price, Instrument=self.instrument))
+        self.dma_2_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_qdl6, OrderQty=self.dec_display_qty, Price=self.inc_price, Instrument=self.instrument))
         self.fix_verifier_buy.check_fix_message(self.dma_2_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
         er_pending_new_dma_2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_order, self.gateway_side_buy, self.status_pending)
