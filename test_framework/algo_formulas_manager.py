@@ -557,6 +557,39 @@ class AlgoFormulasManager:
                     return phase_from_list['endTime'].timestamp()
 
     @staticmethod
+    def update_endtime_for_trading_phase_by_phase_name(phase_list: list, phase_name: TradingPhases, end_time: datetime):
+        new_phase_list = phase_list
+        if phase_name == TradingPhases.PreOpen:
+            new_phase_list[0].update(endTime=end_time)
+            new_phase_list[1].update(beginTime=end_time, endTime=end_time + timedelta(minutes=5))
+            new_phase_list[2].update(beginTime=end_time + timedelta(minutes=5), endTime=end_time + timedelta(minutes=5))
+            new_phase_list[3].update(beginTime=end_time + timedelta(minutes=5), endTime=end_time + timedelta(minutes=4))
+            new_phase_list[4].update(beginTime=end_time + timedelta(minutes=4), endTime=end_time + timedelta(minutes=5))
+            new_phase_list[5].update(beginTime=end_time + timedelta(minutes=10), endTime=end_time + timedelta(minutes=5))
+        elif phase_name == TradingPhases.Open:
+            new_phase_list[1].update(endTime=end_time)
+            new_phase_list[2].update(beginTime=end_time + timedelta(minutes=5), endTime=end_time + timedelta(minutes=5))
+            new_phase_list[3].update(beginTime=end_time + timedelta(minutes=5), endTime=end_time + timedelta(minutes=4))
+            new_phase_list[4].update(beginTime=end_time + timedelta(minutes=4), endTime=end_time + timedelta(minutes=5))
+            new_phase_list[5].update(beginTime=end_time + timedelta(minutes=5), endTime=end_time + timedelta(minutes=5))
+        elif phase_name == TradingPhases.PreClosed:
+            new_phase_list[2].update(endTime=end_time)
+            new_phase_list[3].update(beginTime=end_time + timedelta(minutes=5), endTime=end_time + timedelta(minutes=4))
+            new_phase_list[4].update(beginTime=end_time + timedelta(minutes=4), endTime=end_time + timedelta(minutes=5))
+            new_phase_list[5].update(beginTime=end_time + timedelta(minutes=5), endTime=end_time + timedelta(minutes=5))
+        elif phase_name == TradingPhases.AtLast:
+            new_phase_list[3].update(endTime=end_time)
+            new_phase_list[4].update(beginTime=end_time + timedelta(minutes=5), endTime=end_time + timedelta(minutes=4))
+            new_phase_list[5].update(beginTime=end_time + timedelta(minutes=4), endTime=end_time + timedelta(minutes=5))
+        elif phase_name == TradingPhases.Closed:
+            new_phase_list[4].update(endTime=end_time)
+            new_phase_list[5].update(beginTime=end_time + timedelta(minutes=5), endTime=end_time + timedelta(minutes=5))
+        elif phase_name == TradingPhases.Expiry:
+            new_phase_list[5].update(endTime=end_time)
+
+        return new_phase_list
+
+    @staticmethod
     def get_litdark_child_price(ord_side: int, bid_price: float, ask_price: float, parent_qty: int, cost_per_trade: float , comm_per_unit: float = 12,
                                     comm_basis_point: float = 16, is_comm_per_unit: bool = False, spread_disc_proportion: int = 0) -> float:
         if ord_side == 1:
