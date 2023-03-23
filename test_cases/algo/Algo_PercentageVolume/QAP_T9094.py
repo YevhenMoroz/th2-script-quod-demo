@@ -45,6 +45,7 @@ class QAP_T9094(TestCase):
         self.auc_child_qty = self.indicative_volume * self.pct
         self.child_qty = AFM.get_pov_child_qty(self.pct, self.indicative_volume, self.qty)
         self.float_type = StrategyParameterType.Float.value
+        self.dateformat = "time_only"
         # endregion
 
         # region Gateway Side
@@ -81,9 +82,9 @@ class QAP_T9094(TestCase):
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
         # endregion
 
-        # self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile4")
+        self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile4")
 
-        # self.rest_api_manager = RestApiAlgoManager(session_alias=self.restapi_env1.session_alias_wa, case_id=self.test_id)
+        self.rest_api_manager = RestApiAlgoManager(session_alias=self.restapi_env1.session_alias_wa, case_id=self.test_id)
 
         self.rule_list = []
 
@@ -96,11 +97,11 @@ class QAP_T9094(TestCase):
         self.rule_list = [nos_1_rule, ocr_rule]
         # endregion
 
-        # # region Update Trading Phase
-        # self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify trading phase profile", self.test_id))
-        # trading_phases = AFM.get_timestamps_for_current_phase(TradingPhases.PreOpen)
-        # self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
-        # # end region
+        # region Update Trading Phase
+        self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify trading phase profile", self.test_id))
+        trading_phases = AFM.get_timestamps_for_current_phase(TradingPhases.PreOpen, self.dateformat)
+        self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
+        # end region
 
         # region Send MarketData LTQ PRE
         self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send Trading Phase PreOpen Auction", self.test_id))
@@ -183,11 +184,11 @@ class QAP_T9094(TestCase):
         self.fix_verifier_sell.check_fix_message(cancel_POV_order_params, key_parameters=self.key_params_ER_child, message_name='Sell side ExecReport Cancel')
         # endregion
 
-        # # region Update Trading Phase
-        # self.rest_api_manager.set_case_id(case_id=bca.create_event("Revert trading phase profile", self.test_id))
-        # trading_phases = AFM.get_default_timestamp_for_trading_phase()
-        # self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
-        # # end region
+        # region Update Trading Phase
+        self.rest_api_manager.set_case_id(case_id=bca.create_event("Revert trading phase profile", self.test_id))
+        trading_phases = AFM.get_default_timestamp_for_trading_phase(self.dateformat)
+        self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
+        # end region
 
         rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)

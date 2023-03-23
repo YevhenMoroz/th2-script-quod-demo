@@ -323,7 +323,7 @@ class AlgoFormulasManager:
         ]
 
     @staticmethod
-    def get_timestamps_for_current_phase(phase: TradingPhases):
+    def get_timestamps_for_current_phase(phase: TradingPhases, dateformat="full"):
         tm = dt.now()
         if phase == TradingPhases.PreOpen:
             pop_start = tm - datetime.timedelta(seconds=tm.second, microseconds=tm.microsecond)
@@ -374,103 +374,185 @@ class AlgoFormulasManager:
             exa_start = tm - datetime.timedelta(seconds=tm.second, microseconds=tm.microsecond)
             exa_end = exa_start + timedelta(minutes=5)
 
-        return [
-            {
-                "beginTime": pop_start,
-                "endTime": opn_start,
-                "submitAllowed": "True",
-                "tradingPhase": "POP",
-                "standardTradingPhase": "PRE",
-            },
-            {
-                "beginTime": opn_start,
-                "endTime": pcl_start,
-                "submitAllowed": "True",
-                "tradingPhase": "OPN",
-                "standardTradingPhase": "OPN",
-            },
-            {
-                "beginTime": pcl_start,
-                "endTime": pcl_end,
-                "submitAllowed": "True",
-                "tradingPhase": "PCL",
-                "standardTradingPhase": "PCL",
-            },
-            {
-                "beginTime": pcl_end,
-                "endTime": clo_start,
-                "submitAllowed": "True",
-                "tradingPhase": "TAL",
-                "standardTradingPhase": "TAL",
-            },
-            {
-                "beginTime": clo_start,
-                "endTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=23, minute=0, second=0, microsecond=0),
-                "submitAllowed": "True",
-                "tradingPhase": "CLO",
-                "standardTradingPhase": "CLO",
-            },
-            {
-                "beginTime": exa_start,
-                "endTime": exa_end,
-                "submitAllowed": "True",
-                "tradingPhase": "EXA",
-                "standardTradingPhase": "EXA",
-                "expiryCycle": "EVM",
-            }
+        if dateformat == "full":
+            return [
+                {
+                    "beginTime": pop_start,
+                    "endTime": opn_start,
+                    "submitAllowed": "True",
+                    "tradingPhase": "POP",
+                    "standardTradingPhase": "PRE",
+                },
+                {
+                    "beginTime": opn_start,
+                    "endTime": pcl_start,
+                    "submitAllowed": "True",
+                    "tradingPhase": "OPN",
+                    "standardTradingPhase": "OPN",
+                },
+                {
+                    "beginTime": pcl_start,
+                    "endTime": pcl_end,
+                    "submitAllowed": "True",
+                    "tradingPhase": "PCL",
+                    "standardTradingPhase": "PCL",
+                },
+                {
+                    "beginTime": pcl_end,
+                    "endTime": clo_start,
+                    "submitAllowed": "True",
+                    "tradingPhase": "TAL",
+                    "standardTradingPhase": "TAL",
+                },
+                {
+                    "beginTime": clo_start,
+                    "endTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=23, minute=0, second=0, microsecond=0),
+                    "submitAllowed": "True",
+                    "tradingPhase": "CLO",
+                    "standardTradingPhase": "CLO",
+                },
+                {
+                    "beginTime": exa_start,
+                    "endTime": exa_end,
+                    "submitAllowed": "True",
+                    "tradingPhase": "EXA",
+                    "standardTradingPhase": "EXA",
+                    "expiryCycle": "EVM",
+                }]
+        else:
+            return [
+                {
+                    "phaseBeginTime": pop_start.strftime("%H:%M:%S"),
+                    "phaseEndTime": opn_start.strftime("%H:%M:%S"),
+                    "tradingPhase": "POP",
+                    "standardTradingPhase": "PRE",
+                },
+                {
+                    "phaseBeginTime": opn_start.strftime("%H:%M:%S"),
+                    "phaseEndTime": pcl_start.strftime("%H:%M:%S"),
+                    "tradingPhase": "OPN",
+                    "standardTradingPhase": "OPN",
+                },
+                {
+                    "phaseBeginTime": pcl_start.strftime("%H:%M:%S"),
+                    "phaseEndTime": pcl_end.strftime("%H:%M:%S"),
+                    "tradingPhase": "PCL",
+                    "standardTradingPhase": "PCL",
+                },
+                {
+                    "phaseBeginTime": pcl_end.strftime("%H:%M:%S"),
+                    "phaseEndTime": clo_start.strftime("%H:%M:%S"),
+                    "tradingPhase": "AUC",
+                    "standardTradingPhase": "TAL",
+                },
+                {
+                    "phaseBeginTime": clo_start.strftime("%H:%M:%S"),
+                    "phaseEndTime": datetime.time(hour=23, minute=0, second=0),
+                    "tradingPhase": "CLO",
+                    "standardTradingPhase": "CLO",
+                },
+                {
+                    "phaseBeginTime": exa_start.strftime("%H:%M:%S"),
+                    "phaseEndTime": exa_end.strftime("%H:%M:%S"),
+                    "tradingPhase": "HAL",
+                    "standardTradingPhase": "EXA",
+                    "expiryCycle": "EVM",
+                }
         ]
 
     @staticmethod
-    def get_default_timestamp_for_trading_phase():
+    def get_default_timestamp_for_trading_phase(dateformat="full"):
         tm = dt.now()
-        return [
-            {
-                "beginTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=6, minute=50, second=0, microsecond=0).replace(tzinfo=timezone.utc),
-                "endTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=7, minute=0, second=0, microsecond=0).replace(tzinfo=timezone.utc),
-                "submitAllowed": "True",
-                "tradingPhase": "POP",
-                "standardTradingPhase": "PRE",
-            },
-            {
-                "beginTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=7, minute=0, second=0, microsecond=0).replace(tzinfo=timezone.utc),
-                "endTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=19, minute=0, second=0, microsecond=0).replace(tzinfo=timezone.utc),
-                "submitAllowed": "True",
-                "tradingPhase": "OPN",
-                "standardTradingPhase": "OPN",
-            },
-            {
-                "beginTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=19, minute=0, second=0, microsecond=0).replace(tzinfo=timezone.utc),
-                "endTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=19, minute=10, second=0, microsecond=0).replace(tzinfo=timezone.utc),
-                "submitAllowed": "True",
-                "tradingPhase": "PCL",
-                "standardTradingPhase": "PCL",
-            },
-            {
-                "beginTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=19, minute=10, second=0, microsecond=0).replace(tzinfo=timezone.utc),
-                "endTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=19, minute=20, second=0, microsecond=0).replace(tzinfo=timezone.utc),
-                "submitAllowed": "True",
-                "tradingPhase": "TAL",
-                "standardTradingPhase": "TAL",
-            },
-            {
-                "beginTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=19, minute=20, second=0, microsecond=0).replace(tzinfo=timezone.utc),
-                "endTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=23, minute=59, second=0, microsecond=0).replace(tzinfo=timezone.utc),
-                "submitAllowed": "True",
-                "tradingPhase": "CLO",
-                "standardTradingPhase": "CLO",
-            },
-            {
-                "beginTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=10, minute=10, second=0, microsecond=0).replace(tzinfo=timezone.utc),
-                "endTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=10, minute=15, second=0, microsecond=0).replace(tzinfo=timezone.utc),
-                "submitAllowed": "True",
-                "tradingPhase": "EXA",
-                "standardTradingPhase": "EXA",
-                "expiryCycle": "EVM",
-            }
-        ]
+        if dateformat == "full":
+            return [
+                {
+                    "beginTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=6, minute=50, second=0, microsecond=0).replace(tzinfo=timezone.utc),
+                    "endTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=7, minute=0, second=0, microsecond=0).replace(tzinfo=timezone.utc),
+                    "submitAllowed": "True",
+                    "tradingPhase": "POP",
+                    "standardTradingPhase": "PRE",
+                },
+                {
+                    "beginTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=7, minute=0, second=0, microsecond=0).replace(tzinfo=timezone.utc),
+                    "endTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=19, minute=0, second=0, microsecond=0).replace(tzinfo=timezone.utc),
+                    "submitAllowed": "True",
+                    "tradingPhase": "OPN",
+                    "standardTradingPhase": "OPN",
+                },
+                {
+                    "beginTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=19, minute=0, second=0, microsecond=0).replace(tzinfo=timezone.utc),
+                    "endTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=19, minute=10, second=0, microsecond=0).replace(tzinfo=timezone.utc),
+                    "submitAllowed": "True",
+                    "tradingPhase": "PCL",
+                    "standardTradingPhase": "PCL",
+                },
+                {
+                    "beginTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=19, minute=10, second=0, microsecond=0).replace(tzinfo=timezone.utc),
+                    "endTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=19, minute=20, second=0, microsecond=0).replace(tzinfo=timezone.utc),
+                    "submitAllowed": "True",
+                    "tradingPhase": "TAL",
+                    "standardTradingPhase": "TAL",
+                },
+                {
+                    "beginTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=19, minute=20, second=0, microsecond=0).replace(tzinfo=timezone.utc),
+                    "endTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=23, minute=59, second=0, microsecond=0).replace(tzinfo=timezone.utc),
+                    "submitAllowed": "True",
+                    "tradingPhase": "CLO",
+                    "standardTradingPhase": "CLO",
+                },
+                {
+                    "beginTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=10, minute=10, second=0, microsecond=0).replace(tzinfo=timezone.utc),
+                    "endTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=10, minute=15, second=0, microsecond=0).replace(tzinfo=timezone.utc),
+                    "submitAllowed": "True",
+                    "tradingPhase": "EXA",
+                    "standardTradingPhase": "EXA",
+                    "expiryCycle": "EVM",
+                }
+            ]
+        else:
+            tm = datetime.time
+            return [
+                {
+                    "phaseBeginTime": tm(hour=6, minute=50, second=0).replace(tzinfo=timezone.utc),
+                    "phaseEndTime": tm(hour=7, minute=0, second=0).replace(tzinfo=timezone.utc),
+                    "tradingPhase": "POP",
+                    "standardTradingPhase": "PRE",
+                },
+                {
+                    "phaseBeginTime": tm(hour=7, minute=0, second=0).replace(tzinfo=timezone.utc),
+                    "phaseEndTime": tm(hour=19, minute=0, second=0).replace(tzinfo=timezone.utc),
+                    "tradingPhase": "OPN",
+                    "standardTradingPhase": "OPN",
+                },
+                {
+                    "phaseBeginTime": tm(hour=19, minute=0, second=0).replace(tzinfo=timezone.utc),
+                    "phaseEndTime": tm(hour=19, minute=10, second=0).replace(tzinfo=timezone.utc),
+                    "tradingPhase": "PCL",
+                    "standardTradingPhase": "PCL",
+                },
+                {
+                    "phaseBeginTime": tm(hour=19, minute=10, second=0).replace(tzinfo=timezone.utc),
+                    "phaseEndTime": tm(hour=19, minute=20, second=0).replace(tzinfo=timezone.utc),
+                    "tradingPhase": "AUC",
+                    "standardTradingPhase": "TAL",
+                },
+                {
+                    "phaseBeginTime": tm(hour=19, minute=20, second=0).replace(tzinfo=timezone.utc),
+                    "phaseEndTime": tm(hour=23, minute=59, second=0).replace(tzinfo=timezone.utc),
+                    "tradingPhase": "CLO",
+                    "standardTradingPhase": "CLO",
+                },
+                {
+                    "phaseBeginTime": tm(hour=10, minute=10, second=0).replace(tzinfo=timezone.utc),
+                    "phaseEndTime": tm(hour=10, minute=15, second=0).replace(tzinfo=timezone.utc),
+                    "tradingPhase": "HAL",
+                    "standardTradingPhase": "EXA",
+                    "expiryCycle": "EVM",
+                }
+            ]
 
     @staticmethod
-    def get_timestamps_for_next_phase(phase: TradingPhases):
+    def get_timestamps_for_next_phase(phase: TradingPhases, dateformat="full"):
         tm = dt.now()
         if phase == TradingPhases.PreOpen:
             pop_start = tm + datetime.timedelta(minutes=3) - datetime.timedelta(seconds=tm.second, microseconds=tm.microsecond)
@@ -499,51 +581,92 @@ class AlgoFormulasManager:
             exa_start = tm - datetime.timedelta(seconds=tm.second, microseconds=tm.microsecond) + timedelta(minutes=2)
             exa_end = exa_start + timedelta(minutes=5)
 
-        return [
-            {
-                "beginTime": pop_start,
-                "endTime": opn_start,
-                "submitAllowed": "True",
-                "tradingPhase": "POP",
-                "standardTradingPhase": "PRE",
-            },
-            {
-                "beginTime": opn_start,
-                "endTime": pcl_start,
-                "submitAllowed": "True",
-                "tradingPhase": "OPN",
-                "standardTradingPhase": "OPN",
-            },
-            {
-                "beginTime": pcl_start,
-                "endTime": pcl_end,
-                "submitAllowed": "True",
-                "tradingPhase": "PCL",
-                "standardTradingPhase": "PCL",
-            },
-            {
-                "beginTime": pcl_end,
-                "endTime": clo_start,
-                "submitAllowed": "True",
-                "tradingPhase": "TAL",
-                "standardTradingPhase": "TAL",
-            },
-            {
-                "beginTime": clo_start,
-                "endTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=23, minute=0, second=0, microsecond=0),
-                "submitAllowed": "True",
-                "tradingPhase": "CLO",
-                "standardTradingPhase": "CLO",
-            },
-            {
-                "beginTime": exa_start,
-                "endTime": exa_end,
-                "submitAllowed": "True",
-                "tradingPhase": "EXA",
-                "standardTradingPhase": "EXA",
-                "expiryCycle": "EVM",
-            }
-        ]
+        if dateformat == "full":
+            return [
+                {
+                    "beginTime": pop_start,
+                    "endTime": opn_start,
+                    "submitAllowed": "True",
+                    "tradingPhase": "POP",
+                    "standardTradingPhase": "PRE",
+                },
+                {
+                    "beginTime": opn_start,
+                    "endTime": pcl_start,
+                    "submitAllowed": "True",
+                    "tradingPhase": "OPN",
+                    "standardTradingPhase": "OPN",
+                },
+                {
+                    "beginTime": pcl_start,
+                    "endTime": pcl_end,
+                    "submitAllowed": "True",
+                    "tradingPhase": "PCL",
+                    "standardTradingPhase": "PCL",
+                },
+                {
+                    "beginTime": pcl_end,
+                    "endTime": clo_start,
+                    "submitAllowed": "True",
+                    "tradingPhase": "TAL",
+                    "standardTradingPhase": "TAL",
+                },
+                {
+                    "beginTime": clo_start,
+                    "endTime": dt(year=tm.year, month=tm.month, day=tm.day, hour=23, minute=0, second=0, microsecond=0),
+                    "submitAllowed": "True",
+                    "tradingPhase": "CLO",
+                    "standardTradingPhase": "CLO",
+                },
+                {
+                    "beginTime": exa_start,
+                    "endTime": exa_end,
+                    "submitAllowed": "True",
+                    "tradingPhase": "EXA",
+                    "standardTradingPhase": "EXA",
+                    "expiryCycle": "EVM",
+                }
+            ]
+        else:
+            return [
+                {
+                    "phaseBeginTime": pop_start.strftime("%H:%M:%S"),
+                    "phaseEndTime": opn_start.strftime("%H:%M:%S"),
+                    "tradingPhase": "POP",
+                    "standardTradingPhase": "PRE",
+                },
+                {
+                    "phaseBeginTime": opn_start.strftime("%H:%M:%S"),
+                    "phaseEndTime": pcl_start.strftime("%H:%M:%S"),
+                    "tradingPhase": "OPN",
+                    "standardTradingPhase": "OPN",
+                },
+                {
+                    "phaseBeginTime": pcl_start.strftime("%H:%M:%S"),
+                    "phaseEndTime": pcl_end.strftime("%H:%M:%S"),
+                    "tradingPhase": "PCL",
+                    "standardTradingPhase": "PCL",
+                },
+                {
+                    "phaseBeginTime": pcl_end.strftime("%H:%M:%S"),
+                    "phaseEndTime": clo_start.strftime("%H:%M:%S"),
+                    "tradingPhase": "AUC",
+                    "standardTradingPhase": "TAL",
+                },
+                {
+                    "phaseBeginTime": clo_start.strftime("%H:%M:%S"),
+                    "phaseEndTime": datetime.time(hour=23, minute=0, second=0),
+                    "tradingPhase": "CLO",
+                    "standardTradingPhase": "CLO",
+                },
+                {
+                    "phaseBeginTime": exa_start.strftime("%H:%M:%S"),
+                    "phaseEndTime": exa_end.strftime("%H:%M:%S"),
+                    "tradingPhase": "HAL",
+                    "standardTradingPhase": "EXA",
+                    "expiryCycle": "EVM",
+                }
+            ]
 
     @staticmethod
     def get_timestamp_from_list(phases, phase: TradingPhases, start_time: bool = True):
