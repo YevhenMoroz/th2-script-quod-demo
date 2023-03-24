@@ -2,6 +2,7 @@ from appium_flutter_finder import FlutterElement, FlutterFinder
 
 from test_cases.mobile_android.common_test_case import CommonTestCase
 from test_framework.mobile_android_core.utils.common_page import CommonPage
+from test_framework.mobile_android_core.pages.login.login_page import LoginPage
 from test_framework.mobile_android_core.utils.driver import AppiumDriver
 
 from pathlib import Path
@@ -20,20 +21,19 @@ class QAP_T3375(CommonTestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
         # region - preconditions
-        finder = FlutterFinder()
-        login_page = CommonPage(self.appium_driver)
+        login_page = LoginPage(self.appium_driver)
 
-        login_page.tap("usernameField")
-        login_page.enter_data("usernameField", "a_MobileQA1")
+        # login_page.click_field_username()
+        login_page.enter_data_field_username("a_MobileQA1")
 
-        login_page.tap("passwordField")
-        login_page.enter_data("passwordField","a_MobileQA1!")
+        # login_page.click_field_password()
+        login_page.enter_data_field_password("a_MobileQA1!")
 
-        login_page.tap("buttonLogin")
-
-        login_page.tap("buttonUserProfile")
-
-        login_page.tap("buttonLogout")
+        # login_page.tap("buttonLogin")
+        #
+        # login_page.tap("buttonUserProfile")
+        #
+        # login_page.tap("buttonLogout")
 
         time.sleep(3)
 

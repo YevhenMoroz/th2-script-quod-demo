@@ -16,16 +16,24 @@ class CommonPage:
         """
         method is used to find element by valueKey = key and input data in it
         """
-        text_element = FlutterElement(self.appium_driver.get_driver(), self.finder.by_value_key(key))
-        text_element.send_keys(data)
+        element = FlutterElement(self.appium_driver.get_driver(), self.finder.by_value_key(key))
+        element.send_keys(data)
 
     @wait_for_element
-    def tap (self, key):
+    def tap(self, key):
         """
         method is used to find element by valueKey = key and tap on it
         """
-        text_element = FlutterElement(self.appium_driver.get_driver(), self.finder.by_value_key(key))
-        text_element.click()
+        element = FlutterElement(self.appium_driver.get_driver(), self.finder.by_value_key(key))
+        element.click()
+
+    @wait_for_element
+    def get_text(self, key):
+        """
+        method is used to get text of element
+        """
+        element = FlutterElement(self.appium_driver.get_driver(), self.finder.by_value_key(key))
+        return element.text
 
     # OLD APPIUM FRAMEWORK METHODS
     # def get_element_exists_by_xpath(self, xpath):
