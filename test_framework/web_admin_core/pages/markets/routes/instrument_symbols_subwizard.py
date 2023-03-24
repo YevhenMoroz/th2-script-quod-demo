@@ -35,7 +35,7 @@ class RoutesInstrumentSymbolsSubWizard(CommonPage):
 
     # setters
     def set_instr_symbol_at_instr_symbols_tab(self, value):
-        self.set_combobox_value(RoutesConstants.INSTR_SYMBOL_AT_INSTR_SYMBOLS_TAB_XPATH, value)
+        self.select_value_from_dropdown_list(RoutesConstants.INSTR_SYMBOL_AT_INSTR_SYMBOLS_TAB_XPATH, value)
 
     def set_price_multiplier_at_instr_symbols_tab(self, value):
         self.set_text_by_xpath(RoutesConstants.PRICE_MULTIPLIER_AT_INSTR_SYMBOLS_TAB_XPATH, value)

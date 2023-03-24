@@ -52,7 +52,7 @@ class ValuesTab(CommonPage):
         self.find_by_xpath(Constants.Wizard.ValuesTab.REMOVE_DETECTED_PRICE_UPDATES_CHECKBOX).click()
 
     def set_reference_venues(self, value):
-        self.set_checkbox_list(Constants.Wizard.ValuesTab.REFERENCE_VENUES, value)
+        self.set_multiselect_field_value(Constants.Wizard.ValuesTab.REFERENCE_VENUES, value)
 
     def get_reference_venues(self):
         return self.get_text_by_xpath(Constants.Wizard.ValuesTab.REFERENCE_VENUES)

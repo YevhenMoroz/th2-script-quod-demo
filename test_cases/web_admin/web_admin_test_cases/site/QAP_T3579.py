@@ -22,9 +22,9 @@ class QAP_T3579(CommonTestCase):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
 
-        self.login = 'adm_loca'
-        self.password = 'adm_loca'
-        self.location = 'EAST-LOCATION-B'
+        self.login = self.data_set.get_user("user_2")
+        self.password = self.data_set.get_password("password_2")
+        self.location = self.data_set.get_location("location_1")
         self.desk_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.desk_mode = 'Hierarchical'
 

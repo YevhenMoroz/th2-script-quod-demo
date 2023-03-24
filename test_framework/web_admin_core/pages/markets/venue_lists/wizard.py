@@ -39,8 +39,8 @@ class VenuesListsWizard(CommonPage):
     def get_description(self):
         return self.get_text_by_xpath(VenueListsConstants.Wizard.DESCRIPTION_XPATH)
 
-    def set_venue_list(self, value: list):
-        self.set_checkbox_list(VenueListsConstants.Wizard.VENUE_LIST_XPATH, value)
+    def set_venue_list(self, value):
+        self.set_multiselect_field_value(VenueListsConstants.Wizard.VENUE_LIST_XPATH, value)
 
     def get_venue_list(self):
         return self.get_text_by_xpath(VenueListsConstants.Wizard.VENUE_LIST_XPATH)

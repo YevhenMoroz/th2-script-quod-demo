@@ -28,8 +28,12 @@ class TestCase(ABC):
     def sleep(self, duration: int):
         time.sleep(duration)
 
-    def compare_values(self, expected_value: str, actual_value: str, event_name: str = "Compare values",
-                       ver_method: VerificationMethod = VerificationMethod.EQUALS, value_name: str = "Value"):
-        self.verifier.set_event_name(event_name)
-        self.verifier.compare_values(value_name, expected_value, actual_value, ver_method)
-        self.verifier.verify()
+    def compare_values(self, test_id, expected_value: list, actual_value: list, event_name: str = "Compare values",
+                       ver_method: VerificationMethod = VerificationMethod.EQUALS):
+        verifier = Verifier(test_id)
+        verifier.set_event_name(event_name)
+
+        for i in range(len(expected_value)):
+            verifier.compare_values(f"Compare value {i + 1}", expected_value[i], actual_value[i],
+                                    verification_method=ver_method)
+        verifier.verify()

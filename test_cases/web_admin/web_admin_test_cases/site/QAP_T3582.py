@@ -27,9 +27,9 @@ class QAP_T3582(CommonTestCase):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
 
-        self.login = 'adm_zone'
-        self.password = 'adm_zone'
-        self.zone = 'EAST-ZONE'
+        self.login = self.data_set.get_user("user_1")
+        self.password = self.data_set.get_password("password_1")
+        self.zone = self.data_set.get_zone("zone_2")
         self.location_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.desk_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.desk_mode = 'Hierarchical'

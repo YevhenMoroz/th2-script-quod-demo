@@ -18,11 +18,11 @@ class QAP_T3577(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
-        self.login = "adm03"
-        self.password = "adm03"
-        self.desk_name = "QAP5695"
+        self.login = self.data_set.get_user("user_1")
+        self.password = self.data_set.get_password("password_1")
+        self.desk_name = "QAP-T3577"
         self.desk_mode = "Collaborative"
-        self.location = "WEST-LOCATION-A"
+        self.location = self.data_set.get_location("location_1")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

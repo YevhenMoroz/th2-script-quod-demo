@@ -43,3 +43,7 @@ class FixRequestForPositionsFX(JavaApiMessage):
         params["QuoteRequestBlock"]["QuoteReqList"]["QuoteReqBlock"][0]["InstrumentBlock"]["InstrSymbol"] = instrument
         params["QuoteRequestBlock"]["QuoteReqList"]["QuoteReqBlock"][0]["Currency"] = currency
         return self
+
+    def unsubscribe(self):
+        self.update_fields_in_component("RequestForPositionsBlock", {"SubscriptionRequestType": "Unsubscribe"})
+        return self

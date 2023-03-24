@@ -38,17 +38,17 @@ class QAP_T3671(CommonTestCase):
         self.bo_field_3 = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.bo_field_4 = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.bo_field_5 = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.counterpart = 'TCOther'
+        self.counterpart = data_set.get_counterpart("counterpart_1")
 
         self.venue_account = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.venue = 'AMEX'
         self.account_id_source = 'SID'
-        self.dimensions_default_route = 'Credit Suisse'
+        self.dimensions_default_route = self.data_set.get_default_route("default_route_1")
         self.venue_client_account_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
 
         self.route_account_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.route = 'Credit Suisse'
-        self.default_route = 'Credit Suisse'
+        self.route = self.data_set.get_default_route("default_route_1")
+        self.default_route = self.data_set.get_default_route("default_route_1")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

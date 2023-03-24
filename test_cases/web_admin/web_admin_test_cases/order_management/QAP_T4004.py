@@ -1,3 +1,5 @@
+import random
+import string
 import sys
 import time
 import traceback
@@ -21,7 +23,7 @@ class QAP_T4004(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.name = "TestSuperStrategy"
+        self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.user = "QA1"
         self.strategy_type = self.data_set.get_strategy_type("strategy_type_2")
 

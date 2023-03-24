@@ -49,5 +49,9 @@ class QAP_T2500(TestCase):
         self.fix_manager.send_message_and_receive_response(self.new_order_single)
         self.execution_report.set_params_from_new_order_swap_ccy2(self.new_order_single)
         self.execution_report.remove_parameter("Price")
+        self.execution_report.remove_values_in_repeating_group_by_index("NoLegs", 0, (
+        "LegPrice", "LegLastForwardPoints", "LegLastPx"))
+        self.execution_report.remove_values_in_repeating_group_by_index("NoLegs", 1, (
+        "LegPrice", "LegLastForwardPoints", "LegLastPx"))
         self.fix_verifier.check_fix_message(self.execution_report)
         # endregion

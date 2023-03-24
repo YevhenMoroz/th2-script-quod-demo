@@ -19,7 +19,7 @@ class ClientGroupsConstants:
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
     DISPLAYED_ENTITY_XPATH = "//*[text()='{}']"
-    DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span'
+    DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//nb-option'
 
     #   Main page
 

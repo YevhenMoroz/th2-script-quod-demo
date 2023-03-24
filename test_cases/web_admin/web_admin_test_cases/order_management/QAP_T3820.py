@@ -74,11 +74,12 @@ class QAP_T3820(CommonTestCase):
             time.sleep(1)
             strategies_page.click_on_more_actions()
             strategies_page.click_on_edit_at_more_actions()
-            expected_parameter_and_value_at_dark_block = ["LISPhase: ", "Y", "LISResidentTime: ", "5000", "LISPools: ",
-                                                          "ADX"]
+            expected_parameter_and_value_at_dark_block = ["LISPhase: Y", "LISResidentTime: 5000", "LISPools: ADX"]
             strategies_wizard = ExecutionStrategiesWizard(self.web_driver_container)
-            actual_parameter_and_value_at_dark_block = [strategies_wizard.get_parameter_name_at_dark_block(),
-                                                        strategies_wizard.get_parameter_value_at_dark_block()]
+            parameters = strategies_wizard.get_all_parameters_names_from_dark_block()
+            values = strategies_wizard.get_all_parameters_values_from_dark_block()
+            actual_parameter_and_value_at_dark_block = [a+" "+str(b) for a, b in zip(parameters, values)]
+
             self.verify("After saved at Dark block", expected_parameter_and_value_at_dark_block,
                         actual_parameter_and_value_at_dark_block)
 
@@ -89,12 +90,13 @@ class QAP_T3820(CommonTestCase):
             dark_sub_wizard.set_checkbox()
             dark_sub_wizard.click_on_checkmark_button()
 
-            dark_sub_wizard.click_on_plus_button()
+            time.sleep(1)
             dark_sub_wizard.set_parameter_filter(self.dark_parameter_2)
             dark_sub_wizard.click_on_edit_button()
             dark_sub_wizard.set_value("1000")
             dark_sub_wizard.click_on_checkmark_button()
 
+            time.sleep(1)
             dark_sub_wizard.set_parameter_filter(self.dark_parameter_3)
             dark_sub_wizard.click_on_edit_button()
             dark_sub_wizard.click_on_delete_at_actions_sub_wizard()
@@ -110,11 +112,11 @@ class QAP_T3820(CommonTestCase):
             time.sleep(1)
             strategies_page.click_on_more_actions()
             strategies_page.click_on_edit_at_more_actions()
-            expected_parameter_and_value_at_dark_block = ["LISPhase: ", "N", "LISResidentTime: ", "1000", "LISPools: ",
-                                                          f"{self.venue_2}"]
+            expected_parameter_and_value_at_dark_block = ["LISPhase: N", "LISResidentTime: 1000", f"LISPools: {self.venue_2}"]
             strategies_wizard = ExecutionStrategiesWizard(self.web_driver_container)
-            actual_parameter_and_value_at_dark_block = [strategies_wizard.get_parameter_name_at_dark_block(),
-                                                        strategies_wizard.get_parameter_value_at_dark_block()]
+            parameters = strategies_wizard.get_all_parameters_names_from_dark_block()
+            values = strategies_wizard.get_all_parameters_values_from_dark_block()
+            actual_parameter_and_value_at_dark_block = [a + " " + str(b) for a, b in zip(parameters, values)]
             self.verify("After saved at Dark block", expected_parameter_and_value_at_dark_block,
                         actual_parameter_and_value_at_dark_block)
 

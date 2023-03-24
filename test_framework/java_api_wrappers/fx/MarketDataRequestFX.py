@@ -13,7 +13,6 @@ class MarketDataRequestFX(JavaApiMessage):
 
     def set_default_params_sub(self):
         client_tier_id = self.get_data_set().get_client_tier_id_by_name("client_tier_id_1")
-        # client_tier_id = "4"
         listing_id = self.get_data_set().get_listing_id_by_name("gbp_usd_spo")
         md_request_params = {
             "SEND_SUBJECT": "MDA.QUOD.PRICING.8.SUB",

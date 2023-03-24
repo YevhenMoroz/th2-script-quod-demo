@@ -43,9 +43,9 @@ class QAP_T2393(TestCase):
         self.fix_manager_sel.send_message_and_receive_response(self.quote_request, self.test_id)
         # endregion
         # region Step 3
-        self.quote_reject.set_quote_reject_params(self.quote_request, text=self.text)
+        self.quote_reject.set_quote_reject_swap(self.quote_request, text=self.text)
         self.quote_reject.remove_fields_in_repeating_group("NoRelatedSymbols", ["Account", "OrderQty"])
-        self.fix_verifier.check_fix_message(fix_message=self.quote_reject, key_parameters=["QuoteReqID"])
+        self.fix_verifier.check_fix_message(self.quote_reject)
         # endregion
 
 

@@ -7,7 +7,7 @@ class SshClientEnvironment(BaseEnvironment):
     environment_instances = {}
 
     def __init__(self, environment_type=None, host=None, port=None, user=None, password=None, su_user=None,
-                 su_password=None,db_host=None, db_name=None,db_user=None, db_password=None):
+                 su_password=None):
         self.environment_type = environment_type
         self.host = host
         self.port = port
@@ -15,10 +15,6 @@ class SshClientEnvironment(BaseEnvironment):
         self.password = password
         self.su_user = su_user
         self.su_password = su_password
-        self.db_host = db_host
-        self.db_name = db_name
-        self.db_user = db_user
-        self.db_password = db_password
 
     @staticmethod
     def get_instance(env: EnvironmentType):
@@ -32,10 +28,6 @@ class SshClientEnvironment(BaseEnvironment):
                     password=SshClientEnv.PASSWORD_317.value,
                     su_user=SshClientEnv.SU_USER_317.value,
                     su_password=SshClientEnv.SU_PASSWORD_317.value,
-                    db_host=SshClientEnv.DB_HOST_317.value,
-                    db_user=SshClientEnv.DB_USER_317.value,
-                    db_password=SshClientEnv.DB_PASSWORD_317.value,
-                    db_name=SshClientEnv.DB_NAME_317.value,
                 )
                 SshClientEnvironment.environment_instances.update(
                     {EnvironmentType.quod317_ssh_client.value: site_environment})

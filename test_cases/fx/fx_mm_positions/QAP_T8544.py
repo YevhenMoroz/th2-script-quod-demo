@@ -51,3 +51,6 @@ class QAP_T8544(TestCase):
         self.request.set_default_params()
         response: list = self.java_api_manager.send_message_and_receive_response(self.request)
         print(response[0].get_parameters())
+        self.sleep(5)
+        self.request.unsubscribe()
+        self.java_api_manager.send_message(self.request)
