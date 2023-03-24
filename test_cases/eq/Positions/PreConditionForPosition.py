@@ -15,21 +15,25 @@ class PreConditionForPosition:
 
     def add_record_or_updating_fields_in_daily_posit_table(self, account, instr_id, currency):
         try:
-            self.db_manager = DBManager(self._environment.get_list_data_base_environment()[0])
             today_date = datetime.strftime(datetime.now(), "%Y%m%d")
-            out = self.db_manager.execute_query(
+            out = self._db_manager.execute_query(
                 f"SELECT * FROM dailyposit WHERE clearingbusinessdate = '{today_date}' AND accountid = '{account}' AND instrid = '{instr_id}'")
             if out == ():
-                query = f"""INSERT INTO dailyposit (accountid,instrid, positiontype, clearingbusinessdate, dailyfeeamt,
-                dailyagentfeeamt,dailyclientcommission,dailyrealizedgrosspl,dailyrealizednetpl, dailynetbuyexecamt,
-                dailynetsellexecamt,dailygrossbuyexecamt, dailygrosssellexecamt, currency, alive, originator)
-                                   VALUES ('{account}','{instr_id}','N', '{today_date}','0','0','0','1','1','0','0','0','0','{currency}','Y','PKS_VS');"""
-                print(query)
-                self.db_manager.update_insert_query(query)
+                self._insert_request(today_date, account, instr_id, currency)
             else:
-                query = f"""UPDATE  dailyposit SET  dailyrealizedgrosspl = 1, dailyrealizednetpl = 1, dailynetbuyexecamt=0,
-                dailynetsellexecamt = 0, dailygrossbuyexecamt=0 ,dailygrosssellexecamt=0 
-                 WHERE accountid = '{account}' AND clearingbusinessdate = '{today_date}' AND instrid = '{instr_id}';"""
-                self.db_manager.update_insert_query(query)
+                self._update_query(today_date, account, instr_id)
         finally:
-            self.db_manager.close_connection()
+            self._db_manager.close_connection()
+
+    def _insert_request(self, today_date, account, instr_id, currency):
+        query = f"""INSERT INTO dailyposit (accountid,instrid, positiontype, clearingbusinessdate, dailyfeeamt,
+                        dailyagentfeeamt,dailyclientcommission,dailyrealizedgrosspl,dailyrealizednetpl, dailynetbuyexecamt,
+                        dailynetsellexecamt,dailygrossbuyexecamt, dailygrosssellexecamt, currency, alive, originator)
+                                           VALUES ('{account}','{instr_id}','N', '{today_date}','0','0','0','1','1','0','0','0','0','{currency}','Y','PKS_VS');"""
+        self._db_manager.update_insert_query(query)
+
+    def _update_query(self, today_date, account, instr_id):
+        query = f"""UPDATE  dailyposit SET  dailyrealizedgrosspl = 1, dailyrealizednetpl = 1, dailynetbuyexecamt=0,
+                       dailynetsellexecamt = 0, dailygrossbuyexecamt=0 ,dailygrosssellexecamt=0 
+                        WHERE accountid = '{account}' AND clearingbusinessdate = '{today_date}' AND instrid = '{instr_id}';"""
+        self._db_manager.update_insert_query(query)
