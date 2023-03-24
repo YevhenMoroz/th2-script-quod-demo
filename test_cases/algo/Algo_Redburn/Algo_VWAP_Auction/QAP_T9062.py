@@ -144,7 +144,7 @@ class QAP_T9062(TestCase):
         auction_start = AFM.change_datetime_from_epoch_to_normal(start_time_pre_closed).astimezone(pytz.utc).isoformat()[:-6]
         auction_60_sec_before_start = AFM.change_datetime_from_epoch_to_normal(start_time_pre_closed - 60).astimezone(pytz.utc).isoformat()[:-6]
 
-        # region Send TWAP algo 30 second before end of
+        # region Send VWAP algo
         self.auction_algo = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_VWAP_auction_params()
         self.auction_algo.add_ClordId((os.path.basename(__file__)[:-3]))
         self.auction_algo.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.mic))
