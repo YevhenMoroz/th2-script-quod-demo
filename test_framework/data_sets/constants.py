@@ -441,6 +441,7 @@ class FreeNotesReject(Enum):
     ReachedUncross = "reached uncross"
     CouldNotDetermineLimitPriceFromPrimary = "could not determine Limit price from Primary"
     AuctionOrderEliminatedCoreOrderRejected = "auction order Eliminated - core order Rejected"
+    CouldNotRetrieveAverageVolumeDistribution = "could not retrieve average volume distribution"
 
 
 class TradingPhases(Enum):
