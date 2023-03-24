@@ -20,6 +20,7 @@ class QAP_T3375(CommonTestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
         # region - preconditions
+        finder = FlutterFinder()
         login_page = CommonPage(self.appium_driver)
 
         login_page.tap("usernameField")
@@ -28,7 +29,11 @@ class QAP_T3375(CommonTestCase):
         login_page.tap("passwordField")
         login_page.enter_data("passwordField","a_MobileQA1!")
 
-        login_page.fail("pasfw")
+        login_page.tap("buttonLogin")
+
+        login_page.tap("buttonUserProfile")
+
+        login_page.tap("buttonLogout")
 
         time.sleep(3)
 
