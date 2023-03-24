@@ -22,7 +22,8 @@ class PreConditionForPosition:
                 self._insert_request(today_date, account, instr_id, currency)
             else:
                 self._update_query(today_date, account, instr_id)
-        finally:
+        except Exception as e:
+            logger.error(f'{e}', exc_info=True)
             self._db_manager.close_connection()
 
     def _insert_request(self, today_date, account, instr_id, currency):
@@ -39,9 +40,13 @@ class PreConditionForPosition:
         self._db_manager.update_insert_query(query)
 
     def reset_values_for_posit_table(self, account, instr_id):
-        query = f"""UPDATE  posit SET  cumbuyqty = 0, cumsellqty = 0, positqty=0,
-                               netweightedavgpx = 1, cumbuyamt=0 ,cumsellamt=0,
-                                transferredinamt = 0, transferredoutamt=0,
-                                buyavgpx = 0, sellavgpx = 0
-                                WHERE accountid = '{account}'  AND instrid = '{instr_id}';"""
-        self._db_manager.update_insert_query(query)
+        try:
+            query = f"""UPDATE  posit SET  cumbuyqty = 0, cumsellqty = 0, positqty=0,
+                                   netweightedavgpx = 1, cumbuyamt=0 ,cumsellamt=0,
+                                    transferredinamt = 0, transferredoutamt=0,
+                                    buyavgpx = 0, sellavgpx = 0
+                                    WHERE accountid = '{account}'  AND instrid = '{instr_id}';"""
+            self._db_manager.update_insert_query(query)
+        except Exception as e:
+            logger.error(f'{e}', exc_info=True)
+            self._db_manager.close_connection()
