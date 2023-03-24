@@ -28,9 +28,9 @@ class CommonPage:
         element.click()
 
     @wait_for_element
-    def get_text(self, key):
+    def get_field_text(self, key):
         """
-        method is used to get text of element
+        method is used to get field text
         """
         element = FlutterElement(self.appium_driver.get_driver(), self.finder.by_value_key(key))
         return element.text

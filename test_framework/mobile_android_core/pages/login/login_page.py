@@ -45,13 +45,13 @@ class LoginPage(CommonPage):
         """
         get text of username field
         """
-        return self.get_text(LoginConstants.fieldUsername)
+        return self.get_field_text(LoginConstants.fieldUsername)
 
     def get_text_field_password(self):
         """
         get text of password field
         """
-        return self.get_text(LoginConstants.fieldPassword)
+        return self.get_field_text(LoginConstants.fieldPassword)
 
 
     # OLD FRAMEWORK
