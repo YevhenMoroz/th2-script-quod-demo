@@ -53,6 +53,11 @@ class LoginPage(CommonPage):
         """
         return self.get_field_text(LoginConstants.fieldPassword)
 
+    #complex methods
+    def login_to_application(self, username, password):
+        self.enter_data_field_username(username)
+        self.enter_data_field_password(password)
+        self.click_button_login()
 
     # OLD FRAMEWORK
     # def set_email(self, email):
