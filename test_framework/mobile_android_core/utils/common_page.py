@@ -22,7 +22,7 @@ class CommonPage:
     @wait_for_element
     def tap (self, key):
         """
-        method used to find element by valueKey = key and tap on it
+        method is used to find element by valueKey = key and tap on it
         """
         text_element = FlutterElement(self.appium_driver.get_driver(), self.finder.by_value_key(key))
         text_element.click()
