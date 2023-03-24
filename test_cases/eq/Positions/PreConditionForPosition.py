@@ -1,0 +1,35 @@
+import logging
+from datetime import datetime
+
+from test_framework.db_wrapper.db_manager import DBManager
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+timeouts = True
+
+
+class PreConditionForPosition:
+    def __init__(self, environment):
+        self._environment = environment
+        self._db_manager = DBManager(environment.get_list_data_base_environment()[0])
+
+    def add_record_or_updating_fields_in_daily_posit_table(self, account, instr_id, currency):
+        try:
+            self.db_manager = DBManager(self._environment.get_list_data_base_environment()[0])
+            today_date = datetime.strftime(datetime.now(), "%Y%m%d")
+            out = self.db_manager.execute_query(
+                f"SELECT * FROM dailyposit WHERE clearingbusinessdate = '{today_date}' AND accountid = '{account}' AND instrid = '{instr_id}'")
+            if out == ():
+                query = f"""INSERT INTO dailyposit (accountid,instrid, positiontype, clearingbusinessdate, dailyfeeamt,
+                dailyagentfeeamt,dailyclientcommission,dailyrealizedgrosspl,dailyrealizednetpl, dailynetbuyexecamt,
+                dailynetsellexecamt,dailygrossbuyexecamt, dailygrosssellexecamt, currency, alive, originator)
+                                   VALUES ('{account}','{instr_id}','N', '{today_date}','0','0','0','1','1','0','0','0','0','{currency}','Y','PKS_VS');"""
+                print(query)
+                self.db_manager.update_insert_query(query)
+            else:
+                query = f"""UPDATE  dailyposit SET  dailyrealizedgrosspl = 1, dailyrealizednetpl = 1, dailynetbuyexecamt=0,
+                dailynetsellexecamt = 0, dailygrossbuyexecamt=0 ,dailygrosssellexecamt=0 
+                 WHERE accountid = '{account}' AND clearingbusinessdate = '{today_date}' AND instrid = '{instr_id}';"""
+                self.db_manager.update_insert_query(query)
+        finally:
+            self.db_manager.close_connection()
