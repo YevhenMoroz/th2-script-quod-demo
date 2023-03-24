@@ -24,7 +24,7 @@ class QAP_T3657(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
 
-        self.user_id = 'QAP5259'
+        self.user_id = 'QAP-T3657'
         self.ext_id_client = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.email = '2@2'
         self.desks = [self.data_set.get_desk("desk_1")]

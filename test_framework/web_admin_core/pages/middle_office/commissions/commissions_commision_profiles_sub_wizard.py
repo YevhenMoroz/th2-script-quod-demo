@@ -35,7 +35,7 @@ class CommissionsCommissionProfilesSubWizard(CommonPage):
         return self.get_text_by_xpath(CommissionsConstants.COMMISSION_PROFILES_DESCRIPTION_XPATH)
 
     def set_comm_xunit(self, value):
-        self.set_combobox_value(CommissionsConstants.COMMISSION_PROFILES_COMM_XUNIT_XPATH, value)
+        self.select_value_from_dropdown_list(CommissionsConstants.COMMISSION_PROFILES_COMM_XUNIT_XPATH, value)
 
     def get_comm_xunit(self):
         return self.get_text_by_xpath(CommissionsConstants.COMMISSION_PROFILES_COMM_XUNIT_XPATH)
@@ -47,13 +47,13 @@ class CommissionsCommissionProfilesSubWizard(CommonPage):
         return self.get_text_by_xpath(CommissionsConstants.COMMISSION_PROFILES_VENUE_COMMISSION_PROFILE_ID_XPATH)
 
     def set_comm_type(self, value):
-        self.set_combobox_value(CommissionsConstants.COMMISSION_PROFILES_COMM_TYPE_XPATH, value)
+        self.select_value_from_dropdown_list(CommissionsConstants.COMMISSION_PROFILES_COMM_TYPE_XPATH, value)
 
     def get_comm_type(self):
         return self.get_text_by_xpath(CommissionsConstants.COMMISSION_PROFILES_COMM_TYPE_XPATH)
 
     def set_comm_algorithm(self, value):
-        self.set_combobox_value(CommissionsConstants.COMMISSION_PROFILES_COMM_ALGORITHM_XPATH, value)
+        self.select_value_from_dropdown_list(CommissionsConstants.COMMISSION_PROFILES_COMM_ALGORITHM_XPATH, value)
 
     def get_comm_algorithm(self):
         return self.get_text_by_xpath(CommissionsConstants.COMMISSION_PROFILES_COMM_ALGORITHM_XPATH)
@@ -71,7 +71,7 @@ class CommissionsCommissionProfilesSubWizard(CommonPage):
         return self.get_text_by_xpath(CommissionsConstants.COMMISSION_PROFILES_CURRENCY_XPATH)
 
     def set_rounding_direction(self, value):
-        self.set_combobox_value(CommissionsConstants.COMMISSION_PROFILES_ROUNDING_DIRECTION_XPATH, value)
+        self.select_value_from_dropdown_list(CommissionsConstants.COMMISSION_PROFILES_ROUNDING_DIRECTION_XPATH, value)
 
     def get_rounding_direction(self):
         return self.get_text_by_xpath(CommissionsConstants.COMMISSION_PROFILES_ROUNDING_DIRECTION_XPATH)

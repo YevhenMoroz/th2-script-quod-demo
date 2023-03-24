@@ -1,3 +1,5 @@
+import random
+import string
 import sys
 import time
 import traceback
@@ -17,9 +19,9 @@ class QAP_T3934(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
-        self.user_id = self.data_set.get_user("user_4")
+        self.user_id = self.data_set.get_user("user_6")
         self.venue = self.data_set.get_venue_by_name("venue_1")
-        self.venue_trader_name = "AW9RSTOWN03_03426"
+        self.venue_trader_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
 

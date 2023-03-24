@@ -34,6 +34,16 @@ class WebAdminEnvironment(BaseEnvironment):
                 WebAdminEnvironment.environment_instances.update(
                     {EnvironmentType.quod306_web_admin_saturn_chrome.value: web_admin_environment})
             return WebAdminEnvironment.environment_instances[EnvironmentType.quod306_web_admin_saturn_chrome.value]
+        elif env.value == EnvironmentType.test_site_web_admin_chrome.value:
+            if EnvironmentType.test_site_web_admin_chrome.value not in WebAdminEnvironment.environment_instances.keys():
+                web_admin_environment = WebAdminEnvironment(
+                    environment_type=EnvironmentType.test_site_web_admin_chrome.value,
+                    web_browser=WebBrowser.chrome.value,
+                    site_url=WebAdminURL.test_site.value
+                )
+                WebAdminEnvironment.environment_instances.update(
+                    {EnvironmentType.test_site_web_admin_chrome.value: web_admin_environment})
+            return WebAdminEnvironment.environment_instances[EnvironmentType.test_site_web_admin_chrome.value]
         else:
             raise Exception('Environment not found')
 

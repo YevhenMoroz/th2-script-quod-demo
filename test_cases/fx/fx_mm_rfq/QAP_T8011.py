@@ -47,7 +47,7 @@ class QAP_T8011(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region step 1
-        self.quote_request.set_swap_rfq_params()
+        self.quote_request.set_swap_ndf()
 
         self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
                                                            Instrument=self.instrument, Currency=self.currency)
@@ -58,14 +58,12 @@ class QAP_T8011(TestCase):
                                           settle_date=self.settle_date_wk2_ndf, leg_qty=self.qty,
                                           settle_type=self.settle_type_wk2)
         response: list = self.fix_manager_sel.send_message_and_receive_response(self.quote_request, self.test_id)
-        # TODO Create separate message for NDS quote
-        self.quote.set_params_for_quote_swap(self.quote_request)
+        self.quote.set_params_for_quote_swap_ndf(self.quote_request)
         self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
         # endregion
         # region Step 2
-        # TODO Create separate message for NDS order
-        self.new_order_single.set_default_prev_quoted_swap(self.quote_request, response[0], side="1")
+        self.new_order_single.set_default_prev_quoted_swap_ndf(self.quote_request, response[0], side="1")
         self.fix_manager_sel.send_message_and_receive_response(self.new_order_single)
-        self.execution_report.set_params_from_new_order_swap(self.new_order_single)
+        self.execution_report.set_params_from_new_order_swap_ndf(self.new_order_single)
         self.fix_verifier.check_fix_message(self.execution_report, direction=DirectionEnum.FromQuod)
         # endregion

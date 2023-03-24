@@ -23,19 +23,19 @@ class ClientsTradeConfirmSubWizard(CommonPage):
         self.find_by_xpath(ClientsConstants.TRADE_CONFIRM_TAB_DELETE_BUTTON_XPATH).click()
 
     def set_trade_confirm_generation(self, value):
-        self.set_combobox_value(ClientsConstants.TRADE_CONFIRM_TRADE_CONFIRM_GENERATION_XPATH, value)
+        self.select_value_from_dropdown_list(ClientsConstants.TRADE_CONFIRM_TRADE_CONFIRM_GENERATION_XPATH, value)
 
     def get_trade_confirm_generation(self):
         return self.get_text_by_xpath(ClientsConstants.TRADE_CONFIRM_TRADE_CONFIRM_GENERATION_XPATH)
 
     def set_trade_confirm_preference(self, value):
-        self.set_combobox_value(ClientsConstants.TRADE_CONFIRM_TRADE_CONFIRM_PREFERENCE_XPATH, value)
+        self.select_value_from_dropdown_list(ClientsConstants.TRADE_CONFIRM_TRADE_CONFIRM_PREFERENCE_XPATH, value)
 
     def get_trade_confirm_preference(self):
         return self.get_text_by_xpath(ClientsConstants.TRADE_CONFIRM_TRADE_CONFIRM_PREFERENCE_XPATH)
 
     def set_net_gross_ind_type(self, value):
-        self.set_combobox_value(ClientsConstants.TRADE_CONFIRM_NET_GROSS_IND_TYPE_XPATH, value)
+        self.select_value_from_dropdown_list(ClientsConstants.TRADE_CONFIRM_NET_GROSS_IND_TYPE_XPATH, value)
 
     def get_net_gross_ind_type(self):
         return self.get_text_by_xpath(ClientsConstants.TRADE_CONFIRM_NET_GROSS_IND_TYPE_XPATH)
@@ -50,7 +50,7 @@ class ClientsTradeConfirmSubWizard(CommonPage):
         self.set_text_by_xpath(ClientsConstants.TRADE_CONFIRM_EMAIL_ADDRESS_FILTER_XPATH, value)
 
     def set_recipient_types(self, value):
-        self.set_combobox_value(ClientsConstants.TRADE_CONFIRM_RECIPIENT_TYPES_XPATH, value)
+        self.select_value_from_dropdown_list(ClientsConstants.TRADE_CONFIRM_RECIPIENT_TYPES_XPATH, value)
 
     def get_recipient_types(self):
         return self.get_text_by_xpath(ClientsConstants.TRADE_CONFIRM_RECIPIENT_TYPES_XPATH)

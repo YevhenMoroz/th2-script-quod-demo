@@ -61,10 +61,12 @@ class QAP_T9291(TestCase):
         # region step 1: Send Algo order
         price = '10'
         qty = '10000'
+        route_params = {'RouteBlock': [{'RouteID': self.data_set.get_route_id_by_name("route_1")}]}
         self.order_submit.set_default_dma_limit()
         self.order_submit.update_fields_in_component(JavaApiFields.NewOrderSingleBlock.value,
                                                      {JavaApiFields.Price.value: price,
                                                       JavaApiFields.OrdQty.value: qty,
+                                                      'RouteList': route_params,
                                                       "AlgoParametersBlock": {"AlgoType": "External",
                                                                               "ScenarioID": "101",
                                                                               "AlgoPolicyID": "1000131"},

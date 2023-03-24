@@ -50,10 +50,8 @@ class QAP_T2877(TestCase):
         self.quote_request.update_far_leg(leg_side=self.sell_side)
         response: list = self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
 
-        self.fix_verifier.check_fix_message(fix_message=self.quote_request,
-                                            key_parameters=["MDReqID"])
         self.quote.set_params_for_quote_swap_ndf(self.quote_request)
-        self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
+        self.fix_verifier.check_fix_message(self.quote)
         # endregion
 
         # region Step 2

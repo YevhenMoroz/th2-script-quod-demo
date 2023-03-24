@@ -9,7 +9,7 @@ class RoutesStrategyTypeSubWizard(CommonPage):
         super().__init__(web_driver_container)
 
     def set_strategy_type_at_strategy_type_tab(self, value):
-        self.set_checkbox_list(RoutesConstants.CHECKBOX_LIST_AT_STRATEGY_TYPE_TAB_XPATH, value)
+        self.set_multiselect_field_value(RoutesConstants.CHECKBOX_LIST_AT_STRATEGY_TYPE_TAB_XPATH, value)
 
     def set_default_scenario_at_strategy_type_tab(self, value):
         self.set_combobox_value(RoutesConstants.DEFAULT_SCENARIO_AT_STRATEGY_TYPE_TAB_XPATH, value)

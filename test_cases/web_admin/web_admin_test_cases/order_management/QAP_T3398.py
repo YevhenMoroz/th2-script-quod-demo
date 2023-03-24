@@ -6,16 +6,8 @@ import string
 
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
-from test_framework.web_admin_core.pages.order_management.order_management_rules.order_management_rules_page import \
-    OrderManagementRulesPage
-from test_framework.web_admin_core.pages.order_management.order_management_rules.order_management_rules_wizard import \
-    OrderManagementRulesWizard
-from test_framework.web_admin_core.pages.order_management.order_management_rules.order_management_rules_values_sub_wizard import \
-    OrderManagementRulesValuesSubWizard
-from test_framework.web_admin_core.pages.order_management.order_management_rules.order_management_rules_conditions_sub_wizard import \
-    OrderManagementRulesConditionsSubWizard
-from test_framework.web_admin_core.pages.order_management.order_management_rules.order_management_rules_default_result_sub_wizard import \
-    OrderManagementRulesDefaultResultSubWizard
+from test_framework.web_admin_core.pages.order_management.order_management_rules.main_page import MainPage
+from test_framework.web_admin_core.pages.order_management.order_management_rules.wizard import *
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
@@ -27,126 +19,90 @@ class QAP_T3398(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.name = 'QAP6725'
+        self.name = 'QAPT3398'
         self.description = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.condition_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.default_result_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.condition_logic_value = ["Client"]
+        self.condition_name = ['Cond1', 'Cond2']
+        self.condition_criteria = "Client"
         self.client = self.data_set.get_client("client_2")
-        self.exec_policy = self.data_set.get_exec_policy("exec_policy_2")
-        self.percentage = "100"
-        self.first_criteria = "Client"
+        self.action = 'Reject'
+        self.percentage = '100'
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
         login_page.set_login(self.login)
         login_page.set_password(self.password)
         login_page.click_login_button()
-        time.sleep(2)
         side_menu = SideMenu(self.web_driver_container)
         side_menu.click_on_order_management_rules_when_order_management_tab_is_open()
-        time.sleep(2)
-        order_management_page = OrderManagementRulesPage(self.web_driver_container)
-        order_management_page.set_name_filter(self.name)
-        try:
-            time.sleep(2)
-            order_management_page.click_on_more_actions()
-            time.sleep(2)
-            order_management_page.click_on_edit_at_more_actions()
-        except:
-            if self.first_criteria not in order_management_page.get_settings_values():
-                order_management_page.click_on_change_criteria()
-                time.sleep(1)
-                order_management_page.set_first_criteria(self.first_criteria)
-                time.sleep(1)
-                order_management_page.click_on_change_criteria_for_saving(True)
+        main_page = MainPage(self.web_driver_container)
+        main_page.set_name_filter(self.name)
+        time.sleep(1)
+        if main_page.is_searched_entity_found(self.name):
+            main_page.click_on_more_actions()
+            main_page.click_on_edit()
+        else:
+            main_page.click_on_new_button()
 
-            order_management_page.click_on_new_button()
-            time.sleep(2)
-            order_management_value_tab = OrderManagementRulesValuesSubWizard(self.web_driver_container)
-            order_management_value_tab.set_name(self.name)
-            order_management_value_tab.set_description(self.description)
-            order_management_value_tab.set_client(self.client)
-            order_management_conditions_tab = OrderManagementRulesConditionsSubWizard(self.web_driver_container)
-            order_management_conditions_tab.click_on_plus()
-            order_management_conditions_tab.set_name(self.condition_name)
-            time.sleep(1)
-            order_management_conditions_tab.click_on_add_condition()
-            time.sleep(1)
-            order_management_conditions_tab.set_right_side_list_at_conditional_logic(self.condition_logic_value)
-            order_management_conditions_tab.set_right_side_at_conditional_logic(self.client)
+            values_tab = ValuesTab(self.web_driver_container)
+            values_tab.set_name(self.name)
+            values_tab.set_description(self.description)
+            conditions_tab = ConditionsTab(self.web_driver_container)
+            conditions_tab.click_on_plus_button()
+            conditions_tab.set_name(self.condition_name[0])
+            conditions_tab.click_on_add_condition_button()
+            conditions_tab.set_condition_criteria(self.condition_criteria)
+            conditions_tab.set_condition_value(self.client)
 
-            order_management_conditions_tab.click_on_plus_at_results_sub_wizard()
-            time.sleep(1)
-            order_management_conditions_tab.set_exec_policy(self.exec_policy)
-            time.sleep(1)
-            order_management_conditions_tab.set_percentage(self.percentage)
-            time.sleep(1)
-            order_management_conditions_tab.click_on_checkmark_at_results_sub_wizard()
-            time.sleep(1)
-            order_management_conditions_tab.click_on_checkmark()
-            time.sleep(1)
-            order_management_default_result = OrderManagementRulesDefaultResultSubWizard(self.web_driver_container)
-            order_management_default_result.set_default_result_name(self.default_result_name)
-            time.sleep(1)
-            order_management_default_result.click_on_plus()
-            time.sleep(1)
-            order_management_default_result.set_exec_policy(self.exec_policy)
-            time.sleep(1)
-            order_management_default_result.set_percentage(self.percentage)
-            time.sleep(1)
-            order_management_default_result.click_on_checkmark()
-            order_management_wizard = OrderManagementRulesWizard(self.web_driver_container)
-            order_management_wizard.click_on_save_changes()
+            conditions_tab.click_on_plus_button_at_result()
+            conditions_tab.set_action(self.action)
+            conditions_tab.set_split(self.percentage)
+            conditions_tab.click_on_save_checkmark_at_result()
+            conditions_tab.click_on_save_checkmark()
 
-            if order_management_wizard.is_gating_rule_already_has_the_same_criteria_message_displayed():
-                clients = order_management_value_tab.get_all_clients_from_drop_menu()
-                while order_management_wizard.is_gating_rule_already_has_the_same_criteria_message_displayed():
-                    client = random.choice(clients)
-                    order_management_value_tab.set_client(client)
-                    clients.remove(client)
-                    time.sleep(1)
-                    order_management_wizard.click_on_save_changes()
-                    time.sleep(1)
+            values_tab.set_name(self.name)
+            values_tab.set_description(self.description)
+            conditions_tab.click_on_plus_button()
+            conditions_tab.set_name(self.condition_name[1])
+            conditions_tab.click_on_add_condition_button()
+            conditions_tab.set_condition_criteria(self.condition_criteria)
+            conditions_tab.set_condition_value(self.client)
 
-            order_management_page.set_name_filter(self.name)
+            conditions_tab.click_on_plus_button_at_result()
+            conditions_tab.set_action(self.action)
+            conditions_tab.set_split(self.percentage)
+            conditions_tab.click_on_save_checkmark_at_result()
+            conditions_tab.click_on_save_checkmark()
+
+            default_result = DefaultResultEntity(self.web_driver_container)
+            default_result.click_on_edit_button()
+            default_result.click_on_plus_button_at_result()
+            default_result.set_action(self.action)
+            default_result.set_split(self.percentage)
+            default_result.click_on_save_checkmark_at_result()
+            default_result.click_on_save_checkmark()
+
+            wizard = MainWizard(self.web_driver_container)
+            wizard.click_on_save_changes()
+
+            main_page.set_name_filter(self.name)
             time.sleep(1)
-            order_management_page.click_on_more_actions()
-            time.sleep(1)
-            order_management_page.click_on_edit_at_more_actions()
-            time.sleep(2)
+            main_page.click_on_more_actions()
+            main_page.click_on_edit()
 
     def test_context(self):
         try:
             self.precondition()
 
-            order_management_conditions_tab = OrderManagementRulesConditionsSubWizard(self.web_driver_container)
-            if order_management_conditions_tab.is_condition_button_enable_disable():
-                order_management_conditions_tab.click_on_enabled_disable(True)
-                time.sleep(2)
-                self.verify("Condition btn has been disable", False,
-                            order_management_conditions_tab.is_condition_button_enable_disable())
-                time.sleep(1)
-                order_management_conditions_tab.click_on_enabled_disable(True)
-                time.sleep(2)
-                self.verify("Condition btn has been enable", True,
-                            order_management_conditions_tab.is_condition_button_enable_disable())
+            conditions_tab = ConditionsTab(self.web_driver_container)
+            conditions_tab.click_on_toggle_button(True)
+            time.sleep(3)
+            self.verify(f"Condition {self.condition_name[0]} has been disable", False,
+                        conditions_tab.is_condition_enabled())
 
-            else:
-                time.sleep(1)
-                order_management_conditions_tab.click_on_enabled_disable(True)
-                time.sleep(2)
-                self.verify("Condition btn has been enable", True,
-                            order_management_conditions_tab.is_condition_button_enable_disable())
-                time.sleep(1)
-                order_management_conditions_tab.click_on_enabled_disable(True)
-                time.sleep(2)
-                self.verify("Condition btn has been disable", False,
-                            order_management_conditions_tab.is_condition_button_enable_disable())
-
-            order_management_wizard = OrderManagementRulesWizard(self.web_driver_container)
-            time.sleep(2)
-            order_management_wizard.click_on_save_changes()
+            conditions_tab.click_on_toggle_button(True)
+            time.sleep(3)
+            self.verify(f"Condition {self.condition_name[0]} has been enable", True,
+                        conditions_tab.is_condition_enabled())
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

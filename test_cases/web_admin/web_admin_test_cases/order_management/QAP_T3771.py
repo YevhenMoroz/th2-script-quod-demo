@@ -34,6 +34,9 @@ class QAP_T3771(CommonTestCase):
         self.strategy_type = self.data_set.get_strategy_type("strategy_type_1")
         self.user = self.data_set.get_user("user_9")
         self.client = self.data_set.get_client("client_1")
+        self.parameters = {"1": "StatMarketShareCalcType", "2": "PostMode", "3": "StatMarketShareTimeHorizon",
+                           "4": "CrossCurrency", "5": "StatHitRatioCalcType", "6": "MinimumPercentage"}
+        self.parameter_values = {"1": "DAY", "2": "Single", "3": "22", "4": "Default", "5": "DAY", "6": "12"}
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -55,18 +58,18 @@ class QAP_T3771(CommonTestCase):
         time.sleep(2)
         execution_strategies_lit_passive = ExecutionStrategiesLitPassiveSubWizard(self.web_driver_container)
         execution_strategies_lit_passive.click_on_plus_button()
-        execution_strategies_lit_passive.set_parameter("StatMarketShareCalcType")
-        execution_strategies_lit_passive.set_value_by_dropdown_list_at_sub_wizard("Daily")
+        execution_strategies_lit_passive.set_parameter(self.parameters["1"])
+        execution_strategies_lit_passive.set_value_by_dropdown_list_at_sub_wizard(self.parameter_values["1"])
         execution_strategies_lit_passive.click_on_checkmark_button()
         execution_strategies_lit_passive = ExecutionStrategiesLitPassiveSubWizard(self.web_driver_container)
         execution_strategies_lit_passive.click_on_plus_button()
-        execution_strategies_lit_passive.set_parameter("PostMode")
-        execution_strategies_lit_passive.set_value_by_dropdown_list_at_sub_wizard("Single")
+        execution_strategies_lit_passive.set_parameter(self.parameters["2"])
+        execution_strategies_lit_passive.set_value_by_dropdown_list_at_sub_wizard(self.parameter_values["2"])
         execution_strategies_lit_passive.click_on_checkmark_button()
         execution_strategies_lit_passive = ExecutionStrategiesLitPassiveSubWizard(self.web_driver_container)
         execution_strategies_lit_passive.click_on_plus_button()
-        execution_strategies_lit_passive.set_parameter("StatMarketShareTimeHorizon")
-        execution_strategies_lit_passive.set_value("22")
+        execution_strategies_lit_passive.set_parameter(self.parameters["3"])
+        execution_strategies_lit_passive.set_value(self.parameter_values["3"])
         execution_strategies_lit_passive.click_on_checkmark_button()
         execution_strategies_lit_passive.click_on_go_back_button()
         time.sleep(2)
@@ -77,7 +80,7 @@ class QAP_T3771(CommonTestCase):
             execution_strategies_main_menu = ExecutionStrategiesPage(self.web_driver_container)
             execution_strategies_wizard = ExecutionStrategiesWizard(self.web_driver_container)
             expected_parameter_and_value_at_lit_passive_block = [
-                "StatMarketShareCalcType: ", "Daily"]
+                f'{self.parameters["1"]}: ', self.parameter_values["1"]]
             actual_parameter_and_value_at_lit_passive_block = [
                 execution_strategies_wizard.get_parameter_name_at_lit_passive_block(),
                 execution_strategies_wizard.get_parameter_value_at_lit_passive_block()]
@@ -89,24 +92,24 @@ class QAP_T3771(CommonTestCase):
             execution_strategies_wizard.click_on_lit_general()
             execution_strategies_lit_general = ExecutionStrategiesLitGeneralSubWizard(self.web_driver_container)
             execution_strategies_lit_general.click_on_plus_button()
-            execution_strategies_lit_general.set_parameter("CrossCurrency")
-            execution_strategies_lit_general.set_value_by_dropdown_list_at_sub_wizard("Default")
+            execution_strategies_lit_general.set_parameter(self.parameters["4"])
+            execution_strategies_lit_general.set_value_by_dropdown_list_at_sub_wizard(self.parameter_values["4"])
             execution_strategies_lit_general.click_on_checkmark_button()
             execution_strategies_lit_general.click_on_go_back_button()
             time.sleep(2)
             execution_strategies_wizard.click_on_lit_aggressive()
             execution_strategies_lit_aggressive = ExecutionStrategiesLitAggressiveSubWizard(self.web_driver_container)
             execution_strategies_lit_aggressive.click_on_plus_button()
-            execution_strategies_lit_aggressive.set_parameter("StatHitRatioCalcType")
-            execution_strategies_lit_aggressive.set_value_by_dropdown_list_at_sub_wizard("Daily")
+            execution_strategies_lit_aggressive.set_parameter(self.parameters["5"])
+            execution_strategies_lit_aggressive.set_value_by_dropdown_list_at_sub_wizard(self.parameter_values["5"])
             execution_strategies_lit_aggressive.click_on_checkmark_button()
             execution_strategies_lit_aggressive.click_on_go_back_button()
             time.sleep(2)
             execution_strategies_wizard.click_on_lit_sweeping()
             execution_strategies_lit_sweeping = ExecutionStrategiesLitSweepingSubWizard(self.web_driver_container)
             execution_strategies_lit_sweeping.click_on_plus_button()
-            execution_strategies_lit_sweeping.set_parameter("MinimumPercentage")
-            execution_strategies_lit_sweeping.set_value("12")
+            execution_strategies_lit_sweeping.set_parameter(self.parameters["6"])
+            execution_strategies_lit_sweeping.set_value(self.parameter_values["6"])
             execution_strategies_lit_sweeping.click_on_checkmark_button()
             execution_strategies_lit_sweeping.click_on_go_back_button()
             time.sleep(2)
@@ -117,7 +120,7 @@ class QAP_T3771(CommonTestCase):
             time.sleep(2)
             execution_strategies_main_menu.click_on_more_actions()
             execution_strategies_main_menu.click_on_edit_at_more_actions()
-            expected_parameter_and_value_at_lit_general_block = ["CrossCurrency: ", "Default"]
+            expected_parameter_and_value_at_lit_general_block = [f'{self.parameters["4"]}: ', self.parameter_values["4"]]
             actual_parameter_and_value_at_lit_general_block = [
                 execution_strategies_wizard.get_parameter_name_at_lit_general_block(),
                 execution_strategies_wizard.get_parameter_value_at_lit_general_block()]
@@ -126,7 +129,7 @@ class QAP_T3771(CommonTestCase):
                         expected_parameter_and_value_at_lit_general_block,
                         actual_parameter_and_value_at_lit_general_block)
 
-            expected_parameter_and_value_at_lit_aggressive_block = ["StatHitRatioCalcType: ", "Daily"]
+            expected_parameter_and_value_at_lit_aggressive_block = [f'{self.parameters["5"]}: ', self.parameter_values["5"]]
             actual_parameter_and_value_at_lit_aggressive_block = [
                 execution_strategies_wizard.get_parameter_name_at_lit_aggressive_block(),
                 execution_strategies_wizard.get_parameter_value_at_lit_aggressive_block()]
@@ -135,7 +138,7 @@ class QAP_T3771(CommonTestCase):
                         expected_parameter_and_value_at_lit_aggressive_block,
                         actual_parameter_and_value_at_lit_aggressive_block)
 
-            expected_parameter_and_value_at_sweeping_block = ["MinimumPercentage: ", "12"]
+            expected_parameter_and_value_at_sweeping_block = [f'{self.parameters["6"]}: ', self.parameter_values["6"]]
             actual_parameter_and_value_at_sweeping_block = [
                 execution_strategies_wizard.get_parameter_name_at_lit_sweeping_block(),
                 execution_strategies_wizard.get_parameter_value_at_lit_sweeping_block()]

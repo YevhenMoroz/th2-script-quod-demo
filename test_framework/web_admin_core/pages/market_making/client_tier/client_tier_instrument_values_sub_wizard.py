@@ -9,7 +9,7 @@ class ClientTierInstrumentValuesSubWizard(CommonPage):
         super().__init__(web_driver_container)
 
     def set_symbol(self, value):
-        self.set_combobox_value(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_VALUES_TAB_SYMBOL_XPATH, value)
+        self.select_value_from_dropdown_list(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_VALUES_TAB_SYMBOL_XPATH, value)
 
     def get_symbol(self):
         return self.get_text_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_VALUES_TAB_SYMBOL_XPATH)
@@ -26,7 +26,7 @@ class ClientTierInstrumentValuesSubWizard(CommonPage):
         return self.get_text_by_xpath(ClientTierConstants.CLIENT_TIER_INSTRUMENTS_VALUES_TAB_RFQ_RESPONSE_TTL_XPATH)
 
     def set_core_spot_price_strategy(self, value):
-        self.set_combobox_value(ClientTierConstants.CLIENT_TIER_VALUES_TAB_CORE_SPOT_PRICE_STRATEGY_XPATH, value)
+        self.select_value_from_dropdown_list(ClientTierConstants.CLIENT_TIER_VALUES_TAB_CORE_SPOT_PRICE_STRATEGY_XPATH, value)
 
     def get_core_spot_price_strategy(self):
         return self.get_text_by_xpath(ClientTierConstants.CLIENT_TIER_VALUES_TAB_CORE_SPOT_PRICE_STRATEGY_XPATH)

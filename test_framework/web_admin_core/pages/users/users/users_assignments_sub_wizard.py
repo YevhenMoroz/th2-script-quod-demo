@@ -11,7 +11,7 @@ class UsersAssignmentsSubWizard(CommonPage):
         self.find_by_xpath(UsersConstants.DESKS_AT_ASSIGNMENTS_SUB_WIZARD).click()
 
     def set_desks(self, value: list):
-        self.set_checkbox_list(UsersConstants.DESKS_AT_ASSIGNMENTS_SUB_WIZARD, value)
+        self.set_multiselect_field_value(UsersConstants.DESKS_AT_ASSIGNMENTS_SUB_WIZARD, value)
 
     def set_location(self, value):
         self.set_combobox_value(UsersConstants.LOCATION_AT_ASSIGNMENTS_SUB_WIZARD, value)
@@ -63,7 +63,7 @@ class UsersAssignmentsSubWizard(CommonPage):
 
     def clear_assignments_tab(self):
         if self.is_desks_field_displayed():
-            selected_desks = self.find_by_xpath(UsersConstants.DESKS_AT_ASSIGNMENTS_SUB_WIZARD).text
+            selected_desks = self.get_text_by_xpath(UsersConstants.DESKS_AT_ASSIGNMENTS_SUB_WIZARD)
             if self.is_desks_field_enabled() and len(selected_desks) > 1:
                 self.set_desks([_.strip() for _ in selected_desks.split(",")])
         if self.is_location_field_displayed():

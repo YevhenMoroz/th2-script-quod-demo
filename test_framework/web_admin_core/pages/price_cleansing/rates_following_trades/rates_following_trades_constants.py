@@ -1,5 +1,5 @@
 class RatesFollowingTradesConstants:
-    RATES_FOLLOWING_TRADES_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Rates Following Trade ']"
+    RATES_FOLLOWING_TRADES_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][normalize-space()='Rates Following Trade']"
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"
     SAVE_CHANGES_BUTTON_XPATH = "//*[text()='Save Changes']"

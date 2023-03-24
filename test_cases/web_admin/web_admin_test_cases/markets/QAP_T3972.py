@@ -23,7 +23,7 @@ class QAP_T3972(CommonTestCase):
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.first_venue = self.data_set.get_venue_by_name("venue_9")
-        self.second_venue = self.data_set.get_venue_by_name("venue_8")
+        self.second_venue = self.data_set.get_venue_by_name("venue_12")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

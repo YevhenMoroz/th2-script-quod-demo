@@ -27,6 +27,9 @@ from test_cases.web_admin.web_admin_test_cases.general.QAP_T4017 import QAP_T401
 from test_cases.web_admin.web_admin_test_cases.general.QAP_T4018 import QAP_T4018
 from test_cases.web_admin.web_admin_test_cases.general.QAP_T7866 import QAP_T7866
 from test_cases.web_admin.web_admin_test_cases.general.QAP_T9446 import QAP_T9446
+from test_cases.web_admin.web_admin_test_cases.general.QAP_T10424 import QAP_T10424
+from test_cases.web_admin.web_admin_test_cases.general.QAP_T10643 import QAP_T10643
+
 
 from test_framework.configurations.component_configuration import ComponentConfiguration
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -96,6 +99,10 @@ class RunGeneral:
                       environment=configuration.environment).run()
             QAP_T9446(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
+            QAP_T10424(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                       environment=configuration.environment).run()
+            QAP_T10643(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                       environment=configuration.environment).run()
 
             end_time = time.monotonic()
             print("Run General ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))

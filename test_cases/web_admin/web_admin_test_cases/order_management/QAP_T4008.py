@@ -6,16 +6,8 @@ import traceback
 
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
-from test_framework.web_admin_core.pages.order_management.order_management_rules.order_management_rules_conditions_sub_wizard import \
-    OrderManagementRulesConditionsSubWizard
-from test_framework.web_admin_core.pages.order_management.order_management_rules.order_management_rules_default_result_sub_wizard import \
-    OrderManagementRulesDefaultResultSubWizard
-from test_framework.web_admin_core.pages.order_management.order_management_rules.order_management_rules_page import \
-    OrderManagementRulesPage
-from test_framework.web_admin_core.pages.order_management.order_management_rules.order_management_rules_values_sub_wizard import \
-    OrderManagementRulesValuesSubWizard
-from test_framework.web_admin_core.pages.order_management.order_management_rules.order_management_rules_wizard import \
-    OrderManagementRulesWizard
+from test_framework.web_admin_core.pages.order_management.order_management_rules.wizard import *
+from test_framework.web_admin_core.pages.order_management.order_management_rules.main_page import MainPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
@@ -28,91 +20,63 @@ class QAP_T4008(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.venue = self.data_set.get_venue_by_name("venue_7")
+        self.venue = self.data_set.get_venue_by_name("venue_6")
         self.condition_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.condition_logic_value = 'Client'
-        self.first_criteria = "Venue"
+        self.condition_criteria = 'Venue'
         self.default_result_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        self.action = ['SendCare', 'Reject']
+        self.split = '100'
+        self.set_split_qty_precision = '50'
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
         side_menu = SideMenu(self.web_driver_container)
-        page = OrderManagementRulesPage(self.web_driver_container)
-        values_sub_wizard = OrderManagementRulesValuesSubWizard(self.web_driver_container)
-        conditions_sub_wizard = OrderManagementRulesConditionsSubWizard(self.web_driver_container)
-        default_result_sub_wizard = OrderManagementRulesDefaultResultSubWizard(self.web_driver_container)
-        wizard = OrderManagementRulesWizard(self.web_driver_container)
 
         login_page.login_to_web_admin(self.login, self.password)
-        time.sleep(2)
         side_menu.click_on_order_management_rules_when_order_management_tab_is_open()
-        time.sleep(2)
-
-        if self.first_criteria not in page.get_settings_values():
-            page.click_on_change_criteria()
-            time.sleep(1)
-            page.set_first_criteria(self.first_criteria)
-            time.sleep(1)
-            page.click_on_change_criteria_for_saving(True)
-
-        time.sleep(2)
-        page.click_on_new_button()
-        time.sleep(2)
-        values_sub_wizard.set_name(self.name)
-        time.sleep(2)
-        conditions_sub_wizard.click_on_plus()
-        time.sleep(1)
-        conditions_sub_wizard.set_name(self.condition_name)
-        time.sleep(1)
-        conditions_sub_wizard.set_qty_precision("100")
-        conditions_sub_wizard.click_on_add_condition()
-        time.sleep(2)
-        conditions_sub_wizard.set_right_side_list_at_conditional_logic(self.condition_logic_value)
-        conditions_sub_wizard.set_right_side_at_conditional_logic("CLIENT1")
-        conditions_sub_wizard.click_on_plus_at_results_sub_wizard()
-        conditions_sub_wizard.set_exec_policy("DMA")
-        time.sleep(1)
-        conditions_sub_wizard.set_percentage("100")
-        conditions_sub_wizard.click_on_checkmark_at_results_sub_wizard()
-        time.sleep(1)
-        conditions_sub_wizard.click_on_checkmark()
-        default_result_sub_wizard.set_default_result_name(self.default_result_name)
-        default_result_sub_wizard.click_on_plus()
-        time.sleep(1)
-        default_result_sub_wizard.set_exec_policy("Care")
-        default_result_sub_wizard.set_percentage("100")
-        default_result_sub_wizard.click_on_checkmark()
-        time.sleep(1)
-        values_sub_wizard.set_venue(self.venue)
-        time.sleep(1)
-        wizard.click_on_save_changes()
-        time.sleep(2)
-
-        if wizard.is_gating_rule_already_has_the_same_criteria_message_displayed():
-            venues = values_sub_wizard.get_all_venues_from_drop_menu()
-            while wizard.is_gating_rule_already_has_the_same_criteria_message_displayed():
-                venue = random.choice(venues)
-                values_sub_wizard.set_venue(venue)
-                venues.remove(venue)
-                time.sleep(1)
-                wizard.click_on_save_changes()
-                time.sleep(2)
 
     def test_context(self):
+        page = MainPage(self.web_driver_container)
+        values_tab = ValuesTab(self.web_driver_container)
+        conditions_tab = ConditionsTab(self.web_driver_container)
+        default_result_entity = DefaultResultEntity(self.web_driver_container)
+        wizard = MainWizard(self.web_driver_container)
 
         try:
             self.precondition()
-            page = OrderManagementRulesPage(self.web_driver_container)
-            try:
-                page.set_name_filter(self.name)
-                time.sleep(2)
-                page.click_on_enabled_disable(True)
-                time.sleep(1)
-                self.verify("Entity created correctly", True, True)
-            except Exception as e:
-                self.verify("Entity NOT created !!!", True, e.__class__.__name__)
 
+            page.click_on_new_button()
+            values_tab.set_name(self.name)
+            conditions_tab.click_on_plus_button()
+            conditions_tab.set_name(self.condition_name)
+            conditions_tab.click_on_add_condition_button()
+            conditions_tab.set_condition_criteria(self.condition_criteria)
+            conditions_tab.set_condition_value(self.venue)
+            conditions_tab.click_on_plus_button_at_result()
+            conditions_tab.set_action(self.action[0])
+            conditions_tab.set_split(self.split)
+            conditions_tab.set_split_qty_precision(self.set_split_qty_precision)
+            conditions_tab.click_on_save_checkmark_at_result()
+            conditions_tab.click_on_save_checkmark()
 
+            default_result_entity.click_on_edit_button()
+            default_result_entity.click_on_plus_button_at_result()
+            default_result_entity.set_action(self.action[1])
+            default_result_entity.set_split(self.split)
+            default_result_entity.click_on_save_checkmark_at_result()
+            default_result_entity.click_on_save_checkmark()
+
+            wizard.click_on_save_changes()
+
+            page.set_name_filter(self.name)
+            time.sleep(1)
+            self.verify("Created entity found", True, page.is_searched_entity_found(self.name))
+            page.select_rule_by_name(self.name)
+            time.sleep(1)
+            expected_result = {f"{self.condition_name}": f"{self.action[0]} ({self.split}%)",
+                               f"Default Result": f"{self.action[1]} ({self.split}%)"}
+            actual_result = page.get_conditions_names_and_percentage()
+            self.verify("Rule conditions name and percentage displayed correct", expected_result, actual_result)
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

@@ -57,7 +57,7 @@ class QAP_T2406(TestCase):
             },
             {
                 "MDEntryType": "0",
-                "MDEntryPx": 1.18126,
+                "MDEntryPx": 1.18106,
                 "MDEntrySize": 10000000,
                 "MDQuoteType": 1,
                 "MDEntryPositionNo": 2,
@@ -66,7 +66,7 @@ class QAP_T2406(TestCase):
             },
             {
                 "MDEntryType": "1",
-                "MDEntryPx": 1.18177,
+                "MDEntryPx": 1.18197,
                 "MDEntrySize": 10000000,
                 "MDQuoteType": 1,
                 "MDEntryPositionNo": 2,
@@ -114,13 +114,13 @@ class QAP_T2406(TestCase):
         self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*"])
         time.sleep(4)
         self.md_snapshot.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid_1m,
-                                                         MDEntrySize=self.qty_bid_1m)
+                                                         MDEntrySize=self.qty_bid_1m, MDEntryPositionNo="2")
         self.md_snapshot.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask_1m,
-                                                         MDEntrySize=self.qty_ask_1m)
+                                                         MDEntrySize=self.qty_ask_1m, MDEntryPositionNo="2")
         self.md_snapshot.update_repeating_group_by_index('NoMDEntries', 2, MDEntryPx=self.price_bid_3m,
-                                                         MDEntrySize=self.qty_bid_3m)
+                                                         MDEntrySize=self.qty_bid_3m, MDEntryPositionNo="1")
         self.md_snapshot.update_repeating_group_by_index('NoMDEntries', 3, MDEntryPx=self.price_ask_3m,
-                                                         MDEntrySize=self.qty_ask_3m)
+                                                         MDEntrySize=self.qty_ask_3m, MDEntryPositionNo="1")
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])
         # endregion

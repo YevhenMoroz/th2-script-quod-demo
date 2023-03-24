@@ -1,6 +1,6 @@
 class AutoHedgerConstants:
 
-    AUTO_HEDGER_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Auto Hedgers ']"
+    AUTO_HEDGER_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][normalize-space(text())='Auto Hedgers']"
 
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"
@@ -108,5 +108,6 @@ class AutoHedgerConstants:
     INSTRUMENTS_TAB_SEND_HEDGE_ORDER_FIELD_XPATH = '//*[@id ="hedgeOrderDestination"]'
     INSTRUMENTS_TAB_SEND_HEDGE_ORDER_CHECKBOX_XPATH = '/html/body/ngx-app/ngx-pages/ngx-one-column-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-auto-hedger/ngx-ah-wizard/div/nb-card/nb-card-body/div/nb-accordion/nb-accordion-item[5]/nb-accordion-item-body/div/div/ngx-ah-instrument-form/div/div[2]/form/div[3]/div[3]/div/div[1]/nb-checkbox/label/span[1]'
     INSTRUMENTS_TAB_EXECUTION_STRATEGY_TYPE_XPATH = '//*[@id="scenario"]'
-    INSTRUMENTS_TAB_HEDGING_EXECUTION_STRATEGY_FIELD_XPATH = '//*[text()= "Execution Strategy"]/preceding-sibling::input'
+    INSTRUMENTS_TAB_HEDGING_EXECUTION_STRATEGY_FIELD_XPATH = '//*[@id="strategy"]'
+    INSTRUMENTS_TAB_DEFAULT_EXECUTION_STRATEGY_IN_DROP_MENU = '//nb-option[contains(text(), "Default")]'
     INSTRUMENTS_TAB_REQUEST_APPROVAL_CHECKBOX = '//*[@formcontrolname="holdOrder"]//input'

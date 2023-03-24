@@ -29,7 +29,7 @@ class QAP_T3290(CommonTestCase):
         self.misc_fee_type = 'Levy'
         self.exec_fee_profile = 'UK stamp'
         self.instr_list = ''
-        self.venue = 'BATS'
+        self.venue = self.data_set.get_venue_by_name("venue_10")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
