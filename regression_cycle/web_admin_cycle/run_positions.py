@@ -13,6 +13,9 @@ from test_cases.web_admin.web_admin_test_cases.positions.QAP_T3406 import QAP_T3
 from test_cases.web_admin.web_admin_test_cases.positions.QAP_T3412 import QAP_T3412
 from test_cases.web_admin.web_admin_test_cases.positions.QAP_T3430 import QAP_T3430
 from test_cases.web_admin.web_admin_test_cases.positions.QAP_T3486 import QAP_T3486
+from test_cases.web_admin.web_admin_test_cases.positions.QAP_T3496 import QAP_T3496
+from test_cases.web_admin.web_admin_test_cases.positions.QAP_T3497 import QAP_T3497
+from test_cases.web_admin.web_admin_test_cases.positions.QAP_T3498 import QAP_T3498
 from test_cases.web_admin.web_admin_test_cases.positions.QAP_T3632 import QAP_T3632
 from test_cases.web_admin.web_admin_test_cases.positions.QAP_T3634 import QAP_T3634
 from test_cases.web_admin.web_admin_test_cases.positions.QAP_T3809 import QAP_T3809
@@ -69,8 +72,14 @@ class RunPositions:
                       environment=configuration.environment).run()
 
             # ATs that do not work on the quod306 site must be run on a site with a running RDS component
-            QAP_T3342(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                      environment=configuration.environment).run()
+            # QAP_T3342(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+            #           environment=configuration.environment).run()
+            # QAP_T3496(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+            #           environment=configuration.environment).run()
+            # QAP_T3497(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+            #           environment=configuration.environment).run()
+            # QAP_T3498(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+            #           environment=configuration.environment).run()
 
 
             end_time = time.monotonic()

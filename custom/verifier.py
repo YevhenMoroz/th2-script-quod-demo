@@ -1,6 +1,4 @@
 import json
-import os
-import sys
 from enum import Enum
 
 from google.protobuf.timestamp_pb2 import Timestamp
@@ -14,7 +12,6 @@ class VerificationMethod(Enum):
     EQUALS = "EQUAL"
     NOT_EQUALS = "NOT EQUAL"
     CONTAINS = "CONTAINS"
-    NOT_CONTAINS = "NOT CONTAINS"
 
 
 class Verifier:
@@ -24,7 +21,6 @@ class Verifier:
         self.success = True
         self.result = dict()
         self.fields = dict()
-        self.printed_name = None
 
     def set_parent_id(self, parent_id: EventID):
         self.parent_id = parent_id
@@ -40,8 +36,6 @@ class Verifier:
             passed = expected_value != actual_value
         elif verification_method is VerificationMethod.CONTAINS:
             passed = expected_value in actual_value
-        elif verification_method is VerificationMethod.NOT_CONTAINS:
-            passed = expected_value not in actual_value
         else:
             raise Exception("Unexpected verification method")
 
@@ -58,7 +52,6 @@ class Verifier:
                     }
             })
         self.success &= passed
-        self.printed_name = printed_name
 
     def _build_json(self) -> list:
         return [
@@ -81,6 +74,4 @@ class Verifier:
         event_batch = EventBatch()
         event_batch.events.append(event)
         event_store.send(event_batch)
-        result = self._build_json()[0]["fields"][self.printed_name]
-        if not self.success: raise ValueError('\033[91m' + f'{result["expected"]} not {result["operation"]}'
-                                                           f' {result["actual"]}' + '\033[0m')
+

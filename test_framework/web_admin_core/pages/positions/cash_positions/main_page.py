@@ -37,7 +37,7 @@ class MainPage(CommonPage):
         self.find_by_xpath(Constants.MainPage.TRANSACTION_BUTTON).click()
 
     def set_transaction_type(self, value):
-        self.set_combobox_value(Constants.MainPage.TRANSACTION_TYPE, value)
+        self.select_value_from_dropdown_list(Constants.MainPage.TRANSACTION_TYPE, value)
 
     def set_amount(self, value):
         self.set_text_by_xpath(Constants.MainPage.AMOUNT, value)
@@ -89,3 +89,6 @@ class MainPage(CommonPage):
 
     def is_searched_cash_account_found(self, value):
         return self.is_element_present(Constants.MainPage.DISPLAYED_CASH_POSITIONS.format(value))
+
+    def click_on_enable_disable_button(self):
+        self.find_by_xpath(Constants.MainPage.TOGGLE_BUTTON).click()

@@ -427,6 +427,12 @@ class DataBaseEnv(Enum):
     PORT_316 = 27316
     NAME_316 = "filteredQuoteDB"
     DB_TYPE_316 = "mongo"
+    # 320 postgres
+    HOST_320 = "10.0.22.69"
+    NAME_320 = "quoddb"
+    USER_320 = "quod320prd"
+    PASS_320 = "quod320prd"
+    DB_TYPE_320 = "postgresql"
 
 
 class FreeNotesReject(Enum):

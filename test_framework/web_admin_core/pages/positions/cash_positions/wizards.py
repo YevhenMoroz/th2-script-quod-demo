@@ -59,6 +59,11 @@ class ValuesTab(CommonPage):
     def get_client(self):
         return self.get_text_by_xpath(Constants.Wizard.ValuesTab.CLIENT)
 
+    def get_all_client_from_drop_menu_by_patter(self, value):
+        self.set_text_by_xpath(Constants.Wizard.ValuesTab.CLIENT, value)
+        time.sleep(1)
+        return self.get_all_items_from_drop_down(Constants.Wizard.DROP_DOWN_MENU)
+
     def set_security_accounts(self, value):
         self.set_multiselect_field_value(Constants.Wizard.ValuesTab.SECURITY_ACCOUNTS, value)
 

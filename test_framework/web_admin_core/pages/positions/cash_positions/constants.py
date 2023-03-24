@@ -7,6 +7,7 @@ class Constants:
         NEW_BUTTON = '//*[text()="New"]'
         DOWNLOAD_CSV_BUTTON = '//*[@data-name="download"]'
         DISPLAYED_CASH_POSITIONS = "//*[text()='{}']"
+        TOGGLE_BUTTON = '//nb-toggle'
         TRANSACTION_BUTTON = '//*[@nbtooltip="Transaction"]//*[@data-name="swap"]'
         TRANSACTION_POP_UP = '//cash-account-transfer-popup'
 
@@ -41,6 +42,7 @@ class Constants:
         REVERT_CHANGES_BUTTON = "//*[text()='Revert Changes']"
         DOWNLOAD_PDF_BUTTON = '//*[@nbtooltip="Download PDF"]//*[@data-name="download"]'
         FOOTER_ERROR_TEXT = '//app-footer-form//span'
+        DROP_DOWN_MENU = '//*[@class="option-list"]//span'
 
         class ValuesTab:
             NAME = '//*[@formcontrolname="cashAccountName"]'
