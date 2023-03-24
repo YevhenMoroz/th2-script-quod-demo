@@ -430,7 +430,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(IClOrdIdTO=new_order_single.get_parameter('IClOrdIdTO'))
         if new_order_single.is_parameter_exist('ExDestination'):
             temp.update(ExDestination=new_order_single.get_parameter('ExDestination'))
-        if new_order_single.get_parameter('TargetStrategy') in ['1008', '1020']:
+        if new_order_single.get_parameter('TargetStrategy') in ['1008', '1020', '2']:
             if new_order_single.is_parameter_exist('MinQty'):
                 temp.update(
                     LastExecutionPolicy='*',
@@ -445,8 +445,9 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
                     LastExecutionPolicy='*',
                     TradeReportingIndicator='*',
                     ExDestination='*',
-                    SettlType='*'
                 )
+        if new_order_single.get_parameter('TargetStrategy') in ['1008', '1020']:
+            temp.update(SettlType='*')
         if new_order_single.get_parameter('TargetStrategy') in ['1011', '1010', '1004'] and new_order_single.get_parameter('Account') == 'KEPLER':
             temp.update(
                 SecondaryAlgoPolicyID='*',
@@ -454,7 +455,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
                 ExDestination='*',
                 ChildOrderID='*'
             )
-        if new_order_single.get_parameter('TargetStrategy') not in ['1008', '1020', 1008, 1020, 1004, '1004']:
+        if new_order_single.get_parameter('TargetStrategy') not in ['1008', '1020', 1008, 1020, 1004, '1004', '2']:
             temp.update(Text='*')
         if new_order_single.is_parameter_exist('NoStrategyParameters') or (new_order_single.get_parameter('TargetStrategy') == '1008' and new_order_single.is_parameter_exist('MinQty')):
             temp.update(NoStrategyParameters='*')
