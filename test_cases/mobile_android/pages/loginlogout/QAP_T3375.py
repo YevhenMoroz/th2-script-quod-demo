@@ -34,15 +34,7 @@ class QAP_T3375(CommonTestCase):
         # login_page.tap("buttonUserProfile")
         #
         # login_page.tap("buttonLogout")
-        print(login_page.is_element_presented("usernameField"))
-        print(login_page.is_element_presented("passwordField"))
-        print(login_page.is_element_presented("buttonLogout", 100))
-        print(login_page.is_element_presented("buttonUserProfile", 100))
 
-        login_page.tap("buttonLogin")
-
-        print(login_page.is_element_presented("buttonUserProfile", 2000))
-        print(login_page.is_element_presented("usernameField"))
         time.sleep(3)
 
         # finder = FlutterFinder()
