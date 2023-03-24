@@ -71,7 +71,7 @@ class QAP_T3375(CommonTestCase):
         # #     self.appium_driver.get_driver().execute_script('flutter:waitFor', finder.by_value_key("buttonOrderTicket"), 100)
         # # except:
         # #     print("There is an EXPECTED Error, couldn't find 'buttonOrderTicket'")
-        self.verify("Step Last - All Actions are done", None, None)
+        # self.verify("Step Last - All Actions are done", None, None)
 
         # region - postconditions
         # endregion
