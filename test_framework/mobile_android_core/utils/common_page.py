@@ -35,6 +35,14 @@ class CommonPage:
         element = FlutterElement(self.appium_driver.get_driver(), self.finder.by_value_key(key))
         return element.text
 
+    def is_element_presented(self, key, timeout=5000):
+        try:
+            self.appium_driver.get_driver().execute_script('flutter:waitFor', self.finder.by_value_key(key), timeout)
+            return True
+        except:
+            return False
+
+
     # OLD APPIUM FRAMEWORK METHODS
     # def get_element_exists_by_xpath(self, xpath):
     #     if self.get_count_of_elements_by_xpath(xpath)==0:
