@@ -15,7 +15,7 @@ class QAP_T3375(CommonTestCase):
         super().__init__(driver, self.__class__.__name__, report_id, data_set=data_set,
                          environment=environment)
         self.appium_driver = driver
-        self.login = self.data_set.get_user("user_1")
+        self.user = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -24,10 +24,10 @@ class QAP_T3375(CommonTestCase):
         login_page = LoginPage(self.appium_driver)
 
         # login_page.click_field_username()
-        login_page.enter_data_field_username("a_MobileQA1")
+        login_page.enter_data_field_username(self.user)
 
         # login_page.click_field_password()
-        login_page.enter_data_field_password("a_MobileQA1!")
+        login_page.enter_data_field_password(self.password)
 
         # login_page.tap("buttonLogin")
         #
