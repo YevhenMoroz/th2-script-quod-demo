@@ -9,8 +9,8 @@ import os
 timeouts = True
 
 instrument = {
-    'Symbol': 'FR0013357621-XPAR',
-    'SecurityID': 'FR0013357621',
+    'Symbol': 'FR0000120321-XPAR',
+    'SecurityID': 'FR0000120321',
     'SecurityIDSource': '4',
     'SecurityExchange': 'XPAR'
 }
@@ -26,7 +26,7 @@ def execute(report_id):
             'OrderQty': 10000000,
             'TimeInForce': 0,
             'OrdType': 2,
-            'Price': 46,
+            'Price': 400,
             'TransactTime': datetime.utcnow().isoformat(),
             'Instrument': instrument,
             'OrderCapacity': 'A',
