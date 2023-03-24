@@ -37,3 +37,11 @@ class PreConditionForPosition:
                        dailynetsellexecamt = 0, dailygrossbuyexecamt=0 ,dailygrosssellexecamt=0 
                         WHERE accountid = '{account}' AND clearingbusinessdate = '{today_date}' AND instrid = '{instr_id}';"""
         self._db_manager.update_insert_query(query)
+
+    def reset_values_for_posit_table(self, account, instr_id):
+        query = f"""UPDATE  posit SET  cumbuyqty = 0, cumsellqty = 0, positqty=0,
+                               netweightedavgpx = 1, cumbuyamt=0 ,cumsellamt=0,
+                                transferredinamt = 0, transferredoutamt=0,
+                                buyavgpx = 0, sellavgpx = 0
+                                WHERE accountid = '{account}'  AND instrid = '{instr_id}';"""
+        self._db_manager.update_insert_query(query)
