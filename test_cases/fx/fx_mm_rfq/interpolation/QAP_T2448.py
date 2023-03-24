@@ -66,3 +66,4 @@ class QAP_T2448(TestCase):
         self.market_data_snap_shot.change_parameters({"Instrument": self.instrument})
         self.market_data_snap_shot.update_MDReqID(self.md_req_id, self.fh_connectivity, "FX")
         self.fix_manager_fh.send_message(self.market_data_snap_shot, "Send MD GBP/USD FWD HSBC")
+        self.sleep(2)
