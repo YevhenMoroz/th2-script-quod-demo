@@ -29,7 +29,7 @@ class PreConditionForPosition:
         query = f"""INSERT INTO dailyposit (accountid,instrid, positiontype, clearingbusinessdate, dailyfeeamt,
                         dailyagentfeeamt,dailyclientcommission,dailyrealizedgrosspl,dailyrealizednetpl, dailynetbuyexecamt,
                         dailynetsellexecamt,dailygrossbuyexecamt, dailygrosssellexecamt, currency, alive, originator)
-                                           VALUES ('{account}','{instr_id}','N', '{today_date}','0','0','0','1','1','0','0','0','0','{currency}','Y','PKS_VS');"""
+                                           VALUES ('{account}','{instr_id}','N', '{today_date}','0','0','0','1','1','0','0','0','0','{currency}','Y','PKS');"""
         self._db_manager.update_insert_query(query)
 
     def _update_query(self, today_date, account, instr_id):
