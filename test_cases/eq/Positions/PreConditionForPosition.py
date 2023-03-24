@@ -23,7 +23,7 @@ class PreConditionForPosition:
             else:
                 self._update_query(today_date, account, instr_id)
         except Exception as e:
-            logger.error('{e}', exc_info=True)
+            logger.error(f'{e}', exc_info=True)
             self._db_manager.close_connection()
 
     def _insert_request(self, today_date, account, instr_id, currency):
@@ -48,5 +48,5 @@ class PreConditionForPosition:
                                     WHERE accountid = '{account}'  AND instrid = '{instr_id}';"""
             self._db_manager.update_insert_query(query)
         except Exception as e:
-            logger.error('{e}', exc_info=True)
+            logger.error(f'{e}', exc_info=True)
             self._db_manager.close_connection()
