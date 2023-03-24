@@ -36,6 +36,11 @@ class CommonPage:
         return element.text
 
     def is_element_presented(self, key, timeout=5000):
+        """
+        checks if element presented
+        if Yes - returns True
+        if No - after timeout delay returns False
+        """
         try:
             self.appium_driver.get_driver().execute_script('flutter:waitFor', self.finder.by_value_key(key), timeout)
             return True
