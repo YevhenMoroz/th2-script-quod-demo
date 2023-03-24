@@ -152,7 +152,7 @@ class QAP_T9031(TestCase):
 
         # region Check child DMA order
         self.dma_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        self.dma_order.change_parameters(dict(OrderQty=self.qty, Price=self.price, Instrument='*', Side=self.side))
+        self.dma_order.change_parameters(dict(OrderQty=self.qty, Price=self.price, Instrument='*', Side=self.side, MinQty=self.min_trig_qty))
         self.fix_verifier_buy.check_fix_message(self.dma_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Child DMA')
 
         self.pending_dma_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_pending)

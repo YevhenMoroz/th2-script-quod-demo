@@ -75,6 +75,7 @@ class QAP_T10485(TestCase):
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
         self.key_params_NOS_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_parent")
         self.key_params_OCR_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_OCR_child")
+        self.key_params_ER_eliminate_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_cancel_reject_child")
         # endregion
 
         # region Read log verifier params
@@ -84,10 +85,9 @@ class QAP_T10485(TestCase):
         # endregion
 
         # region Compare message params
-        self.text = "removing CHIXDELTA"
+        self.text = "removing CHIXDELTA (broker count: 3)"
         # endregion
 
-        self.pre_filter = self.data_set.get_pre_filter("pre_filer_equal_D")
         self.rule_list = []
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -136,18 +136,10 @@ class QAP_T10485(TestCase):
         self.dma_chix_order.change_parameters(dict(Account=self.account_chix, ExDestination=self.ex_destination_chix, OrderQty=self.qty, Instrument=self.instrument))
         self.fix_verifier_buy.check_fix_message(self.dma_chix_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
-        er_eliminate_dma_chix_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_chix_order, self.gateway_side_buy, self.status_eliminate)
-        self.fix_verifier_buy.check_fix_message(er_eliminate_dma_chix_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Eliminate Child DMA 1 order')
-        # endregion
+        time.sleep(2)
 
-        # region Check Read log
-        time.sleep(70)
-
-        compare_message = ReadLogMessageAlgo().set_compare_message_for_check_order_event()
-        compare_message.change_parameters(dict(OrderId=parent_MP_Dark_order_id, Text=self.text))
-
-        self.read_log_verifier.set_case_id(bca.create_event("Check that the venue CHIXDELTA is discarded", self.test_id))
-        self.read_log_verifier.check_read_log_message(compare_message, self.key_params_readlog)
+        er_eliminate_dma_chix_order_params = FixMessageExecutionReportAlgo().set_params_for_nos_eliminate_rule(self.dma_chix_order)
+        self.fix_verifier_buy.check_fix_message(er_eliminate_dma_chix_order_params, key_parameters=self.key_params_ER_eliminate_child, direction=self.ToQuod, message_name='Buy side ExecReport Eliminate Child DMA 1 order')
         # endregion
 
         # region Check child DMA order on venue BATS DARKPOOL UK
@@ -161,6 +153,8 @@ class QAP_T10485(TestCase):
         er_new_dma_bats_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_bats_order, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message(er_new_dma_bats_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 2 order')
         # endregion
+
+        time.sleep(7)
 
         # region Check that the 2nd child expires
         order_cancel_request_dma_bats_order = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child_kepler(self.dma_bats_order)
@@ -182,6 +176,8 @@ class QAP_T10485(TestCase):
         self.fix_verifier_buy.check_fix_message(er_new_dma_cboe_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 3 order')
         # endregion
 
+        time.sleep(7)
+
         # region Check that the 3rd child expires
         order_cancel_request_dma_cboe_order = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child_kepler(self.dma_cboe_order)
         self.fix_verifier_buy.check_fix_message(order_cancel_request_dma_cboe_order, key_parameters=self.key_params_OCR_child, message_name='Buy side OrderCancelRequest Child DMA 3 order')
@@ -193,6 +189,16 @@ class QAP_T10485(TestCase):
         # region Check that parent order eliminated
         er_eliminate_mp_dark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_eliminate)
         self.fix_verifier_sell.check_fix_message(er_eliminate_mp_dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Eliminate')
+        # endregion
+
+        # region Check Read log
+        time.sleep(70)
+
+        compare_message = ReadLogMessageAlgo().set_compare_message_for_check_order_event()
+        compare_message.change_parameters(dict(OrderId=parent_MP_Dark_order_id, Text=self.text))
+
+        self.read_log_verifier.set_case_id(bca.create_event("Check that the venue CHIXDELTA is discarded", self.test_id))
+        self.read_log_verifier.check_read_log_message(compare_message, self.key_params_readlog)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

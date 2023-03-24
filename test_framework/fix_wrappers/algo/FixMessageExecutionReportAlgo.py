@@ -76,7 +76,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             elif status is Status.PartialFill:
                 self.__set_partial_fill_buy(new_order_single)
             elif status is Status.CancelReplace:
-                self.__set_cancel_replace_buy(new_order_single)
+                self.__set_cancel_replace_rb_buy(new_order_single)
             elif status is Status.Cancel:
                 self.__set_cancel_rb_buy(new_order_single)
             elif status is Status.Eliminate:
@@ -132,6 +132,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
                 self.__set_cancel_rep_partial_fill_kepler_sell(order_cancel_replace)
             elif status is Status.Fill:
                 self.__set_cancel_rep_fill_kepler_sell(order_cancel_replace)
+            elif status is Status.Eliminate:
+                self.__set_cancel_rep_eliminate_kepler_sell(order_cancel_replace)
             else:
                 raise Exception(f'Incorrect Status')
         return self
@@ -146,7 +148,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(DisplayInstruction=new_order_single.get_parameter('DisplayInstruction'))
         if new_order_single.is_parameter_exist('MinQty'):
             temp.update(MinQty=new_order_single.get_parameter('MinQty'))
-        if new_order_single.is_parameter_exist('NoStrategyParameters') and new_order_single.get_parameter('TargetStrategy') not in ['1004', '1003', '1001', '1020']:
+        if new_order_single.is_parameter_exist('NoStrategyParameters') and new_order_single.get_parameter('TargetStrategy') not in ['1004', '1003']:
             temp.update(NoStrategyParameters='*')
         if new_order_single.get_parameter('TargetStrategy') in ['1010', '1011', '1004', '1003'] or (new_order_single.get_parameter('TargetStrategy') == '1008' and new_order_single.is_parameter_exist('MinQty')) or new_order_single.is_parameter_exist('NoParty'):
             temp.update(NoParty='*')
@@ -198,11 +200,11 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(DisplayInstruction=new_order_single.get_parameter('DisplayInstruction'))
         if new_order_single.is_parameter_exist('MinQty'):
             temp.update(MinQty=new_order_single.get_parameter('MinQty'))
-        if new_order_single.is_parameter_exist('NoStrategyParameters') and new_order_single.get_parameter('TargetStrategy') not in ['1004', '1003', '1001', '1020']:
+        if new_order_single.is_parameter_exist('NoStrategyParameters') and new_order_single.get_parameter('TargetStrategy') not in ['1004', '1003', '1001']:
             temp.update(NoStrategyParameters='*')
         if new_order_single.get_parameter('TargetStrategy') != '1020':
             temp.update(TargetStrategy=new_order_single.get_parameter("TargetStrategy"))
-        if new_order_single.get_parameter('TargetStrategy') in ['1010', '1011', '1004', '1003', '1020'] or (new_order_single.get_parameter('TargetStrategy') == '1008' and new_order_single.is_parameter_exist('MinQty')):
+        if new_order_single.get_parameter('TargetStrategy') in ['1010', '1011', '1004', '1003', '1020', '1009', '2'] or (new_order_single.get_parameter('TargetStrategy') == '1008' and new_order_single.is_parameter_exist('MinQty')):
             temp.update(
                 NoParty='*'
             )
@@ -332,6 +334,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             )
         if new_order_single.is_parameter_exist('IClOrdIdCO'):
             temp.update(IClOrdIdCO=new_order_single.get_parameter('IClOrdIdCO'))
+        if new_order_single.get_parameter('TargetStrategy') not in ['1008', '1020', 1008, 1020, 1004, '1004']:
+            temp.update(Text='*')
         if new_order_single.get_parameter('TargetStrategy') in ('1008', '1020'):
             if new_order_single.is_parameter_exist('MinQty'):
                 temp.update(
@@ -357,7 +361,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
                     LastMkt='*',
                     ExDestination='*'
                 )
-        if new_order_single.is_parameter_exist('NoStrategyParameters') and new_order_single.get_parameter('TargetStrategy') not in ('1004', '1020'):
+        if new_order_single.is_parameter_exist('NoStrategyParameters') and (new_order_single.get_parameter('TargetStrategy') not in ('1004')):
             temp.update(NoStrategyParameters='*')
         if 'ClientAlgoPolicyID' not in new_order_single.get_parameters() and new_order_single.get_parameter('TargetStrategy') == '1011':
             temp.update(
@@ -372,6 +376,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(TargetStrategy='*')
         if new_order_single.is_parameter_exist('TimeInForce'):
             temp.update(TimeInForce=new_order_single.get_parameter('TimeInForce'))
+        else:
+            temp.update(TimeInForce='0')
         # The next parameter maybe will remove (see PALGO-547)
         if new_order_single.get_parameter('Account') == 'KEPLER':
             temp.update(misc5='*')
@@ -390,8 +396,6 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             OrdStatus=2,
             OrdType=new_order_single.get_parameter('OrdType'),
             Side=new_order_single.get_parameter('Side'),
-            Text='*',
-            TimeInForce='0',
             TransactTime='*',
             SettlDate='*',
             TradeDate='*',
@@ -450,6 +454,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
                 ExDestination='*',
                 ChildOrderID='*'
             )
+        if new_order_single.get_parameter('TargetStrategy') not in ['1008', '1020', 1008, 1020, 1004, '1004']:
+            temp.update(Text='*')
         if new_order_single.is_parameter_exist('NoStrategyParameters') or (new_order_single.get_parameter('TargetStrategy') == '1008' and new_order_single.is_parameter_exist('MinQty')):
             temp.update(NoStrategyParameters='*')
         if new_order_single.is_parameter_exist('MinQty'):
@@ -480,7 +486,6 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             OrdStatus=1,
             OrdType=new_order_single.get_parameter('OrdType'),
             Side=new_order_single.get_parameter('Side'),
-            Text='*',
             TimeInForce=new_order_single.get_parameter('TimeInForce'),
             TransactTime='*',
             SettlDate='*',
@@ -637,6 +642,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         temp = dict()
         if new_order_single.is_parameter_exist("Price"):
             temp.update(Price=new_order_single.get_parameter("Price"))
+        if new_order_single.is_parameter_exist("StopPx"):
+            temp.update(StopPx=new_order_single.get_parameter("StopPx"))
         if new_order_single.is_parameter_exist('ExpireDate'):
             temp.update(ExpireDate=new_order_single.get_parameter('ExpireDate'))
         temp.update(
@@ -648,7 +655,30 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             TimeInForce=new_order_single.get_parameter("TimeInForce"),
             ExecType="5",
             OrdStatus="0",
-            CumQty='0',
+            CumQty='*',
+            ExecID='*',
+            OrderID='*',
+            LeavesQty='*',
+            TransactTime='*',
+            AvgPx='*',
+            OrigClOrdID='*',
+        )
+        super().change_parameters(temp)
+        return self
+
+    def __set_cancel_replace_rb_buy(self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict()
+        temp.update(
+            ClOrdID='*',
+            OrdType=new_order_single.get_parameter('OrdType'),
+            OrderQty=new_order_single.get_parameter("OrderQty"),
+            Text='order replaced',
+            Side=new_order_single.get_parameter("Side"),
+            TimeInForce=new_order_single.get_parameter("TimeInForce"),
+            Price=new_order_single.get_parameter('Price'),
+            ExecType="5",
+            OrdStatus="0",
+            CumQty='*',
             ExecID='*',
             OrderID='*',
             LeavesQty='*',
@@ -669,7 +699,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(PegInstructions=order_cancel_replace.get_parameter('PegInstructions'))
         if order_cancel_replace.is_parameter_exist('ClientAlgoPolicyID'):
             temp.update(SecondaryAlgoPolicyID=order_cancel_replace.get_parameter('ClientAlgoPolicyID'))
-        if order_cancel_replace.is_parameter_exist('NoStrategyParameters') or (order_cancel_replace.get_parameter('TargetStrategy') == '1008' and order_cancel_replace.is_parameter_exist('MinQty')):
+        if order_cancel_replace.is_parameter_exist('NoStrategyParameters') and order_cancel_replace.get_parameter('TargetStrategy') not in ['1001', 1001]:
             temp.update(NoStrategyParameters='*')
         if order_cancel_replace.is_parameter_exist('MinQty'):
             temp.update(MinQty=order_cancel_replace.get_parameter('MinQty'))
@@ -757,11 +787,11 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(StopPx=new_order_single.get_parameter('StopPx'))
         if 'DisplayInstruction' in new_order_single.get_parameters():
             temp.update(DisplayInstruction=new_order_single.get_parameter('DisplayInstruction'))
-        if new_order_single.is_parameter_exist('NoStrategyParameters') and new_order_single.get_parameter('TargetStrategy') not in ['1004', '1003', '1001', '1020']:
+        if new_order_single.is_parameter_exist('NoStrategyParameters') and new_order_single.get_parameter('TargetStrategy') not in ['1004', '1003', '1001']:
             temp.update(NoStrategyParameters='*')
         if new_order_single.is_parameter_exist('MinQty'):
             temp.update(MinQty=new_order_single.get_parameter('MinQty'))
-        if new_order_single.get_parameter('TargetStrategy') in ['1010', '1011', '1004', '1003', '1009', '1020'] or (new_order_single.get_parameter('TargetStrategy') == '1008' and new_order_single.is_parameter_exist('MinQty')):
+        if new_order_single.get_parameter('TargetStrategy') in ['1010', '1011', '1004', '1003', '1009', '1020', '2'] or (new_order_single.get_parameter('TargetStrategy') == '1008' and new_order_single.is_parameter_exist('MinQty')):
             temp.update(NoParty='*')
         if new_order_single.is_parameter_exist('ExpireDate'):
             temp.update(ExpireDate=new_order_single.get_parameter('ExpireDate'))
@@ -822,7 +852,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             )
         if order_cancel_replace.get_parameter('TargetStrategy') in ['1011']:
             temp.update(NoParty='*')
-        if order_cancel_replace.is_parameter_exist('NoStrategyParameters') or (order_cancel_replace.get_parameter('TargetStrategy') == '1008' and order_cancel_replace.is_parameter_exist('MinQty')):
+        if order_cancel_replace.is_parameter_exist('NoStrategyParameters') and (order_cancel_replace.get_parameter('TargetStrategy') == '1008' and order_cancel_replace.is_parameter_exist('MinQty')):
             temp.update(NoStrategyParameters='*')
         if order_cancel_replace.is_parameter_exist('ExpireDate'):
             temp.update(ExpireDate='*')
@@ -1024,8 +1054,12 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(MinQty=new_order_single.get_parameter('MinQty'))
         if new_order_single.is_parameter_exist('NoStrategyParameters') and new_order_single.get_parameter('TargetStrategy') not in ['1004', '1003', '1001', '1020']:
             temp.update(NoStrategyParameters='*')
-        if new_order_single.get_parameter('TargetStrategy') != '1008' and new_order_single.get_parameter('TargetStrategy') != '1011':
-            temp.update(LastMkt='*')
+        if new_order_single.get_parameter('TargetStrategy') not in ['1008', '1011', 1008, 1011]:
+            temp.update(
+                NoParty='*',
+                LastMkt='*')
+        if new_order_single.get_parameter('TargetStrategy') not in '1005':
+            temp.update(Text='*')
         if 'TriggeringInstruction' in new_order_single.get_parameters():
             temp.update(TriggeringInstruction='*')
         if new_order_single.get_parameter('TargetStrategy') != '1020':
@@ -1055,8 +1089,6 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             QtyType='*',
             CxlQty='*',
             Instrument='*',
-            NoParty='*',
-            Text='*'
         )
         super().change_parameters(temp)
         return self
@@ -1225,8 +1257,12 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         temp = dict()
         if str(new_order_single.get_parameter('OrdType')) == '2':
             temp.update(Price = new_order_single.get_parameter("Price"))
-        if new_order_single.is_parameter_exist("NoStrategyParameters") or new_order_single.get_parameter('TargetStrategy') == '1008':
-            temp.update(NoStrategyParameters='*')
+        if new_order_single.is_parameter_exist("NoStrategyParameters") or new_order_single.get_parameter('TargetStrategy') in ['2', '1008']:
+            temp.update(
+                NoStrategyParameters='*',
+                NoParty='*',
+                TargetStrategy=new_order_single.get_parameter('TargetStrategy')
+            )
         if new_order_single.get_parameter('Account') == 'KEPLER':
             temp.update(
                 Account='*',
@@ -1249,7 +1285,6 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             SettlDate='*',
             Currency='*',
             HandlInst='*',
-            NoParty='*',
             LastPx='*',
             OrderCapacity='*',
             QtyType='*',
@@ -1258,7 +1293,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             LastQty='*',
             Text='*'
         )
-        if new_order_single.is_parameter_exist('ExDestination'):
+        if new_order_single.is_parameter_exist('ExDestination') and new_order_single.get_parameter('TargetStrategy') not in ['2']:
             temp.update(ExDestination=new_order_single.get_parameter('ExDestination'))
         if new_order_single.is_parameter_exist('MinQty'):
             temp.update(MinQty=new_order_single.get_parameter('MinQty'))
@@ -1601,6 +1636,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         # The next parameter maybe will remove (see PALGO-547)
         if order_cancel_replace.get_parameter('Account') == 'KEPLER':
             temp.update(misc5='*')
+        if order_cancel_replace.get_parameter('TargetStrategy') != '1008':
+            temp.update(Text='*')
         temp.update(
             Account=order_cancel_replace.get_parameter('Account'),
             AvgPx='*',
@@ -1616,7 +1653,6 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             OrdStatus=2,
             OrdType=order_cancel_replace.get_parameter('OrdType'),
             Side=order_cancel_replace.get_parameter('Side'),
-            Text='*',
             TimeInForce=order_cancel_replace.get_parameter('TimeInForce'),
             TransactTime='*',
             SettlDate='*',
@@ -1850,7 +1886,6 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             OrdStatus=2,
             OrdType=new_order_single.get_parameter('OrdType'),
             Side=new_order_single.get_parameter('Side'),
-            Text='*',
             TimeInForce=new_order_single.get_parameter('TimeInForce'),
             TransactTime='*',
             SettlDate='*',
@@ -1911,7 +1946,6 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             OrdStatus=1,
             OrdType=new_order_single.get_parameter('OrdType'),
             Side=new_order_single.get_parameter('Side'),
-            Text='*',
             TimeInForce=new_order_single.get_parameter('TimeInForce'),
             TransactTime='*',
             SettlDate='*',
@@ -2212,7 +2246,6 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             OrdStatus=2,
             OrdType=order_cancel_replace.get_parameter('OrdType'),
             Side=order_cancel_replace.get_parameter('Side'),
-            Text='*',
             TimeInForce=order_cancel_replace.get_parameter('TimeInForce'),
             TransactTime='*',
             SettlDate='*',
@@ -2268,7 +2301,6 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             OrdStatus=1,
             OrdType=order_cancel_replace.get_parameter('OrdType'),
             Side=order_cancel_replace.get_parameter('Side'),
-            Text='*',
             TimeInForce=order_cancel_replace.get_parameter('TimeInForce'),
             TransactTime='*',
             SettlDate='*',
@@ -2289,6 +2321,56 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             SecondaryAlgoPolicyID='*',
             ChildOrderID='*',
             misc5='*'
+        )
+        super().change_parameters(temp)
+        return self
+
+    def __set_cancel_rep_eliminate_kepler_sell(self, order_cancel_replace: FixMessageOrderCancelReplaceRequest = None):
+        temp = dict()
+        if order_cancel_replace.is_parameter_exist('Price'):
+            temp.update(Price=order_cancel_replace.get_parameter("Price"))
+        if order_cancel_replace.is_parameter_exist('StopPx'):
+            temp.update(StopPx=order_cancel_replace.get_parameter('StopPx'))
+        if 'DisplayInstruction' in order_cancel_replace.get_parameters():
+            temp.update(DisplayInstruction=order_cancel_replace.get_parameter('DisplayInstruction'))
+        if order_cancel_replace.is_parameter_exist('ExpireDate'):
+            temp.update(ExpireDate=order_cancel_replace.get_parameter('ExpireDate'))
+        if order_cancel_replace.is_parameter_exist('MinQty'):
+            temp.update(MinQty=order_cancel_replace.get_parameter('MinQty'))
+        if order_cancel_replace.is_parameter_exist('NoStrategyParameters'):
+            temp.update(NoStrategyParameters='*')
+        if order_cancel_replace.is_parameter_exist('TargetStrategy'):
+            temp.update(TargetStrategy=order_cancel_replace.get_parameter('TargetStrategy'))
+            if order_cancel_replace.get_parameter('TargetStrategy') != '1008' and order_cancel_replace.get_parameter('TargetStrategy') != '1011': # LastMkt should appear after the Trade
+                temp.update(LastMkt='*')
+        temp.update(
+            Account=order_cancel_replace.get_parameter('Account'),
+            AvgPx='*',
+            ClOrdID=order_cancel_replace.get_parameter('ClOrdID'),
+            CumQty='*',
+            Currency=order_cancel_replace.get_parameter('Currency'),
+            ExecID='*',
+            HandlInst=order_cancel_replace.get_parameter('HandlInst'),
+            LastPx=0,
+            LastQty=0,
+            OrderID='*',
+            OrderQty=order_cancel_replace.get_parameter('OrderQty'),
+            OrdStatus=4,
+            OrdType=order_cancel_replace.get_parameter('OrdType'),
+            Side=order_cancel_replace.get_parameter('Side'),
+            TimeInForce=order_cancel_replace.get_parameter('TimeInForce'),
+            TransactTime='*',
+            SettlDate='*',
+            ExecType=4,
+            LeavesQty=0,
+            ExecRestatementReason='*',
+            OrderCapacity=order_cancel_replace.get_parameter('OrderCapacity'),
+            QtyType='*',
+            CxlQty='*',
+            Instrument='*',
+            NoParty='*',
+            SecondaryAlgoPolicyID='*',
+            SettlType='*'
         )
         super().change_parameters(temp)
         return self

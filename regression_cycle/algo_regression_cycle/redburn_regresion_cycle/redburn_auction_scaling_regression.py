@@ -3,9 +3,16 @@ from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T10278 import QAP_T10278
 from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T10273 import QAP_T10273
+from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T4348 import QAP_T4348
+from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T4364 import QAP_T4364
+from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T4390 import QAP_T4390
+from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T4447 import QAP_T4447
+from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T4450 import QAP_T4450
+from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T4451 import QAP_T4451
 from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T4460 import QAP_T4460
 from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T4389 import QAP_T4389
 from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T10476 import QAP_T10476
+from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T4463 import QAP_T4463
 from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T4506 import QAP_T4506
 from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T4507 import QAP_T4507
 from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T4459 import QAP_T4459
@@ -26,6 +33,7 @@ from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T4498 import QAP_T449
 from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T4501 import QAP_T4501
 from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T4388 import QAP_T4388
 from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T4302 import QAP_T4302
+from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T4517 import QAP_T4517
 from test_framework.configurations.component_configuration import ComponentConfigurationAlgo
 
 
@@ -69,6 +77,14 @@ def test_run(parent_id=None, version=None):
         QAP_T4302(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4511(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4510(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4348(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4463(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4450(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4451(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4390(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4447(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4364(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4517(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
 
     except Exception:

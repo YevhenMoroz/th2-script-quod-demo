@@ -16,6 +16,8 @@ from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
 from test_framework.algo_formulas_manager import AlgoFormulasManager
+from test_framework.ssh_wrappers.ssh_client import SshClient
+
 
 class QAP_T5039(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
@@ -78,6 +80,24 @@ class QAP_T5039(TestCase):
         self.key_params_cl = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_1")
         self.key_params = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_2")
         # endregion
+        
+        # region SSH
+        self.config_file = "client_sats.xml"
+        self.def_quote_value = "false"
+        self.def_depth_value = "false"
+        self.def_enabled_value = "false"
+        self.mod_quote_value = "true"
+        self.mod_depth_value = "true"
+        self.mod_enabled_value = "true"
+        self.xpath_quote = ".//childMask/quote"
+        self.xpath_depth = ".//childMask/depth"
+        self.xpath_enabled = ".//childMask/enabled"
+        self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
+        self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
+                                    self.ssh_client_env.password, self.ssh_client_env.su_user,
+                                    self.ssh_client_env.su_password)
+        # endregion
+
 
         self.rule_list = []
 
@@ -89,6 +109,12 @@ class QAP_T5039(TestCase):
         ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_1, True)
 
         self.rule_list = [ocr_rule, nos_dma_rule]
+        # endregion
+        
+        # region precondition: Prepare SATS configuration
+        self.ssh_client.get_and_update_file(self.config_file, {self.xpath_enabled: self.mod_enabled_value, self.xpath_quote: self.mod_depth_value, self.xpath_depth: self.mod_depth_value})
+        self.ssh_client.send_command("qrestart SATS")
+        time.sleep(35)
         # endregion
 
         # region Send_MarkerData
@@ -259,6 +285,12 @@ class QAP_T5039(TestCase):
         # region check cancel child DMA
         cancel_dma_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order_2, self.gateway_side_buy, self.status_cancel)
         self.fix_verifier_buy_2.check_fix_message(cancel_dma_order, self.key_params, self.ToQuod, "Buy Side ExecReport cancel Child DMA")
+        # endregion
+        
+        # region postcondition: Change SATS configuration to default
+        self.ssh_client.get_and_update_file(self.config_file, {self.xpath_enabled: self.def_enabled_value, self.xpath_quote: self.def_depth_value, self.xpath_depth: self.def_depth_value})
+        self.ssh_client.send_command("qrestart SATS")
+        time.sleep(35)
         # endregion
 
         RuleManager(Simulators.algo).remove_rules(self.rule_list)
