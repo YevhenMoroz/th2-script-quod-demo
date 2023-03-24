@@ -2,12 +2,12 @@ import json
 import time
 
 from stubs import ROOT_DIR
+from appium.webdriver.webdriver import WebDriver
 from appium import webdriver
 from appium.webdriver.appium_service import AppiumService
 import time
 
 class AppiumDriver:
-
 
     def __init__(self):
         self.appium_driver = None
@@ -22,7 +22,7 @@ class AppiumDriver:
         desired_cap = {**device_data[device_data['currentDevice']], **app_data[app_data['currentApp']], "automationName": "flutter", "retryBackoffTime": 5000}
         self.appium_driver = webdriver.Remote('http://127.0.0.1:4723', desired_cap)
         # self.appium_driver.implicitly_wait(5)
-        time.sleep(5)
+        time.sleep(20)
         self.wait_time(5)
         # endregion
 

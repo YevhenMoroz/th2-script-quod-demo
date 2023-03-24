@@ -7,7 +7,7 @@ from test_framework.mobile_android_core.utils.waits import Waits
 import abc
 
 class CommonTestCase:
-    def __init__(self, driver:AppiumDriver, test_case_id, root_id, data_set: BaseDataSet = None,
+    def __init__(self, driver: AppiumDriver, test_case_id, root_id, data_set: BaseDataSet = None,
                  environment: FullEnvironment = None):
         ## event creation
         self.appium_driver = driver
@@ -19,7 +19,7 @@ class CommonTestCase:
     def run(self):
         self.__start_driver()
         self.test_context()
-        # self.__stop_driver()
+        self.__stop_driver()
 
     @abc.abstractmethod
     def test_context(self):
