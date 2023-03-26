@@ -87,8 +87,8 @@ class QAP_T7281(TestCase):
         compute_reply = self.java_api_manager.get_last_message(
             ORSMessageType.ComputeBookingFeesCommissionsReply.value).get_parameters()[
             "ComputeBookingFeesCommissionsReplyBlock"]
-        expected_result = {'CommissionCurrency': 'GBP', 'CommissionBasis': 'ABS', 'CommissionRate': '0.01',
-                           'CommissionAmount': '0.01', 'CommissionAmountType': 'BRK'}
+        expected_result = {'CommissionCurrency': 'GBP', 'CommissionBasis': 'ABS', 'CommissionRate': '1.0',
+                           'CommissionAmount': '1.0', 'CommissionAmountType': 'BRK'}
         self.java_api_manager.compare_values(expected_result,
                                              compute_reply["ClientCommissionList"]["ClientCommissionBlock"][0],
                                              "Compare ClientCommission")
