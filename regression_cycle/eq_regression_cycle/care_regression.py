@@ -32,11 +32,7 @@ def test_run(parent_id=None, version=None, skip_ssh=False, only_ssh=False):
             class_ = getattr(importlib.import_module(f"test_cases.eq.Care.{test[:-3]}"), test[:-3])
             ssh_test = check_ssh(f'{root_path(ignore_cwd=True)}/test_cases/eq/Care/{test}')
 
-            if skip_ssh and not ssh_test:
-                class_(report_id, None, data_set, configuration.environment).execute()
-            if only_ssh and ssh_test:
-                class_(report_id, None, data_set, configuration.environment).execute()
-            if not skip_ssh and not only_ssh:
+            if skip_ssh and not ssh_test or only_ssh and ssh_test or not skip_ssh and not only_ssh:
                 class_(report_id, None, data_set, configuration.environment).execute()
 
     except Exception:
