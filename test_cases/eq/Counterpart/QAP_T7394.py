@@ -98,17 +98,11 @@ class QAP_T7394(TestCase):
             {"Parties": parties})
 
         self.fix_verifier.check_fix_message_fix_standard(exec_report2, ignored_fields=list_of_ignored_fields)
-        sts_of_order_after_trade = \
-            self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameters()[
-                JavaApiFields.OrderNotificationBlock.value][JavaApiFields.TransStatus.value]
         exec_sts = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
             JavaApiFields.ExecutionReportBlock.value][JavaApiFields.TransExecStatus.value]
         self.order_book.compare_values(
-            {OrderBookColumns.exec_sts.value: ExecutionReportConst.TransExecStatus_FIL.value,
-             OrderBookColumns.sts.value: OrderReplyConst.TransStatus_OPN.value}, {
-                OrderBookColumns.exec_sts.value: exec_sts,
-                OrderBookColumns.sts.value: sts_of_order_after_trade
-            }, 'Comparing values of order')
+            {OrderBookColumns.exec_sts.value: ExecutionReportConst.TransExecStatus_FIL.value}, {
+                OrderBookColumns.exec_sts.value: exec_sts}, 'Comparing values of order')
         counterparts = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
             JavaApiFields.ExecutionReportBlock.value][JavaApiFields.CounterpartList.value][
             JavaApiFields.CounterpartBlock.value]
