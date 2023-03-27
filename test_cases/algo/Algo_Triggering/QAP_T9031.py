@@ -92,7 +92,7 @@ class QAP_T9031(TestCase):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
         nos_dma_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price)
-        trade_dma_rule = rule_manager.add_NewOrdSingleExecutionReportTrade(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price, self.qty, 0)
+        trade_dma_rule = rule_manager.add_NewOrdSingleExecutionReportTrade(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price, self.qty, 2000)
         ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_1, True)
 
         self.rule_list = [ocr_rule, nos_dma_rule, trade_dma_rule]
