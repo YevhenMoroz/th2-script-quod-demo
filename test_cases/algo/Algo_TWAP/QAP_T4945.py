@@ -200,4 +200,5 @@ class QAP_T4945(TestCase):
         self.fix_verifier_sell.check_fix_message(eliminate_twap_order, key_parameters=self.key_params_cl,  message_name='Sell side ExecReport Eliminated')
         # endregion
 
-        RuleManager().remove_rules(self.rule_list)
+        rule_manager = RuleManager(Simulators.algo)
+        rule_manager.remove_rules(self.rule_list)

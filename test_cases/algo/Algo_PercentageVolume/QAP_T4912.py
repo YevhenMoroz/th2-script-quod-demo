@@ -106,13 +106,6 @@ class QAP_T4912(TestCase):
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
         # endregion
 
-        # region Set TradingPhase and LTQ for POV
-        self.fix_manager_feed_handler.set_case_id(bca.create_event("Set TradingPhase for POV", self.test_id))
-        market_data_incr_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
-        market_data_incr_par.update_repeating_group_by_index('NoMDEntriesIR', MDEntryPx=self.price_bid, MDEntrySize=self.ltq)
-        self.fix_manager_feed_handler.send_message(market_data_incr_par)
-        # endregion
-
         # region Send NewOrderSingle (35=D) for POV order
         case_id_1 = bca.create_event("Create POV Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
@@ -122,8 +115,14 @@ class QAP_T4912(TestCase):
         self.POV_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
         self.POV_order.update_repeating_group('NoStrategyParameters', [dict(StrategyParameterName='PercentageVolume', StrategyParameterType=6, StrategyParameterValue=self.pct)])
         self.POV_order.add_fields_into_repeating_group_algo('NoStrategyParameters', [['StartDate', 14, start_time], ['EndDate', 14, end_time_init], ['Aggressivity', 1, self.aggressivity]])
-        # self.POV_order.add_fields_into_repeating_group('NoStrategyParameters', [{'StrategyParameterName': 'Aggressivity', 'StrategyParameterType': '1', 'StrategyParameterValue': self.aggressivity}])
         self.fix_manager_sell.send_message_and_receive_response(self.POV_order, case_id_1)
+        # endregion
+
+        # region Set TradingPhase and LTQ for POV
+        self.fix_manager_feed_handler.set_case_id(bca.create_event("Set TradingPhase for POV", self.test_id))
+        market_data_incr_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
+        market_data_incr_par.update_repeating_group_by_index('NoMDEntriesIR', MDEntryPx=self.price_bid, MDEntrySize=self.ltq)
+        self.fix_manager_feed_handler.send_message(market_data_incr_par)
         # endregion
 
         # region Check Sell side
@@ -151,6 +150,7 @@ class QAP_T4912(TestCase):
 
         self.new_dma_order_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order_1, self.gateway_side_buy, self.status_pending)
         self.fix_verifier_buy.check_fix_message(self.new_dma_order_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA Slice 1')
+        # endregion
 
         # region Check child DMA order 2
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order 2", self.test_id))
@@ -227,6 +227,7 @@ class QAP_T4912(TestCase):
         self.fix_verifier_sell.check_fix_message(cancel_request_pov_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
 
         time.sleep(5)
+        # endregion
 
         # region check cancellation parent POV order
         cancel_pov_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.POV_order, self.gateway_side_sell, self.status_cancel)

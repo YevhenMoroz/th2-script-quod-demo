@@ -147,7 +147,7 @@ class QAP_T4089(TestCase):
 
         self.fix_verifier_sell.set_case_id(bca.create_event("Fill Algo Order", self.test_id))
         fill_multilisted_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.multilisting_order, self.gateway_side_sell, self.status_fill)
-        fill_multilisted_order.change_parameters(dict(CumQty=self.qty, LeavesQty=0, LastQty=self.qty, Instrument="*", Text='*', Price=self.price))
+        fill_multilisted_order.change_parameters(dict(CumQty=self.qty, LeavesQty=0, LastQty=self.qty, Instrument="*", Price=self.price))
         self.fix_verifier_sell.check_fix_message(fill_multilisted_order, key_parameters=self.key_params_cl,  message_name='Sell side ExecReport Fill')
         # endregion
 

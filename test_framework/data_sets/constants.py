@@ -153,6 +153,7 @@ class Status(Enum):
     CancelReplace = "CancelReplace"
     Cancel = "Cancel"
     Eliminate = "Eliminate"
+    ReachedUncross = "ReachedUncross"
 
 
 class OrdStatus(Enum):
@@ -201,8 +202,12 @@ class ClientAlgoPolicy(Enum):
     qa_mpdark_8 = "QA_Auto_MPDark8"
     qa_mpdark_11 = "QA_Auto_MPDark11"
     qa_mpdark_13 = "QA_Auto_MPDark13"
+    qa_mpdark_14 = "QA_Auto_MPDark14"
+    qa_mpdark_15 = "QA_Auto_MPDark15"
+    qa_mpdark_16 = "QA_Auto_MPDark16"
     qa_mpdark_rr_1 = "QA_Auto_MPDark_RR_1"
     qa_mpdark_rr_2 = "QA_Auto_MPDark_RR_2"
+    qa_mpdark_rr_3 = "QA_Auto_MPDark_RR_3"
     qa_sorping = "QA_SORPING"
     qa_sorping_1 = "QA_Auto_SORPING_1"
     qa_sorping_2 = "QA_Auto_SORPING_2"
@@ -362,6 +367,7 @@ class ReadLogVerifiers(Enum):
     log_319_check_party_info_sell_side = "log319-check-party-info-sell-side"
     log_319_check_party_info_buy_side = "log319-check-party-info-buy-side"
     log_319_check_exec_type = "log319-check-exec-type"
+    log_319_cancel_child = "log319-cancel-child"
 
 
 class ExecType(Enum):
@@ -440,6 +446,9 @@ class FreeNotesReject(Enum):
     PricePoint2ParticipationMustBeEqualOrHigherThenMaxParticipation = "PricePoint2Participation must be equal or higher than MaxParticipation"
     PricePoint2ParticipationMustBeEqualOrHigherThenPricePoint1Participation = "PricePoint2Participation must be equal or higher than PricePoint1Participation"
     ReachedUncross = "reached uncross"
+    CouldNotDetermineLimitPriceFromPrimary = "could not determine Limit price from Primary"
+    AuctionOrderEliminatedCoreOrderRejected = "auction order Eliminated - core order Rejected"
+    CouldNotRetrieveAverageVolumeDistribution = "could not retrieve average volume distribution"
 
 
 class TradingPhases(Enum):
