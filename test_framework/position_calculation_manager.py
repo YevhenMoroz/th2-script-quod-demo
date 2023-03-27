@@ -17,7 +17,7 @@ class PositionCalculationManager:
         if float(posit_qty) < 0:
             daily_realized_gross_pl = float(daily_realized_gross_pl) - \
                                       (min(float(posit_qty), float(exec_qty)) * (
-                                                  float(exec_price) * float(cross_rate) - float(gross_weighted_avg_px)))
+                                              float(exec_price) * float(cross_rate) - float(gross_weighted_avg_px)))
             return daily_realized_gross_pl
         else:
             return daily_realized_gross_pl
@@ -90,5 +90,38 @@ class PositionCalculationManager:
 
         return buy_avg_px
 
+    @staticmethod
+    def calculate_net_weighted_avg_px_for_position_transfer_source_acc(posit_qty, qty_to_transfer, net_weighted_avg_px,
+                                                                       transfer_price):
+        if float(posit_qty) <= 0:
+            if float(qty_to_transfer) > 0:
+                net_weighted_avg_px = (float(net_weighted_avg_px) * -(float(posit_qty)) +
+                                       float(qty_to_transfer) * float(transfer_price)) / (
+                                              -(float(posit_qty)) + float(transfer_price))
+                return str(net_weighted_avg_px)
+            if float(qty_to_transfer) < float(posit_qty):
+                net_weighted_avg_px = float(qty_to_transfer) * float(transfer_price) / float(qty_to_transfer)
+                return str(net_weighted_avg_px)
+            if float(qty_to_transfer) == -float(posit_qty):
+                return '0.0'
+        if float(posit_qty) > 0:
+            if float(qty_to_transfer) < 0:
+                net_weighted_avg_px = (float(net_weighted_avg_px) * float(posit_qty) +
+                                       (-float(qty_to_transfer) * float(transfer_price))) / (
+                                              float(posit_qty) - float(qty_to_transfer))
+                return str(net_weighted_avg_px)
+            if float(qty_to_transfer) > float(posit_qty):
+                net_weighted_avg_px = float(qty_to_transfer) * float(transfer_price) / float(qty_to_transfer)
+                return str(net_weighted_avg_px)
 
+            if float(posit_qty) == float(transfer_price):
+                return '0.0'
 
+    @staticmethod
+    def calculate_realized_pl_for_transfer_sell(posit_qty, transfered_qty, transfered_price, net_weighted_avg_px):
+        if float(posit_qty) > 0:
+            realized_pl = min(float(posit_qty), float(transfered_qty)) * (
+                    float(transfered_price) - float(net_weighted_avg_px))
+            return str(realized_pl)
+        else:
+            return '0.0'
