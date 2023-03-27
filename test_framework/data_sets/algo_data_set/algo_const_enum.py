@@ -637,3 +637,4 @@ class AlgoTradingPhaseProfile(Enum):
     trading_phase_profile1 = "PreClose Auction Phase (QA)"
     trading_phase_profile2 = "Auction Phase QA2"
     trading_phase_profile3 = "Brussel Phase"
+    trading_phase_profile4 = "Auction Phase"

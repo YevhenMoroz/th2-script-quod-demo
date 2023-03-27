@@ -440,6 +440,8 @@ class FreeNotesReject(Enum):
     PricePoint2ParticipationMustBeEqualOrHigherThenPricePoint1Participation = "PricePoint2Participation must be equal or higher than PricePoint1Participation"
     ReachedUncross = "reached uncross"
     CouldNotDetermineLimitPriceFromPrimary = "could not determine Limit price from Primary"
+    AuctionOrderEliminatedCoreOrderRejected = "auction order Eliminated - core order Rejected"
+    CouldNotRetrieveAverageVolumeDistribution = "could not retrieve average volume distribution"
 
 
 class TradingPhases(Enum):
