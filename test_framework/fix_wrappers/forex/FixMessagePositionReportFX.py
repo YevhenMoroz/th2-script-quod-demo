@@ -17,7 +17,6 @@ class FixMessagePositionReportFX(FixMessage):
             "PosReqID": request.get_parameter("PosReqID"),
             "Account": request.get_parameter("Account"),
             "Currency": request.get_parameter("Currency"),
-            "Instrument": request.get_parameter("Instrument"),
             "PosReqType": "0",
             "PosMaintRptID": "*",
             "SettlDate": "*",
@@ -25,15 +24,14 @@ class FixMessagePositionReportFX(FixMessage):
             "LastPositEventType": "*",
             "LastPositUpdateEventID": "*",
             "TransactTime": "*",
-            "Parties": "*"
+            "Parties": "*",
+            "Instrument": dict(SecurityType=request.get_parameter("Instrument")["SecurityType"],
+                               Symbol=request.get_parameter("Instrument")["Symbol"],
+                               SecurityID=request.get_parameter("Instrument")["Symbol"],
+                               SecurityIDSource="8",
+                               SecurityExchange="*"
+                               )
         }
         super().change_parameters(base_parameters)
-        instrument = dict(
-            SecurityType=request.get_parameter("Instrument")["SecurityType"],
-            Symbol=request.get_parameter("Instrument")["Symbol"],
-            SecurityID=request.get_parameter("Instrument")["Symbol"],
-            SecurityIDSource="8",
-            SecurityExchange="*",
-        )
-        super().update_fields_in_component("Instrument", instrument)
+
         return self
