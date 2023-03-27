@@ -91,13 +91,13 @@ class QAP_T3347(CommonTestCase):
             self.verify("All checkboxes selected", expected_result, actual_result)
 
             common_act = CommonPage(self.web_driver_container)
+            common_act.click_on_info_error_message_pop_up()
             common_act.click_on_user_icon()
             common_act.click_on_logout()
 
             login_page = LoginPage(self.web_driver_container)
             login_page.login_to_web_admin(self.login, self.password)
-            side_menu = SideMenu(self.web_driver_container)
-            side_menu.open_listings_page()
+
             actual_result = [fee_type_exemption.is_stamp_fee_exemption(), fee_type_exemption.is_levy_fee_exemption(),
                              fee_type_exemption.is_per_tranac_fee_exemption()]
             self.verify("All checkboxes still selected after relogin", expected_result, actual_result)

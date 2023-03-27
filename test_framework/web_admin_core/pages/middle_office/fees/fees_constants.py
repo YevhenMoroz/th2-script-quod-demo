@@ -1,5 +1,5 @@
 class FeesConstants:
-    FEES_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Fees ']"
+    FEES_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][normalize-space()='Fees']"
 
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"
@@ -20,7 +20,8 @@ class FeesConstants:
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
     DISPLAYED_ENTITY_XPATH = "//*[text()='{}']"
-    DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span'
+    DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//nb-option | span'
+    FOOTER_WARNING_XPATH = '//nb-card-footer//*[@outline="danger"]//span'
 
     # Main page
 
@@ -48,6 +49,8 @@ class FeesConstants:
     # Order fee profile sub wizard
     ORDER_FEE_PROFILE_COMMISSION_PROFILE_NAME_XPATH = "//*[@placeholder = 'Commission Profile Name *']"
     ORDER_FEE_PROFILE_COMMISSION_PROFILE_FILTER_XPATH = '//*[normalize-space()="Commission Profile Name"]//*[@placeholder="Filter"]'
+    ORDER_FEE_PROFILE_COMMISSION_PROFILE_ENTITY_XPATH = '//*[normalize-space()="Commission Profile Name"]//..//span[@class="ng-star-inserted"][normalize-space()="{}"]'
+    ORDER_FEE_PROFILE_COMMISSION_PROFILE_PREVIEW_XPATH = '//*[@class="form-table-details-wrapper ng-star-inserted"]'
     ORDER_FEE_PROFILE_PLUS_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@nbtooltip="Add"]'
     ORDER_FEE_PROFILE_CHECKMARK_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@data-name="checkmark"]'
     ORDER_FEE_PROFILE_CANCEL_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@data-name="close"]'
@@ -89,7 +92,7 @@ class FeesConstants:
     EXEC_FEE_PROFILE_DISPLAYED_PROFILE_XPATH = '//*[normalize-space()="{}"]'
 
     EXEC_FEE_PROFILE_DESCRIPTION_XPATH = '//*[@formcontrolname = "commProfileDescription"]'
-    EXEC_FEE_PROFILE_COMM_XUNIT_XPATH = '//*[@id = "commXUnit"]'
+    EXEC_FEE_PROFILE_COMM_XUNIT_XPATH = '//*[@id = "commXUnit"]/button'
     EXEC_FEE_PROFILE_VENUE_COMMISSION_PROFILE_ID_XPATH = '//*[@formcontrolname = "venueCommissionProfileID"]'
     EXEC_FEE_PROFILE_COMM_TYPE_XPATH = '//*[@id = "commType"]'
     EXEC_FEE_PROFILE_COMM_ALGORITHM_XPATH = '//*[@id = "commAlgorithm"]'

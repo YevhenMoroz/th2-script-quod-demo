@@ -21,13 +21,13 @@ class QAP_T3450(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
 
-        self.name = "QAP6427"
+        self.name = "QAP-T3450"
         self.description = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.venue_list = ["BATS", "BATS Dark Pool", "BINANCE"]
+        self.venue_list = ["USA", "BATS Dark Pool", "BINANCE"]
 
         self.new_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.new_description = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.new_venue_list = ["COINBASE", "Dubai Financial Exchange", "Egypt Stock Exchange"]
+        self.new_venue_list = ["COINBASE", "Dubai Financial Exchange"]
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

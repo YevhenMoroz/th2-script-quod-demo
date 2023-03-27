@@ -6,8 +6,8 @@ from test_framework.environments.base_environment import BaseEnvironment
 class SshClientEnvironment(BaseEnvironment):
     environment_instances = {}
 
-    def __init__(self, environment_type: str = None, host: str = None, port: str = None, user: str = None,
-                 password: str = None, su_user: str = None, su_password: str = None):
+    def __init__(self, environment_type=None, host=None, port=None, user=None, password=None, su_user=None,
+                 su_password=None):
         self.environment_type = environment_type
         self.host = host
         self.port = port
@@ -29,7 +29,8 @@ class SshClientEnvironment(BaseEnvironment):
                     su_user=SshClientEnv.SU_USER_317.value,
                     su_password=SshClientEnv.SU_PASSWORD_317.value,
                 )
-                SshClientEnvironment.environment_instances.update({EnvironmentType.quod317_ssh_client.value: site_environment})
+                SshClientEnvironment.environment_instances.update(
+                    {EnvironmentType.quod317_ssh_client.value: site_environment})
             return SshClientEnvironment.environment_instances[EnvironmentType.quod317_ssh_client.value]
         elif env.value == EnvironmentType.quod310_ssh_client.value:
             if EnvironmentType.quod310_ssh_client.value not in SshClientEnvironment.environment_instances.keys():

@@ -1,6 +1,6 @@
 class AccountsConstants:
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"
-    ACCOUNTS_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Accounts ']"
+    ACCOUNTS_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][normalize-space()='Accounts']"
     NEW_BUTTON_XPATH = '//*[normalize-space()="Accounts"]//..//*[normalize-space()="New"]'
     MAIN_PAGE_CLEARING_ACCOUNT_TYPE ='//*[@col-id="clearingAccountType"]//*[@class="ag-group-value"]'
     MAIN_PAGE_CLIENT ='//*[@col-id="accountGroup.accountGroupName"]//*[@class="ag-group-value"]'

@@ -24,7 +24,7 @@ class QAP_T3658(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
 
-        self.user_id = 'QAP5215'
+        self.user_id = 'QAP-T3658'
         self.ext_id_client = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.email = '2@2'
 
@@ -50,6 +50,7 @@ class QAP_T3658(CommonTestCase):
             wizard.click_on_save_changes()
             time.sleep(2)
             users_page.set_user_id(self.user_id)
+            time.sleep(1)
 
     def post_conditions(self):
         assignments_tab = UsersAssignmentsSubWizard(self.web_driver_container)

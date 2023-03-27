@@ -30,19 +30,19 @@ class QAP_T3625(CommonTestCase):
                 "password": "adm03"
             },
             "test_user": {
-                "login": "adm_zone",
-                "password": "adm_zone"
+                "login": self.data_set.get_user("user_4"),
+                "password": self.data_set.get_password("password_4")
             },
             "user": {
-                "user_id": 'QAP5460',
+                "user_id": 'QAP-T3625',
                 "ext_id_client": ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6)),
                 "email": '2@2',
-                "zone": 'SOUTH-ZONE'
+                "zone": self.data_set.get_zone("zone_4")
             },
-            "desk_user": "adm_desk",
-            "inst_user": "adm_inst",
-            "location_user": "adm_loca",
-            "zone_user": "adm_zone"
+            "desk_user": self.data_set.get_user("user_3"),
+            "zone_user": self.data_set.get_user("user_4"),
+            "location_user": self.data_set.get_user("user_2"),
+            "inst_user": self.data_set.get_user("user_5")
         }
 
     def precondition(self):

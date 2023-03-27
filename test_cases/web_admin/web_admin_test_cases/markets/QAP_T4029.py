@@ -11,6 +11,11 @@ from test_framework.web_admin_core.pages.markets.listing_groups.listing_groups_d
 from test_framework.web_admin_core.pages.markets.listing_groups.listing_groups_page import ListingGroupsPage
 from test_framework.web_admin_core.pages.markets.listing_groups.listing_groups_wizard import \
     ListingGroupsWizard
+from test_framework.web_admin_core.pages.markets.subvenues.subvenues_description_sub_wizard import \
+    SubVenuesDescriptionSubWizard
+from test_framework.web_admin_core.pages.markets.subvenues.subvenues_page import SubVenuesPage
+from test_framework.web_admin_core.pages.markets.subvenues.subvenues_wizard import SubVenuesWizard
+
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
@@ -31,9 +36,20 @@ class QAP_T4029(CommonTestCase):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
-        time.sleep(2)
+        side_menu.open_subvenues_page()
+        page = SubVenuesPage(self.web_driver_container)
+        page.set_name_filter(self.data_set.get_sub_venue("sub_venue_1"))
+        time.sleep(1)
+        if not page.is_searched_subvenue_found(self.data_set.get_sub_venue("sub_venue_1")):
+            page.click_on_new()
+            description_sub_wizard = SubVenuesDescriptionSubWizard(self.web_driver_container)
+            description_sub_wizard.set_name(self.data_set.get_sub_venue("sub_venue_1"))
+            description_sub_wizard.set_venue(self.data_set.get_venue_by_name("venue_2"))
+            wizard = SubVenuesWizard(self.web_driver_container)
+            wizard.click_on_save_changes()
+            time.sleep(1)
+
         side_menu.open_listing_groups_page()
-        time.sleep(2)
         page = ListingGroupsPage(self.web_driver_container)
         wizard = ListingGroupsWizard(self.web_driver_container)
         description_sub_wizard = ListingGroupsDescriptionSubWizard(self.web_driver_container)
@@ -41,13 +57,10 @@ class QAP_T4029(CommonTestCase):
         time.sleep(1)
         description_sub_wizard.set_name(self.name)
         description_sub_wizard.set_sub_venue(self.sub_venue)
-        time.sleep(2)
         wizard.click_on_save_changes()
-        time.sleep(2)
         page.set_name(self.name)
-        time.sleep(2)
+        time.sleep(1)
         page.click_on_more_actions()
-        time.sleep(2)
         page.click_on_edit()
         time.sleep(2)
         description_sub_wizard.set_name(self.new_name)
@@ -57,9 +70,7 @@ class QAP_T4029(CommonTestCase):
             self.precondition()
             page = ListingGroupsPage(self.web_driver_container)
             wizard = ListingGroupsWizard(self.web_driver_container)
-            time.sleep(2)
             wizard.click_on_save_changes()
-            time.sleep(2)
             page.set_name(self.new_name)
             time.sleep(2)
             self.verify("Is entity edited and  saved correctly and displayed in main page", self.new_name,

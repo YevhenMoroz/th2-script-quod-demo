@@ -25,7 +25,7 @@ class TranslationTab:
             self.find_by_xpath(ListingsConstants.TRANSLATION_TAB_LISTING_DELETE_BUTTON_XPATH).click()
 
         def set_language_filter(self, value):
-            self.set_combobox_value(ListingsConstants.TRANSLATION_TAB_LISTING_LANGUAGE_FILTER_XPATH, value)
+            self.set_text_by_xpath(ListingsConstants.TRANSLATION_TAB_LISTING_LANGUAGE_FILTER_XPATH, value)
 
         def set_language(self, value):
             self.set_combobox_value(ListingsConstants.TRANSLATION_TAB_LISTING_LANGUAGE_XPATH, value)
@@ -65,7 +65,7 @@ class TranslationTab:
             self.find_by_xpath(ListingsConstants.TRANSLATION_TAB_INSTRUMENT_DELETE_BUTTON_XPATH).click()
 
         def set_language_filter(self, value):
-            self.set_combobox_value(ListingsConstants.TRANSLATION_TAB_INSTRUMENT_LANGUAGE_FILTER_XPATH, value)
+            self.set_text_by_xpath(ListingsConstants.TRANSLATION_TAB_INSTRUMENT_LANGUAGE_FILTER_XPATH, value)
 
         def set_language(self, value):
             self.set_combobox_value(ListingsConstants.TRANSLATION_TAB_INSTRUMENT_LANGUAGE_XPATH, value)

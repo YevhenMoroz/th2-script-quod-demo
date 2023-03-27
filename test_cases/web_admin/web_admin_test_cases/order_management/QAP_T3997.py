@@ -29,7 +29,7 @@ class QAP_T3997(CommonTestCase):
         self.user = "QA1"
         self.strategy_type = self.data_set.get_strategy_type("strategy_type_3")
         self.first_parameter = "AllowedAggressiveVenues"
-        self.first_venue = self.data_set.get_venue_by_name("venue_9")
+        self.first_venue = self.data_set.get_venue_by_name("venue_10")
 
         self.new_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.new_user = "QA2"
@@ -64,20 +64,14 @@ class QAP_T3997(CommonTestCase):
         aggressive_lit_block.click_on_checkmark_at_actions_sub_wizard()
         aggressive_lit_block.click_on_checkmark_button()
         aggressive_lit_block.click_on_go_back_button()
-        time.sleep(2)
         strategies_wizard.click_on_save_changes()
-        time.sleep(2)
         main_menu.set_name_at_filter_field(self.name)
-        time.sleep(2)
+        time.sleep(1)
         main_menu.click_on_more_actions()
         main_menu.click_on_edit_at_more_actions()
-        time.sleep(2)
         strategies_wizard.set_user(self.new_user)
-        time.sleep(1)
         strategies_wizard.set_name(self.new_name)
-        time.sleep(2)
         strategies_wizard.set_strategy_type(self.new_strategy_type)
-        time.sleep(2)
         strategies_wizard.click_on_general()
         general_block = ExecutionStrategiesGeneralSubWizard(self.web_driver_container)
         general_block.click_on_plus_button()

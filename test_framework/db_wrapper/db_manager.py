@@ -1,3 +1,5 @@
+import psycopg2
+
 from test_framework.db_wrapper.db_connector import DBConnector
 from test_framework.environments.data_base_environment import DataBaseEnvironment
 from test_framework.environments.full_environment import FullEnvironment
@@ -17,9 +19,14 @@ class DBManager:
     def execute_query(self, query: str = None):
         out = tuple()
         self.my_db.execute(query)
-        for value in self.my_db: out += (value, )
-        self.my_db.close()
+        for value in self.my_db: out += (value,)
         return out
+
+    def update_insert_query(self, query):
+        try:
+            self.my_db.execute(query)
+        except (Exception, psycopg2.Error) as error:
+            raise ValueError('Something go wrong {}'.format(error))
 
     def get_collection(self, collection_name):
         if self.db_type != "mongo":
@@ -58,4 +65,7 @@ class DBManager:
         self.insert_one(collection, data)
 
     def create_empty_collection(self, collection_name):
-        self.insert_one_to_mongodb_with_drop({},collection_name)
+        self.insert_one_to_mongodb_with_drop({}, collection_name)
+
+    def close_connection(self):
+        self.my_db.close()

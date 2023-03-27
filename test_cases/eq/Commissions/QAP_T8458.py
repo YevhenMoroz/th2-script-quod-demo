@@ -70,7 +70,6 @@ class QAP_T8458(TestCase):
         self.trade_entry = TradeEntryOMS(self.data_set)
         self.allocation_instruction = AllocationInstructionOMS(self.data_set)
         self.compute_booking_fee_commission_request = ComputeBookingFeesCommissionsRequestOMS(self.data_set)
-        self.allocation_instruction_message = AllocationInstructionOMS(self.data_set)
         self.confirmation_request = ConfirmationOMS(self.data_set)
         self.approve_block = ForceAllocInstructionStatusRequestOMS(self.data_set)
         self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
@@ -300,7 +299,7 @@ class QAP_T8458(TestCase):
                                   'QtyType', 'ExecBroker', 'Price', 'VenueType',
                                   'Instrument', 'NoParty', 'ExDestination', 'GrossTradeAmt',
                                   'AllocInstructionMiscBlock2',
-                                  'OrderAvgPx', 'CommissionData']
+                                  'OrderAvgPx', 'CommissionData', 'GatingRuleName', 'GatingRuleCondName']
         fix_execution_report = FixMessageExecutionReportOMS(self.data_set, params_of_execution_report_message)
         self.fix_verifier.check_fix_message_fix_standard(fix_execution_report, ignored_fields=list_of_ignored_fields)
 
@@ -341,7 +340,7 @@ class QAP_T8458(TestCase):
         # check that 35 = AK messages (part of step 8)
         list_of_ignored_fields.extend(['ConfirmType', 'MatchStatus', 'ConfirmStatus',
                                        'CpctyConfGrp', 'ConfirmID', 'ConfirmTransType', 'AllocAccount', 'AllocQty',
-                                       'OrderAvgPx'])
+                                       'OrderAvgPx', 'tag11245'])
         params_of_allocation.pop('AllocType')
         params_of_allocation.update({'ConfirmTransType': "0"})
         fix_confirmation = FixMessageConfirmationReportOMS(self.data_set, params_of_allocation)

@@ -23,7 +23,7 @@ class ClientsInstrTypesSubWizard(CommonPage):
         self.find_by_xpath(ClientsConstants.INSTR_TYPES_TAB_DELETE_BUTTON_XPATH).click()
 
     def set_instr_type(self, value):
-        self.set_combobox_value(ClientsConstants.INSTR_TYPES_TAB_INSTR_TYPE_XPATH, value)
+        self.select_value_from_dropdown_list(ClientsConstants.INSTR_TYPES_TAB_INSTR_TYPE_XPATH, value)
 
     def get_instr_type(self):
         return self.get_text_by_xpath(ClientsConstants.INSTR_TYPES_TAB_INSTR_TYPE_XPATH)
@@ -32,7 +32,7 @@ class ClientsInstrTypesSubWizard(CommonPage):
         self.set_text_by_xpath(ClientsConstants.INSTR_TYPES_TAB_INSTR_TYPE_FILTER_XPATH, value)
 
     def set_pos_keeping_mode(self, value):
-        self.set_combobox_value(ClientsConstants.INSTR_TYPES_TAB_POS_KEEPING_MODE_XPATH, value)
+        self.select_value_from_dropdown_list(ClientsConstants.INSTR_TYPES_TAB_POS_KEEPING_MODE_XPATH, value)
 
     def get_pos_keeping_mode(self):
         return self.get_text_by_xpath(ClientsConstants.INSTR_TYPES_TAB_POS_KEEPING_MODE_XPATH)

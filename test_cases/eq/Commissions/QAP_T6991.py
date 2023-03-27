@@ -54,10 +54,6 @@ class QAP_T6991(TestCase):
         self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
         self.fix_verifier = FixVerifier(self.fix_env.drop_copy, self.test_id)
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
-        self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
-        self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
-                                    self.ssh_client_env.password, self.ssh_client_env.su_user,
-                                    self.ssh_client_env.su_password)
         self.order_submit = OrderSubmitOMS(self.data_set)
         self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
@@ -80,11 +76,6 @@ class QAP_T6991(TestCase):
         self.rest_commission_sender.change_message_params(
             {'commExecScope': on_calculated_exec_scope, 'instrType': instr_type, "venueID": venue_id})
         self.rest_commission_sender.send_post_request()
-        # endregion
-        # region set up configuration on BackEnd(precondition)
-        self.ssh_client.send_command('~/quod/script/site_scripts/change_book_agent_misc_fee_type_on_N')
-        self.ssh_client.send_command("qrestart QUOD.ORS QUOD.CS QUOD.ESBUYTH2TEST")
-        time.sleep(80)
         # endregion
 
         # region create DMA  and fill it step 1
@@ -156,19 +147,21 @@ class QAP_T6991(TestCase):
             'Compare actually and expected result Execution from step 2')
 
         # verify that allocation report doesn`t have Total Fee
-        self.java_api_manager.key_is_absent(JavaApiFields.RootMiscFeesList.value,
-                                            self.java_api_manager.get_last_message(
-                                                ORSMessageType.AllocationReport.value).get_parameters()[
-                                                JavaApiFields.AllocationReportBlock.value],
-                                            f'Check that Agent fee doesn`t apply to {ORSMessageType.AllocationReport.value}')
+        fee_is_absent = not JavaApiFields.MiscFeesList.value in self.java_api_manager.get_last_message(
+            ORSMessageType.AllocationReport.value).get_parameters()[
+            JavaApiFields.AllocationReportBlock.value]
+        self.java_api_manager.compare_values({"AgentFeesIsAbsent": True},
+                                             {"AgentFeesIsAbsent": fee_is_absent},
+                                             f'Check that Agent fee does not apply to {ORSMessageType.AllocationReport.value}')
         # endregion
 
         # verify that confirmation report doesn`t have Total Fee
-        self.java_api_manager.key_is_absent(JavaApiFields.MiscFeesList.value,
-                                            self.java_api_manager.get_last_message(
-                                                ORSMessageType.ConfirmationReport.value).get_parameters()[
-                                                JavaApiFields.ConfirmationReportBlock.value],
-                                            f'Check that Agent fee doesn`t apply to {ORSMessageType.ConfirmationReport.value}')
+        fee_is_absent = not JavaApiFields.MiscFeesList.value in self.java_api_manager.get_last_message(
+            ORSMessageType.ConfirmationReport.value).get_parameters()[
+            JavaApiFields.ConfirmationReportBlock.value]
+        self.java_api_manager.compare_values({"AgentFeesIsAbsent": True},
+                                             {"AgentFeesIsAbsent": fee_is_absent},
+                                             f'Check that Agent fee does not apply to {ORSMessageType.ConfirmationReport.value}')
         # endregion
 
         # comparing statuses of Allocation Report (step 2)
@@ -210,7 +203,8 @@ class QAP_T6991(TestCase):
                                   'Side', 'AvgPx', 'SettlCurrency', 'SettlDate', 'TimeInForce',
                                   'PositionEffect', 'HandlInst', 'LeavesQty', 'CumQty',
                                   'LastPx', 'OrdType', 'SecondaryOrderID', 'OrderCapacity', 'QtyType',
-                                  'Price', 'Instrument', 'BookID', 'QuodTradeQualifier', 'NoParty', 'ExDestination']
+                                  'Price', 'Instrument', 'BookID', 'QuodTradeQualifier', 'NoParty', 'ExDestination',
+                                  'tag11245', 'GatingRuleName', 'GatingRuleCondName']
         execution_report = FixMessageExecutionReportOMS(self.data_set)
         execution_report.change_parameters({
             'ClOrdID': cl_ord_id,
@@ -236,7 +230,8 @@ class QAP_T6991(TestCase):
                                        'BookingType', 'RootSettlCurrency', 'AllocInstructionMiscBlock1',
                                        'Quantity', 'AllocTransType', 'RootSettlCurrFxRate', 'RootSettlCurrAmt',
                                        'GrossTradeAmt', 'AllocSettlCurrAmt', 'AllocSettlCurrency',
-                                       'SettlCurrAmt', 'SettlCurrFxRate', 'SettlCurrFxRateCalc', 'ReportedPx','OrderAvgPx'])
+                                       'SettlCurrAmt', 'SettlCurrFxRate', 'SettlCurrFxRateCalc', 'ReportedPx',
+                                       'OrderAvgPx'])
         allocation_report = FixMessageAllocationInstructionReportOMS()
         allocation_report.change_parameters({'NoOrders': [{'ClOrdID': cl_ord_id, 'OrderID': order_id}],
                                              'AllocType': '2'})
@@ -274,4 +269,3 @@ class QAP_T6991(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.rest_commission_sender.clear_fees()
-        self.ssh_client.close()

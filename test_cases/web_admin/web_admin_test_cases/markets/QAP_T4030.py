@@ -17,6 +17,9 @@ from test_framework.web_admin_core.pages.markets.subvenues.subvenues_description
     SubVenuesDescriptionSubWizard
 from test_framework.web_admin_core.pages.markets.subvenues.subvenues_page import SubVenuesPage
 from test_framework.web_admin_core.pages.markets.subvenues.subvenues_wizard import SubVenuesWizard
+from test_framework.web_admin_core.pages.markets.subvenues.subvenues_price_limit_profile_sub_wizard \
+    import SubVenuesPriceLimitProfilesSubWizard
+
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
@@ -38,50 +41,64 @@ class QAP_T4030(CommonTestCase):
         self.tick_size_profile = self.data_set.get_tick_size_profile("tick_size_profile_1")
         self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile_1")
 
+        self.trading_reference_price_type = 'LastTradedPrice'
+        self.price_limit_type = 'Price'
+        self.limit_price = '1'
+
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
-        time.sleep(2)
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_subvenues_page()
-        time.sleep(2)
         page = SubVenuesPage(self.web_driver_container)
-        page.click_on_new()
-        time.sleep(2)
-        description_sub_wizard = SubVenuesDescriptionSubWizard(self.web_driver_container)
-        description_sub_wizard.set_name(self.data_set.get_sub_venue("sub_venue_1"))
-        description_sub_wizard.set_venue(self.data_set.get_venue_by_name("venue_2"))
-        wizard = SubVenuesWizard(self.web_driver_container)
-        wizard.click_on_save_changes()
-        time.sleep(2)
+        page.set_name_filter(self.data_set.get_sub_venue("sub_venue_1"))
+        time.sleep(1)
+        if not page.is_searched_subvenue_found(self.data_set.get_sub_venue("sub_venue_1")):
+            page.click_on_new()
+            description_sub_wizard = SubVenuesDescriptionSubWizard(self.web_driver_container)
+            description_sub_wizard.set_name(self.data_set.get_sub_venue("sub_venue_1"))
+            description_sub_wizard.set_venue(self.data_set.get_venue_by_name("venue_2"))
+            wizard = SubVenuesWizard(self.web_driver_container)
+            wizard.click_on_save_changes()
+            time.sleep(1)
+
         side_menu.open_listing_groups_page()
-        time.sleep(2)
         page = ListingGroupsPage(self.web_driver_container)
 
         description_sub_wizard = ListingGroupsDescriptionSubWizard(self.web_driver_container)
         details_sub_wizard = ListingGroupsDetailsSubWizard(self.web_driver_container)
 
         page.click_on_new()
-        time.sleep(1)
         description_sub_wizard.set_name(self.name)
         description_sub_wizard.set_sub_venue(self.sub_venue)
         description_sub_wizard.set_ext_id_venue(self.ext_id_client)
         description_sub_wizard.click_on_news_checkbox()
-        time.sleep(1)
         details_sub_wizard.set_trading_status(self.trading_status)
         details_sub_wizard.set_trading_phase(self.trading_phase)
+        if not details_sub_wizard.is_price_limit_profile_contains_filled_value(self.price_limit_profile):
+            details_sub_wizard.click_on_manage_price_limit_profile_button()
+            price_limit_profile = SubVenuesPriceLimitProfilesSubWizard(self.web_driver_container)
+            price_limit_profile.click_on_plus_at_profiles()
+            price_limit_profile.set_external_id(self.price_limit_profile)
+            price_limit_profile.set_trading_reference_price_type(self.trading_reference_price_type)
+            price_limit_profile.set_price_limit_type(self.price_limit_type)
+            price_limit_profile.click_on_plus_at_points()
+            price_limit_profile.set_limit_price(self.limit_price)
+            price_limit_profile.click_on_checkmark_at_points()
+            price_limit_profile.click_on_checkmark_at_profiles()
+            price_limit_profile.click_on_go_back_button()
+            time.sleep(1)
         details_sub_wizard.set_price_limit_profile(self.price_limit_profile)
         details_sub_wizard.set_tick_size_profile(self.tick_size_profile)
         details_sub_wizard.set_trading_phase_profile(self.trading_phase_profile)
         time.sleep(1)
-
 
     def test_context(self):
         try:
             self.precondition()
             page = ListingGroupsPage(self.web_driver_container)
             wizard = ListingGroupsWizard(self.web_driver_container)
-            expected_pdf_values = ["test",
+            expected_pdf_values = [self.name,
                                    self.sub_venue,
                                    self.ext_id_client,
                                    self.trading_status,

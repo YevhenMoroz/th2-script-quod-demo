@@ -120,6 +120,8 @@ from test_cases.fx.fx_mm_rfq.QAP_T8642 import QAP_T8642
 from test_cases.fx.fx_mm_rfq.QAP_T8643 import QAP_T8643
 from test_cases.fx.fx_mm_rfq.QAP_T8695 import QAP_T8695
 from test_cases.fx.fx_mm_rfq.QAP_T8697 import QAP_T8697
+from test_cases.fx.fx_mm_rfq.QAP_T9361 import QAP_T9361
+from test_cases.fx.fx_mm_rfq.QAP_T9363 import QAP_T9363
 from test_cases.fx.fx_mm_rfq.interpolation import QAP_T2589
 from test_cases.fx.fx_mm_rfq.interpolation.QAP_T2444 import QAP_T2444
 from test_cases.fx.fx_mm_rfq.interpolation.QAP_T2461 import QAP_T2461

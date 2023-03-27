@@ -50,6 +50,8 @@ class QAP_T2619(TestCase):
         # endregion
         # region Step 5
         response = self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
+        self.fix_subscribe.set_md_uns_parameters_maker()
+        self.fix_manager_gtw.send_message(self.fix_subscribe, 'Unsubscribe')
         no_md_entries = response[0].get_parameter("NoMDEntries")
         md_entry_id_1 = no_md_entries[0].get("MDEntryID")
         self.fix_subscribe.set_md_req_parameters_maker(). \

@@ -112,13 +112,12 @@ class QAP_T7502(TestCase):
         change_parameters = {
             'ClOrdID': cl_ord_id
         }
-        list_of_ignored_fields = ['Account', 'ExecID', 'tag5120', 'OrderQtyData',
-                                  'LastQty', 'OrderID', 'TimeInForce', 'PositionEffect',
-                                  'HandlInst', 'CumQty', 'LastPx', 'OrdType',
-                                  'LastMkt', 'OrderCapacity', 'QtyType', 'ExecBroker',
-                                  'Price', 'VenueType', 'ExDestination', 'GrossTradeAmt',
-                                  'TransactTime', 'Side', 'AvgPx', 'QuodTradeQualifier',
-                                  'BookID', 'Currency', 'TradeDate', 'LeavesQty', 'NoParty', 'Instrument']
+        list_of_ignored_fields = ['Account', 'ExecID', 'tag5120', 'OrderQtyData', 'LastQty', 'OrderID', 'TimeInForce',
+                                  'PositionEffect','HandlInst', 'CumQty', 'LastPx', 'OrdType','LastMkt', 'NoParty',
+                                  'OrderCapacity', 'QtyType', 'ExecBroker','Price', 'VenueType', 'ExDestination',
+                                  'GrossTradeAmt', 'TransactTime', 'Side', 'AvgPx', 'QuodTradeQualifier','BookID',
+                                  'Currency', 'TradeDate', 'LeavesQty', 'Instrument',"GatingRuleCondName",
+                                  "GatingRuleName"]
         execution_report = FixMessageExecutionReportOMS(self.data_set, change_parameters)
         execution_report.change_parameters({'ExecType': 'F', "OrdStatus": "1",
                                             'LeavesQty': qty_for_trade, 'SettlDate': settl_date_check_exec_message})

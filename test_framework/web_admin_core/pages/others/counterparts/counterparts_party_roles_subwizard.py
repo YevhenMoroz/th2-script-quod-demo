@@ -8,19 +8,19 @@ class CounterpartsPartyRolesSubWizard(CommonPage):
         super().__init__(web_driver_container)
 
     def set_party_id_source_at_party_roles_tab(self, value):
-        self.set_combobox_value(CounterpartsConstants.PARTY_ID_SOURCE_AT_PARTY_ROLES_TAB_XPATH, value)
+        self.select_value_from_dropdown_list(CounterpartsConstants.PARTY_ID_SOURCE_AT_PARTY_ROLES_TAB_XPATH, value)
 
     def set_venue_counterpart_id_at_party_roles_tab(self, value):
         self.set_text_by_xpath(CounterpartsConstants.VENUE_COUNTERPART_ID_AT_PARTY_ROLES_TAB_XPATH, value)
 
     def set_party_role_at_party_roles_tab(self, value):
-        self.set_combobox_value(CounterpartsConstants.PARTY_ROLE_AT_PARTY_ROLES_TAB_XPATH, value)
+        self.select_value_from_dropdown_list(CounterpartsConstants.PARTY_ROLE_AT_PARTY_ROLES_TAB_XPATH, value)
 
     def set_ext_id_client_at_party_roles_tab(self, value):
         self.set_text_by_xpath(CounterpartsConstants.EXT_ID_CLIENT_AT_PARTY_ROLES_TAB_XPATH, value)
 
     def set_party_role_qualifier_at_party_roles_tab(self, value):
-        self.set_combobox_value(CounterpartsConstants.PARTY_ROLE_QUALIFIER_AT_PARTY_ROLES_TAB_XPATH, value)
+        self.select_value_from_dropdown_list(CounterpartsConstants.PARTY_ROLE_QUALIFIER_AT_PARTY_ROLES_TAB_XPATH, value)
 
     def set_venue_at_party_roles_tab(self, value):
         self.set_combobox_value(CounterpartsConstants.VENUE_AT_PARTY_ROLES_TAB_XPATH, value)

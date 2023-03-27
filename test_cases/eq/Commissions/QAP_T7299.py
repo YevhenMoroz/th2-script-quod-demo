@@ -66,11 +66,11 @@ class QAP_T7299(TestCase):
             JavaApiFields.OrderNotificationBlock.value)["ClOrdID"]
         # endregion
         # region step 2
-        self.trade_request.set_default_trade(order_id)
+        self.trade_request.set_default_trade(order_id, self.price, self.qty)
         self.java_api_manager.send_message_and_receive_response(self.trade_request)
         exec_reply = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
             JavaApiFields.ExecutionReportBlock.value]
-        expected_result = {"TransExecStatus": "FIL", "ExecCommission": "0.01"}
+        expected_result = {"TransExecStatus": "FIL", "ExecCommission": "1.0"}
         self.java_api_manager.compare_values(expected_result, exec_reply,
                                              "Compare TransExecStatus and ExecCommission")
         # endregion
@@ -90,8 +90,8 @@ class QAP_T7299(TestCase):
         compute_reply = self.java_api_manager.get_last_message(
             ORSMessageType.ComputeBookingFeesCommissionsReply.value).get_parameters()[
             "ComputeBookingFeesCommissionsReplyBlock"]
-        expected_result = {'RootMiscFeeBasis': 'A', 'RootMiscFeeType': 'EXC', 'RootMiscFeeRate': '0.01',
-                           'RootMiscFeeAmt': '0.01', 'RootMiscFeeCurr': 'GBP'}
+        expected_result = {'RootMiscFeeBasis': 'P', 'RootMiscFeeType': 'EXC', 'RootMiscFeeRate': '5.0',
+                           'RootMiscFeeAmt': '100.0', 'RootMiscFeeCurr': 'GBP'}
         self.java_api_manager.compare_values(expected_result,
                                              compute_reply["RootMiscFeesList"]["RootMiscFeesBlock"][0],
                                              "Compare RootMiscFees")

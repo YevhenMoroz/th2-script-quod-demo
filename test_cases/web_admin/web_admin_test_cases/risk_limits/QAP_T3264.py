@@ -22,7 +22,7 @@ class QAP_T3264(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.users_dimensions = ["Users", "Desks"]
-        self.actions = ["Select All", "De-Select All"]
+        self.look_up_pattern = ["user", "desk"]
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -41,15 +41,15 @@ class QAP_T3264(CommonTestCase):
             time.sleep(2)
             dimensions_tab = DimensionsTab(self.web_driver_container)
             dimensions_tab.set_users_dimension(self.users_dimensions[0])
-            dimensions_tab.set_user([self.actions[0]])
+            dimensions_tab.select_all_users_by_pattern([self.look_up_pattern[0]])
             time.sleep(2)
             selected_accounts = dimensions_tab.get_user().split(",")
             time.sleep(2)
             excepted_result = dimensions_tab.get_all_user_from_drop_menu()
 
-            self.verify("All Users has been selected", len(excepted_result) - 2, len(selected_accounts))
+            self.verify("All Users has been selected", len(excepted_result), len(selected_accounts))
 
-            dimensions_tab.set_user([self.actions[1]])
+            dimensions_tab.select_all_users_by_pattern()
             time.sleep(2)
             selected_accounts = dimensions_tab.get_user().split(",")
             time.sleep(2)
@@ -57,15 +57,16 @@ class QAP_T3264(CommonTestCase):
             self.verify("All Users has been deselected", True, 1 == len(selected_accounts))
 
             dimensions_tab.set_users_dimension(self.users_dimensions[1])
-            dimensions_tab.set_desks([self.actions[0]])
+            time.sleep(2)
+            dimensions_tab.select_all_desks_by_pattern([self.look_up_pattern[1]])
             time.sleep(2)
             selected_accounts = dimensions_tab.get_desks().split(",")
             time.sleep(2)
             excepted_result = dimensions_tab.get_all_desks_from_drop_menu()
 
-            self.verify("All Desks has been selected", len(excepted_result) - 2, len(selected_accounts))
+            self.verify("All Desks has been selected", len(excepted_result), len(selected_accounts))
 
-            dimensions_tab.set_desks([self.actions[1]])
+            dimensions_tab.select_all_desks_by_pattern()
             time.sleep(2)
             selected_accounts = dimensions_tab.get_desks().split(",")
             time.sleep(2)

@@ -4,7 +4,7 @@ from copy import deepcopy
 
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
-from test_framework.data_sets.message_types import ORSMessageType
+from test_framework.data_sets.message_types import ORSMessageType, PKSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
@@ -13,6 +13,7 @@ from pathlib import Path
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, ExecutionPolicyConst
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
 from test_framework.java_api_wrappers.ors_messages.UnMatchRequest import UnMatchRequest
 from test_framework.ssh_wrappers.ssh_client import SshClient
@@ -78,13 +79,12 @@ class QAP_T7369(TestCase):
         tree.write("temp.xml")
         self.ssh_client.put_file(self.remote_path, "temp.xml")
         self.ssh_client.send_command("qrestart ORS")
-        time.sleep(30)
+        time.sleep(60)
         # endregion
         # region create Care order
         response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
         parent_order_id = response[0].get_parameter("OrderID")
         client_ord_id = response[0].get_parameter("ClOrdID")
-        print(client_ord_id)
         # endregion
 
         # region Split
@@ -110,15 +110,15 @@ class QAP_T7369(TestCase):
                                                                                        })
             responses = self.java_api_manager.send_message_and_receive_response(self.child_order_submit)
             class_name.__print_message(f'Report after trade CHILD DMA ORDER', responses)
-            self.__return_result(responses, ORSMessageType.PositionReport.value)
-            exec_id = self.result.get_parameters()['PositionReportBlock']['PositionList']['PositionBlock'][0]['LastPositUpdateEventID']
+            execution_report = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value, ExecutionPolicyConst.DMA.value)
+            exec_id = execution_report.get_parameters()[JavaApiFields.ExecutionReportBlock.value][JavaApiFields.ExecID.value]
         finally:
             time.sleep(1)
             self.rule_manager.remove_rule(nos_rule)
             self.rule_manager.remove_rule(trade_rule)
 
         list_of_ignored_fields = ['SettlCurrency', 'SecondaryOrderID', 'MiscFeesGrp', 'CommissionData', 'NoMiscFees',
-                                  'PartyRoleQualifier']
+                                  'PartyRoleQualifier','GatingRuleCondName', 'GatingRuleName']
         list_of_counterparts = [
                 self.data_set.get_counterpart_id_fix('counterpart_id_gtwquod4'),
                 self.data_set.get_counterpart_id_fix('counterpart_id_market_maker_th2_route'),
