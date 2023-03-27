@@ -73,3 +73,15 @@ class TradeEntryOMS(TradeEntryRequest):
                                             'ExecRefID': exec_id,
                                             'SourceAccountID': source_account
                                         })
+
+    def set_default_cancel_house_fill(self, order_id, source_account, exec_id):
+        self.change_parameters(self.base_parameters)
+        self.update_fields_in_component('TradeEntryRequestBlock',
+                                        {
+                                            'OrdID': order_id,
+                                            'ExecPrice': '0.0',
+                                            'ExecQty': '0.0',
+                                            'ExecRefID': exec_id,
+                                            'TradeEntryTransType': 'CAN',
+                                            'SourceAccountID': source_account
+                                        })
