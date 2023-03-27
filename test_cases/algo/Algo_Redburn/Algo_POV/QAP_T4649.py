@@ -1,17 +1,15 @@
 import os
 import time
-from datetime import datetime, timedelta
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
 from test_framework.algo_formulas_manager import AlgoFormulasManager as AFM
-from test_framework.algo_mongo_manager import AlgoMongoManager as AMM
+
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets import constants
-from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, TradingPhases, Reference, OrderSide
-from test_framework.db_wrapper.db_manager import DBManager
+from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, TradingPhases, Reference
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
@@ -23,7 +21,7 @@ from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMes
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
 from test_framework.ssh_wrappers.ssh_client import SshClient
 
-# митання по ціні
+
 class QAP_T4649(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
@@ -76,16 +74,11 @@ class QAP_T4649(TestCase):
         # endregion
 
         # region Venue params
-        # self.instrument = self.data_set.get_fix_instrument_by_name("instrument_1")
-        # self.ex_destination_1 = self.data_set.get_mic_by_name("mic_1")
-        # self.client = self.data_set.get_client_by_name("client_2")
-        # self.account = self.data_set.get_account_by_name('account_2')
-        # self.listing_id = self.data_set.get_listing_id_by_name("listing_36")
-        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_38")
-        self.client = self.data_set.get_client_by_name("client_3")
-        self.account = self.data_set.get_account_by_name("account_21")
-        self.ex_destination_1 = self.data_set.get_mic_by_name("mic_47")
-        self.listing_id = self.data_set.get_listing_id_by_name("listing_58")
+        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_1")
+        self.ex_destination_1 = self.data_set.get_mic_by_name("mic_1")
+        self.client = self.data_set.get_client_by_name("client_2")
+        self.account = self.data_set.get_account_by_name('account_2')
+        self.listing_id = self.data_set.get_listing_id_by_name("listing_36")
         # endregion
 
         # Key parameters
@@ -183,21 +176,6 @@ class QAP_T4649(TestCase):
         self.fix_verifier_sell.check_fix_message(new_pov_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
 
-        # # region Check pov child
-        # self.case_id_2 = bca.create_event("pov DMA child order", self.test_id)
-        # self.fix_verifier_buy.set_case_id(self.case_id_2)
-        #
-        # self.pov_child = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()
-        # self.pov_child.change_parameters(dict(OrderQty=self.qty_child, Price=self.price_child, Account=self.account, Instrument='*', ExDestination=self.ex_destination_1, Side=self.order_side_sell))
-        # self.fix_verifier_buy.check_fix_message(self.pov_child, key_parameters=self.key_params, message_name='Buy side NewOrderSingle pov child')
-        #
-        # pending_pov_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.pov_child, self.gateway_side_buy, self.status_pending)
-        # self.fix_verifier_buy.check_fix_message(pending_pov_child_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew pov child')
-        #
-        # new_pov_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.pov_child, self.gateway_side_buy, self.status_new)
-        # self.fix_verifier_buy.check_fix_message(new_pov_child_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New pov child')
-        # # endregion
-
         # region Check Passive  child order
         self.fix_verifier_buy.set_case_id(bca.create_event("Check Passive child order", self.test_id))
 
@@ -206,7 +184,7 @@ class QAP_T4649(TestCase):
         self.fix_verifier_buy.check_fix_message(self.dma_child_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Passive Child 1')
 
         pending_dma_child_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_child_order, self.gateway_side_buy, self.status_pending)
-        self.fix_verifier_buy.check_fix_message(pending_dma_child_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew  Passive Child 1')
+        self.fix_verifier_buy.check_fix_message(pending_dma_child_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew  Passive Child')
 
         new_vwap_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_child_order, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message(new_vwap_child_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New vwap child')
@@ -215,18 +193,18 @@ class QAP_T4649(TestCase):
         # region Check IOC child order
         self.fix_verifier_buy.set_case_id(bca.create_event("IOC child order", self.test_id))
 
-        ioc_child_order_2 = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()
-        ioc_child_order_2.change_parameters(dict(Account=self.account, OrderQty=self.qty_child_aggressive, Price=self.price_child_aggressive, Instrument='*', TimeInForce=self.tif_ioc, ExDestination=self.ex_destination_1))
-        self.fix_verifier_buy.check_fix_message(ioc_child_order_2, key_parameters=self.key_params, message_name='Buy side NewOrderSingle IOC Child 2')
+        ioc_child_order = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()
+        ioc_child_order.change_parameters(dict(Account=self.account, OrderQty=self.qty_child_aggressive, Price=self.price_child_aggressive, Instrument='*', TimeInForce=self.tif_ioc, ExDestination=self.ex_destination_1))
+        self.fix_verifier_buy.check_fix_message(ioc_child_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle IOC Child')
 
-        pending_ioc_child_order_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_2, self.gateway_side_buy, self.status_pending)
-        self.fix_verifier_buy.check_fix_message(pending_ioc_child_order_2_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew  IOC Child 2')
+        pending_ioc_child_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message(pending_ioc_child_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew  IOC Child 2')
 
-        new_ioc_child_order_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_2, self.gateway_side_buy, self.status_new)
-        self.fix_verifier_buy.check_fix_message(new_ioc_child_order_2_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New  IOC Child 2')
+        new_ioc_child_order_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order, self.gateway_side_buy, self.status_new)
+        self.fix_verifier_buy.check_fix_message(new_ioc_child_order_2_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New  IOC Child')
 
-        eliminate_ioc_child_order_2 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order_2, self.gateway_side_buy, self.status_eliminate).change_parameters(dict(TimeInForce=self.tif_ioc))
-        self.fix_verifier_buy.check_fix_message(eliminate_ioc_child_order_2, self.key_params, self.ToQuod, "Buy Side ExecReport IOC Child 2")
+        eliminate_ioc_child_order_2 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order, self.gateway_side_buy, self.status_eliminate).change_parameters(dict(TimeInForce=self.tif_ioc))
+        self.fix_verifier_buy.check_fix_message(eliminate_ioc_child_order_2, self.key_params, self.ToQuod, "Buy Side ExecReport IOC Child")
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
