@@ -57,7 +57,7 @@ class QAP_T7107(TestCase):
             self.rule_manager.remove_rule(trd_rule)
 
         posit_qty = \
-        self.ja_manager.get_last_message(PKSMessageType.PositionReport.value, self.source_acc).get_parameters()[
+        self.ja_manager.get_last_message_by_multiple_filter(PKSMessageType.PositionReport.value, [self.source_acc,JavaApiFields.PositQty.value]).get_parameters()[
             JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
             JavaApiFields.PositionBlock.value][0]["PositQty"]
         # endregion

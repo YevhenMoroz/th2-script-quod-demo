@@ -72,9 +72,9 @@ class QAP_T7589(TestCase):
         # region Step 1-4
         self.cancel_transfer.set_default(trans_id)
         self.ja_manager.send_message_and_receive_response(self.cancel_transfer)
-        posit = self.ja_manager.get_last_message(PKSMessageType.PositionReport.value, "PositQty").get_parameters()[
+        posit = self.ja_manager.get_last_message_by_multiple_filter(PKSMessageType.PositionReport.value, [JavaApiFields.PositQty.value, self.source_acc]).get_parameters()[
             JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
             JavaApiFields.PositionBlock.value][0]
-        exp_posit_qty = str(float(posit_qty) - int(self.qty))
+        exp_posit_qty = str(float(posit_qty) + int(self.qty))
         self.ja_manager.compare_values({"PositQty": exp_posit_qty}, posit, "Check PositQty after cancel")
         # endregion

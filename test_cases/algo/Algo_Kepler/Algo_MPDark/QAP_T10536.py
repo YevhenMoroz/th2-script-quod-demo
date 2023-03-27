@@ -39,7 +39,7 @@ class QAP_T10536(TestCase):
         self.qty = 3000000
         self.inc_qty = 5000
         self.price = 20
-        self.delay_for_rfq = 4000 # 3450 for after # 3000 for before
+        self.delay_for_rfq = 4000
         self.algopolicy = constants.ClientAlgoPolicy.qa_mpdark_rr_2.value
         # endregion
 
@@ -223,7 +223,7 @@ class QAP_T10536(TestCase):
         self.fix_verifier_buy.check_fix_message(er_cancel_chix_delta_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel dark child DMA order on the CHIXDELTA")
         # endregion
 
-        er_cancel_mp_dark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_cancel)
+        er_cancel_mp_dark_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.MP_Dark_order_replace_params, self.gateway_side_sell, self.status_cancel)
         self.fix_verifier_sell.check_fix_message(er_cancel_mp_dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
 

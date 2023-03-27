@@ -14,11 +14,11 @@ from test_framework.fix_wrappers.algo.FixMessageMarketDataIncrementalRefreshAlgo
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
-from test_framework.data_sets import constants
 from test_framework.algo_formulas_manager import AlgoFormulasManager
+from test_framework.ssh_wrappers.ssh_client import SshClient
 
 
-class QAP_T9156(TestCase):
+class QAP_T9158(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -38,7 +38,7 @@ class QAP_T9156(TestCase):
         self.price = 25
         self.volume = 0.1
         self.md_entry_px_incr_r = 0
-        self.md_entry_size_incr_r = 0
+        self.md_entry_size_incr_r = 1000
         self.price_bid_1 = 22.005
         self.price_bid_2 = 20
         self.qty_bid = 1000
@@ -61,7 +61,7 @@ class QAP_T9156(TestCase):
         self.status_pending = Status.Pending
         self.status_new = Status.New
         self.status_fill = Status.Fill
-        self.statulisting_id_xpartial_fill = Status.PartialFill
+        self.partial_fill = Status.PartialFill
         self.status_cancel = Status.Cancel
         # endregion
 
@@ -87,10 +87,30 @@ class QAP_T9156(TestCase):
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
         # endregion
 
+        # region SSH
+        self.config_file = "client_sats.xml"
+        self.def_bpsOffs_value = "false"
+        self.def_levels_value = "5"
+        self.mod_levels_value = "2"
+        self.xpath_bpsOffs = ".//Participate/bpsOffsets"
+        self.xpath_levels = ".//Participate/levels"
+        self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
+        self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
+                                    self.ssh_client_env.password, self.ssh_client_env.su_user,
+                                    self.ssh_client_env.su_password)
+        # endregion
+
+
         self.rule_list = []
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        # region precondition: Prepare SATS configuration
+        self.ssh_client.get_and_update_file(self.config_file, {self.xpath_bpsOffs: self.def_bpsOffs_value, self.xpath_levels: self.mod_levels_value})
+        self.ssh_client.send_command("qrestart SATS")
+        time.sleep(35)
+        # endregion
+
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
         nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_xpar, self.price_bid_1)
@@ -108,6 +128,7 @@ class QAP_T9156(TestCase):
         market_data_snap_shot_xpar = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_xpar, self.fix_env1.feed_handler)
         market_data_snap_shot_xpar.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=0, MDEntrySize=0)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_xpar)
+        # endregion
 
         time.sleep(3)
 
@@ -145,7 +166,7 @@ class QAP_T9156(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA orders", self.test_id))
 
         self.dma_1_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        self.dma_1_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_xpar, OrderQty=self.child_qty, Price=self.price_bid_1, Instrument=self.instrument))
+        self.dma_1_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_xpar, OrderQty=self.child_qty, Price=self.price_bid_1, Instrument='*'))
         self.fix_verifier_buy.check_fix_message(self.dma_1_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
         er_pending_dma_1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy, self.status_pending)
@@ -156,8 +177,8 @@ class QAP_T9156(TestCase):
         # endregion
 
         # region Check that is only one child DMA order
-        self.fix_verifier_buy.set_case_id(bca.create_event("Check that is only one child DMA order", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([self.dma_1_order], [None], self.FromQuod, pre_filter=self.pre_filter)
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check that only one child DMA order generated", self.test_id))
+        self.fix_verifier_buy.check_fix_message_sequence([self.dma_1_order], [None], self.FromQuod)
         # endregion
 
         time.sleep(15)

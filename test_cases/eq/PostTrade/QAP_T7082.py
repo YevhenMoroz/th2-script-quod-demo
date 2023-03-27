@@ -102,6 +102,7 @@ class QAP_T7082(TestCase):
         # endregion
         # region allocate block
         self.confirm.set_default_allocation(alloc_id)
+        self.confirm.remove_fields_from_component("ConfirmationBlock", ["AllocAccountID"])
         self.confirm.update_fields_in_component("ConfirmationBlock", {"AllocFreeAccountID": "test1","AllocQty": alloc_qty})
         self.java_api_manager.send_message_and_receive_response(self.confirm)
         confirm_report = \

@@ -18,8 +18,6 @@ from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
 from test_framework.algo_formulas_manager import AlgoFormulasManager
 from test_framework.ssh_wrappers.ssh_client import SshClient
-from pkg_resources import resource_filename
-import xml.etree.ElementTree as ET
 
 
 class QAP_T5088(TestCase):
@@ -87,12 +85,12 @@ class QAP_T5088(TestCase):
 
         # region SSH
         self.config_file = "client_sats.xml"
+        self.def_conf_value = "false"
+        self.mod_conf_value = "true"
         self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
         self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
                                     self.ssh_client_env.password, self.ssh_client_env.su_user,
                                     self.ssh_client_env.su_password)
-        self.local_path = resource_filename("test_resources.be_configs.algo_be_configs", self.config_file)
-        self.remote_path = f"/home/{self.ssh_client_env.su_user}/quod/cfg/{self.config_file}"
         # endregion
 
         self.rule_list = []
@@ -100,12 +98,7 @@ class QAP_T5088(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region precondition: Prepare SATS configuration
-        tree = ET.parse(self.local_path)
-        sats = tree.getroot().find("sats/priority/enabled")
-        sats.text = 'true'
-        tree.write("temp.xml")
-        self.ssh_client.send_command('~/quod/script/site_scripts/change_permission_script')
-        self.ssh_client.put_file(self.remote_path, "temp.xml")
+        self.ssh_client.get_and_update_file(self.config_file, {".//priority/enabled": self.mod_conf_value})
         self.ssh_client.send_command("qrestart SATS")
         time.sleep(35)
         # endregion
@@ -239,9 +232,8 @@ class QAP_T5088(TestCase):
         # endregion
 
         # region config reset
-        self.ssh_client.put_file(self.remote_path, self.local_path)
+        self.ssh_client.get_and_update_file(self.config_file, {".//priority/enabled": self.def_conf_value})
         self.ssh_client.send_command("qrestart SATS")
-        os.remove('temp.xml')
         time.sleep(35)
         self.ssh_client.close()
         # endregion

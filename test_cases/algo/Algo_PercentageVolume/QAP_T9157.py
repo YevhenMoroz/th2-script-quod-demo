@@ -38,7 +38,7 @@ class QAP_T9157(TestCase):
         self.price = 25
         self.volume = 0.1
         self.md_entry_px_incr_r = 0
-        self.md_entry_size_incr_r = 0
+        self.md_entry_size_incr_r = 1000
         self.price_bid_1 = 22.005
         self.price_bid_2 = 20
         self.qty_bid = 1000
@@ -146,7 +146,7 @@ class QAP_T9157(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA orders", self.test_id))
 
         self.dma_1_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        self.dma_1_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_xpar, OrderQty=self.child_qty, Price=self.price_bid_1, Instrument=self.instrument))
+        self.dma_1_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_xpar, OrderQty=self.child_qty, Price=self.price_bid_1, Instrument='*'))
         self.fix_verifier_buy.check_fix_message(self.dma_1_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
         er_pending_dma_1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy, self.status_pending)
@@ -158,7 +158,7 @@ class QAP_T9157(TestCase):
 
         # region Check second child DMA order
         self.dma_2_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        self.dma_2_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_xpar, OrderQty=self.qty, Price=self.price_bid_2, Instrument=self.instrument))
+        self.dma_2_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_xpar, OrderQty=self.child_qty, Price=self.price_bid_2, Instrument='*'))
         self.fix_verifier_buy.check_fix_message(self.dma_2_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 2 order')
 
         er_pending_dma_2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_order, self.gateway_side_buy, self.status_pending)

@@ -314,6 +314,14 @@ class AlgoFixInstruments(Enum):
         SecurityType='CS'
     )
 
+    instrument_40 = dict(
+        Symbol='QUODTESTQA09',
+        SecurityID='TESTQA09',
+        SecurityIDSource='8',
+        SecurityExchange='CHIX',
+        SecurityType='CS'
+    )
+
 
 class AlgoVenues(Enum):
     venue_1 = ""
@@ -485,6 +493,8 @@ class AlgoListingId(Enum):
     listing_57 = "2025020512"       # CHIX UK for QUODTESTQA08
     listing_58 = "383"       # Brussel for BE0003680916
     listing_59 = "496"       # AGTA for XPAR @ Columbia
+    listing_60 = "2025020536"       # CHIX UK for QUODTESTQA09
+    listing_61 = "2025020537"       # BATS UK for QUODTESTQA09
 
 
 class AlgoCurrency(Enum):
@@ -518,9 +528,11 @@ class AlgoVerifierKeyParameters(Enum):
     verifier_key_parameters_ER_RFQ_with_qty = ['OrdStatus', 'ExecType', 'OrderQty', 'AlgoCst01', "OrdType", "ExDestination"]
     verifier_key_parameters_NOS_RFQ = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce', 'OrdType', 'AlgoCst01']
     verifier_key_parameters_RFQ_canceled = ['ExDestination', 'OrderQty', 'Price', 'TimeInForce', 'OrdType', 'DeliverToCompID']
+    verifier_key_parameters_RFQ_ocr = ['ExDestination', 'DeliverToCompID']
     verifier_key_parameters_with_text = ['ExDestination', 'OrdStatus', 'ExecType', 'Text']
     verifier_key_parameters_er_fill = ['OrdStatus', 'ExecType']
     verifier_key_parameters_er_replace_display_qty_parent = ['ClOrdID', 'OrdStatus', 'ExecType', 'OrderQty', 'Price', 'DisplayQty']
+    verifier_key_parameters_OCR_child = ['ExDestination', 'OrderQty']
     key_params_read_log_check_updating_status = ['OldStatus', 'NewStatus']
     key_params_read_log_check_updating_status_with_order_id = ['OrderId', 'OldStatus', 'NewStatus']
     key_params_read_log_check_cancel_child = ['OrderId', 'QtyCancelingChilds']
@@ -617,7 +629,12 @@ class AlgoPreFilter(Enum):
         'OrderId': ('*', "EQUAL")
     }
 
+    pre_filter_with_client_order_id = {
+        'ClOrdID': ('*', "EQUAL")
+    }
+
 class AlgoTradingPhaseProfile(Enum):
     trading_phase_profile1 = "PreClose Auction Phase (QA)"
     trading_phase_profile2 = "Auction Phase QA2"
     trading_phase_profile3 = "Brussel Phase"
+    trading_phase_profile4 = "Auction Phase"

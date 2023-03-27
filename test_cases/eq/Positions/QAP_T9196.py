@@ -36,7 +36,7 @@ class QAP_T9196(TestCase):
             JavaApiFields.OrdReplyBlock.value]
         last_venue_ord_id = ord_rep["LastVenueOrdID"]
         self.ja_manager.compare_values({"WashBookAccountID": self.washbook_acc}, ord_rep, "Check WashBookAccountID")
-        posit_qty = self.ja_manager.get_last_message(PKSMessageType.PositionReport.value).get_parameters()[
+        posit_qty = self.ja_manager.get_last_message_by_multiple_filter(PKSMessageType.PositionReport.value, [self.washbook_acc, JavaApiFields.PositQty.value]).get_parameters()[
             JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
             JavaApiFields.PositionBlock.value][0]["PositQty"]
         # endregion

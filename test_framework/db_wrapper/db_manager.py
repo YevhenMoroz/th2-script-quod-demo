@@ -61,4 +61,7 @@ class DBManager:
         self.insert_one(collection, data)
 
     def create_empty_collection(self, collection_name):
-        self.insert_one_to_mongodb_with_drop({},collection_name)
+        self.insert_one_to_mongodb_with_drop({}, collection_name)
+
+    def close_connection(self):
+        self.my_db.close()
