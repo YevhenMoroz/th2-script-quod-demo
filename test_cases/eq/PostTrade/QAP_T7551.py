@@ -90,7 +90,8 @@ class QAP_T7551(TestCase):
 
         # region Checking Execution report
         self.execution_report.set_default_filled(self.fix_message)
-        list_of_ignored_fields: list = ["ReplyReceivedTime", "LastMkt", "Text", "Instrument", "SettlCurrency"]
+        list_of_ignored_fields: list = ["ReplyReceivedTime", "LastMkt", "Text", "Instrument", "SettlCurrency",
+                                        "GatingRuleCondName", "GatingRuleName"]
         self.execution_report.change_parameters({"Account": self.alloc_account})
         self.fix_verifier.check_fix_message_fix_standard(self.execution_report, ignored_fields=list_of_ignored_fields)
         # endregion

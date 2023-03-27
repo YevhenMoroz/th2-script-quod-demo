@@ -61,7 +61,7 @@ class Constants:
                 UNDERLYING_LISTING_FILTER = '(//*[normalize-space()="Security Values"]//..//thead//input[@placeholder="Filter"])[3]'
                 HAIRCUT_VALUE_FILTER = '(//*[normalize-space()="Security Values"]//..//thead//input[@placeholder="Filter"])[4]'
 
-                INSTRUMENT_TYPE_FIELD = '//*[normalize-space()="Security Values"]//..//input[@id="instrType"]'
+                INSTRUMENT_TYPE_FIELD = '//*[normalize-space()="Security Values"]//..//*[@id="instrType"]'
                 INSTRUMENT_GROUP_FIELD = '//*[normalize-space()="Security Values"]//..//input[@id="instrumentGroup"]'
                 UNDERLYING_LISTING_FIELD = '//*[normalize-space()="Security Values"]//..//input[@id="account"]'
                 HAIRCUT_VALUE_FIELD = '//input[@placeholder="Haircut Value"]'
@@ -82,7 +82,7 @@ class Constants:
                 INSTRUMENT_FILTER = '(//*[normalize-space()="Risk Margin"]//..//thead//*[@placeholder="Filter"])[6]'
                 UNDERLYING_INSTRUMENT_FILTER = '(//*[normalize-space()="Risk Margin"]//..//thead//*[@placeholder="Filter"])[7]'
 
-                MARGIN_METHOD_FIELD = '//input[@id="marginMethod"]'
+                MARGIN_METHOD_FIELD = '//*[@id="marginMethod"]'
                 INITIAL_MARGIN_FIELD = '//input[@placeholder="Initial Margin *"]'
                 MAINTENANCE_MARGIN_FIELD = '//input[@placeholder="Maintenance Margin *"]'
                 INSTRUMENT_TYPE_FIELD = '//*[normalize-space()="Risk Margin"]//..//input[@id="instrType"]'

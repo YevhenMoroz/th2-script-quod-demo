@@ -47,7 +47,7 @@ class QAP_T7638(TestCase):
         bag_id = bag_reply.get_parameter("OrderBagCreationReplyBlock")["OrderBagID"]
         # endregion
         # region Step 1 2 3
-        self.wave_request.set_default(bag_id, "200", "MKT", "GTD")
+        self.wave_request.set_default(bag_id, "200", "LMT", "GTD")
         self.wave_request.update_fields_in_component('OrderBagWaveRequestBlock', {"Price": price})
         day = str((tm(datetime.utcnow().isoformat()) + timedelta(days=1)).date().strftime('%Y%m%d'))
         self.wave_request.update_fields_in_component("OrderBagWaveRequestBlock", {"ExpireDate": day})
@@ -69,7 +69,6 @@ class QAP_T7638(TestCase):
                     ord_update2 = res
 
         child_notify_exp_result = {"TimeInForce": "GTD", "LeavesQty": "100.0", "ExpireDate": day}
-        print(child_notify)
         self.java_api_manager.compare_values(child_notify_exp_result,
                                              child_notify.get_parameter("OrdNotificationBlock"),
                                              "Check 1st child order")

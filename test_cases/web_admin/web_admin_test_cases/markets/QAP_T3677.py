@@ -28,11 +28,11 @@ class QAP_T3677(CommonTestCase):
         self.es_instance = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.description = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.counterpart = "TC Counterpart"
-        self.venue = "BATS"
+        self.venue = self.data_set.get_venue_by_name("venue_10")
         self.instr_symbol = "AUD/DKK"
         self.price_multiplier = str(random.randint(1, 10))
-        self.strategy_type = "External CUSTOM1"
-        self.default_scenario = "External CUSTOM1"
+        self.strategy_type = "Dark SOR"
+        self.default_scenario = "Quod Financial Dark SOR"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

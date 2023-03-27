@@ -8,25 +8,25 @@ class ClientsPosMaintenanceSubWizard(CommonPage):
         super().__init__(web_driver_container)
 
     def set_position_maintenance(self, value):
-        self.set_combobox_value(ClientsConstants.POS_MAINTENANCE_TAB_POSITION_MAINTENANCE_XPATH, value)
+        self.select_value_from_dropdown_list(ClientsConstants.POS_MAINTENANCE_TAB_POSITION_MAINTENANCE_XPATH, value)
 
     def get_position_maintenance(self):
         return self.get_text_by_xpath(ClientsConstants.POS_MAINTENANCE_TAB_POSITION_MAINTENANCE_XPATH)
 
     def set_cash_maintenance(self, value):
-        self.set_combobox_value(ClientsConstants.POS_MAINTENANCE_TAB_CASH_MAINTENANCE_XPATH, value)
+        self.select_value_from_dropdown_list(ClientsConstants.POS_MAINTENANCE_TAB_CASH_MAINTENANCE_XPATH, value)
 
     def get_cash_maintenance(self):
         return self.get_text_by_xpath(ClientsConstants.POS_MAINTENANCE_TAB_CASH_MAINTENANCE_XPATH)
 
     def set_underl_position_maintenance(self, value):
-        self.set_combobox_value(ClientsConstants.POS_MAINTENANCE_TAB_UNDERL_POSITION_MAINTENANCE_XPATH, value)
+        self.select_value_from_dropdown_list(ClientsConstants.POS_MAINTENANCE_TAB_UNDERL_POSITION_MAINTENANCE_XPATH, value)
 
     def get_underl_position_maintenance(self):
         return self.get_text_by_xpath(ClientsConstants.POS_MAINTENANCE_TAB_UNDERL_POSITION_MAINTENANCE_XPATH)
 
     def set_posit_price_currency(self, value):
-        self.set_combobox_value(ClientsConstants.POS_MAINTENANCE_TAB_POSIT_PRICE_CURRENCY_XPATH, value)
+        self.select_value_from_dropdown_list(ClientsConstants.POS_MAINTENANCE_TAB_POSIT_PRICE_CURRENCY_XPATH, value)
 
     def get_posit_price_currency(self):
         return self.get_text_by_xpath(ClientsConstants.POS_MAINTENANCE_TAB_POSIT_PRICE_CURRENCY_XPATH)

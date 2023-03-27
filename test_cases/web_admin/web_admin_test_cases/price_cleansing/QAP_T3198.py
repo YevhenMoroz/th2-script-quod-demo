@@ -28,7 +28,7 @@ class QAP_T3198(CommonTestCase):
         self.password = self.data_set.get_password("password_1")
         self.name = 'QAP_T3198'
         self.new_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.venue = ['ASE', 'AMEX']
+        self.venue = ['COINBASE', 'BINANCE']
         self.instr_type = ['Bond', 'Certificate']
         self.listing = ['ALDAR', 'ORAp']
         self.symbol = ['AUD/BRL', 'CNH/JPY']

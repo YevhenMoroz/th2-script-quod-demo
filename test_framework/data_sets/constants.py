@@ -19,6 +19,7 @@ class Connectivity(Enum):
     Ganymede_316_Sell_Side_Redburn = 'fix-sell-side-316-gnmd-rb'
     Ganymede_316_web_admin_site = 'rest_wa316ganymede'
     Ganymede_317_ss = 'fix-sell-317-standard-test'
+    Ganymede_317_ss_42 = 'fix-sell-317-standard42'
     Ganymede_317_bs = 'fix-buy-317-standard-test'
     Ganymede_317_dc = 'fix-sell-317-backoffice'
     Ganymede_317_wa = "rest_wa317ganymede"
@@ -34,6 +35,7 @@ class Connectivity(Enum):
     Luna_314_wa = "rest_wa314luna"
     Luna_314_ja = "314_java_api"
     Luna_314_ev = "fix-buy-extern-314-stand"
+    Luna_314_ss_pks = "fix-sell-pks-314luna"
     Luna_315_web_admin = 'rest_wa315luna'
     Luna_315_web_admin_site = 'rest_wa315luna_site_admin'
     Luna_315_desktop_trading_http = 'rest_trading_desktop315luna'
@@ -44,6 +46,7 @@ class Connectivity(Enum):
     Ganymede_317_ja_user2 = '317_java_api_user2'
     Ganymede_317_als_email_report = 'log317-als-email-report'
     Ganymede_317_ors_report = "log317-ors-report"
+    Ganymede_317_Feed_Handler = 'fix-fh-317-ganymede'
     Columbia_310_Feed_Handler = 'fix-fh-310-columbia'
     Columbia_310_Sell_Side = 'fix-ss-310-columbia-standart'
     Columbia_310_Buy_Side = 'fix-bs-310-columbia'
@@ -67,11 +70,12 @@ class Connectivity(Enum):
     Kratos_309_wa = "rest_wa309kratos"
     Kratos_309_ja = "309_java_api"
     Kratos_309_ev = "fix-buy-extern-309-stand"
+    Kratos_309_ss_pks = "fix-sell-pks-309kratos"
 
 
 class FrontEnd(Enum):
     # 317 site
-    USERS_317 = [""]
+    USERS_317 = ["JavaApiUser", "JavaApiUser2"]
     PASSWORDS_317 = [""]
     FOLDER_317 = ""
     DESKS_317 = ["Desk of Order Book", "Desk of Middle Office"]
@@ -137,6 +141,7 @@ class MessageType(Enum):
     Confirmation = "Confirmation"
     AllocationInstruction = "AllocationInstruction"
     QuoteCancel = "QuoteCancel"
+    QuoteResponse = "QuoteResponse"
 
 
 class Status(Enum):
@@ -371,6 +376,7 @@ class ExecType(Enum):
 
 class WebAdminURL(Enum):
     saturn_306 = "http://10.0.22.38:3480/adm/saturn/#/auth/login"
+    test_site = ""
 
 
 class WebBrowser(Enum):
@@ -390,6 +396,7 @@ class SshClientEnv(Enum):
     PASSWORD_317 = ""
     SU_USER_317 = "quod317"
     SU_PASSWORD_317 = "quod317"
+
     HOST_310 = "10.0.22.31"
     PORT_310 = 22
     USER_310 = ""

@@ -15,5 +15,5 @@ class SystemCommandsConstants:
     VALUE_FILTER_XPATH = '//*[@class="adminCommandParamValue ng2-smart-th ng-star-inserted"]//input'
     VALUE_XPATH = '//*[@placeholder="Value *"]'
 
-    SEND_BUTTON_XPATH = '//*[text()="Send"]'
+    SEND_BUTTON_XPATH = '//button[normalize-space()="Save Changes"]'
     ERROR_XPATH = '//nb-toast[contains(@class, "danger")]'

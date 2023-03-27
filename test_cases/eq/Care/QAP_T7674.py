@@ -37,7 +37,7 @@ class QAP_T7674(TestCase):
     def run_pre_conditions_and_steps(self):
         # region send Fix Message
         response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
-        exec_report_new = response[2].get_parameters()
+        exec_report_new = response[0].get_parameters()
         # endregion
 
         # region check order has open status
@@ -63,7 +63,7 @@ class QAP_T7674(TestCase):
         # endregion
 
         # region check cancelled status
-        exec_report_cancelled = response[1].get_parameters()
+        exec_report_cancelled = response[0].get_parameters()
         self.order_book.compare_values({'ExecType': '4'},
                                        exec_report_cancelled, 'Check replaced values ')
         # endregion

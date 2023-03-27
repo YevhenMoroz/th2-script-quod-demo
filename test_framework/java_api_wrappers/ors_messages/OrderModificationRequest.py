@@ -39,3 +39,15 @@ class OrderModificationRequest(JavaApiMessage):
         }
         super().change_parameters(base_parameters)
         return self
+
+    def set_default_amend_counterparts(self, order_id, counterpart_list):
+        base_parameters = {
+            'SEND_SUBJECT': 'QUOD.ORS.FE',
+            'REPLY_SUBJECT': 'QUOD.FE.ORS',
+            'OrderModificationRequestBlock': {
+                'OrdID': order_id,
+                'CounterpartList': {'CounterpartBlock': counterpart_list}
+            }
+        }
+        super().change_parameters(base_parameters)
+        return self

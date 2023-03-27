@@ -40,18 +40,23 @@ class ExecutionStrategiesConstants:
     REVERT_CHANGES_AT_WIZARD = "//*[text()='Revert Changes']"
     CLOSE_WIZARD = '//*[@data-name="close"]'
     # --VALUES TAB--
-    NAME_AT_VALUES_TAB_XPATH = '//*[@formcontrolname="algoPolicyName"]'
-    STRATEGY_TYPE_AT_VALUES_TAB_XPATH = '//*[text()="Strategy Type *"]/preceding-sibling::input'
-    DESCRIPTION_AT_VALUES_TAB_XPATH = '//*[text()="Description"]/preceding-sibling::input'
-    USER_AT_VALUES_TAB_XPATH = '//*[text()="User"]/preceding-sibling::input'
-    CLIENT_AT_VALUES_TAB_XPATH = '//*[text()="Client"]/preceding-sibling::input'
+    NAME_AT_VALUES_TAB_XPATH = '//*[@id="algoPolicyName"]'
+    STRATEGY_TYPE_AT_VALUES_TAB_XPATH = '//*[@id="scenario"]'
+    DESCRIPTION_AT_VALUES_TAB_XPATH = '//*[@id="algoPolicyDesc"]'
+    USER_AT_VALUES_TAB_XPATH = '//*[@id="user"]'
+    CLIENT_AT_VALUES_TAB_XPATH = '//*[@id="accountGroup"]'
     SUB_VENUE_AT_VALUES_TAB_XPATH = '//*[text()="SubVenue"]/preceding-sibling::input'
-    EXT_ID_CLIENT_AT_VALUES_TAB_XPATH = '//*[text()="Ext ID Client"]/preceding-sibling::input'
-    EXT_ID_VENUE_AT_VALUES_TAB_XPATH = '//*[text()="Ext ID Venue"]/preceding-sibling::input'
-    DEFAULT_TIF_AT_VALUES_TAB_XPATH = '//*[text()="Default TIF"]/preceding-sibling::input'
-    DEFAULT_ORD_TYPE_AT_VALUES_TAB_XPATH = '//*[text()="Default Ord Type"]/preceding-sibling::input'
-    AGGRESSOR_INDICATOR_AT_VALUES_TAB_XPATH = '//*[text()="Aggressor Indicator"]/preceding-sibling::input'
+    EXT_ID_CLIENT_AT_VALUES_TAB_XPATH = '//*[@id="clientAlgoPolicyID"]'
+    EXT_ID_VENUE_AT_VALUES_TAB_XPATH = '//*[@id="venueAlgoPolicyID"]'
     PEGGED_AT_VALUES_TAB_XPATH = '//*[text()="Pegged"]/preceding-sibling::span'
+
+    ORD_TYPY_XPATH = '//*[@id="defaultOrdType"]'
+    TIF_XPATH = '//*[@id="defaultTIF"]'
+    LIMIT_PRICE_OFFSET_VALUE = '//*[@id="limitPriceOffsetValue"]'
+    LIMIT_PRICE_OFFSET_TYPE = '//*[@id="limitPriceOffsetType"]'
+    LIMIT_PRICE_REFERENCE = '//*[@id="limitPriceReference"]'
+
+    AGGRESSOR_INDICATOR_AT_VALUES_TAB_XPATH = '//*[text()="Aggressor Indicator"]/preceding-sibling::input'
 
     # --PARAMETERS TAB--
     GENERAL_AT_PARAMETERS_TAB_XPATH = '//*[@class="full-height top-parameter-region"]//*[text()="General"]'
@@ -73,13 +78,13 @@ class ExecutionStrategiesConstants:
     PARAMETER_FIELD_AT_PARAMETERS_SUB_WIZARD = "//*[@placeholder='Parameter *']"
     PARAMETER_FILTER_AT_PARAMETERS_SUB_WIZARD ='(//*[@placeholder="Filter"])[1]'
 
-    VISIBLE_CHECKBOX_AT_PARAMETERS_SUB_WIZARD = '//*[@class="ng-star-inserted"]//td[3]//*[@class="custom-checkbox"]'
+    VISIBLE_CHECKBOX_AT_PARAMETERS_SUB_WIZARD = '(//*[contains(@class, "custom-checkbox")])[1]'
     VISIBLE_FILTER_AT_PARAMETERS_SUB_WIZARD = '//*[@class="isVisible ng2-smart-th ng-star-inserted"]//input'
 
-    EDITABLE_CHECKBOX_AT_PARAMETERS_SUB_WIZARD = '//*[@class="ng-star-inserted"]//td[4]//*[@class="custom-checkbox"]'
+    EDITABLE_CHECKBOX_AT_PARAMETERS_SUB_WIZARD = '(//*[contains(@class, "custom-checkbox")])[2]'
     EDITABLE_FILTER_AT_PARAMETERS_SUB_WIZARD = '//*[@class="isEditable ng2-smart-th ng-star-inserted"]//input'
 
-    REQUIRED_CHECKBOX_AT_PARAMETERS_SUB_WIZARD = '//*[@class="ng-star-inserted"]//td[5]//*[@class="custom-checkbox"]'
+    REQUIRED_CHECKBOX_AT_PARAMETERS_SUB_WIZARD = '(//*[contains(@class, "custom-checkbox")])[3]'
     REQUIRED_FILTER_AT_PARAMETERS_SUB_WIZARD = '//*[@class="ng2-smart-th scenarioParameterRequired ng-star-inserted"]//input'
 
     VALUE_FIELD_AT_PARAMETERS_SUB_WIZARD ='//*[@formcontrolname="algoParameterValue" or @id="algoParameterValue"]'
@@ -115,6 +120,8 @@ class ExecutionStrategiesConstants:
     GO_BACK_BUTTON_AT_SUB_WIZARD = '//*[text()="Go Back"]'
 
     #Label and value at all parameters
+    ALL_NAMES_AT_DARK_BLOCK = "//*[@id='dark-parameters']//nb-list//nb-list-item//*[@class='parameter-label']"
+    ALL_VALUES_AT_DARK_BLOCK = "//*[@id='dark-parameters']//nb-list//nb-list-item//*[@class='parameter-value']"
     PARAMETER_NAME_AT_DARK_BLOCK ="//*[@id='dark-parameters']//nb-list//nb-list-item[1]//*[@class='parameter-label']"
     PARAMETER_VALUE_AT_DARK_BLOCK ="//*[@id='dark-parameters']//nb-list//nb-list-item[1]//*[@class='parameter-value']"
 

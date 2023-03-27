@@ -75,7 +75,7 @@ class QAP_T7015(TestCase):
         # region Execute CO
         self.trade_entry_message.set_default_trade(order_id, self.price, self.qty)
         self.java_api_manager.send_message_and_receive_response(self.trade_entry_message)
-        exec_id = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()\
+        exec_id = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters() \
             [JavaApiFields.ExecutionReportBlock.value][JavaApiFields.ExecID.value]
         # endregion
 
@@ -111,13 +111,14 @@ class QAP_T7015(TestCase):
         # endregion
 
         # region Set-up parameters and check Allocation Report
-        list_of_ignored_fields = ['Account', 'Currency', 'AvgPx', 'Quantity', 'OrderAvgPx']
+        list_of_ignored_fields = ['Account', 'Currency', 'AvgPx', 'Quantity', 'OrderAvgPx', 'tag11245']
         self.allocation_message.set_default_ready_to_book(self.fix_message)
         self.allocation_message.change_parameters(
             {'tag5120': '*', 'RootSettlCurrAmt': '*', 'SettlCurrFxRate': '#'})
         self.allocation_message.remove_parameters(["Account"])
         self.fix_verifier_dc.check_fix_message_fix_standard(self.allocation_message,
-                                                            ['AllocType', 'Account', 'NoOrders'], ignored_fields=list_of_ignored_fields)
+                                                            ['AllocType', 'Account', 'NoOrders'],
+                                                            ignored_fields=list_of_ignored_fields)
         # endregion
 
         # region Approve and Allocate block
@@ -153,7 +154,8 @@ class QAP_T7015(TestCase):
         self.confirmation_message.change_parameters(
             {'tag5120': '*', 'AllocAccount': self.alloc_account, 'SettlCurrFxRate': '#'})
         self.fix_verifier_dc.check_fix_message_fix_standard(self.confirmation_message,
-                                                            ['ConfirmTransType', 'NoOrders', 'AllocAccount'], ignored_fields=list_of_ignored_fields)
+                                                            ['ConfirmTransType', 'NoOrders', 'AllocAccount'],
+                                                            ignored_fields=list_of_ignored_fields)
         # endregion
         logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
 

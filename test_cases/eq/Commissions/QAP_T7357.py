@@ -62,7 +62,9 @@ class QAP_T7357(TestCase):
         self.rest_commission_sender.clear_fees()
         self.rest_commission_sender.clear_commissions()
         time.sleep(5)
-        self.rest_commission_sender.set_modify_fees_message(fee_type=self.data_set.get_misc_fee_type_by_name("agent"))
+        fee_profile = self.data_set.get_comm_profile_by_name('abs_amt')
+        self.rest_commission_sender.set_modify_fees_message(fee_type=self.data_set.get_misc_fee_type_by_name("agent"),
+                                                            comm_profile=fee_profile)
         self.rest_commission_sender.change_message_params(
             {'commExecScope': self.data_set.get_fee_exec_scope_by_name("first_exec"),
              "venueID": self.data_set.get_venue_by_name("venue_2")})
@@ -142,7 +144,9 @@ class QAP_T7357(TestCase):
         trans_exec = {JavaApiFields.TransExecStatus.value: actually_result[JavaApiFields.TransExecStatus.value]}
         expected_result = {JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_FIL.value}
         self.java_api_manager.compare_values(expected_result, trans_exec, 'Comparing result from step 3')
-        self.java_api_manager.key_is_absent(JavaApiFields.MiscFeesList.value, actually_result, 'Fee is absent')
+        fee_is_absent = not (JavaApiFields.MiscFeesList.value in actually_result)
+        self.java_api_manager.compare_values({'FeeIsAbsent': True}, {'FeeIsAbsent': fee_is_absent},
+                                             'Verifying that MiscFee doesn`t present for second execution')
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):

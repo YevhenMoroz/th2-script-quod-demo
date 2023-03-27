@@ -12,7 +12,6 @@ from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
 from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
-from test_framework.rest_api_wrappers.oms.RestApiDisableGatingRuleMessage import RestApiDisableGatingRuleMessage
 from test_framework.rest_api_wrappers.oms.RestApiModifyGatingRuleMessage import RestApiModifyGatingRuleMessage
 
 logger = logging.getLogger(__name__)
@@ -37,12 +36,10 @@ class QAP_T4684(TestCase):
         self.venue_client_names = self.data_set.get_venue_client_names_by_name("client_1_venue_1")  # XPAR_CLIENT1
         self.exec_destination = self.data_set.get_mic_by_name("mic_1")  # XPAR
         self.modify_rule_message = RestApiModifyGatingRuleMessage(self.data_set).set_default_param()
-        self.disable_rule_message = RestApiDisableGatingRuleMessage(self.data_set).set_default_param()
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        class_name = QAP_T4684
         # region Enabling GatingRule
         self.order_submit.update_fields_in_component("NewOrderSingleBlock", {"OrdQty": "20"})
         price = self.order_submit.get_parameter("NewOrderSingleBlock")["Price"]
@@ -58,8 +55,7 @@ class QAP_T4684(TestCase):
             nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(
                 self.fix_env.buy_side, self.venue_client_names, self.exec_destination, float(price)
             )
-            responses = self.java_api_manager.send_message_and_receive_response(self.order_submit)
-            class_name.print_message("CREATE", responses)
+            self.java_api_manager.send_message_and_receive_response(self.order_submit)
         except Exception as e:
             logger.info(f"Your Exception is {e}")
         finally:
@@ -72,7 +68,7 @@ class QAP_T4684(TestCase):
             "OrdReplyBlock"
         ]
         self.java_api_manager.compare_values(
-            {"GatingRuleCondName": "Cond1", "ExecType": "OPN", "OrdQty": "20.0", "Price": str(float(price))},
+            {"GatingRuleCondName": "All Orders", "ExecType": "OPN", "OrdQty": "20.0", "Price": str(float(price))},
             order_reply,
             "Check that the Gating rule is applied to the order",
         )
@@ -82,11 +78,4 @@ class QAP_T4684(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        self.rest_api_manager.send_post_request(self.disable_rule_message)
-
-    @staticmethod
-    def print_message(message, responses):
-        logger.info(message)
-        for i in responses:
-            logger.info(i)
-            logger.info(i.get_parameters())
+        self.rest_api_manager.send_post_request(self.modify_rule_message.set_default_param())

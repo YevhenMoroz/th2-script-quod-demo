@@ -6,10 +6,8 @@ import traceback
 
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
-from test_framework.web_admin_core.pages.order_management.order_management_rules.order_management_rules_conditions_sub_wizard import \
-    OrderManagementRulesConditionsSubWizard
-from test_framework.web_admin_core.pages.order_management.order_management_rules.order_management_rules_page import \
-    OrderManagementRulesPage
+from test_framework.web_admin_core.pages.order_management.order_management_rules.main_page import MainPage
+from test_framework.web_admin_core.pages.order_management.order_management_rules.wizard import *
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
@@ -23,52 +21,45 @@ class QAP_T3886(CommonTestCase):
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.condition_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.conditional_logic = " NOT IN "
-        self.exec_policy = self.data_set.get_exec_policy("exec_policy_2")
-        self.client = ["QUODAH"]
-        self.percentage = "100"
+        self.condition_criteria = 'Client'
+        self.conditional_logic = 'NOT IN'
+        self.action = 'Reject'
+        self.client = ['QUODAH', 'CLIENT1']
+        self.split = '100'
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
-        side_menu.click_on_order_management_rules_when_order_management_tab_is_open()
-        side_menu.wait_for_button_to_become_active()
-        page = OrderManagementRulesPage(self.web_driver_container)
-        conditions_sub_wizard = OrderManagementRulesConditionsSubWizard(self.web_driver_container)
-        page.click_on_new_button()
-        time.sleep(2)
-        conditions_sub_wizard.click_on_plus()
-        time.sleep(2)
-        conditions_sub_wizard.set_name(self.name)
-        time.sleep(1)
-        conditions_sub_wizard.set_qty_precision("100")
-        time.sleep(1)
-        conditions_sub_wizard.click_on_add_condition()
-        time.sleep(1)
-        conditions_sub_wizard.set_conditional_logic(self.conditional_logic)
-        time.sleep(1)
-        conditions_sub_wizard.set_right_side_list_at_conditional_logic(self.client)
-        time.sleep(1)
-        conditions_sub_wizard.click_on_plus_at_results_sub_wizard()
-        time.sleep(2)
-        conditions_sub_wizard.set_exec_policy(self.exec_policy)
-        time.sleep(2)
-        conditions_sub_wizard.set_percentage(self.percentage)
-        time.sleep(2)
-        conditions_sub_wizard.click_on_checkmark_at_results_sub_wizard()
-        time.sleep(2)
-
+        side_menu.open_order_management_rules_page()
+    
     def test_context(self):
+        main_page = MainPage(self.web_driver_container)
+        condition_tab = ConditionsTab(self.web_driver_container)
 
         try:
             self.precondition()
-            conditions_sub_wizard = OrderManagementRulesConditionsSubWizard(self.web_driver_container)
-            try:
-                conditions_sub_wizard.click_on_checkmark()
-                self.verify("Entity created correctly", True, True)
-            except Exception:
-                self.verify("Entity NOT created ", True, False)
+            
+            main_page.click_on_new_button()
+            
+            condition_tab.click_on_plus_button()
+            condition_tab.set_name(self.condition_name)
+            condition_tab.click_on_add_condition_button()
+            condition_tab.set_condition_criteria(self.condition_criteria)
+            condition_tab.set_condition_logic(self.conditional_logic)
+            condition_tab.set_condition_value(self.client)
+            condition_tab.click_on_plus_button_at_result()
+            condition_tab.set_action(self.action)
+            condition_tab.set_split(self.split)
+            condition_tab.click_on_save_checkmark_at_result()
+            condition_tab.click_on_save_checkmark()
+            time.sleep(1)
+            condition_tab.click_on_edit_button()
+
+            expected_result = self.client
+            actual_result = condition_tab.get_condition_value()
+
+            self.verify("Clients has been add", expected_result, actual_result)
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

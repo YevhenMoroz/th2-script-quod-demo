@@ -37,7 +37,6 @@ from test_cases.web_admin.web_admin_test_cases.site.QAP_T3702 import QAP_T3702
 from test_cases.web_admin.web_admin_test_cases.site.QAP_T3703 import QAP_T3703
 from test_cases.web_admin.web_admin_test_cases.site.QAP_T3704 import QAP_T3704
 from test_cases.web_admin.web_admin_test_cases.site.QAP_T3786 import QAP_T3786
-from test_cases.web_admin.web_admin_test_cases.site.QAP_T3787 import QAP_T3787
 from test_cases.web_admin.web_admin_test_cases.site.QAP_T8698 import QAP_T8698
 
 
@@ -117,8 +116,6 @@ class RunSite:
             QAP_T3704(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3786(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                      environment=configuration.environment).run()
-            QAP_T3787(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T8698(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()

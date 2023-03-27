@@ -11,7 +11,6 @@ from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.java_api_constants import JavaApiFields
 from test_framework.java_api_wrappers.oms.ors_messges.FixNewOrderSingleOMS import FixNewOrderSingleOMS
@@ -40,7 +39,7 @@ class QAP_T7162(TestCase):
         self.remote_path = f"/home/{self.ssh_client_env.su_user}/quod/cfg/client_ors.xml"
         self.fix_responses = None
         self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
-        self.expected_sec_account = self.data_set.get_account_by_name('client_pt_1_acc_1')
+        self.expected_sec_account = self.data_set.get_account_by_name('client_pt_1_acc_2')
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -64,7 +63,6 @@ class QAP_T7162(TestCase):
         self.java_api_manager.send_message_and_receive_response(self.nos_request)
         order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
             JavaApiFields.OrdReplyBlock.value]
-        print(order_reply)
         self.java_api_manager.compare_values({JavaApiFields.AllocAccountID.value: self.expected_sec_account},
                                              order_reply[JavaApiFields.PreTradeAllocationBlock.value][
                                                  JavaApiFields.PreTradeAllocationList.value][
@@ -79,10 +77,3 @@ class QAP_T7162(TestCase):
         time.sleep(80)
         os.remove("temp.xml")
         self.ssh_client.close()
-
-    def __get_fix_message(self, parameter: dict):
-        for i in range(len(self.fix_responses)):
-            for j in parameter.keys():
-                print(self.fix_responses[i].get_parameters()[j])
-                if self.fix_responses[i].get_parameters()[j] == parameter[j]:
-                    return self.fix_responses[i].get_parameters()

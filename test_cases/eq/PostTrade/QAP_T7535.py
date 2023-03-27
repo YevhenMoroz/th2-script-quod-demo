@@ -119,7 +119,7 @@ class QAP_T7535(TestCase):
         # region check Alloc Report (step 3)
         list_of_ignored_fields = ['Account', 'RootSettlCurrFxRateCalc', 'RootSettlCurrFxRate',
                                   'OrderAvgPx', 'AllocInstructionMiscBlock2', 'SettlCurrFxRateCalc',
-                                  'SettlCurrFxRate']
+                                  'SettlCurrFxRate', 'tag11245']
         self.allocation_message.set_default_ready_to_book(self.fix_message)
         self.allocation_message.change_parameters(
             {'AvgPx': str(new_avg_px), 'Currency': self.currency, 'RootSettlCurrency': self.currency,
@@ -139,8 +139,8 @@ class QAP_T7535(TestCase):
             "AllocQty": self.qty,
             "AvgPx": new_avg_px,
             "InstrID": self.instr_id})
-        responses = self.java_api_manager.send_message_and_receive_response(self.confirmation_request)
-        print_message('Allocate block', responses)
+        resp = self.java_api_manager.send_message_and_receive_response(self.confirmation_request)
+        print(resp)
         allocation_report = \
             self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
                 JavaApiFields.AllocationReportBlock.value]

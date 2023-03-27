@@ -23,7 +23,7 @@ class QAP_T3451(CommonTestCase):
 
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.description = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.venue_list = ["BATS", "BATS Dark Pool", "BINANCE"]
+        self.venue_list = ["USA", "BATS Dark Pool", "BINANCE"]
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

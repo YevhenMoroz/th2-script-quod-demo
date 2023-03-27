@@ -33,9 +33,8 @@ class QAP_T3848(CommonTestCase):
         self.mic = self.data_set.get_mic_by_name("mic_3")
         self.country = self.data_set.get_country("country_3")
         self.name_at_routing_param_groups = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.negative_routes = ["ESDEMO", "ESFIXED"]
-        self.positive_routes = [self.data_set.get_positive_route("positive_route_1"),
-                                self.data_set.get_positive_route("positive_route_2")]
+        self.negative_routes = [self.data_set.get_route("route_1"), self.data_set.get_route("route_2")]
+        self.positive_routes = [self.data_set.get_route("route_3"), self.data_set.get_route("route_4")]
         self.parameter = "All"
         self.value = "test"
 

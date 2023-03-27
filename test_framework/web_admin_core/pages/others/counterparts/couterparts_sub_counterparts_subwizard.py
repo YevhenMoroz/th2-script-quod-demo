@@ -17,7 +17,7 @@ class CounterpartsSubCounterpartsSubWizard(CommonPage):
         self.set_text_by_xpath(CounterpartsConstants.EXT_ID_CLIENT_AT_SUB_COUNTERPARTS_TAB_XPATH, ext_id_client)
 
     def set_party_sub_id_at_sub_counterparts_tab(self, value):
-        self.set_combobox_value(CounterpartsConstants.PARTY_SUB_ID_TYPE_AT_SUB_COUNTERPARTS_TAB_XPATH, value)
+        self.select_value_from_dropdown_list(CounterpartsConstants.PARTY_SUB_ID_TYPE_AT_SUB_COUNTERPARTS_TAB_XPATH, value)
 
     # --sub counterparts filters--
     def set_name_filter_at_sub_counterparts_tab(self, value):

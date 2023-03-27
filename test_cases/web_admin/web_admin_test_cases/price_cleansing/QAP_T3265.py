@@ -27,7 +27,7 @@ class QAP_T3265(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.venue = 'ASE'
+        self.venue = 'COINBASE'
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

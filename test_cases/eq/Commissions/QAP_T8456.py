@@ -297,7 +297,7 @@ class QAP_T8456(TestCase):
                                   'OrdType', 'tag5120', 'LastMkt', 'OrderCapacity',
                                   'QtyType', 'ExecBroker', 'Price', 'VenueType',
                                   'Instrument', 'NoParty', 'ExDestination', 'GrossTradeAmt',
-                                  'AllocInstructionMiscBlock2', 'CommissionData']
+                                  'AllocInstructionMiscBlock2', 'CommissionData', 'GatingRuleName', 'GatingRuleCondName']
         fix_execution_report = FixMessageExecutionReportOMS(self.data_set, params_of_execution_report_message)
         self.fix_verifier.check_fix_message_fix_standard(fix_execution_report, ignored_fields=list_of_ignored_fields)
 
@@ -309,7 +309,7 @@ class QAP_T8456(TestCase):
                                        'Quantity', 'AllocTransType', 'RootSettlCurrFxRate', 'RootSettlCurrAmt',
                                        'GrossTradeAmt', 'AllocSettlCurrAmt', 'AllocSettlCurrency',
                                        'SettlCurrAmt', 'SettlCurrFxRate', 'SettlCurrFxRateCalc', 'ReportedPx',
-                                       'OrderAvgPx'])
+                                       'OrderAvgPx', 'tag11245'])
         params_of_allocation = {'NoOrders': [{
             'ClOrdID': cl_ord_id,
             'OrderID': order_id,

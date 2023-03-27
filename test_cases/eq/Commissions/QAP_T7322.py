@@ -6,7 +6,7 @@ from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from test_framework.data_sets.message_types import ORSMessageType
+from test_framework.data_sets.message_types import ORSMessageType, PKSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
@@ -93,11 +93,9 @@ class QAP_T7322(TestCase):
         self.java_api_manager.compare_values(
             {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_TER.value},
             order_reply, "Check the first child order open sts")
-        self.__return_result(responses, ORSMessageType.PositionReport.value)
-        order_reply = self.result.get_parameter('PositionReportBlock')
-        posit_block = order_reply['PositionList']['PositionBlock'][0]
-        exec_id_1 = posit_block['LastPositUpdateEventID']
-        ignored_list_1 = ['ReplyReceivedTime', 'Currency', 'SecondaryOrderID', 'SettlType', 'CommissionData', 'LastMkt']
+        execution_report = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[JavaApiFields.ExecutionReportBlock.value]
+        exec_id_1 = execution_report[JavaApiFields.ExecID.value]
+        ignored_list_1 = ['ReplyReceivedTime', 'Currency', 'SecondaryOrderID', 'SettlType', 'CommissionData', 'LastMkt', 'GatingRuleName', 'GatingRuleCondName']
         misc_fee1 = {'NoMiscFees': [{'MiscFeeAmt': '0.5', 'MiscFeeCurr': self.cur_fee, 'MiscFeeType': '12'}]}
         self.exec_report.set_default_filled(self.fix_message)
         self.exec_report.change_parameters({'ExecID': exec_id_1, 'OrdStatus': '1', 'MiscFeesGrp': misc_fee1})
@@ -114,10 +112,8 @@ class QAP_T7322(TestCase):
         self.java_api_manager.compare_values(
             {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_TER.value},
             order_reply, "Check the second child order open sts")
-        self.__return_result(responses, ORSMessageType.PositionReport.value)
-        order_reply = self.result.get_parameter('PositionReportBlock')
-        posit_block = order_reply['PositionList']['PositionBlock'][0]
-        exec_id_2 = posit_block['LastPositUpdateEventID']
+        order_reply = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value, order_id).get_parameters()[JavaApiFields.ExecutionReportBlock.value]
+        exec_id_2 = order_reply[JavaApiFields.ExecID.value]
         misc_fee2 = {'NoMiscFees': [{'MiscFeeAmt': '0.4', 'MiscFeeCurr': self.cur_fee, 'MiscFeeType': '12'}]}
         self.exec_report.set_default_filled(self.fix_message)
         self.exec_report.change_parameters({'ExecID': exec_id_2, 'MiscFeesGrp': misc_fee2})

@@ -166,3 +166,9 @@ class CommonPage(CP):
         [{dict}, {dict}, ...]
         """
         return self.web_driver_container.get_driver().get_log('browser')
+
+    def get_user_data(self):
+        return self.find_by_xpath(CommonConstants.USER_NAME_XPATH).text
+
+    def get_site_name_from_header(self):
+        return self.find_by_xpath(CommonConstants.SITE_NAME_XPATH).text

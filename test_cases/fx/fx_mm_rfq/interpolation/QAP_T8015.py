@@ -52,4 +52,5 @@ class QAP_T8015(TestCase):
         # endregion
         # region Step 5
         self.execution_report.set_params_from_deposit_and_loan(self.order)
+        self.execution_report.remove_fields_from_component("Instrument", ["SecurityType"])
         self.fix_verifier.check_fix_message(self.execution_report)

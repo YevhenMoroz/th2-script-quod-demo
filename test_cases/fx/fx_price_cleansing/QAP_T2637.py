@@ -60,6 +60,7 @@ class QAP_T2637(TestCase):
             'MarketID': f"{self.venue}-SW"
         }]
         self.md_id_citi = f"{self.symbol}:{self.instr_type_wa}:REG:{self.venue}"
+        self.md_id_citi_123 = f"{self.symbol}:{self.instr_type_wa}:REG:{self.venue}"+"_123"
         self.md_req_id = ''
         self.md_entries = [
             {
@@ -74,7 +75,7 @@ class QAP_T2637(TestCase):
             },
             {
                 "MDEntryType": "1",
-                "MDEntryPx": round(1.18158, 5),
+                "MDEntryPx": 1.18158,
                 "MDEntrySize": 1000000,
                 "MDQuoteType": 1,
                 "MDEntryPositionNo": 1,
@@ -93,6 +94,15 @@ class QAP_T2637(TestCase):
             self.rest_manager.send_multiple_request(self.rest_message))
         time.sleep(3)
         # endregion
+
+        self.md_request.set_md_req_parameters_taker(). \
+            change_parameters({'MDReqID': self.md_id_citi_123}). \
+            update_repeating_group("NoRelatedSymbols", self.no_related_symbols)
+        self.fix_manager_marketdata_th2.send_message_and_receive_response(self.md_request, self.test_id)
+
+        self.md_request.set_md_uns_parameters_maker(). \
+            change_parameters({'MDReqID': self.md_id_citi_123})
+        self.fix_manager_marketdata_th2.send_message(self.md_request)
 
         self.fix_md.change_parameter("MDReqID", self.md_id_citi)
         self.fix_md.change_parameter("NoMDEntries", self.md_entries)

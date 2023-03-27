@@ -415,6 +415,20 @@ class FixVerifier:
                     Direction.Value(direction.value)
                 )
             )
+        elif fix_message.get_message_type() == FIXMessageType.OrderCancelReplaceRequest.value:
+            if key_parameters is None:
+                key_parameters = ['OrigClOrdID']
+            self.__verifier.submitCheckRule(
+                basic_custom_actions.create_check_rule(
+                    'Check OrderCancelReplaceRequest',
+                    basic_custom_actions.filter_to_grpc(FIXMessageType.OrderCancelReplaceRequest.value, fix_message.get_parameters(),
+                                                        key_parameters, ignored_fields),
+                    self.__checkpoint,
+                    self.__session_alias,
+                    self.__case_id,
+                    Direction.Value(direction.value)
+                )
+            )
         else:
             pass
         # TODO add exeption into else

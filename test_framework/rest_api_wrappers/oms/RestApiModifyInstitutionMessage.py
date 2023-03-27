@@ -11,17 +11,22 @@ class RestApiModifyInstitutionMessage(RestApiMessages):
         self.message_type = "ModifyInstitution"
         self.base_parameters = {
             'BIC': "QUODTESTGW3",
-            'crossCurrencySettlement': True,
-            'enableUnknownAccounts': False,
+            'crossCurrSettlHedgePos': 'true',
+            'crossCurrencySettlement': 'true',
+            'enableUnknownAccounts': 'true',
             "institutionID": 1,
             "institutionName": "QUOD FINANCIAL 1",
-            "posFlatteningTime": 1658959200000,
             "settlCurrFxHairCut": 0,
-            "settlCurrFxRateSource": "MAN"
+            "settlCurrFxRateSource": "MKT"
         }
 
     def set_default_param(self):
         self.set_params(self.base_parameters)
+        return self
 
     def modify_enable_unknown_accounts(self, value_of_modification: bool = False):
-        self.update_parameters({'enableUnknownAccounts': value_of_modification})
+        self.set_default_param()
+        if not value_of_modification:
+            self.update_parameters({'enableUnknownAccounts': 'false'})
+        else:
+            self.update_parameters({'enableUnknownAccounts': 'true'})

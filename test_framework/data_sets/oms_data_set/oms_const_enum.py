@@ -24,6 +24,12 @@ class OmsFixInstruments(Enum):
         SecurityExchange='XEUR',
         SecurityType='CS'
     )
+    instrument_4 = dict(
+        Symbol='CS-SHA-M15-2200/2600',  # MultyLeg
+        SecurityID='CS-SHA-M15-2200/2600',
+        SecurityIDSource='4',
+        SecurityExchange='TOMX'
+    )
     instrument_dummy = dict(
         Symbol='DUMMY',
         SecurityID='DUMMY',
@@ -70,6 +76,8 @@ class OmsInstrumentId(Enum):
     instrument_2 = "EuUVvUnWPiYSvXGV6IBedQ"
     instrument_3 = "JAFGYQq-9qTrmmY9kyM2TQ"
     instrument_4 = "0dzj8AKkVyG-HT4dY2lA2Q"
+    instrument_5 = "zjZwA8LXItn246hPYfpe9w"  # MultyLeg
+    instrument_6 = "HNUAw6jnU8PDj2cvSkJlYg"  # Leg instrument
 
 
 class OmsListingId(Enum):
@@ -77,6 +85,7 @@ class OmsListingId(Enum):
     listing_2 = '9500000049'
     listing_3 = "704"
     listing_4 = "2259"
+    listing_5 = "16734"  # MultyLeg
 
 
 class OmsVenues(Enum):
@@ -130,6 +139,7 @@ class OmsClients(Enum):
     client_counterpart_1 = "CLIENT_COUNTERPART"
     client_counterpart_2 = "CLIENT_COUNTERPART2"
     client_counterpart_3 = "CLIENT_COUNTERPART_3"
+    client_counterpart_4 = "CLIENT_COUNTERPART4"
     """ClientAccountGroupID"""
     client_2_ext_id = "CLIENT2ExtID"
 
@@ -158,6 +168,7 @@ class OmsVenueClientNames(Enum):
     client_pt_10_venue_1 = "MOClient10_PARIS"
     client_pos_3_venue_1 = "SBK_PARIS"
     client_pos_1_venue_1 = "36ONE_PARIS"
+    client_pos_1_venue_2 = "36ONE_EUREX"
     """Care"""
     client_co_1_venue_1 = "CLIENT_FIX_CARE_PARIS"
     client_co_2_venue_1 = "CLIENT_FIX_CARE_WB_PARIS"
@@ -169,6 +180,7 @@ class OmsVenueClientNames(Enum):
     client_counterpart_1_venue_2 = "CLIENT_COUNTERPART_EUREX"
     client_counterpart_2_venue_1 = "CLIENT_COUNTERPART2_PARIS"
     client_counterpart_3_venue_1 = "CLIENT_COUNTERPART_3_PARIS"
+    client_counterpart_4_venue_1 = "CLIENT_COUNTERPART4_PARIS"
 
 
 class OmsAccounts(Enum):
@@ -218,6 +230,7 @@ class OmsAccounts(Enum):
     client_counterpart_1_acc_3 = "CLIENT_COUNTERPART_SA3"
     client_counterpart_2_acc_1 = "CLIENT_COUNTERPART2_SA1"
     client_counterpart_3_acc_1 = "CLIENT_COUNTERPART_3_SA1"
+    client_counterpart_4_acc_1 = 'CLIENT_COUNTERPART4_SA1'
 
 
 class AlgoParametersExternal(Enum):
@@ -261,6 +274,7 @@ class OmsCounterparts(Enum):
 class OmsMic(Enum):  # Market Identifier Code
     mic_1 = "XPAR"  # EURONEXT PARIS
     mic_2 = "XEUR"  # EUREX
+    mic_3 = "TOMX"  # OMX - MultyLeg
     mic_1_blm = "XPAR_BLM"  # PARIS bloomberg code
 
 
@@ -270,6 +284,7 @@ class OmsCurrency(Enum):
     currency_3 = "GBp"
     currency_4 = "USD"
     currency_5 = "UAH"
+    currency_6 = "GBX"
 
 
 class OmsRoutes(Enum):
@@ -302,6 +317,8 @@ class OMSCommissionProfiles(Enum):
     abs_amt_gbp = 12
     perc_rounding_to_whole_number = 800020
     abs_amt_gbp_small = 800021
+    amt_plus_client = 600020
+    sixbps = 800024
 
 
 class OMSFeeType(Enum):
@@ -405,6 +422,7 @@ class OMSExecutionPolicy(Enum):
     dma = 'DMA'
     care = 'Care'
     synthetic = 'Synth'
+    execution_policy_C = ' C'
 
 
 class OMSTimeInForce(Enum):
@@ -477,6 +495,7 @@ class OMSVenueAccountNamesOfSecurityAccounts(Enum):
     venue_account_name_of_security_acc_1_eurex = "MOClient_SA1_EUREX"
     venue_account_name_of_security_acc_1_jse = "MOClient_SA1_JSE"
     venue_account_name_of_security_acc_1_paris = "MOClient_SA1_PARIS"
+    venue_account_name_of_prop_account_paris = '49403'
 
 
 class OMSVenueSecAccountNames(Enum):
@@ -516,6 +535,7 @@ class OMSClearingAccountTypes(Enum):
 
 class OMSVenueListForCommissionAndFees(Enum):
     venue_list_1 = 1
+    test_auto = 7
 
 
 class OMSISINSecurityAltIDs(Enum):
@@ -537,24 +557,29 @@ class OMSTickSizeProfile(Enum):
 class OMSCounterPartyIDs_FIX(Enum):
     counterpart_id_gtwquod4 = {'PartyRole': "36", 'PartyRoleQualifier': '1011', 'PartyID': "gtwquod4",
                                'PartyIDSource': "D"}
-    counterpart_id_market_maker_th2_route = {'PartyRole': "66", 'PartyID': "MarketMaker - TH2Route",
+    counterpart_id_market_maker_th2_route = {'PartyRole': "66", 'PartyRoleQualifier': '12',
+                                             'PartyID': "MarketMaker - TH2Route",
                                              'PartyIDSource': "C"}
     counterpart_id_investment_firm_cl_counterpart_sa1 = {'PartyRole': "5",
+                                                         'PartyRoleQualifier': '12',
                                                          'PartyID': 'InvestorID - ClCounterpart_SA1',
                                                          'PartyIDSource': "C"}
-    counterpart_id_custodian_user_2 = {'PartyRole': '28', 'PartyID': 'CustodianUser2', 'PartyRoleQualifier': '24',
+    counterpart_id_custodian_user_2 = {'PartyRole': '28', 'PartyRoleQualifier': '24', 'PartyID': 'CustodianUser2',
                                        'PartyIDSource': 'C'}
-    counterpart_id_custodian_user = {'PartyRole': '28', 'PartyID': 'CustodianUser', 'PartyRoleQualifier': '24',
+    counterpart_id_custodian_user = {'PartyRole': '28', 'PartyRoleQualifier': '12', 'PartyID': 'CustodianUser',
                                      'PartyIDSource': 'C'}
     counter_part_id_contra_firm = {'PartyRole': "17", 'PartyID': 'ContraFirm', 'PartyIDSource': "C"}
     counter_part_id_contra_firm_2 = {'PartyRole': "17", 'PartyID': 'ContraFirm2', 'PartyIDSource': "C"}
     counter_part_id_executing_firm = {'PartyRole': "1", 'PartyID': "ExecutingFirm", 'PartyIDSource': "C"}
-    counterpart_id_investment_firm_cl_counterpart = {'PartyRole': "67", 'PartyID': "InvestmentFirm - ClCounterpart",
+    counterpart_id_investment_firm_cl_counterpart = {'PartyRole': "67", 'PartyRoleQualifier': '12',
+                                                     'PartyID': "InvestmentFirm - ClCounterpart",
                                                      'PartyIDSource': "C"}
     counterpart_id_investment_firm_cl_counterpart_sa3 = {'PartyRole': "67",
+                                                         'PartyRoleQualifier': '12',
                                                          'PartyID': "InvestmentFirm - ClCounterpart_SA3",
                                                          'PartyIDSource': "C"}
     counterpart_id_regulatory_body_venue_paris = {'PartyRole': "34",
+                                                  'PartyRoleQualifier': '12',
                                                   'PartyID': "RegulatoryBody - Venue(Paris)",
                                                   'PartyIDSource': "C"}
     counterpart_id_settlement_location = {'PartyRole': '10',
@@ -566,6 +591,12 @@ class OMSCounterPartyIDs_FIX(Enum):
     counterpart_java_api_user = {'PartyRole': '36',
                                  'PartyID': "JavaApiUser",
                                  'PartyIDSource': "D"}
+    entering_firm = {
+        'PartyRole': '7',
+        'PartyRoleQualifier': '12',
+        'PartyID': 'EnteringFirm',
+        'PartyIDSource': 'C'
+    }
 
 
 class OMSCounterPartyIDs_JavaAPI(Enum):
@@ -573,7 +604,18 @@ class OMSCounterPartyIDs_JavaAPI(Enum):
     counterpart_contra_firm = {'PartyRole': 'CNF', 'CounterpartID': '200003'}
     counterpart_contra_firm_2 = {'PartyRole': 'CNF', 'CounterpartID': '1000009'}
     counterpart_give_up_broker = {'PartyRole': "GIV", 'CounterpartID': '1000007'}
+    counterpart_market_maker_th2_route = {'PartyRole': "MMA", 'CounterpartID': '200007'}
+    counterpart_custodian_user = {'PartyRole': "CUS", 'CounterpartID': '1'}
+    counterpart_investor_firm_cl_counterpart = {'PartyRole': "IVF", 'CounterpartID': '600006'}
+    counterpart_regulatory_body_venue = {'CounterpartID': '200008', 'PartyRole': 'REB'}
+    counterpart_custodian_user_2 = {'PartyRole': "CUS", 'CounterpartID': '800006'}
+    counterpart_agent = {'CounterpartID': '1400025', 'PartyRole': 'AGE'}
+    counterpart_entering_firm = {'CounterpartID': '1200012', 'PartyRole':'ENF'}
 
 
 class OMSVenueClientAccountName(Enum):
     venue_client_account_name = 'MOCLIENT_SA1'
+
+
+class OMSGatingRuleIDs(Enum):
+    main_rule_id = '2200035'

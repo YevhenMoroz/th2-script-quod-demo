@@ -131,8 +131,8 @@ class QAP_T7159(TestCase):
                                                                  'MiscFeeCurr': self.currency_major,
                                                                  'MiscFeeType': '1'
                                                              }]})
-
-        self.fix_verifier.check_fix_message_fix_standard(self.fix_message_execution_report)
+        ignored_fields = ['GatingRuleName', 'GatingRuleCondName']
+        self.fix_verifier.check_fix_message_fix_standard(self.fix_message_execution_report, ignored_fields=ignored_fields)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

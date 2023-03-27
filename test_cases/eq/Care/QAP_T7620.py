@@ -135,14 +135,13 @@ class QAP_T7620(TestCase):
                                                                                                  'ListingID': listing}]}
                                                                                          })
             self.java_api_manager.send_message_and_receive_response(self.order_submit_request)
-            order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value,
-                                                                 f"'TransStatus': '{OrderReplyConst.TransStatus_OPN.value}'").get_parameters()[
+            order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
                 JavaApiFields.OrdReplyBlock.value]
             self.java_api_manager.compare_values(
-                {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value}, order_reply,
+                {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_TER.value}, order_reply,
                 f'Checking that Child DMA order created {step[0]}')
             execution_report = \
-                self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
+                self.java_api_manager.get_first_message(ORSMessageType.ExecutionReport.value).get_parameters()[
                     JavaApiFields.ExecutionReportBlock.value]
             exec_id = execution_report[JavaApiFields.ExecID.value]
             self.java_api_manager.compare_values(

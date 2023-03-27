@@ -1,7 +1,9 @@
 from datetime import datetime
 from pathlib import Path
 from custom import basic_custom_actions as bca
+from custom.verifier import Verifier
 from stubs import Stubs
+from test_cases.fx.fx_wrapper.common_tools import check_quote_request_id, extract_freenotes
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
@@ -27,6 +29,7 @@ class QAP_T2419(TestCase):
         self.fix_manager_sel = FixManager(self.ss_rfq_connectivity, self.test_id)
         self.fix_manager_fh = FixManager(self.fh_connectivity, self.test_id)
         self.fix_verifier = FixVerifier(self.ss_rfq_connectivity, self.test_id)
+        self.verifier = Verifier(self.test_id)
         self.status = Status.Fill
         self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
         self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
@@ -159,11 +162,13 @@ class QAP_T2419(TestCase):
         self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
                                                            Currency="GBP", Instrument=self.instrument)
         self.fix_manager_sel.send_message(self.quote_request)
-
         # endregion
         # region Step 3
-        self.quote_rb.set_filter([self.qty_col, self.qty, self.inst_col, self.symbol]). \
-            check_quote_book_fields_list({self.notes_col: self.note})
+        freenotes = extract_freenotes(self.quote_request)
+        self.verifier.set_event_name("check freenotes")
+        self.verifier.compare_values("check freenotes", freenotes,
+                                     "request exceeds quantity threshold for instrument over this client tier")
+        self.verifier.verify()
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

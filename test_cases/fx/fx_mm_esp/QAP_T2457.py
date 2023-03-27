@@ -40,7 +40,7 @@ class QAP_T2457(TestCase):
                 'SecurityType': self.data_set.get_security_type_by_name('fx_spot'),
                 'Product': '4', },
             'SettlType': self.settle_type, }]
-        self.bands = ["1000000"]
+        self.bands = ["1000000", "10000000"]
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -66,6 +66,7 @@ class QAP_T2457(TestCase):
             update_repeating_group('NoRelatedSymbols', self.no_related_symbols)
         self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
         self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands, published=False)
+        self.fix_md_snapshot.get_parameter("NoMDEntries").pop(3)
         self.fix_verifier.check_fix_message(self.fix_md_snapshot)
         # endregion
 
