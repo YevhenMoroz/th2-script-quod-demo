@@ -50,3 +50,15 @@ class PreConditionForPosition:
         except Exception as e:
             logger.error(f'{e}', exc_info=True)
             self._db_manager.close_connection()
+
+    def get_common_daily_pl(self, account):
+        try:
+            today_date = datetime.strftime(datetime.now(), "%Y%m%d")
+            query = f"""SELECT SUM(dailyrealizednetpl) FROM dailyposit
+                                    WHERE accountid = '{account}'  AND clearingbusinessdate = '{today_date}';"""
+            out = self._db_manager.execute_query(query)
+            return out[0][0]
+        except Exception as e:
+            logger.error(f'{e}', exc_info=True)
+            self._db_manager.close_connection()
+
