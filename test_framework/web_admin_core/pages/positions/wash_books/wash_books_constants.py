@@ -1,5 +1,5 @@
 class WashBookConstants:
-    WASHBOOK_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Wash Books ']"
+    WASHBOOK_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][normalize-space()='Wash Books']"
 
     # region ~~~MAIN PAGE~~~
     NEW_BUTTON_XPATH = '//*[normalize-space()="Wash Books"]//..//*[text()="New"]'

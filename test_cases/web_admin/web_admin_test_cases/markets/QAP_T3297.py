@@ -69,10 +69,10 @@ class QAP_T3297(CommonTestCase):
                 translation_tab_listing.click_on_checkmark()
 
             translation_tab_instrument = TranslationTab.InstrumentTable(self.web_driver_container)
-            for i in range(len(self.listing_languages)):
+            for i in range(len(self.instrument_languages)):
                 translation_tab_instrument.click_on_plus()
-                translation_tab_instrument.set_language(self.listing_languages[i])
-                translation_tab_instrument.set_description(self.listing_description[i])
+                translation_tab_instrument.set_language(self.instrument_languages[i])
+                translation_tab_instrument.set_description(self.instrument_description[i])
                 translation_tab_instrument.click_on_checkmark()
 
             attachment_tab = ListingsAttachmentSubWizard(self.web_driver_container)
@@ -89,7 +89,7 @@ class QAP_T3297(CommonTestCase):
             saved_listing_languages = []
             saved_listing_description = []
             for i in range(len(self.listing_languages)):
-                translation_tab_listing.set_language(self.listing_languages[i])
+                translation_tab_listing.set_language_filter(self.listing_languages[i])
                 time.sleep(0.5)
                 translation_tab_listing.click_on_edit()
                 saved_listing_languages.append(translation_tab_listing.get_language())
@@ -99,18 +99,18 @@ class QAP_T3297(CommonTestCase):
             actual_result = [a+": "+b for a, b in zip(saved_listing_languages, saved_listing_description)]
             self.verify("Listing languages and description save correct", expected_result, actual_result)
 
-            expected_result = [a + ": " + b for a, b in zip(self.listing_languages, self.listing_description)]
+            expected_result = [a + ": " + b for a, b in zip(self.instrument_languages, self.instrument_description)]
             saved_instrument_languages = []
             saved_instrument_description = []
-            for i in range(len(self.listing_languages)):
-                translation_tab_instrument.set_language(self.listing_languages[i])
+            for i in range(len(self.instrument_languages)):
+                translation_tab_instrument.set_language_filter(self.instrument_languages[i])
                 time.sleep(0.5)
                 translation_tab_instrument.click_on_edit()
-                saved_instrument_languages.append(translation_tab_listing.get_language())
-                saved_instrument_description.append(translation_tab_listing.get_description())
+                saved_instrument_languages.append(translation_tab_instrument.get_language())
+                saved_instrument_description.append(translation_tab_instrument.get_description())
                 translation_tab_instrument.click_on_close()
 
-            actual_result = [a + ": " + b for a, b in zip(saved_listing_languages, saved_listing_description)]
+            actual_result = [a + ": " + b for a, b in zip(saved_instrument_languages, saved_instrument_description)]
             self.verify("Instrument languages and description save correct", expected_result, actual_result)
 
         except Exception:

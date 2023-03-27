@@ -157,14 +157,16 @@ class QAP_T2605(TestCase):
         self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
 
         self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*", "*"])
-        self.md_snapshot.remove_values_in_repeating_group_by_index("NoMDEntries", 6, (
-        "SettlType", "MDEntryPx", "MDEntryTime",
-        "MDQuoteType", "MDOriginType", "MDEntryID",
-        "MDEntrySize","QuoteEntryID", "MDEntryDate"))
-        self.md_snapshot.remove_values_in_repeating_group_by_index("NoMDEntries", 7, (
-        "SettlType", "MDEntryPx", "MDEntryTime",
-        "MDQuoteType", "MDOriginType", "MDEntryID",
-        "MDEntrySize", "QuoteEntryID", "MDEntryDate"))
+        self.md_snapshot.get_parameter("NoMDEntries").pop(7)
+        self.md_snapshot.get_parameter("NoMDEntries").pop(6)
+        # self.md_snapshot.remove_values_in_repeating_group_by_index("NoMDEntries", 6, (
+        # "SettlType", "MDEntryPx", "MDEntryTime",
+        # "MDQuoteType", "MDOriginType", "MDEntryID",
+        # "MDEntrySize","QuoteEntryID", "MDEntryDate"))
+        # self.md_snapshot.remove_values_in_repeating_group_by_index("NoMDEntries", 7, (
+        # "SettlType", "MDEntryPx", "MDEntryTime",
+        # "MDQuoteType", "MDOriginType", "MDEntryID",
+        # "MDEntrySize", "QuoteEntryID", "MDEntryDate"))
         self.fix_verifier.check_fix_message(self.md_snapshot)
         # endregion
 

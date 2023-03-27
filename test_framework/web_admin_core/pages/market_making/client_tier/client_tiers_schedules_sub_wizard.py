@@ -58,7 +58,7 @@ class ClientTiersSchedulesSubWizard(CommonPage):
         self.find_by_xpath(ClientTierConstants.CLIENT_TIER_SCHEDULES_TAB_DELETE_BUTTON_XPATH).click()
 
     def set_day(self, value):
-        self.set_combobox_value(ClientTierConstants.CLIENT_TIER_SCHEDULES_TAB_DAY_XPATH, value)
+        self.select_value_from_dropdown_list(ClientTierConstants.CLIENT_TIER_SCHEDULES_TAB_DAY_XPATH, value)
 
     def get_day(self):
         return self.get_text_by_xpath(ClientTierConstants.CLIENT_TIER_SCHEDULES_TAB_DAY_XPATH)

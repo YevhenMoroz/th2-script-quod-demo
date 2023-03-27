@@ -42,13 +42,10 @@ class QAP_T8378(TestCase):
                                                                             Account=self.client)
         response: list = self.fix_manager_sell.send_message_and_receive_response(self.quote_request)
         self.quote_cancel_receive.set_params_for_receive(self.quote_request)
-        self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0,
-                                                           Instrument=self.instrument)
-        self.fix_verifier.check_fix_message(self.quote_request)
         # endregion
 
         # region Step 2
-        self.quote_cancel.set_params_for_cancel(self.quote_request)
+        self.quote_cancel.set_params_for_cancel(self.quote_request, response[0])
         self.fix_manager_sell.send_message(self.quote_cancel)
 
         self.fix_verifier.check_fix_message(self.quote_cancel_receive)

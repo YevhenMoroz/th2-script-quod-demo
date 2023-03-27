@@ -35,7 +35,7 @@ class UsersClientSubWizard(CommonPage):
         return self.get_text_by_xpath(UsersConstants.CLIENT_AT_CLIENT_SUB_WIZARD)
 
     def set_type(self, value):
-        self.set_combobox_value(UsersConstants.TYPE_AT_CLIENT_SUB_WIZARD, value)
+        self.select_value_from_dropdown_list(UsersConstants.TYPE_AT_CLIENT_SUB_WIZARD, value)
 
     def get_type(self):
         return self.get_text_by_xpath(UsersConstants.TYPE_AT_CLIENT_SUB_WIZARD)

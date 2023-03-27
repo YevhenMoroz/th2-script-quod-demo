@@ -24,7 +24,7 @@ class QAP_T3664(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.description = "QAP5019"
+        self.description = "QAP-T3664"
         self.new_description = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.external_id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.currency = ''

@@ -28,26 +28,30 @@ class ClientGroupsValuesSubWizard(CommonPage):
         self.get_text_by_xpath(ClientGroupsConstants.VALUES_TAB_SELF_HELP_BEHAVIOR_XPATH)
 
     def set_confirmation_service(self, value):
-        self.set_combobox_value(ClientGroupsConstants.VALUES_TAB_CONFIRMATION_SERVICE_XPATH, value)
+        self.select_value_from_dropdown_list(ClientGroupsConstants.VALUES_TAB_CONFIRMATION_SERVICE_XPATH, value)
 
     def get_confirmation_service(self):
         return self.get_text_by_xpath(ClientGroupsConstants.VALUES_TAB_CONFIRMATION_SERVICE_XPATH)
 
     def get_all_confirmation_service_from_drop_menu(self):
-        self.set_text_by_xpath(ClientGroupsConstants.VALUES_TAB_CONFIRMATION_SERVICE_XPATH, "")
+        self.find_by_xpath(ClientGroupsConstants.VALUES_TAB_CONFIRMATION_SERVICE_XPATH).click()
         time.sleep(1)
-        return self.get_all_items_from_drop_down(ClientGroupsConstants.DROP_DOWN_MENU_XPATH)
+        items = self.get_all_items_from_drop_down(ClientGroupsConstants.DROP_DOWN_MENU_XPATH)
+        self.find_by_xpath(ClientGroupsConstants.VALUES_TAB_CONFIRMATION_SERVICE_XPATH).click()
+        return items
 
     def set_block_approval(self, value):
-        self.set_combobox_value(ClientGroupsConstants.VALUES_TAB_BLOCK_APPROVAL_XPATH, value)
+        self.select_value_from_dropdown_list(ClientGroupsConstants.VALUES_TAB_BLOCK_APPROVAL_XPATH, value)
 
     def get_block_approval(self):
         return self.get_text_by_xpath(ClientGroupsConstants.VALUES_TAB_BLOCK_APPROVAL_XPATH)
 
     def get_all_block_approval_from_drop_menu(self):
-        self.set_text_by_xpath(ClientGroupsConstants.VALUES_TAB_BLOCK_APPROVAL_XPATH, "")
+        self.find_by_xpath(ClientGroupsConstants.VALUES_TAB_BLOCK_APPROVAL_XPATH).click()
         time.sleep(1)
-        return self.get_all_items_from_drop_down(ClientGroupsConstants.DROP_DOWN_MENU_XPATH)
+        items = self.get_all_items_from_drop_down(ClientGroupsConstants.DROP_DOWN_MENU_XPATH)
+        self.find_by_xpath(ClientGroupsConstants.VALUES_TAB_BLOCK_APPROVAL_XPATH).click()
+        return items
 
     def set_user_manager(self, value):
         self.set_combobox_value(ClientGroupsConstants.VALUES_TAB_USER_MANAGER_XPATH, value)

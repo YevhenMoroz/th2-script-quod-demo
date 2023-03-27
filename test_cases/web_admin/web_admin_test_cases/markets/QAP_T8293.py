@@ -51,9 +51,11 @@ class QAP_T8293(CommonTestCase):
             holidays_wizard.set_date(self.holiday_day)
             holidays_wizard.click_on_checkmark_at_holiday_calendars()
             holidays_wizard.click_on_checkmark()
+            time.sleep(1)
 
             wizard = VenuesWizard(self.web_driver_container)
             wizard.click_on_go_back_button()
+            time.sleep(1)
             profiles_tab.set_holiday(self.holiday_name)
             self.verify("Newly Holidays select", self.holiday_name, profiles_tab.get_holiday())
 
@@ -62,6 +64,7 @@ class QAP_T8293(CommonTestCase):
             time.sleep(1)
             holidays_wizard.click_on_delete()
             wizard.click_on_ok_button()
+            time.sleep(1)
             self.verify('Holiday not displaying after delete', False,
                         holidays_wizard.is_holiday_found(self.holiday_name))
 

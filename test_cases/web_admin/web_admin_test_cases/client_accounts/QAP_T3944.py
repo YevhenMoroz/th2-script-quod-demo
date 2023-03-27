@@ -22,7 +22,7 @@ class QAP_T3944(CommonTestCase):
         self.password = self.data_set.get_password("password_1")
         self.route_account_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.route = self.data_set.get_route("route_2")
-        self.client = "test"
+        self.client = "ACABankFirm"
         self.clear_client = "Not found"
         self.test_client = ''
         self.clearing_type = [

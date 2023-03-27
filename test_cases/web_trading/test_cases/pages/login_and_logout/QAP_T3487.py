@@ -21,7 +21,7 @@ class QAP_T3487(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
-        self.login = self.data_set.get_user("user_5")
+        self.login = self.data_set.get_user("user_12")
         self.password = self.data_set.get_password("password_5")
         self.password_for_reset = str
         self.new_password = '!new1234' + ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))

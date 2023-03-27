@@ -20,7 +20,7 @@ class QAP_T3693(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.user = "adm_zone"
+        self.user = self.data_set.get_user("user_4")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

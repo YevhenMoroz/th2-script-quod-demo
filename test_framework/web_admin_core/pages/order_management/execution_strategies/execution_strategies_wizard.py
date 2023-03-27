@@ -66,17 +66,17 @@ class ExecutionStrategiesWizard(CommonPage):
     def get_aggressor_indicator(self):
         return self.get_text_by_xpath(ExecutionStrategiesConstants.AGGRESSOR_INDICATOR_AT_VALUES_TAB_XPATH)
 
-    def set_default_tif(self, value):
-        self.set_combobox_value(ExecutionStrategiesConstants.DEFAULT_TIF_AT_VALUES_TAB_XPATH, value)
+    def set_tif(self, value):
+        self.select_value_from_dropdown_list(ExecutionStrategiesConstants.TIF_XPATH, value)
 
-    def get_default_tif(self):
-        return self.get_text_by_xpath(ExecutionStrategiesConstants.DEFAULT_TIF_AT_VALUES_TAB_XPATH)
+    def get_tif(self):
+        return self.get_text_by_xpath(ExecutionStrategiesConstants.TIF_XPATH)
 
-    def set_default_ord_type(self, value):
-        self.set_combobox_value(ExecutionStrategiesConstants.DEFAULT_ORD_TYPE_AT_VALUES_TAB_XPATH, value)
+    def set_ord_type(self, value):
+        self.select_value_from_dropdown_list(ExecutionStrategiesConstants.ORD_TYPY_XPATH, value)
 
-    def get_default_ord_type(self):
-        return self.get_text_by_xpath(ExecutionStrategiesConstants.DEFAULT_ORD_TYPE_AT_VALUES_TAB_XPATH)
+    def get_ord_type(self):
+        return self.get_text_by_xpath(ExecutionStrategiesConstants.ORD_TYPY_XPATH)
 
     def set_on_pegged(self):
         self.find_by_xpath(ExecutionStrategiesConstants.PEGGED_AT_VALUES_TAB_XPATH).click()
@@ -119,6 +119,12 @@ class ExecutionStrategiesWizard(CommonPage):
 
     def get_parameter_value_at_dark_block(self):
         return self.find_by_xpath(ExecutionStrategiesConstants.PARAMETER_VALUE_AT_DARK_BLOCK).text
+
+    def get_all_parameters_names_from_dark_block(self):
+        return self.get_all_items_from_table_column(ExecutionStrategiesConstants.ALL_NAMES_AT_DARK_BLOCK)
+
+    def get_all_parameters_values_from_dark_block(self):
+        return self.get_all_items_from_table_column(ExecutionStrategiesConstants.ALL_VALUES_AT_DARK_BLOCK)
 
     def get_parameter_name_at_lit_general_block(self):
         return self.find_by_xpath(ExecutionStrategiesConstants.PARAMETER_NAME_AT_LIT_GENERAL_BLOCK).text

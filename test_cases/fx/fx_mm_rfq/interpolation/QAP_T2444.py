@@ -45,6 +45,8 @@ class QAP_T2444(TestCase):
                                            settle_date=self.settle_date_today)
         self.quote_request.update_far_leg(leg_symbol=self.gbp_usd, settle_type=self.settle_type_tom,
                                           settle_date=self.settle_date_tom)
+        self.quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][0].pop('LegSide')
+        self.quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][1].pop('LegSide')
         response: list = self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
         # region Calculations
         near_bid_pts = response[0].get_parameter("NoLegs")[0]["LegBidForwardPoints"]
@@ -54,11 +56,9 @@ class QAP_T2444(TestCase):
         expected_bid_swap = str(round(Decimal.from_float(float(far_offer_pts) - float(near_offer_pts)), 6))
         expected_offer_swap = str(round(Decimal.from_float(float(far_bid_pts) - float(near_bid_pts)), 6))
         # endregion
-        # endregion
 
         # region Step 2
-        self.fix_verifier.check_fix_message(fix_message=self.quote_request)
-        self.quote.set_params_for_quote_swap(self.quote_request)
+        self.quote.set_params_for_quote_swap_no_side(self.quote_request)
         self.quote.change_parameters({"BidSwapPoints": expected_bid_swap, "OfferSwapPoints": expected_offer_swap})
         self.fix_verifier.check_fix_message(fix_message=self.quote)
         # endregion

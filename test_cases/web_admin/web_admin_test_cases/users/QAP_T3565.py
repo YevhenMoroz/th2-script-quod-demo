@@ -10,6 +10,7 @@ from test_framework.web_admin_core.pages.general.common.common_page import Commo
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.users.users.users_values_sub_wizard import UsersValuesSubWizard
+from test_framework.web_admin_core.pages.users.users.users_user_details_sub_wizard import UsersUserDetailsSubWizard
 from test_framework.web_admin_core.pages.users.users.users_page import UsersPage
 from test_framework.web_admin_core.pages.users.users.users_wizard import UsersWizard
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -23,10 +24,11 @@ class QAP_T3565(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.user_id = self.data_set.get_user("user_4")
+        self.user_id = 'QAP-T3565'
         self.new_password = 'Qwe!'.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.current_password = ""
-        self.path_to_file = f'{ROOT_DIR}\\test_framework\\web_admin_core\\resourses\\password_for_QAP_5842.txt'
+        self.email = '2@2'
+        self.path_to_file = f'{ROOT_DIR}\\test_framework\\web_admin_core\\resourses\\password_for_QAP_T3565.txt'
 
     def read_password_from_file(self):
         try:
@@ -57,17 +59,34 @@ class QAP_T3565(CommonTestCase):
         time.sleep(2)
         users_page.set_user_id(self.user_id)
         time.sleep(2)
-        users_page.click_on_more_actions()
-        time.sleep(1)
-        users_page.click_on_edit_at_more_actions()
-        time.sleep(2)
-        users_login_sub_wizard = UsersValuesSubWizard(self.web_driver_container)
-        if not users_login_sub_wizard.is_first_time_login_checkbox_selected():
-            time.sleep(1)
-            users_login_sub_wizard.set_first_time_login_checkbox()
-        time.sleep(1)
+        values_tab = UsersValuesSubWizard(self.web_driver_container)
+        details_tab = UsersUserDetailsSubWizard(self.web_driver_container)
         users_wizard = UsersWizard(self.web_driver_container)
-        users_wizard.click_on_save_changes()
+
+        if not users_page.is_searched_user_found(self.user_id):
+            users_page.click_on_new_button()
+            values_tab.set_user_id(self.user_id)
+            values_tab.set_ext_id_client(self.user_id)
+            details_tab.set_mail(self.email)
+            users_wizard.click_on_save_changes()
+            users_page.set_user_id(self.user_id)
+            time.sleep(1)
+            users_page.click_on_more_actions()
+            users_page.click_on_edit_at_more_actions()
+            values_tab.click_on_change_password()
+            self.read_password_from_file()
+            values_tab.set_new_password(self.current_password)
+            values_tab.set_confirm_new_password(self.current_password)
+            values_tab.click_on_change_password()
+            values_tab.set_first_time_login_checkbox()
+            users_wizard.click_on_save_changes()
+        else:
+            users_page.click_on_more_actions()
+            users_page.click_on_edit_at_more_actions()
+            if not values_tab.is_first_time_login_checkbox_selected():
+                values_tab.set_first_time_login_checkbox()
+            users_wizard.click_on_save_changes()
+
         time.sleep(2)
         common_page = CommonPage(self.web_driver_container)
         common_page.click_on_info_error_message_pop_up()

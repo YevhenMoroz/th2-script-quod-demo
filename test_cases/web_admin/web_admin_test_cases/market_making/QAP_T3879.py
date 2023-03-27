@@ -52,7 +52,7 @@ class QAP_T3879(CommonTestCase):
         self.client_tiers_instrument = {"symbol": "EUR/USD",
                                         "tod_end_time": "01:00:00",
                                         "external_client": "CLIENT1",
-                                        "internal_client": "DEMO100"}
+                                        "internal_client": "HouseFill"}
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

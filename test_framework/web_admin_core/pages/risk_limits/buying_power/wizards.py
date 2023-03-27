@@ -112,7 +112,7 @@ class SecurityValuesTab(CommonPage):
         self.set_text_by_xpath(Constants.Wizard.SecurityValuesTab.Table.HAIRCUT_VALUE_FILTER, value)
 
     def set_instrument_type(self, value):
-        self.set_combobox_value(Constants.Wizard.SecurityValuesTab.Table.INSTRUMENT_TYPE_FIELD, value)
+        self.select_value_from_dropdown_list(Constants.Wizard.SecurityValuesTab.Table.INSTRUMENT_TYPE_FIELD, value)
 
     def get_instrument_type(self):
         return self.get_text_by_xpath(Constants.Wizard.SecurityValuesTab.Table.INSTRUMENT_TYPE_FIELD)
@@ -175,7 +175,7 @@ class RiskMarginTab(CommonPage):
         self.set_text_by_xpath(Constants.Wizard.RiskMarginTab.Table.UNDERLYING_INSTRUMENT_FILTER, value)
 
     def set_margin_method(self, value):
-        self.set_combobox_value(Constants.Wizard.RiskMarginTab.Table.MARGIN_METHOD_FIELD, value)
+        self.select_value_from_dropdown_list(Constants.Wizard.RiskMarginTab.Table.MARGIN_METHOD_FIELD, value)
 
     def get_margin_method(self):
         return self.get_text_by_xpath(Constants.Wizard.RiskMarginTab.Table.MARGIN_METHOD_FIELD)

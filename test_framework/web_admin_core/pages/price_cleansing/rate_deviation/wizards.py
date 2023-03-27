@@ -55,13 +55,13 @@ class ValuesTab(CommonPage):
         return self.is_checkbox_selected(Constants.Wizard.ValuesTab.REMOVE_DETECTED_PRICE_UPDATES_CHECKBOX)
 
     def set_reference_venues(self, value):
-        self.set_checkbox_list(Constants.Wizard.ValuesTab.REFERENCE_VENUES_BUTTON, value)
+        self.set_multiselect_field_value(Constants.Wizard.ValuesTab.REFERENCE_VENUES, value)
 
     def get_reference_venues(self):
-        return self.get_text_by_xpath(Constants.Wizard.ValuesTab.REFERENCE_VENUES_FIELD)
+        return self.get_text_by_xpath(Constants.Wizard.ValuesTab.REFERENCE_VENUES)
 
     def get_all_reference_venues_from_drop_menu(self):
-        self.find_by_xpath(Constants.Wizard.ValuesTab.REFERENCE_VENUES_BUTTON).click()
+        self.find_by_xpath(Constants.Wizard.ValuesTab.REFERENCE_VENUES).click()
         time.sleep(1)
         return self.get_all_items_from_drop_down(Constants.Wizard.ValuesTab.REFERENCE_VENUES_NAME_IN_DROP_DOWN)
 
