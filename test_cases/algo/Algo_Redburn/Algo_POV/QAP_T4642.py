@@ -5,7 +5,6 @@ from pathlib import Path
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
 from test_framework.algo_formulas_manager import AlgoFormulasManager as AFM
-
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets import constants
@@ -22,7 +21,7 @@ from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApi
 from test_framework.ssh_wrappers.ssh_client import SshClient
 
 
-class QAP_T4649(TestCase):
+class QAP_T4642(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -55,6 +54,7 @@ class QAP_T4649(TestCase):
 
         self.last_trade_price = 30
         self.last_trade_qty = 100
+        self.day_lowest = 25
         # endregion
 
         # order params
@@ -68,9 +68,9 @@ class QAP_T4649(TestCase):
 
         # region Algo params
         self.passive_reference_price = Reference.Market.value
-        self.passive_offset = -1
-        self.limit_price_reference = Reference.Market.value
-        self.limit_price_offset = -100
+        self.passive_offset = 0
+        self.limit_price_reference = Reference.DayHight.value
+        self.limit_price_offset = -1100
         # endregion
 
         # region Venue params
@@ -153,6 +153,12 @@ class QAP_T4649(TestCase):
         self.fix_manager_feed_handler.send_message(fix_message=self.incremental_refresh)
         # endregion
 
+        # region send lowPX
+        self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send trading phase", self.test_id))
+        self.incremental_refresh = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_low_px().update_MDReqID(self.listing_id, self.fix_env1.feed_handler).update_value_in_repeating_group('NoMDEntriesIR', 'MDEntryPx', self.day_lowest)
+        self.fix_manager_feed_handler.send_message(fix_message=self.incremental_refresh)
+        # endregion
+
         # region Send NewOrderSingle (35=D)
         self.case_id_1 = bca.create_event("Create Algo Order", self.test_id)
         self.fix_verifier_sell.set_case_id(self.case_id_1)
@@ -187,7 +193,7 @@ class QAP_T4649(TestCase):
         self.fix_verifier_buy.check_fix_message(pending_dma_child_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew  Passive Child')
 
         new_vwap_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_child_order, self.gateway_side_buy, self.status_new)
-        self.fix_verifier_buy.check_fix_message(new_vwap_child_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New vwap child')
+        self.fix_verifier_buy.check_fix_message(new_vwap_child_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New pov child')
         # endregion
 
         # region Check IOC child order
@@ -203,8 +209,8 @@ class QAP_T4649(TestCase):
         new_ioc_child_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message(new_ioc_child_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New  IOC Child')
 
-        eliminate_ioc_child_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order, self.gateway_side_buy, self.status_eliminate).change_parameters(dict(TimeInForce=self.tif_ioc))
-        self.fix_verifier_buy.check_fix_message(eliminate_ioc_child_order, self.key_params, self.ToQuod, "Buy Side ExecReport IOC Child")
+        eliminate_ioc_child_order_2 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order, self.gateway_side_buy, self.status_eliminate).change_parameters(dict(TimeInForce=self.tif_ioc))
+        self.fix_verifier_buy.check_fix_message(eliminate_ioc_child_order_2, self.key_params, self.ToQuod, "Buy Side ExecReport IOC Child")
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

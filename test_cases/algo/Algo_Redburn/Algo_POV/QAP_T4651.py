@@ -180,10 +180,10 @@ class QAP_T4651(TestCase):
 
         self.dma_child_order = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()
         self.dma_child_order.change_parameters(dict(Account=self.account, OrderQty=self.qty_child_passive, Price=self.price_child_passive, Instrument='*', ExDestination=self.ex_destination_1))
-        self.fix_verifier_buy.check_fix_message(self.dma_child_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Passive Child 1')
+        self.fix_verifier_buy.check_fix_message(self.dma_child_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Passive Child')
 
         pending_dma_child_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_child_order, self.gateway_side_buy, self.status_pending)
-        self.fix_verifier_buy.check_fix_message(pending_dma_child_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew  Passive Child 1')
+        self.fix_verifier_buy.check_fix_message(pending_dma_child_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew  Passive Child')
 
         new_pov_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_child_order, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message(new_pov_child_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New vwap child')
@@ -197,7 +197,7 @@ class QAP_T4651(TestCase):
         self.fix_verifier_buy.check_fix_message(ioc_child_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle IOC Child')
 
         pending_ioc_child_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order, self.gateway_side_buy, self.status_pending)
-        self.fix_verifier_buy.check_fix_message(pending_ioc_child_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew  IOC Child 2')
+        self.fix_verifier_buy.check_fix_message(pending_ioc_child_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew  IOC Child')
 
         new_ioc_child_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(ioc_child_order, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message(new_ioc_child_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New  IOC Child')

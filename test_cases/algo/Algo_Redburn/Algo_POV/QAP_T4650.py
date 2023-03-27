@@ -181,7 +181,7 @@ class QAP_T4650(TestCase):
         self.fix_verifier_buy.check_fix_message(self.dma_child_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Passive Child 1')
 
         pending_dma_child_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_child_order, self.gateway_side_buy, self.status_pending)
-        self.fix_verifier_buy.check_fix_message(pending_dma_child_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew  Passive Child 1')
+        self.fix_verifier_buy.check_fix_message(pending_dma_child_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew  Passive Child')
 
         new_vwap_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_child_order, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message(new_vwap_child_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New vwap child')
