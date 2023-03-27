@@ -62,3 +62,5 @@ class PreConditionForPosition:
             logger.error(f'{e}', exc_info=True)
             self._db_manager.close_connection()
 
+    def close_connection(self):
+        self._db_manager.close_connection()
