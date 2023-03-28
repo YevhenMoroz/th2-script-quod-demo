@@ -53,7 +53,7 @@ class QAP_T8554(TestCase):
         self.percentage = 10
         self.child_qty = AFM.get_child_qty_for_auction_historical_volume(self.historical_volume, self.percentage, self.qty)
         self.price = 30
-        self.price2 = AFM.calc_ticks_offset_minus(self.price, 1, 0.01)
+        self.price2 = AFM.calc_ticks_offset_minus(self.price, 1, 0.005)
 
 
         self.tif_ato = TimeInForce.AtTheOpening.value
@@ -71,7 +71,7 @@ class QAP_T8554(TestCase):
         # endregion
 
         # region instrument
-        # self.instrument = self.data_set.get_fix_instrument_by_name("instrument_1")
+        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_1")
         # endregion
 
         # region Direction
@@ -80,9 +80,9 @@ class QAP_T8554(TestCase):
         # endregion
 
         # region venue param
-        # self.client = self.data_set.get_client_by_name("client_3")
-        # self.account = self.data_set.get_account_by_name("account_3")
-        # self.mic = self.data_set.get_mic_by_name("mic_1")
+        self.client = self.data_set.get_client_by_name("client_3")
+        self.account = self.data_set.get_account_by_name("account_3")
+        self.mic = self.data_set.get_mic_by_name("mic_1")
         # endregion
 
         # region Key parameters
@@ -92,20 +92,14 @@ class QAP_T8554(TestCase):
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
         # endregion
 
-        # self.listing_id = self.data_set.get_listing_id_by_name("listing_36")
-        # self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile1")
+        self.listing_id = self.data_set.get_listing_id_by_name("listing_36")
+        self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile1")
         self.rule_list = []
 
         self.pre_filter = self.data_set.get_pre_filter("pre_filer_equal_D")
 
 
-        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_21")
-        self.client = self.data_set.get_client_by_name("client_2")
-        self.account = self.data_set.get_account_by_name("account_18")
-        self.mic = self.data_set.get_mic_by_name("mic_31")
-        self.listing_id = self.data_set.get_listing_id_by_name("listing_37")
-
-        self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile2")
+        self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile1")
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
