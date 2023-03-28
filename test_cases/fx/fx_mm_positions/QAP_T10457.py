@@ -56,6 +56,7 @@ class QAP_T10457(TestCase):
         # endregion
         # region Step 2
         # TODO add Check RequestForPositionsAck
+
         # endregion
         # region Step 3
         self.position_report.set_params_from_reqeust(self.request_for_position)
