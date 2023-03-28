@@ -49,7 +49,8 @@ class OrderSubmitOMS(OrderSubmit):
             params["CDOrdAssignInstructionsBlock"]["RecipientRoleID"] = role
         self.change_parameters(deepcopy(self.base_parameters))
         self.update_fields_in_component('NewOrderSingleBlock',
-                                        {"OrdType": 'Limit', "Price": "20", 'ExecutionPolicy': 'Care'})
+                                        {"OrdType": 'Limit', "Price": "20", 'ExecutionPolicy': 'Care',
+                                         "ClOrdID": basic_custom_actions.client_orderid(9)})
         self.add_tag(params)
         if external_algo_twap:
             algo_params = {"AlgoParametersBlock": {"AlgoType": "External",

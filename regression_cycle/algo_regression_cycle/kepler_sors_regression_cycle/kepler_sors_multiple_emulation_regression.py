@@ -45,6 +45,11 @@ from test_cases.algo.Algo_Kepler.Algo_Multiple_Emulation.QAP_T4804 import QAP_T4
 from test_cases.algo.Algo_Kepler.Algo_Multiple_Emulation.QAP_T4875 import QAP_T4875
 from test_cases.algo.Algo_Kepler.Algo_Multiple_Emulation.QAP_T4892 import QAP_T4892
 from test_cases.algo.Algo_Kepler.Algo_Multiple_Emulation.QAP_T4737 import QAP_T4737
+from test_cases.algo.Algo_Kepler.Algo_Multiple_Emulation.QAP_T4709 import QAP_T4709
+from test_cases.algo.Algo_Kepler.Algo_Multiple_Emulation.QAP_T4920 import QAP_T4920
+from test_cases.algo.Algo_Kepler.Algo_Multiple_Emulation.QAP_T4921 import QAP_T4921
+from test_cases.algo.Algo_Kepler.Algo_Multiple_Emulation.QAP_T4922 import QAP_T4922
+from test_cases.algo.Algo_Kepler.Algo_Multiple_Emulation.QAP_T4923 import QAP_T4923
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -100,6 +105,14 @@ def test_run(parent_id=None, version=None):
         QAP_T4892(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4908(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8155(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # endregion
+
+        #region Additional tests
+        QAP_T4709(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4920(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4921(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4922(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4923(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
     except Exception:

@@ -1,4 +1,6 @@
-from stubs import Stubs
+from stubs import Stubs, ROOT_DIR
+from xml.etree import ElementTree
+
 from win_gui_modules.utils import set_session_id
 import logging
 from getpass import getuser as get_pc_name
@@ -39,7 +41,9 @@ channels = dict()
 
 def test_run(parent_id=None, version=None):
     # pc_name = get_pc_name()  # getting PC name
-    full_ver = '5.1.169.182' # site version
+    tree = ElementTree.parse(f"{ROOT_DIR}/regression_run_config.xml")
+    root = tree.getroot()
+    full_ver = root.find(".//version").text
     ver = full_ver[-3:]
     # report_id_main = bca.create_event(f'[{pc_name}] ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     report_id = bca.create_event('PDAT Acceptance v.' + ver + ' | ' + full_ver)

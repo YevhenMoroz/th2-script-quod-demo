@@ -9,10 +9,10 @@ from stubs import Stubs
 timeouts = True
 
 instrument = {
-    'Symbol': 'GB00BH4HKS39-XLON',
-    'SecurityID': 'GB00BH4HKS39',
+    'Symbol': 'IT0003497168-MTAA',
+    'SecurityID': 'IT0003497168',
     'SecurityIDSource': '4',
-    'SecurityExchange': 'XLON'
+    'SecurityExchange': 'MTAA'
 }
 
 
@@ -29,10 +29,10 @@ def execute(report_id):
             'TransactTime': datetime.utcnow().isoformat(),
             'Instrument': instrument,
             'OrderCapacity': 'A',
-            'Currency': "GBX",
+            'Currency': "EUR",
             'TargetStrategy': 1008,
-            'ExDestination': 'XLON',
-            'Text': 'POV_BA_01',
+            'ExDestination': 'MTAA',
+            'Text': 'MULT_BA_01',
             'QuodFlatParameters': {
                 'AllowMissingPrimary': True,
                 "AvailableVenues": True

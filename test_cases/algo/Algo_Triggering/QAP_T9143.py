@@ -162,7 +162,6 @@ class QAP_T9143(TestCase):
 
         # region check cancel child DMA 2
         cancel_dma_order_2 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_eliminate)
-        cancel_dma_order_2.remove_parameter('Text')
         self.fix_verifier_buy.check_fix_message(cancel_dma_order_2, self.key_params, self.ToQuod, "Buy Side ExecReport Eliminated Child DMA 2")
         # endregion
         # endregion

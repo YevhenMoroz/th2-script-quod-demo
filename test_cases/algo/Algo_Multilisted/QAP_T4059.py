@@ -184,7 +184,6 @@ class QAP_T4059(TestCase):
         self.fix_verifier_sell.check_fix_message(self.multilisting_order_replace_params_qty, direction=self.ToQuod, message_name='Sell side OrderCancelReplaceRequest')
 
         replaced_multilisting_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.multilisting_order_replace_params_qty, self.gateway_side_sell, self.status_cancel_replace)
-        replaced_multilisting_order_params.remove_parameter('NoParty')
         self.fix_verifier_sell.check_fix_message(replaced_multilisting_order_params, key_parameters=self.key_params_cl, message_name='Sell Side ExecReport Replace Request')
         # endregion
 
@@ -219,7 +218,6 @@ class QAP_T4059(TestCase):
         self.fix_verifier_sell.check_fix_message(self.multilisting_order_replace_params_price, direction=self.ToQuod, message_name='Sell side OrderCancelReplaceRequest')
 
         replaced_multilisting_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.multilisting_order_replace_params_price, self.gateway_side_sell, self.status_cancel_replace)
-        replaced_multilisting_order_params.remove_parameter('NoParty')
         self.fix_verifier_sell.check_fix_message(replaced_multilisting_order_params, key_parameters=self.key_params_cl, message_name='Sell Side ExecReport Replace Request')
         # endregion
 
