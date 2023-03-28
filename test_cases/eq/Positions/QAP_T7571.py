@@ -3,6 +3,7 @@ import time
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
+from test_cases.eq.Positions.PreConditionForPosition import PreConditionForPosition
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.message_types import PKSMessageType, CSMessageType, ORSMessageType
@@ -49,6 +50,7 @@ class QAP_T7571(TestCase):
         self.acc2 = self.data_set.get_account_by_name("client_pos_3_acc_2")  # "Prime_Optimise"
         self.cancel_transfer = PositionTransferCancelRequest()
         self.trade_entry = TradeEntryOMS(self.data_set)
+        self.db_position_wrapper = PreConditionForPosition(environment)
         self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
         self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
                                     self.ssh_client_env.password, self.ssh_client_env.su_user,
