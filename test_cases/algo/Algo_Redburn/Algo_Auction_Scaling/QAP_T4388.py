@@ -53,7 +53,7 @@ class QAP_T4388(TestCase):
         self.pp2_percentage = 30
         self.pp2_price = 117
 
-        self.scaling_child_order_qty = '%^([1-2][0-1,8,9])\d{3}|10{5}$'  # fisrt number 100000, 20000, 17-19K and any 3 number
+        self.scaling_child_order_qty = '%^([1-2][0-1,6-9])\d{3}|10{5}$'  # fisrt number 100000, 20000, 17-19K and any 3 number
         self.scaling_child_order_price = '%^1(20|30|1[7-9].[1-9]|17)$'  # the first number 130-117 with step 1.3
 
         self.check_order_sequence = False
@@ -84,7 +84,7 @@ class QAP_T4388(TestCase):
 
         # region venue param
         self.client = self.data_set.get_client_by_name("client_2")
-        self.account = self.data_set.get_account_by_name("account_1")
+        self.account = self.data_set.get_account_by_name("account_2")
         self.ex_destination_1 = self.data_set.get_mic_by_name("mic_1")
         self.s_par = self.data_set.get_listing_id_by_name("listing_36")
         # endregion

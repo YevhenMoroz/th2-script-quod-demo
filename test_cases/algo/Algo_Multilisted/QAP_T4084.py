@@ -153,7 +153,6 @@ class QAP_T4084(TestCase):
         case_id_4 = bca.create_event("Eliminate Algo Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_4)
         eliminate_multilisting_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.multilisting_order, self.gateway_side_sell, self.status_eliminate)
-        eliminate_multilisting_order.change_parameters(dict(LastMkt='*', Text='*'))
         self.fix_verifier_sell.check_fix_message(eliminate_multilisting_order, self.key_params, self.FromQuod, "Sell side Eliminate parent order")
         # endregion
 

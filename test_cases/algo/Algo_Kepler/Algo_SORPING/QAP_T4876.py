@@ -168,7 +168,7 @@ class QAP_T4876(TestCase):
 
         self.fix_verifier_sell.check_fix_message(self.SORPING_order_replace_params, direction=self.ToQuod, message_name='Sell side OrderCancelReplaceRequest')
 
-        business_message_reject = FixMessageBusinessMessageRejectReportAlgo().set_params_for_business_message_reject()
+        business_message_reject = FixMessageBusinessMessageRejectReportAlgo().set_params_for_business_message_reject_kepler()
         business_message_reject.change_parameters(dict(Text=self.text, RefMsgType=self.refMsgType, BusinessRejectReason=self.businessRejectReason))
         self.fix_verifier_sell.check_fix_message(business_message_reject, message_name='Sell side Business Message Reject')
         # endregion

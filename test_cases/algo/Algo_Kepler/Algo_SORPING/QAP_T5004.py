@@ -158,7 +158,9 @@ class QAP_T5004(TestCase):
         self.fix_verifier_sell.check_fix_message(er_new_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
         # endregion
 
-        time.sleep(2)
+        # Delays on sim affect this. Set up time.sleep from 0 to 2
+
+        time.sleep(1)
 
         # region Update_MarketData
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Update Market Data", self.test_id))

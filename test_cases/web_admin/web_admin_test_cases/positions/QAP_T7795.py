@@ -6,8 +6,8 @@ import traceback
 
 from custom import basic_custom_actions
 
-from test_framework.web_admin_core.pages.positions.cash_positions.cash_postitions_page import CashPositionsPage
-from test_framework.web_admin_core.pages.positions.cash_positions.cash_positions_wizard import CashPositionsWizard
+from test_framework.web_admin_core.pages.positions.cash_positions.main_page import *
+from test_framework.web_admin_core.pages.positions.cash_positions.wizards import *
 
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
@@ -43,23 +43,23 @@ class QAP_T7795(CommonTestCase):
         try:
             self.precondition()
 
-            cash_positions_page = CashPositionsPage(self.web_driver_container)
+            cash_positions_page = MainPage(self.web_driver_container)
             cash_positions_page.click_on_new()
-            wizard = CashPositionsWizard(self.web_driver_container)
-            wizard.set_name(self.name[0])
-            wizard.set_client_cash_account_id(self.client_cash_account_id[0])
-            wizard.set_venue_cash_account_id(self.venue_cash_account_id[0])
-            wizard.set_currency(self.currency)
-            wizard.set_client(self.client)
+            values_tab = ValuesTab(self.web_driver_container)
+            values_tab.set_name(self.name[0])
+            values_tab.set_client_cash_account_id(self.client_cash_account_id[0])
+            values_tab.set_venue_cash_account_id(self.venue_cash_account_id[0])
+            values_tab.set_currency(self.currency)
+            values_tab.set_client(self.client)
+            wizard = MainWizard(self.web_driver_container)
             wizard.click_on_save_changes()
 
             cash_positions_page.click_on_new()
-            wizard = CashPositionsWizard(self.web_driver_container)
-            wizard.set_name(self.name[1])
-            wizard.set_client_cash_account_id(self.client_cash_account_id[1])
-            wizard.set_venue_cash_account_id(self.venue_cash_account_id[1])
-            wizard.set_currency(self.currency)
-            wizard.set_client(self.client)
+            values_tab.set_name(self.name[1])
+            values_tab.set_client_cash_account_id(self.client_cash_account_id[1])
+            values_tab.set_venue_cash_account_id(self.venue_cash_account_id[1])
+            values_tab.set_currency(self.currency)
+            values_tab.set_client(self.client)
             wizard.click_on_save_changes()
 
             cash_positions_page.set_name(self.name[0])

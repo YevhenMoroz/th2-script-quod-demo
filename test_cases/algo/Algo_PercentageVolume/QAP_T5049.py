@@ -107,13 +107,6 @@ class QAP_T5049(TestCase):
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
         # endregion
 
-        # region Set TradingPhase and LTQ for POV
-        self.fix_manager_feed_handler.set_case_id(bca.create_event("Set TradingPhase for POV", self.test_id))
-        market_data_incr_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
-        market_data_incr_par.update_repeating_group_by_index('NoMDEntriesIR', MDEntryPx=self.price_bid, MDEntrySize=self.ltq)
-        self.fix_manager_feed_handler.send_message(market_data_incr_par)
-        # endregion
-
         time.sleep(3)
 
         # region Send NewOrderSingle (35=D) for POV order
@@ -128,6 +121,13 @@ class QAP_T5049(TestCase):
                                                                                      ['EndDate', self.param_type_string, end_time],
                                                                                      ['Aggressivity', self.param_type_int, self.aggressivity]]) 
         self.fix_manager_sell.send_message_and_receive_response(self.POV_order, case_id_1)
+        # endregion
+
+        # region Set TradingPhase and LTQ for POV
+        self.fix_manager_feed_handler.set_case_id(bca.create_event("Set TradingPhase for POV", self.test_id))
+        market_data_incr_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
+        market_data_incr_par.update_repeating_group_by_index('NoMDEntriesIR', MDEntryPx=self.price_bid, MDEntrySize=self.ltq)
+        self.fix_manager_feed_handler.send_message(market_data_incr_par)
         # endregion
 
         # region Check Sell side
