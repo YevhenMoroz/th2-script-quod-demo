@@ -16,17 +16,17 @@ class TradeEntryRequestFX(JavaApiMessage):
             "SEND_SUBJECT": "QUOD.ORS.FE",
             "REPLY_SUBJECT": "QUOD.FE.ORS",
             "TradeEntryRequestBlock": {
-                "ExecPrice": "1.2",
-                "ExecQty": "25000000",
+                "ExecPrice": "1.18",
+                "ExecQty": "1000000",
                 "TradeEntryTransType": "NEW",
-                "VenueExecID": "Test123",
+                "VenueExecID": bca.client_orderid(7),
                 "LastMkt": "XQFX",
                 "SettlDate": self.get_data_set().get_settle_date_by_name("spot_java_api"),
                 "TradeDate": self.get_data_set().get_settle_date_by_name("today_java_api"),
                 "Side": "B",
                 "AccountGroupID": "CLIENT_TEST_EXT",
                 # "ListingID": "506403761", # EUR/USD
-                "ListingID": "506404433", # GBP/USD
+                "ListingID": "506404433",  # GBP/USD
                 # "ListingID": "506409971", # USD/PHP
                 # "ListingID": "506403285", # EUR/GBP
                 "SettlCurrFxRate": "0",
@@ -41,3 +41,5 @@ class TradeEntryRequestFX(JavaApiMessage):
         super().change_parameters(request_params)
         return self
 
+    def get_exec_id(self, response) -> str:
+        return response[1].get_parameters()["ExecutionReportBlock"]["ExecID"]
