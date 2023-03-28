@@ -16,6 +16,9 @@ class SubVenuesPriceLimitProfilesSubWizard(CommonPage):
     def click_on_close_at_profiles(self):
         self.find_by_xpath(SubVenuesConstants.PRICE_LIMIT_PROFILE_TAB_CLOSE_BUTTON_XPATH).click()
 
+    def click_on_go_back_button(self):
+        self.find_by_xpath(SubVenuesConstants.GO_BACK_BUTTON_XPATH).click()
+
     def click_on_edit_at_profiles(self):
         self.find_by_xpath(SubVenuesConstants.PRICE_LIMIT_PROFILE_TAB_EDIT_BUTTON_XPATH).click()
 
@@ -40,6 +43,15 @@ class SubVenuesPriceLimitProfilesSubWizard(CommonPage):
     def set_trading_reference_price_type_filter(self, value):
         self.set_text_by_xpath(SubVenuesConstants.PRICE_LIMIT_PROFILE_TAB_TRADING_REFERENCE_PRICE_TYPE_FILTER_XPATH,
                                value)
+
+    def set_price_limit_type(self, value):
+        self.set_text_by_xpath(SubVenuesConstants.PRICE_LIMIT_PROFILE_TAB_PRICE_LIMIT_TYPE_XPATH, value)
+
+    def get_price_limit_type(self):
+        self.get_text_by_xpath(SubVenuesConstants.PRICE_LIMIT_PROFILE_TAB_PRICE_LIMIT_TYPE_XPATH)
+
+    def set_price_limit_type_filter(self, value):
+        self.set_text_by_xpath(SubVenuesConstants.PRICE_LIMIT_PROFILE_TAB_PRICE_LIMIT_TYPE_FILTER_XPATH, value)
 
     def set_price_limit_field_name(self, value):
         self.set_text_by_xpath(SubVenuesConstants.PRICE_LIMIT_PROFILE_TAB_PRICE_LIMIT_FIELD_NAME_XPATH, value)

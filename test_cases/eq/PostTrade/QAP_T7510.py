@@ -149,7 +149,10 @@ class QAP_T7510(TestCase):
             {JavaApiFields.AllocStatus.value: AllocationReportConst.AllocStatus_ACK.value,
              JavaApiFields.MatchStatus.value: AllocationReportConst.MatchStatus_MAT.value}, allocation_report,
             f'Check expected and actually result from step 2 (concerning {JavaApiFields.MatchStatus.value} and {JavaApiFields.AllocStatus.value} of block)')
-        self.java_api_manager.key_is_absent(JavaApiFields.AllocSummaryStatus.value, allocation_report, f'Check that {JavaApiFields.AllocSummaryStatus.value} is empty (step 2)')
+        alloc_summary_status_is_absent = not JavaApiFields.AllocSummaryStatus.value in allocation_report
+        self.java_api_manager.compare_values({'AllocationStatusSummaryIsAbsent': True},
+                                             {'AllocationStatusSummaryIsAbsent': alloc_summary_status_is_absent},
+                                             f'Check that {JavaApiFields.AllocSummaryStatus.value} is empty (step 2)')
         self.java_api_manager.compare_values({
             JavaApiFields.ConfirmStatus.value: ConfirmationReportConst.ConfirmStatus_CXL.value,
             JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_UNM.value}, confirmation_report,

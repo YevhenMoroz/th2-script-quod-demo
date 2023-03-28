@@ -22,11 +22,10 @@ class QAP_T4006(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.expected_error = "Incorrect or missing values"
-        self.strategy_type = "External AMBUSH"
-        self.user = self.data_set.get_user("user_4")
+        self.strategy_type = self.data_set.get_strategy_type("strategy_type_2")
+        self.user = self.data_set.get_user("user_11")
         self.client = self.data_set.get_client("client_4")
         self.default_tif = self.data_set.get_default_tif("default_tif_1")
-        self.aggressor_indicator = "True"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -58,9 +57,7 @@ class QAP_T4006(CommonTestCase):
             time.sleep(1)
             strategies_wizard.set_client(self.client)
             time.sleep(1)
-            strategies_wizard.set_default_tif(self.default_tif)
-            time.sleep(1)
-            strategies_wizard.set_aggressor_indicator(self.aggressor_indicator)
+            strategies_wizard.set_tif(self.default_tif)
             time.sleep(1)
             strategies_wizard.click_on_general()
             general_block = ExecutionStrategiesGeneralSubWizard(self.web_driver_container)

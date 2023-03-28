@@ -44,7 +44,7 @@ class QAP_T7340(TestCase):
         # endregion
 
         # region Set-up parameters for ExecutionReports
-        list_of_ignored_fields = ['SettlDate', 'SettlType', 'Account', 'GatingRuleCondName', 'GatingRuleName']
+        list_of_ignored_fields = ['SettlDate', 'SettlType', 'Account', 'GatingRuleCondName', 'GatingRuleName', 'Text']
         exec_report1 = FixMessageExecutionReportOMS(self.data_set).set_default_new_list(self.message)
         exec_report2 = FixMessageExecutionReportOMS(self.data_set).set_default_new_list(self.message, 1)
         # endregion

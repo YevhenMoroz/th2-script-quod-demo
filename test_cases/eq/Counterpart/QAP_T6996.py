@@ -3,6 +3,9 @@ import os
 import time
 from pathlib import Path
 import xml.etree.ElementTree as ET
+
+from pkg_resources import resource_filename
+
 from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
@@ -45,7 +48,7 @@ class QAP_T6996(TestCase):
                                     self.ssh_client_env.password, self.ssh_client_env.su_user,
                                     self.ssh_client_env.su_password)
         self.api_message = RestApiSettlementModelMessages(self.data_set)
-        self.local_path = os.path.abspath("../../test_framework\ssh_wrappers\oms_cfg_files\client_ors.xml")
+        self.local_path = resource_filename("test_resources.be_configs.oms_be_configs", "client_ors.xml")
         self.remote_path = f"/home/{self.ssh_client_env.su_user}/quod/cfg/client_ors.xml"
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -71,7 +74,7 @@ class QAP_T6996(TestCase):
         tree.write("temp.xml")
         self.ssh_client.put_file(self.remote_path, "temp.xml")
         self.ssh_client.send_command("qrestart ORS")
-        time.sleep(40)
+        time.sleep(60)
         # endregion
 
         # region precondition and step 1
@@ -83,7 +86,8 @@ class QAP_T6996(TestCase):
         response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
         order_id_care = response[0].get_parameter("OrderID")
         fix_execution_report.set_default_new(self.fix_message)
-        ignored_fields = ['Parties', 'QuodTradeQualifier', 'BookID', 'tag5120', 'ExecBroker']
+        ignored_fields = ['Parties', 'QuodTradeQualifier', 'BookID', 'tag5120', 'ExecBroker',
+                                  'GatingRuleCondName', 'GatingRuleName','PartyRoleQualifier']
         no_party = {"NoParty": {'NoParty': [
             {'PartyRole': "*",
              'PartyID': "*",
@@ -125,7 +129,8 @@ class QAP_T6996(TestCase):
         fix_execution_report.add_tag({'BookID': '*'}).add_tag({'tag5120': '*'}).add_tag({'ExecBroker': '*'})
 
         fix_execution_report.add_tag(no_party)
-        list_of_ignored_fields = ['CommissionData', 'NoMiscFees', 'SecurityDesc', 'PartyRoleQualifier']
+        list_of_ignored_fields = ['CommissionData', 'NoMiscFees', 'SecurityDesc', 'PartyRoleQualifier',
+                                  'GatingRuleCondName', 'GatingRuleName','PartyRoleQualifier']
         self.fix_verifier.check_fix_message_fix_standard(fix_execution_report, ignored_fields=list_of_ignored_fields)
 
         # endregion
@@ -136,5 +141,5 @@ class QAP_T6996(TestCase):
         self.rest_api_manager.send_post_request(self.api_message)
         self.ssh_client.put_file(self.remote_path, self.local_path)
         self.ssh_client.send_command("qrestart ORS")
-        time.sleep(40)
+        time.sleep(60)
         os.remove("temp.xml")

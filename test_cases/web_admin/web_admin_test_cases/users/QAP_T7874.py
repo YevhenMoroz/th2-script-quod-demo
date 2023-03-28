@@ -19,7 +19,7 @@ class QAP_T7874(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.venue = 'AMEX'
+        self.venue = self.data_set.get_venue_by_name("venue_1")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

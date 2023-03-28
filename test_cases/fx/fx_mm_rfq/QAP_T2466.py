@@ -50,6 +50,7 @@ class QAP_T2466(TestCase):
         self.currency_gbp = self.data_set.get_currency_by_name("currency_gbp")
         self.settle_date_spo = self.data_set.get_settle_date_by_name("spot")
         self.msg_prams = None
+        self.response = None
         self.instrument = {
             "Symbol": self.gbp_usd,
             "SecurityType": self.security_type
@@ -214,7 +215,7 @@ class QAP_T2466(TestCase):
                                                            Currency=self.currency_gbp,
                                                            Instrument=self.instrument)
         self.quote_request.remove_fields_in_repeating_group("NoRelatedSymbols", ["Side"])
-        response: list = self.fix_manager_gtw.send_message_and_receive_response(self.quote_request)
+        self.response: list = self.fix_manager_gtw.send_message_and_receive_response(self.quote_request)
         self.quote.set_params_for_quote(self.quote_request)
         # endregion
         # region Step 3
@@ -255,7 +256,7 @@ class QAP_T2466(TestCase):
                                                      pre_filter=prefilter, message_name="Check 2 Quotes")
         # endregion
         # region Step 5
-        self.new_order_single.set_default_prev_quoted(self.quote_request, response[0], side="1", price=self.offer_px_0)
+        self.new_order_single.set_default_prev_quoted(self.quote_request, self.response[0], side="1", price=self.offer_px_0)
         self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single)
         reject = Status.Reject
         text = "not a live quote"
@@ -265,7 +266,7 @@ class QAP_T2466(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        self.quote_cancel.set_params_for_cancel(self.quote_request)
+        self.quote_cancel.set_params_for_cancel(self.quote_request, self.response[0])
         self.fix_manager_gtw.send_message(self.quote_cancel)
         self.fix_md.set_market_data()
         self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")

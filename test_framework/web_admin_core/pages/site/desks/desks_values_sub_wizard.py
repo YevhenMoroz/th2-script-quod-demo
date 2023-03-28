@@ -14,7 +14,7 @@ class DesksValuesSubWizard(CommonPage):
         return self.get_text_by_xpath(DesksConstants.NAME_AT_VALUES_TAB_XPATH)
 
     def set_desk_mode(self, value):
-        self.set_combobox_value(DesksConstants.DESK_MODE_AT_VALUES_TAB_XPATH, value)
+        self.select_value_from_dropdown_list(DesksConstants.DESK_MODE_AT_VALUES_TAB_XPATH, value)
 
     def get_desk_mode(self):
         return self.get_text_by_xpath(DesksConstants.DESK_MODE_AT_VALUES_TAB_XPATH)

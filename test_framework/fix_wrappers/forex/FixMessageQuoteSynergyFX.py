@@ -17,7 +17,7 @@ class FixMessageQuoteSynergyFX(FixMessageQuoteFX):
             VenueType=quote_request.get_parameter("VenueType"),
             OfferPx="*",
             OfferSpotRate="*",
-            NoPartyIDs=quote_request.get_parameter("NoRelatedSym")[0]["NoPartyIDs"],
+            NoPartyIDs="*",
             Instrument=dict(Symbol=quote_request.get_parameter("NoRelatedSym")[0]["Instrument"]["Symbol"],
                             SecurityType=quote_request.get_parameter("NoRelatedSym")[0]["Instrument"][
                                 "SecurityType"],

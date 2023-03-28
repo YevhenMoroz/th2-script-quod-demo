@@ -43,6 +43,7 @@ Copyright Quod Financial
                     <AllocationReportPreliminary>true</AllocationReportPreliminary>
                     <AllocationReportReadyToBook>true</AllocationReportReadyToBook>
 					<Confirmation>true</Confirmation>
+					<TradeCorrect>true</TradeCorrect>
 					<Trade>true</Trade>
                     <New>true</New>
 					<Cancel>true</Cancel>
@@ -77,6 +78,7 @@ Copyright Quod Financial
                     <AllocationReportPreliminary>true</AllocationReportPreliminary>
                     <AllocationReportReadyToBook>true</AllocationReportReadyToBook>
 					<Confirmation>true</Confirmation>
+					<TradeCorrect>true</TradeCorrect>
 					<Trade>true</Trade>
 					<New>true</New>
 					<Cancelled>true</Cancelled>
@@ -237,6 +239,7 @@ Copyright Quod Financial
 		<acceptMultipleVenueAccountGroups>true</acceptMultipleVenueAccountGroups>
 			<GatingRules>
 				<enabled>true</enabled>
+				<removeOrdrParametersFromDMAOrder>false</removeOrdrParametersFromDMAOrder>
 			</GatingRules>
 			<instrTypeFilter>false</instrTypeFilter>
 			<currencyFilter>false</currencyFilter>

@@ -35,7 +35,7 @@ class RoutesVenuesSubWizard(CommonPage):
         self.set_text_by_xpath(RoutesConstants.ROUTE_VENUE_NAME_AT_VENUE_WIZARD_XPATH, value)
 
     def set_main_security_id_source_at_venues_tab(self, value):
-        self.set_combobox_value(RoutesConstants.MAIN_SECURITY_ID_SOURCE_VALUE_AT_VENUE_WIZARD_XPATH, value)
+        self.select_value_from_dropdown_list(RoutesConstants.MAIN_SECURITY_ID_SOURCE_VALUE_AT_VENUE_WIZARD_XPATH, value)
 
     def set_ord_id_format_at_venues_tab(self, value):
         self.set_text_by_xpath(RoutesConstants.ORD_ID_FORMAT_AT_VENUE_WIZARD_XPATH, value)

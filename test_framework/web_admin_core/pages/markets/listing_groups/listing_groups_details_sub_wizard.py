@@ -1,3 +1,5 @@
+import time
+
 from test_framework.web_admin_core.pages.common_page import CommonPage
 from test_framework.web_admin_core.pages.markets.listing_groups.listing_groups_constants import \
     ListingGroupsConstants
@@ -9,7 +11,7 @@ class ListingGroupsDetailsSubWizard(CommonPage):
         super().__init__(web_driver_container)
 
     def set_trading_status(self, value):
-        self.set_combobox_value(ListingGroupsConstants.DETAILS_TAB_TRADING_STATUS_XPATH, value)
+        self.select_value_from_dropdown_list(ListingGroupsConstants.DETAILS_TAB_TRADING_STATUS_XPATH, value)
 
     def get_trading_status(self):
         return self.get_text_by_xpath(ListingGroupsConstants.DETAILS_TAB_TRADING_STATUS_XPATH)
@@ -20,6 +22,12 @@ class ListingGroupsDetailsSubWizard(CommonPage):
     def get_price_limit_profile(self):
         return self.get_text_by_xpath(ListingGroupsConstants.DETAILS_TAB_PRICE_LIMIT_PROFILE_XPATH)
 
+    def is_price_limit_profile_contains_filled_value(self, value):
+        self.set_text_by_xpath(ListingGroupsConstants.DETAILS_TAB_PRICE_LIMIT_PROFILE_XPATH, value)
+        time.sleep(1)
+        return self.is_element_present(ListingGroupsConstants.DROP_DOWN_ENTITY.format(value))
+
+
     def set_trading_phase_profile(self, value):
         self.set_combobox_value(ListingGroupsConstants.DETAILS_TAB_TRADING_PHASE_PROFILE_XPATH, value)
 
@@ -27,7 +35,7 @@ class ListingGroupsDetailsSubWizard(CommonPage):
         return self.get_text_by_xpath(ListingGroupsConstants.DETAILS_TAB_TRADING_PHASE_PROFILE_XPATH)
 
     def set_trading_phase(self, value):
-        self.set_combobox_value(ListingGroupsConstants.DETAILS_TAB_TRADING_PHASE_XPATH, value)
+        self.select_value_from_dropdown_list(ListingGroupsConstants.DETAILS_TAB_TRADING_PHASE_XPATH, value)
 
     def get_trading_phase(self):
         return self.get_text_by_xpath(ListingGroupsConstants.DETAILS_TAB_TRADING_PHASE_XPATH)

@@ -19,7 +19,8 @@ class QAP_T3118(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.scenario = "External TWAP"
+        self.strategy_type = "Lit and Dark SOR"
+        self.default_scenario = 'Quod Financial Lit and Dark SOR'
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -35,11 +36,11 @@ class QAP_T3118(CommonTestCase):
             routes_main_menu = RoutesPage(self.web_driver_container)
             routes_main_menu.click_on_new_button()
             strategy_type_sub_wizard = RoutesStrategyTypeSubWizard(self.web_driver_container)
-            strategy_type_sub_wizard.set_strategy_type_at_strategy_type_tab(self.scenario)
+            strategy_type_sub_wizard.set_strategy_type_at_strategy_type_tab(self.strategy_type)
             strategy_type_sub_wizard.click_on_default_scenario()
-            strategy_type_sub_wizard.set_default_scenario_at_strategy_type_tab(self.scenario)
+            strategy_type_sub_wizard.set_default_scenario_at_strategy_type_tab(self.default_scenario)
 
-            self.verify("Default Scenario has been select", self.scenario,
+            self.verify("Default Scenario has been select", self.default_scenario,
                         strategy_type_sub_wizard.get_default_scenario_at_strategy_type_tab())
 
         except Exception:

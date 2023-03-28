@@ -1,5 +1,5 @@
 from datetime import datetime
-from custom.tenor_settlement_date import spo, wk1_ndf_maturity, wk2_ndf_maturity, wk3_ndf_maturity, tom
+from custom.tenor_settlement_date import spo, spo_ndf, wk1_ndf_maturity, wk2_ndf_maturity, wk3_ndf_maturity, tom
 from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.data_sets.constants import Status
 from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
@@ -481,7 +481,6 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
                  LegSettlDate=new_order_single.get_parameter("NoLegs")[1]["LegSettlDate"],
                  LegSettlType=new_order_single.get_parameter("NoLegs")[1]["LegSettlType"],
                  LegLastQty=new_order_single.get_parameter("NoLegs")[1]["LegOrderQty"],
-                 LegLastForwardPoints="*",
                  LegPrice="*",
                  LegLastPx="*",
                  InstrumentLeg=dict(
@@ -500,18 +499,25 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
 
         if new_order_single.get_parameter("NoLegs")[0]["LegSettlType"] == "W1":
             no_legs[0]["InstrumentLeg"]["LegMaturityDate"] = wk1_ndf_maturity()
+            no_legs[0]["LegLastForwardPoints"] = "*"
         elif new_order_single.get_parameter("NoLegs")[0]["LegSettlType"] == "W2":
             no_legs[0]["InstrumentLeg"]["LegMaturityDate"] = wk2_ndf_maturity()
+            no_legs[0]["LegLastForwardPoints"] = "*"
         elif new_order_single.get_parameter("NoLegs")[0]["LegSettlType"] == "W3":
             no_legs[0]["InstrumentLeg"]["LegMaturityDate"] = wk3_ndf_maturity()
+            no_legs[0]["LegLastForwardPoints"] = "*"
         if new_order_single.get_parameter("NoLegs")[1]["LegSettlType"] == "W1":
             no_legs[1]["InstrumentLeg"]["LegMaturityDate"] = wk1_ndf_maturity()
+            no_legs[1]["LegLastForwardPoints"] = "*"
         elif new_order_single.get_parameter("NoLegs")[1]["LegSettlType"] == "W2":
             no_legs[1]["InstrumentLeg"]["LegMaturityDate"] = wk2_ndf_maturity()
+            no_legs[1]["LegLastForwardPoints"] = "*"
         elif new_order_single.get_parameter("NoLegs")[1]["LegSettlType"] == "W3":
             no_legs[1]["InstrumentLeg"]["LegMaturityDate"] = wk3_ndf_maturity()
+            no_legs[1]["LegLastForwardPoints"] = "*"
 
         temp = dict(
+            Account="*",
             ClOrdID=new_order_single.get_parameter("ClOrdID"),
             CumQty=new_order_single.get_parameter("OrderQty"),
             Currency=new_order_single.get_parameter("Currency"),
@@ -522,7 +528,7 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
             OrdType=new_order_single.get_parameter("OrdType"),
             Side=new_order_single.get_parameter("Side"),
             TimeInForce=new_order_single.get_parameter("TimeInForce"),
-            SpotSettlDate=new_order_single.get_parameter("NoLegs")[0]["LegSettlDate"],
+            SpotSettlDate=spo_ndf(),
             Price="*",
             LastMkt="*",
             LastSwapPoints="*",
@@ -627,7 +633,6 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
             TransactTime="*",
             AvgPx="*",
             ExecID="*",
-            LastPx="*",
             OrderID="*",
             LastMkt="XQFX",
             TradeDate=datetime.today().strftime("%Y%m%d"),
@@ -639,7 +644,8 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
         super().change_parameters(temp)
         instrument = dict(
             Symbol=new_order_single.get_parameter("Instrument")["Symbol"],
-            Product="9"
+            Product="9",
+            SecurityType="FOR"
         )
         super().update_fields_in_component("Instrument", instrument)
         return self
@@ -676,7 +682,6 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
             AvgPx="*",
             ExecID="*",
             LastMkt="*",
-            LastPx="*",
             OrderID="*",
             SettlDate="*",
             TradeDate=datetime.today().strftime("%Y%m%d"),
@@ -687,7 +692,7 @@ class FixMessageExecutionReportPrevQuotedFX(FixMessageExecutionReport):
         )
         super().change_parameters(temp)
         instrument = dict(
-            SecurityType=data_set.get_security_type_by_name("fx_spot"),
+            SecurityType="FOR",
             Symbol=new_order_single.get_parameter("Instrument")["Symbol"],
             Product="4",
         )

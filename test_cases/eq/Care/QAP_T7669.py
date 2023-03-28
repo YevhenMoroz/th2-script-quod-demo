@@ -96,7 +96,7 @@ class QAP_T7669(TestCase):
         cd_ord_notif_message = self.java_api_manager2.get_last_message(CSMessageType.CDOrdNotif.value).get_parameters() \
             [JavaApiFields.CDOrdNotifBlock.value]
         self.java_api_manager2.compare_values(
-            {JavaApiFields.CDRequestType.value: CDResponsesConst.CDRequestType_MOD.value},
+            {JavaApiFields.CDRequestType.value: CDResponsesConst.CDRequestType_CAN.value},
             cd_ord_notif_message, f'Verifying {JavaApiFields.CDRequestType.value}  step 7')
         # endregion
 

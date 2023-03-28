@@ -1,5 +1,5 @@
 class ClientTierConstants:
-    CLIENT_TIER_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Client Tiers ']"
+    CLIENT_TIER_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][normalize-space(text())='Client Tiers']"
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"
     SAVE_CHANGES_BUTTON_XPATH = "//*[text()='Save Changes']"
@@ -64,7 +64,7 @@ class ClientTierConstants:
     CLIENT_TIER_SCHEDULES_TAB_EDIT_BUTTON_XPATH = '//*[normalize-space()="Schedules"]//..//*[@data-name="edit"]'
     CLIENT_TIER_SCHEDULES_TAB_DELETE_BUTTON_XPATH = '//*[normalize-space()="Schedules"]//..//*[@data-name="trash-2"]'
 
-    CLIENT_TIER_SCHEDULES_TAB_DAY_XPATH = "//*[@class='schedule']//*[@placeholder='Day *']"
+    CLIENT_TIER_SCHEDULES_TAB_DAY_XPATH = '//*[@class="schedule"]//*[@id="weekDay"]'
     CLIENT_TIER_SCHEDULES_TAB_DAY_FILTER_XPATH = "//*[@class='schedule']//*[@class='ng2-smart-th weekDay ng-star-inserted']//input-filter"
     CLIENT_TIER_SCHEDULES_TAB_FROM_TIME_XPATH = "//*[@class='schedule']//*[@placeholder='From Time *']"
     CLIENT_TIER_SCHEDULES_TAB_FROM_TIME_FILTER_XPATH = "//*[@class='schedule']//*[@class='ng2-smart-th scheduleFromTime ng-star-inserted']//input-filter"

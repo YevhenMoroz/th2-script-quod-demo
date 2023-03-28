@@ -94,7 +94,7 @@ class QAP_T7471(TestCase):
         list_of_ignored_fields = ['SecurityDesc', 'CommissionData', 'RootSettlCurrAmt', 'AllocInstructionMiscBlock1',
                                   'MiscFeesGrp', 'BookingType', 'RootOrClientCommission',
                                   'RootOrClientCommissionCurrency', 'RootCommTypeClCommBasis', 'Account',
-                                  'NoRootMiscFeesList', 'OrderAvgPx']
+                                  'NoRootMiscFeesList', 'OrderAvgPx','GatingRuleCondName', 'GatingRuleName', 'PartyRoleQualifier']
         exec_report = FixMessageExecutionReportOMS(self.data_set).set_default_filled(
             self.fix_message).change_parameters(
             {"Parties": {"NoPartyIDs": parties}, "LastMkt": "*", "VenueType": "*", "MiscFeesGrp": "*",

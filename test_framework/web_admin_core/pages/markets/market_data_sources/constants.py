@@ -1,5 +1,5 @@
 class MarketDataSourcesConstants:
-    MARKET_DATA_SOURCE_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Market Data Sources ']"
+    MARKET_DATA_SOURCE_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][normalize-space()='Market Data Sources']"
     DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span'
 
     # main page

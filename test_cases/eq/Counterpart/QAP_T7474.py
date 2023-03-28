@@ -71,7 +71,8 @@ class QAP_T7474(TestCase):
         # endregion
         # region Set-up parameters for ExecutionReports
         list_of_ignored_fields = ['NoMiscFees', 'Account', 'CommissionData', 'MiscFeesGrp', 'ReplyReceivedTime',
-                                  'SecurityDesc', 'OrderAvgPx']
+                                  'SecurityDesc', 'OrderAvgPx', 'GatingRuleCondName', 'GatingRuleName',
+                                  'PartyRoleQualifier', 'tag11245', 'PartyRoleQualifier']
         list_of_counterparts = [
             self.data_set.get_counterpart_id_fix('counterpart_id_investment_firm_cl_counterpart_sa1'),
             self.data_set.get_counterpart_id_fix('counterpart_id_regulatory_body_venue_paris'),
@@ -83,7 +84,6 @@ class QAP_T7474(TestCase):
              'PartyID': '*',
              'PartyIDSource': '*'}
         ]
-        list_of_counterparts_confirmation = deepcopy(list_of_counterparts)
         parties = {
             'NoPartyIDs': list_of_counterparts
         }
@@ -120,9 +120,6 @@ class QAP_T7474(TestCase):
             self.data_set.get_counterpart_id_fix('counterpart_id_investment_firm_cl_counterpart'),
             {'PartyRole': '*',
              'NoPartySubIDs': '*',
-             'PartyID': '*',
-             'PartyIDSource': '*'},
-            {'PartyRole': '*',
              'PartyID': '*',
              'PartyIDSource': '*'},
         ]

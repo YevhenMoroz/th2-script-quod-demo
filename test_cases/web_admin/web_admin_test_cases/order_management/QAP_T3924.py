@@ -1,3 +1,5 @@
+import random
+import string
 import sys
 import time
 import traceback
@@ -23,15 +25,15 @@ class QAP_T3924(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.name = "TestSuperStrategy"
+        self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.user = self.data_set.get_user("user_8")
-        self.strategy_type = "Quod LitDark"
+        self.strategy_type = self.data_set.get_strategy_type("strategy_type_3")
         self.first_parameter = "AllowedAggressiveVenues"
         self.second_parameter = "AllowedPassiveVenues"
         self.third_parameter = "InitialDarkAllowedVenues"
-        self.first_venue = self.data_set.get_venue_by_name("venue_8")
+        self.first_venue = self.data_set.get_venue_by_name("venue_12")
         self.second_venue = self.data_set.get_venue_by_name("venue_9")
-        self.third_venue = self.data_set.get_venue_by_name("venue_5")
+        self.third_venue = self.data_set.get_venue_by_name("venue_13")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -41,7 +43,6 @@ class QAP_T3924(CommonTestCase):
         login_page.check_is_login_successful()
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_execution_strategies_page()
-        side_menu.wait_for_button_to_become_active()
         main_menu = ExecutionStrategiesPage(self.web_driver_container)
         main_menu.click_on_new_button()
         strategies_wizard = ExecutionStrategiesWizard(self.web_driver_container)
@@ -74,7 +75,7 @@ class QAP_T3924(CommonTestCase):
             aggressive_lit_block = ExecutionStrategiesLitAggressiveSubWizard(self.web_driver_container)
             strategies_wizard = ExecutionStrategiesWizard(self.web_driver_container)
             expected_parameter_and_value_at_lit_passive_block = ["AllowedAggressiveVenues: ",
-                                                                 "AMERICAN STOCK EXCHANGE/EURONEXT AMSTERDAM/BATS"]
+                                                                 f"{self.first_venue}/{self.second_venue}/{self.third_venue}"]
             actual_parameter_and_value_at_lit_passive_block = [
                 strategies_wizard.get_parameter_name_at_lit_aggressive_block(),
                 strategies_wizard.get_parameter_value_at_lit_aggressive_block()]
@@ -96,7 +97,7 @@ class QAP_T3924(CommonTestCase):
             aggressive_lit_block.click_on_checkmark_button()
             aggressive_lit_block.click_on_go_back_button()
             expected_parameter_and_value_at_lit_passive_block_second = ["AllowedPassiveVenues: ",
-                                                                        "AMERICAN STOCK EXCHANGE/EURONEXT AMSTERDAM/BATS"]
+                                                                        f"{self.first_venue}/{self.second_venue}/{self.third_venue}"]
             actual_parameter_and_value_at_lit_passive_block_second = [
                 strategies_wizard.get_parameter_name_at_lit_passive_block(),
                 strategies_wizard.get_parameter_value_at_lit_passive_block()]
@@ -120,7 +121,7 @@ class QAP_T3924(CommonTestCase):
             dark_lit_block.click_on_checkmark_button()
             dark_lit_block.click_on_go_back_button()
             expected_parameter_and_value_at_lit_passive_block_third = ["InitialDarkAllowedVenues: ",
-                                                                       "AMERICAN STOCK EXCHANGE/EURONEXT AMSTERDAM/BATS"]
+                                                                       f"{self.first_venue}/{self.second_venue}/{self.third_venue}"]
             actual_parameter_and_value_at_lit_passive_block_third = [
                 strategies_wizard.get_parameter_name_at_lit_dark_block(),
                 strategies_wizard.get_parameter_value_at_lit_dark_block()]

@@ -27,3 +27,6 @@ class FeesWizard(CommonPage):
         self.find_by_xpath(FeesConstants.DOWNLOAD_PDF_BUTTON_XPATH).click()
         time.sleep(2)
         return self.is_pdf_contains_value(value)
+
+    def is_footer_error_warning_displayed(self):
+        return self.is_element_present(FeesConstants.FOOTER_WARNING_XPATH)

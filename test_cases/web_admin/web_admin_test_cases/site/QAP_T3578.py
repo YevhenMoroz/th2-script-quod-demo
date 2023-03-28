@@ -16,8 +16,8 @@ class QAP_T3578(CommonTestCase):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
 
-        self.login = 'adm_loca'
-        self.password = 'adm_loca'
+        self.login = self.data_set.get_user("user_2")
+        self.password = self.data_set.get_password("password_2")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

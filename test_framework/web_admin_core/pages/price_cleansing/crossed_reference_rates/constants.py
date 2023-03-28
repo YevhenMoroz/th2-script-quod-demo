@@ -46,8 +46,8 @@ class Constants:
         class ValuesTab:
             NAME = '//*[@formcontrolname="priceCleansingRuleName"]'
             REMOVE_DETECTED_PRICE_UPDATES_CHECKBOX = '//*[normalize-space()="Remove Detected Price Update"]/preceding-sibling::span'
-            REFERENCE_VENUES = '//*[@formcontrolname="priceCleansingReferenceVenue"]/button'
-            REFERENCE_VENUES_NAME_IN_DROP_DOWN = '//nb-option-list//nb-option'
+            REFERENCE_VENUES = '//div[@id="Reference Venues *"]'
+            REFERENCE_VENUES_NAME_IN_DROP_DOWN = '//span[@id="textReference Venues *"]'
 
         class DimensionsTab:
             VENUE = '//*[@id="venue"]'
