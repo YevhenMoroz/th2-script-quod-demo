@@ -58,6 +58,7 @@ class QAP_T10840(TestCase):
         # endregion
         # region Step 3
         # TODO add Check RequestForPositionsAck
+
         self.position_report.set_params_from_reqeust(self.request_for_position)
         self.position_report.change_parameter("LastPositUpdateEventID", exec_id)
         prefilter = {
