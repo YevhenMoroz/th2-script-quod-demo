@@ -351,4 +351,7 @@ class FXListings(Enum):
     gbp_usd_spo = "506404433"
     gbp_usd_wk1 = "506404437"
     gbp_usd_wk2 = "506404438"
+    gbp_cad_spo = "506403873"
+    gbp_cad_wk1 = "506403877"
+
     #TODO add more listings
