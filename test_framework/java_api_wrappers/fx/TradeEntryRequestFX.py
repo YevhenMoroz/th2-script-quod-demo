@@ -41,6 +41,33 @@ class TradeEntryRequestFX(JavaApiMessage):
         super().change_parameters(request_params)
         return self
 
+    def set_params_for_fwd(self):
+        request_params = {
+            "SEND_SUBJECT": "QUOD.ORS.FE",
+            "REPLY_SUBJECT": "QUOD.FE.ORS",
+            "TradeEntryRequestBlock": {
+                "ExecPrice": "1.18",
+                "ExecQty": "1000000",
+                "TradeEntryTransType": "NEW",
+                "VenueExecID": bca.client_orderid(7),
+                "LastMkt": "XQFX",
+                "SettlDate": self.get_data_set().get_settle_date_by_name("wk1_java_api"),
+                "TradeDate": self.get_data_set().get_settle_date_by_name("today_java_api"),
+                "Side": "B",
+                "AccountGroupID": "CLIENT1",
+                "ListingID": "506403765",  # EUR/USD WK1
+                "SettlCurrFxRate": "0",
+                "OrdrMiscBlock": {
+                    "OrdrMisc2": "test"
+                },
+                "ExecMiscBlock": {
+                    "ExecMisc2": "test2"
+                }
+            }
+        }
+        super().change_parameters(request_params)
+        return self
+
     def get_exec_id(self, response) -> str:
         return response[1].get_parameters()["ExecutionReportBlock"]["ExecID"]
 
