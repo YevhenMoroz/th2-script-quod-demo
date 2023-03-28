@@ -85,3 +85,4 @@ class QAP_T10760(TestCase):
         self.sleep(2)
         self.request_for_position.set_unsubscribe()
         self.fix_manager.send_message(self.request_for_position)
+
