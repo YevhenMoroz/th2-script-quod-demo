@@ -68,7 +68,7 @@ class PreConditionForPosition:
         return out[0][0]
 
     def set_posit_qty(self, account, instr_id, posit_qty):
-        query = f"""UPDATE posit SET positqty = '{posit_qty}'  WHERE accountid = '{account}'  AND instrid = '{instr_id}';"""
+        query = f"""UPDATE posit SET positqty = '{posit_qty}', cumbuyqty={posit_qty}, cumsellqty='0'WHERE accountid = '{account}'  AND instrid = '{instr_id}';"""
         self._db_manager.execute_query(query)
 
     def close_connection(self):

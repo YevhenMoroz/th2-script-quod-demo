@@ -12,34 +12,39 @@ class PositionCalculationManager:
     # equity position`s formulas
     # cross_rate = 1 if PositCurrency equals TradingCurrency
     @staticmethod
-    def calculate_today_gross_pl_buy_side(daily_realized_gross_pl: str, posit_qty: str, exec_qty: str, exec_price: str,
-                                          gross_weighted_avg_px: str, cross_rate=1):
+    def calculate_today_gross_pl_buy_side_execution(daily_realized_gross_pl: str, posit_qty: str, exec_qty: str,
+                                                    exec_price: str,
+                                                    gross_weighted_avg_px: str, cross_rate=1):
         if float(posit_qty) < 0:
             daily_realized_gross_pl = float(daily_realized_gross_pl) - \
-                                      (min(float(posit_qty), float(exec_qty)) * (
+                                      (min(-float(posit_qty), float(exec_qty)) * (
                                               float(exec_price) * float(cross_rate) - float(gross_weighted_avg_px)))
-            return daily_realized_gross_pl
+            return str(daily_realized_gross_pl)
         else:
-            return daily_realized_gross_pl
+            return str(daily_realized_gross_pl)
 
     @staticmethod
-    def calculate_today_net_pl_buy_side(daily_realized_net_pl: str, posit_qty: str, exec_qty: str, exec_price: str,
-                                        net_weighted_avg_px: str, client_commission=None, fees=None, cross_rate=1):
+    def calculate_realized_pl_buy_side_execution(posit_qty: str, exec_qty: str,
+                                                  exec_price: str,
+                                                  net_weighted_avg_px: str, client_commission='0.0', fees='0.0',
+                                                  cross_rate=1):
+        print(net_weighted_avg_px)
         if float(posit_qty) < 0:
-            daily_realized_net_pl_after = float(daily_realized_net_pl) - (
-                    min(abs(float(posit_qty)), float(exec_qty)) * (
-                    float(exec_price * cross_rate) - float(net_weighted_avg_px)))
-            if client_commission:
-                daily_realized_net_pl_after = daily_realized_net_pl_after - (float(client_commission) * cross_rate)
-            if fees:
-                daily_realized_net_pl_after = daily_realized_net_pl_after - (float(fees) * cross_rate)
-            return str(daily_realized_net_pl_after)
+            realized_pl = -(min(-float(posit_qty), float(exec_qty)) * (float(exec_price) - float(net_weighted_avg_px))) - \
+                          ((float(client_commission)+float(fees)) * float(cross_rate))
+            print(realized_pl)
+            print(float(exec_price) - float(net_weighted_avg_px))
+            print(-float(posit_qty))
+            print(min(-float(posit_qty), float(exec_qty)))
+            return str(realized_pl)
         else:
-            return daily_realized_net_pl
+            return '0.0'
+
 
     @staticmethod
-    def calculate_gross_weighted_avg_px_buy_side(gross_weight_avg_px, posit_qty: str, exec_qty: str, exec_price: str,
-                                                 cross_rate=1):
+    def calculate_gross_weighted_avg_px_buy_side_execution(gross_weight_avg_px, posit_qty: str, exec_qty: str,
+                                                           exec_price: str,
+                                                           cross_rate=1):
         if float(posit_qty) >= float(0):
             gross_weight_avg_px = \
                 (float(gross_weight_avg_px) * float(posit_qty) + float(exec_qty) * float(exec_price) * float(
@@ -47,29 +52,33 @@ class PositionCalculationManager:
                         float(posit_qty) + float(exec_qty))
             return str(gross_weight_avg_px)
         if float(posit_qty) < float(0):
-            if float(exec_qty) < abs(float(posit_qty)):
-                return gross_weight_avg_px
-            if float(exec_qty) > abs(float(posit_qty)):
+            if float(exec_qty) < -(float(posit_qty)):
+                return str(gross_weight_avg_px)
+            if float(exec_qty) > -(float(posit_qty)):
                 gross_weight_avg_px = float(exec_price) * float(cross_rate) * float(exec_qty) / float(exec_qty)
                 return str(gross_weight_avg_px)
-            if float(exec_qty) == abs(float(posit_qty)):
-                return 0
+            if float(exec_qty) == -(float(posit_qty)):
+                return '0.0'
 
     @staticmethod
-    def calculate_net_weighted_avg_px(net_weight_avg_px, posit_qty: str, exec_qty: str, exec_price: str,
-                                      commission: str = None, fees: str = None, cross_rate=1):
+    def calculate_net_weighted_avg_px_buy_side_execution(net_weight_avg_px, posit_qty: str, exec_qty: str,
+                                                         exec_price: str,
+                                                         commission: str = '0.0', fees: str = '0.0', cross_rate=1):
+        if float(posit_qty) >= 0:
+            net_weight_avg_px = (float(net_weight_avg_px) * float(posit_qty) + float(exec_qty) * float(
+                exec_price) * float(cross_rate) +
+                                 (float(commission) + float(fees)) * float(cross_rate)) / (
+                                            float(posit_qty) + float(exec_qty))
+            return str(net_weight_avg_px)
         if float(posit_qty) < 0:
-            if float(exec_qty) > abs(float(posit_qty)):
-                net_weight_avg_px_after = float(exec_qty) * float(exec_price) * cross_rate
-                if commission:
-                    net_weight_avg_px_after = net_weight_avg_px_after + float(commission) * cross_rate
-                if fees:
-                    net_weight_avg_px_after = net_weight_avg_px_after + float(fees) * cross_rate
-                return str(net_weight_avg_px_after / float(exec_qty))
-            if float(exec_qty) < abs(float(posit_qty)):
-                return net_weight_avg_px
-            if float(exec_qty) == abs(float(posit_qty)):
-                return '0'
+            if float(exec_qty) < -float(posit_qty):
+                return str(net_weight_avg_px)
+            if float(exec_qty) > -float(posit_qty):
+                net_weight_avg_px = (float(exec_qty) * float(exec_price) + (float(commission) + float(fees)) * float(
+                    cross_rate))/float(exec_qty)
+                return str(net_weight_avg_px)
+            if float(exec_qty) == -float(posit_qty):
+                return '0.0'
 
     @staticmethod
     def calculate_buy_avg_px(posit_qty, exec_qty, exec_price, buy_avg_px, cross_rate='1', fees='0',
@@ -116,6 +125,8 @@ class PositionCalculationManager:
 
             if float(posit_qty) == float(transfer_price):
                 return '0.0'
+            else:
+                return str(net_weighted_avg_px)
 
     @staticmethod
     def calculate_realized_pl_for_transfer_sell(posit_qty, transfered_qty, transfered_price, net_weighted_avg_px):
