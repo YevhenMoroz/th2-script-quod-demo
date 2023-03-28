@@ -39,4 +39,12 @@ class PositionVerifier:
         self.verifier.verify()
         self.verifier = Verifier(self.test_id)
 
+    def check_transact_time(self, report, expected_value):
+        transact_time = report[0].get_parameters()["TransactTime"]
+        transact_time = transact_time[0:19]
+        expected_value = expected_value[0:19]
+        self.verifier.set_event_name("Check Transact time")
+        self.verifier.compare_values("Compare time", expected_value, transact_time)
+        self.verifier.verify()
+        self.verifier = Verifier(self.test_id)
     # TODO Add new fields to check
