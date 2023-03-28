@@ -10,7 +10,6 @@ from test_framework.fix_wrappers.forex.FixMessageRequestForPositionsFX import Fi
 from custom import basic_custom_actions as bca
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.fx.TradeEntryRequestFX import TradeEntryRequestFX
-from test_framework.positon_verifier_fx import PositionVerifier
 
 
 class QAP_T10760(TestCase):
@@ -24,7 +23,6 @@ class QAP_T10760(TestCase):
         self.fix_verifier = FixVerifier(self.pks_connectivity, self.test_id)
         self.request_for_position = FixMessageRequestForPositionsFX()
         self.position_report = FixMessagePositionReportFX()
-        self.position_verifier = PositionVerifier(self.test_id)
         self.trade_request = TradeEntryRequestFX()
         self.trade_request_wk1 = TradeEntryRequestFX()
         self.client = self.data_set.get_client_by_name("client_mm_7")
@@ -41,7 +39,7 @@ class QAP_T10760(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # Region Send Trade to have position
+        # region Send Trade to have position
         self.trade_request.set_default_params()
         self.trade_request.update_fields_in_component("TradeEntryRequestBlock", {"AccountGroupID": self.client,
                                                                                  "ListingID": self.listing_gbp_cad})
