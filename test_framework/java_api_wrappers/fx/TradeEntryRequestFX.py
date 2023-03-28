@@ -43,3 +43,6 @@ class TradeEntryRequestFX(JavaApiMessage):
 
     def get_exec_id(self, response) -> str:
         return response[1].get_parameters()["ExecutionReportBlock"]["ExecID"]
+
+    def get_termination_time(self, response) -> str:
+        return response[1].get_parameters()["ExecutionReportBlock"]["TerminationTime"]
