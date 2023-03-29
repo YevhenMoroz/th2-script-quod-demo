@@ -261,6 +261,7 @@ class JavaApiFields(Enum):
     PositionTransferID = 'PositionTransferID'
     TransferStatus = 'TransferStatus'
     QtyToTransfer = 'QtyToTransfer'
+    TransferTransType = 'TransferTransType'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"
@@ -417,3 +418,7 @@ class SubscriptionRequestTypes(Enum):
 
 class PosReqTypes(Enum):
     PosReqType_POS = 'POS'
+
+
+class PositionTransferReportConst(Enum):
+    TransferTransType_NEW = 'NEW'
