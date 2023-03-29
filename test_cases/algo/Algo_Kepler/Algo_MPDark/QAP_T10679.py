@@ -182,7 +182,7 @@ class QAP_T10679(TestCase):
         self.fix_verifier_sell.check_fix_message(self.MP_Dark_order_replace_params, direction=self.ToQuod, message_name='Sell side OrderCancelReplaceRequest')
 
         er_reject_replaced_MP_Dark_order_params = FixMessageOrderCancelRejectReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_new)
-        er_reject_replaced_MP_Dark_order_params.change_parameters(dict(CxlRejResponseTo=2, Text='algorithm is suspended'))
+        er_reject_replaced_MP_Dark_order_params.change_parameters(dict(CxlRejResponseTo=2, Text='algorithm already terminated'))
         self.fix_verifier_sell.check_fix_message(er_reject_replaced_MP_Dark_order_params, key_parameters=self.key_params_ER_cancel_reject_parent, message_name='Sell Side ExecReport OrderCancelRejectReport')
         # endregion
 

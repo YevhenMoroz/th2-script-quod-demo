@@ -82,7 +82,7 @@ class FixMessageOrderCancelRejectReportAlgo(FixMessageOrderCancelRejectReport):
 
     def __set_new_kepler_sell(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
-        if new_order_single.get_parameter('TargetStrategy') in ['1010', '1008']:
+        if new_order_single.get_parameter('TargetStrategy') in ['1010', '1008', '1011']:
             temp.update(
                 SecondaryAlgoPolicyID='*',
             )
