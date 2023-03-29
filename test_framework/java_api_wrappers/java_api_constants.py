@@ -253,6 +253,14 @@ class JavaApiFields(Enum):
     TradeEntryRequestBlock = 'TradeEntryRequestBlock'
     LastMkt = 'LastMkt'
     BuyAvgPx = 'BuyAvgPx'
+    TransferredInAmt = 'TransferredInAmt'
+    TransferredOutAmt = 'TransferredOutAmt'
+    SecurityAccountPLBlock = 'SecurityAccountPLBlock'
+    TodayRealizedPL = 'TodayRealizedPL'
+    PositionTransferReportBlock = 'PositionTransferReportBlock'
+    PositionTransferID = 'PositionTransferID'
+    TransferStatus = 'TransferStatus'
+    QtyToTransfer = 'QtyToTransfer'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"
