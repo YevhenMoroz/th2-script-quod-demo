@@ -57,35 +57,17 @@ class QAP_T7571(TestCase):
         posit_qty = float(self.db_position_wrapper.get_posit_qty(self.acc1, self.instrument_id))
         if posit_qty < 0:
             self.qty = str(-posit_qty + float(self.qty_to_transfer))
+            self._precondition(side)
         elif posit_qty > 0 and posit_qty > float(self.qty_to_transfer):
             self.qty = str(posit_qty - float(self.qty_to_transfer))
             side = SubmitRequestConst.Side_Sell.value
+            self._precondition(side)
         elif 0 < posit_qty < float(self.qty_to_transfer):
             self.qty = str(float(self.qty_to_transfer) - float(posit_qty))
-
-        # part 1: Create and accept CO order
-        self.order_submit.update_fields_in_component('NewOrderSingleBlock',
-                                                     {'AccountGroupID': self.client,
-                                                      'Side': side,
-                                                      'OrdQty': self.qty,
-                                                      'PreTradeAllocationBlock': {
-                                                          'PreTradeAllocationList': {'PreTradeAllocAccountBlock': [
-                                                              {'AllocAccountID': self.acc1,
-                                                               'AllocQty': self.qty}]}}})
-        self.ja_manager_second.send_message_and_receive_response(self.order_submit)
-        cd_ord_notif = self.ja_manager_second.get_last_message(CSMessageType.CDOrdNotif.value).get_parameters()[
-            JavaApiFields.CDOrdNotifBlock.value]
-        cd_ord_notif_id = cd_ord_notif[JavaApiFields.CDOrdNotifID.value]
-        order_id = cd_ord_notif[JavaApiFields.OrdID.value]
-        self.accept_request.set_default(order_id, cd_ord_notif_id, self.desk)
-        self.ja_manager.send_message_and_receive_response(self.accept_request)
-        # end of part
-
-        # part 2: Manual Execute CO order
-        self.trade_entry.set_default_trade(order_id, self.price, self.qty)
-        self.ja_manager.send_message_and_receive_response(self.trade_entry)
-        # end of part
-        # endregion
+            self._precondition(side)
+        elif posit_qty == 0:
+            self.qty = self.qty_to_transfer
+            self._precondition(side)
 
         # region step  1-2 : Extract position for acc1 and acc2
         posit_acc1_before_transfer = self._extract_cum_values_for_acc(self.acc1)
@@ -225,3 +207,29 @@ class QAP_T7571(TestCase):
             get_parameters()[JavaApiFields.RequestForPositionsAckBlock.value][JavaApiFields.PositionReportBlock.value] \
             [JavaApiFields.SecurityAccountPLBlock.value][JavaApiFields.TodayRealizedPL.value]
         return common_daily_pl
+
+    def _precondition(self, side):
+        # part 1: Create and accept CO order
+        self.order_submit.update_fields_in_component('NewOrderSingleBlock',
+                                                     {'AccountGroupID': self.client,
+                                                      'Side': side,
+                                                      'OrdQty': self.qty,
+                                                      "Price": self.price,
+                                                      'PreTradeAllocationBlock': {
+                                                          'PreTradeAllocationList': {'PreTradeAllocAccountBlock': [
+                                                              {'AllocAccountID': self.acc1,
+                                                               'AllocQty': self.qty}]}}})
+        self.ja_manager_second.send_message_and_receive_response(self.order_submit)
+        cd_ord_notif = self.ja_manager_second.get_last_message(CSMessageType.CDOrdNotif.value).get_parameters()[
+            JavaApiFields.CDOrdNotifBlock.value]
+        cd_ord_notif_id = cd_ord_notif[JavaApiFields.CDOrdNotifID.value]
+        order_id = cd_ord_notif[JavaApiFields.OrdID.value]
+        self.accept_request.set_default(order_id, cd_ord_notif_id, self.desk)
+        self.ja_manager.send_message_and_receive_response(self.accept_request)
+        # end of part
+
+        # part 2: Manual Execute CO order
+        self.trade_entry.set_default_trade(order_id, self.price, self.qty)
+        self.ja_manager.send_message_and_receive_response(self.trade_entry)
+        # end of part
+        # endregion
