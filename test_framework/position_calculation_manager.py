@@ -28,7 +28,6 @@ class PositionCalculationManager:
                                                  exec_price: str,
                                                  net_weighted_avg_px: str, client_commission='0.0', fees='0.0',
                                                  cross_rate=1):
-        print(net_weighted_avg_px)
         if float(posit_qty) < 0:
             realized_pl = -(
                         min(-float(posit_qty), float(exec_qty)) * (float(exec_price) - float(net_weighted_avg_px))) - \
@@ -115,18 +114,15 @@ class PositionCalculationManager:
                 return '0.0'
         if float(posit_qty) > 0:
             if float(qty_to_transfer) < 0:
-                print("3 case")
                 net_weighted_avg_px = (float(net_weighted_avg_px) * float(posit_qty) +
                                        (-float(qty_to_transfer) * float(transfer_price))) / (
                                               float(posit_qty) - float(qty_to_transfer))
                 return str(net_weighted_avg_px)
             if float(qty_to_transfer) > float(posit_qty):
-                print("1 case")
                 net_weighted_avg_px = float(qty_to_transfer) * float(transfer_price) / float(qty_to_transfer)
                 return str(net_weighted_avg_px)
 
             if float(posit_qty) == float(qty_to_transfer):
-                print('2 case')
                 return '0.0'
             else:
                 return str(net_weighted_avg_px)
