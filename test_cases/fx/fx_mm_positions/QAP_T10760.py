@@ -99,5 +99,5 @@ class QAP_T10760(TestCase):
         self.maintenance_request_fwd.set_params_for_fwd()
         self.maintenance_request_fwd.change_account(self.account)
         self.maintenance_request_fwd.change_client(self.client)
-        self.maintenance_request.change_instrument(self.gbp_cad, self.sec_type_java)
+        self.maintenance_request_fwd.change_instrument(self.gbp_cad, self.sec_type_java)
         self.java_api_manager.send_message(self.maintenance_request_fwd)
