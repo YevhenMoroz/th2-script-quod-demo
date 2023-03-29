@@ -9,6 +9,7 @@ from test_framework.fix_wrappers.forex.FixMessagePositionReportFX import FixMess
 from test_framework.fix_wrappers.forex.FixMessageRequestForPositionsFX import FixMessageRequestForPositionsFX
 from custom import basic_custom_actions as bca
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.fx.FixPositionMaintenanceRequestFX import FixPositionMaintenanceRequestFX
 from test_framework.java_api_wrappers.fx.TradeEntryRequestFX import TradeEntryRequestFX
 
 
@@ -25,17 +26,21 @@ class QAP_T10760(TestCase):
         self.position_report = FixMessagePositionReportFX()
         self.trade_request = TradeEntryRequestFX()
         self.trade_request_wk1 = TradeEntryRequestFX()
+        self.maintenance_request = FixPositionMaintenanceRequestFX()
+        self.maintenance_request_fwd = FixPositionMaintenanceRequestFX()
         self.client = self.data_set.get_client_by_name("client_mm_7")
+        self.account = self.data_set.get_account_by_name("account_mm_7")
         self.listing_gbp_cad = self.data_set.get_listing_id_by_name("gbp_cad_spo")
         self.listing_gbp_cad_wk1 = self.data_set.get_listing_id_by_name("gbp_cad_wk1")
         self.currency = self.data_set.get_currency_by_name("currency_gbp")
         self.gbp_cad = self.data_set.get_symbol_by_name("symbol_synth_5")
         self.spot = self.data_set.get_security_type_by_name("fx_spot")
+        self.sec_type_java = self.data_set.get_fx_instr_type_ja("fx_fwd")
+        self.settle_date_wk1 = self.data_set.get_settle_date_by_name("wk1_java_api")
         self.instrument = {
             "SecurityType": self.spot,
             "Symbol": self.gbp_cad
         }
-        self.settle_date_wk1 = self.data_set.get_settle_date_by_name("wk1_java_api")
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -85,4 +90,14 @@ class QAP_T10760(TestCase):
         self.sleep(2)
         self.request_for_position.set_unsubscribe()
         self.fix_manager.send_message(self.request_for_position)
-
+        self.maintenance_request.set_default_params()
+        self.maintenance_request.change_account(self.account)
+        self.maintenance_request.change_client(self.client)
+        self.maintenance_request.change_instrument(self.gbp_cad)
+        self.java_api_manager.send_message(self.maintenance_request)
+        self.sleep(1)
+        self.maintenance_request_fwd.set_params_for_fwd()
+        self.maintenance_request_fwd.change_account(self.account)
+        self.maintenance_request_fwd.change_client(self.client)
+        self.maintenance_request.change_instrument(self.gbp_cad, self.sec_type_java)
+        self.java_api_manager.send_message(self.maintenance_request_fwd)
