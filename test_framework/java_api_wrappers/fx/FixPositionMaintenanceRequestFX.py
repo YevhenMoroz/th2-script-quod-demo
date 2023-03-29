@@ -202,6 +202,195 @@ class FixPositionMaintenanceRequestFX(JavaApiMessage):
         super().change_parameters(request_params)
         return self
 
+    def set_params_for_fwd(self):
+        request_params = {
+            "SEND_SUBJECT": "QUOD.PKS.REQUEST",
+            "REPLY_SUBJECT": "QUOD.PKS.REPLY",
+            "PositionMaintenanceRequestBlock": {
+                "InstrumentBlock": {
+                    "InstrSymbol": self.get_data_set().get_symbol_by_name("symbol_1"),
+                    "InstrType": self.get_data_set().get_fx_instr_type_ja("fx_fwd")
+                },
+                "ClientAccountGroupID": self.get_data_set().get_client_by_name("client_mm_1"),
+                "PosMaintAction": "DEL",
+                "PosTransType": "ADJ",
+                "ClientPosReqID": bca.client_orderid(9),
+                "SettlDate": self.get_data_set().get_settle_date_by_name("wk1_java_api"),
+                "ClearingBusinessDate": self.get_data_set().get_settle_date_by_name("spot"),
+                "PartiesList": {
+                    "PartiesBlock": [
+                        {"PartyID": self.get_data_set().get_account_by_name("account_mm_1"),
+                         "PartyIDSource": "Proprietary",
+                         "PartyRole": "PositionAccount"}
+                    ]
+                },
+                "PositionAmountDataList": {
+                    "PositionAmountDataBlock": [
+                        {
+                            "PosAmtType": "BASE",
+                            "PosAmt": "0",
+                            "PositionCurrency": self.base_currency,
+                        },
+                        {
+                            "PosAmtType": "INIQ",
+                            "PosAmt": "0",
+                            "PositionCurrency": self.base_currency,
+                        },
+                        {
+                            "PosAmtType": "CBUQ",
+                            "PosAmt": "0",
+                            "PositionCurrency": self.base_currency,
+                        },
+                        {
+                            "PosAmtType": "CSLQ",
+                            "PosAmt": "0",
+                            "PositionCurrency": self.base_currency,
+                        },
+                        {
+                            "PosAmtType": "LEB",
+                            "PosAmt": "0",
+                            "PositionCurrency": self.base_currency,
+                        },
+                        {
+                            "PosAmtType": "LES",
+                            "PosAmt": "0",
+                            "PositionCurrency": self.base_currency,
+                        },
+                        {
+                            "PosAmtType": "AVG",
+                            "PosAmt": "0",
+                            "PositionCurrency": self.base_currency,
+                        },
+                        {
+                            "PosAmtType": "QSYS",
+                            "PosAmt": "0",
+                            "PositionCurrency": self.quote_currency,
+                        },
+                        {
+                            "PosAmtType": "SYSQ",
+                            "PosAmt": "0",
+                            "PositionCurrency": self.quote_currency,
+                        },
+                        {
+                            "PosAmtType": "QSYS",
+                            "PosAmt": "0",
+                            "PositionCurrency": self.quote_currency,
+                        },
+                        {
+                            "PosAmtType": "WORK",
+                            "PosAmt": "0",
+                            "PositionCurrency": self.quote_currency,
+                        },
+                        {
+                            "PosAmtType": "QCLB",
+                            "PosAmt": "0",
+                            "PositionCurrency": self.quote_currency,
+                        },
+                        {
+                            "PosAmtType": "QCLS",
+                            "PosAmt": "0",
+                            "PositionCurrency": self.quote_currency,
+                        },
+                        {
+                            "PosAmtType": "QSYS",
+                            "PosAmt": "0",
+                            "PositionCurrency": self.quote_currency,
+                        }, {
+                            "PosAmtType": "QWO",
+                            "PosAmt": "0",
+                            "PositionCurrency": self.quote_currency,
+                        }, {
+                            "PosAmtType": "SYQWO",
+                            "PosAmt": "0",
+                            "PositionCurrency": self.quote_currency,
+                        }, {
+                            "PosAmtType": "SYWO",
+                            "PosAmt": "0",
+                            "PositionCurrency": self.quote_currency,
+                        }, {
+                            "PosAmtType": "QDMP",
+                            "PosAmt": "0",
+                            "PositionCurrency": self.quote_currency,
+                        },
+                        {
+                            "PosAmtType": "QMMP",
+                            "PosAmt": "0",
+                            "PositionCurrency": self.quote_currency,
+                        },
+                        {
+                            "PosAmtType": "QYMP",
+                            "PosAmt": "0",
+                            "PositionCurrency": self.quote_currency,
+                        },
+                        {
+                            "PosAmtType": "QDPL",
+                            "PosAmt": "0",
+                            "PositionCurrency": self.quote_currency,
+                        },
+                        {
+                            "PosAmtType": "QMPL",
+                            "PosAmt": "0",
+                            "PositionCurrency": self.quote_currency,
+                        },
+                        {
+                            "PosAmtType": "QYPL",
+                            "PosAmt": "0",
+                            "PositionCurrency": self.quote_currency,
+                        },
+                        {
+                            "PosAmtType": "SYDPL",
+                            "PosAmt": "0",
+                            "PositionCurrency": self.quote_currency,
+                        },
+                        {
+                            "PosAmtType": "SYMPL",
+                            "PosAmt": "0",
+                            "PositionCurrency": self.quote_currency,
+                        },
+                        {
+                            "PosAmtType": "SYYPL",
+                            "PosAmt": "0",
+                            "PositionCurrency": self.quote_currency,
+                        },
+                        {
+                            "PosAmtType": "QUPL",
+                            "PosAmt": "0",
+                            "PositionCurrency": self.quote_currency,
+                        },
+                        {
+                            "PosAmtType": "SYUPL",
+                            "PosAmt": "0",
+                            "PositionCurrency": self.quote_currency,
+                        },
+                        {
+                            "PosAmtType": "QINI",
+                            "PosAmt": "0",
+                            "PositionCurrency": self.quote_currency,
+                        },
+                        {
+                            "PosAmtType": "QCUB",
+                            "PosAmt": "0",
+                            "PositionCurrency": self.quote_currency,
+                        },
+                        {
+                            "PosAmtType": "QCUS",
+                            "PosAmt": "0",
+                            "PositionCurrency": self.quote_currency,
+                        },
+                        {
+                            "PosAmtType": "QUOQ",
+                            "PosAmt": "0",
+                            "PositionCurrency": self.quote_currency,
+                        }
+                    ]
+
+                }
+
+            }
+        }
+        super().change_parameters(request_params)
+        return self
+
     def change_instrument(self, currency_pair, instr_type="FXSpot"):
         self.get_parameters()["PositionMaintenanceRequestBlock"]["InstrumentBlock"]["InstrSymbol"] = currency_pair
         self.get_parameters()["PositionMaintenanceRequestBlock"]["InstrumentBlock"]["InstrType"] = instr_type
