@@ -7,10 +7,10 @@ class PositionVerifier:
         self.test_id = test_id
         self.verifier = Verifier(test_id)
 
-    def check_base_position(self, report, expected_value):
+    def check_base_position(self, report, expected_value, text="Check Base Position"):
         pos_amount_date = report[0].get_parameters()["PositionAmountData"][0]
         amount = pos_amount_date["PosAmt"]
-        self.verifier.set_event_name("Check Base Position")
+        self.verifier.set_event_name(text)
         self.verifier.compare_values("Compare Base", expected_value, amount)
         self.verifier.verify()
         self.verifier = Verifier(self.test_id)
