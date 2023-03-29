@@ -1,5 +1,4 @@
 import logging
-import time
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
@@ -18,7 +17,6 @@ from test_framework.java_api_wrappers.oms.ors_messges.TradeEntryOMS import Trade
 from test_framework.java_api_wrappers.ors_messages.PositionTransferCancelRequest import PositionTransferCancelRequest
 from test_framework.java_api_wrappers.pks_messages.RequestForPositions import RequestForPositions
 from test_framework.position_calculation_manager import PositionCalculationManager
-from test_framework.ssh_wrappers.ssh_client import SshClient
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -51,26 +49,29 @@ class QAP_T7571(TestCase):
         self.cancel_transfer = PositionTransferCancelRequest()
         self.trade_entry = TradeEntryOMS(self.data_set)
         self.db_position_wrapper = PreConditionForPosition(environment)
-        self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
-        self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
-                                    self.ssh_client_env.password, self.ssh_client_env.su_user,
-                                    self.ssh_client_env.su_password)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Precondition: Create CO order and Manual Execute its
-        posit_qty = float(self.db_position_wrapper.get_posit_qty(self.washbook, self.instrument_id))
-        if posit_qty > 0:
-            self.db_position_wrapper.set_posit_qty(self.washbook, self.instrument_id, str(float(self.qty_to_transfer) - 10))
-            self.ssh_client.send_command("qrestart QUOD.PKS")
-            time.sleep(25)
+        side = SubmitRequestConst.Side_Buy.value
+        posit_qty = float(self.db_position_wrapper.get_posit_qty(self.acc1, self.instrument_id))
+        if posit_qty < 0:
+            self.qty = str(-posit_qty + float(self.qty_to_transfer))
+        elif posit_qty > 0 and posit_qty > float(self.qty_to_transfer):
+            self.qty = str(posit_qty - float(self.qty_to_transfer))
+            side = SubmitRequestConst.Side_Sell.value
+        elif 0 < posit_qty < float(self.qty_to_transfer):
+            self.qty = str(float(self.qty_to_transfer) - float(posit_qty))
 
         # part 1: Create and accept CO order
         self.order_submit.update_fields_in_component('NewOrderSingleBlock',
-                                                     {'AccountGroupID': self.client, 'PreTradeAllocationBlock': {
-                                                         'PreTradeAllocationList': {'PreTradeAllocAccountBlock': [
-                                                             {'AllocAccountID': self.acc1,
-                                                              'AllocQty': self.qty}]}}})
+                                                     {'AccountGroupID': self.client,
+                                                      'Side': side,
+                                                      'OrdQty': self.qty,
+                                                      'PreTradeAllocationBlock': {
+                                                          'PreTradeAllocationList': {'PreTradeAllocAccountBlock': [
+                                                              {'AllocAccountID': self.acc1,
+                                                               'AllocQty': self.qty}]}}})
         self.ja_manager_second.send_message_and_receive_response(self.order_submit)
         cd_ord_notif = self.ja_manager_second.get_last_message(CSMessageType.CDOrdNotif.value).get_parameters()[
             JavaApiFields.CDOrdNotifBlock.value]
@@ -171,7 +172,7 @@ class QAP_T7571(TestCase):
         daily_pl_actually = position_response[JavaApiFields.SecurityAccountPLBlock.value][
             JavaApiFields.TodayRealizedPL.value]
         today_net_pl_actually = position_response[JavaApiFields.PositionList.value][
-                                           JavaApiFields.PositionBlock.value][0][JavaApiFields.DailyRealizedNetPL.value]
+            JavaApiFields.PositionBlock.value][0][JavaApiFields.DailyRealizedNetPL.value]
 
         self.ja_manager.compare_values({JavaApiFields.DailyRealizedNetPL.value: today_net_pl_before_transfer},
                                        {JavaApiFields.DailyRealizedNetPL.value: today_net_pl_actually},
