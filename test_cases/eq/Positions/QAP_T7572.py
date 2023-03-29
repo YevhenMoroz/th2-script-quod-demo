@@ -70,6 +70,7 @@ class QAP_T7572(TestCase):
         elif posit_qty == 0:
             self.qty = self.qty_to_transfer
             self._precondition(side)
+        # endregion
 
         # region step  1-2 : Extract position for acc1 and acc2
         posit_acc1_before_transfer = self._extract_cum_values_for_acc(self.acc1)
@@ -200,7 +201,6 @@ class QAP_T7572(TestCase):
         self.trade_entry.set_default_trade(order_id, self.price, self.qty)
         self.ja_manager.send_message_and_receive_response(self.trade_entry)
         # end of part
-        # endregion
 
     def _check_common_daily_pl_and_today_daily_pl(self, posit_before_transfer, common_daily_pl_before_transfer,
                                                   qty_to_transfer, step):
