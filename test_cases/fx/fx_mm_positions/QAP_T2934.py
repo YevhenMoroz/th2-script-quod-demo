@@ -62,13 +62,13 @@ class QAP_T2934(TestCase):
         self.maintenance_request_ext.change_client(self.client_ext)
         self.maintenance_request_ext.change_instrument(self.gbp_cad)
         self.java_api_manager.send_message(self.maintenance_request_ext)
-        self.sleep(1)
+        self.sleep(5)
         self.maintenance_request_int.set_default_params()
         self.maintenance_request_int.change_account(self.account_int)
         self.maintenance_request_int.change_client(self.client_int)
         self.maintenance_request_int.change_instrument(self.gbp_cad)
         self.java_api_manager.send_message(self.maintenance_request_int)
-        self.sleep(1)
+        self.sleep(5)
 
         self.request_for_position_ext.set_default()
         self.request_for_position_ext.change_parameters({"Instrument": self.instrument, "Currency": self.currency,
