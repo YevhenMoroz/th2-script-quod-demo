@@ -3,16 +3,13 @@ from pathlib import Path
 
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
-from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.message_types import ORSMessageType
-from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
-from test_framework.java_api_wrappers.java_api_constants import ExecutionReportConst, OrderReplyConst, \
-    SubmitRequestConst, JavaApiFields, ExecutionPolicyConst
+from test_framework.java_api_wrappers.java_api_constants import ExecutionReportConst, SubmitRequestConst, JavaApiFields
 from test_framework.java_api_wrappers.oms.es_messages.ExecutionReportOMS import ExecutionReportOMS
 from test_framework.java_api_wrappers.oms.ors_messges.DFDManagementBatchOMS import DFDManagementBatchOMS
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
@@ -29,12 +26,8 @@ class QAP_T8703(TestCase):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
-        self.bs_connectivity = self.fix_env.buy_side
-        self.ss_connectivity = self.fix_env.sell_side
-        self.rule_manager = RuleManager(sim=Simulators.equity)
         self.fix_verifier = FixVerifier(self.fix_env.drop_copy, self.test_id)
         self.client = self.data_set.get_client('client_pt_1')
-        self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
         self.java_api_connectivity = self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
         self.trade_entry_message = TradeEntryOMS(self.data_set)
