@@ -56,7 +56,7 @@ class QAP_T4673(TestCase):
 
         self.child_qty = AFM.get_next_twap_slice(self.qty, self.waves)
         self.child_traded_qty = 50_000
-        self.price_child = 29.99
+        self.price_child = 29.995
         self.price_child_neutral = 35
         self.trade_delay = 0
         # endregion
