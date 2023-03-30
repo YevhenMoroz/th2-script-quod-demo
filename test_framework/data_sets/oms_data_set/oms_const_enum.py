@@ -600,8 +600,9 @@ class OMSCounterPartyIDs_FIX(Enum):
 
 
 class OMSCounterPartyIDs_JavaAPI(Enum):
-    counterpart_executing_firm = {'PartyRole': 'EXF', 'CounterpartID': '200002'}
-    counterpart_contra_firm = {'PartyRole': 'CNF', 'CounterpartID': '200003'}
+    counterpart_executing_firm = {'CounterpartID': '200002', 'PartyRole': 'EXF', }
+    counterpart_executing_firm2 = {'CounterpartID': '1200016', 'PartyRole': 'EXF'}
+    counterpart_contra_firm = {'CounterpartID': '200003', 'PartyRole': 'CNF'}
     counterpart_contra_firm_2 = {'PartyRole': 'CNF', 'CounterpartID': '1000009'}
     counterpart_give_up_broker = {'PartyRole': "GIV", 'CounterpartID': '1000007'}
     counterpart_market_maker_th2_route = {'PartyRole': "MMA", 'CounterpartID': '200007'}
@@ -610,11 +611,20 @@ class OMSCounterPartyIDs_JavaAPI(Enum):
     counterpart_regulatory_body_venue = {'CounterpartID': '200008', 'PartyRole': 'REB'}
     counterpart_custodian_user_2 = {'PartyRole': "CUS", 'CounterpartID': '800006'}
     counterpart_agent = {'CounterpartID': '1400025', 'PartyRole': 'AGE'}
-    counterpart_entering_firm = {'CounterpartID': '1200012', 'PartyRole':'ENF'}
+    counterpart_entering_firm = {'CounterpartID': '1200012', 'PartyRole': 'ENF'}
 
 
 class OMSVenueClientAccountName(Enum):
     venue_client_account_name = 'MOCLIENT_SA1'
+
+
+class OMSCounterParty_JavaAPI_FOR_ES(Enum):
+    counterpart_executing_firm2 = {'PartyID': "ExecutingFirm2",
+                                   'PartyIDSource': 'AcceptedMarketParticipant',
+                                   'PartyRole': 'ExecutingFirm'}
+    counterpart_contra_firm = {'PartyID': "ContraFirm",
+                               'PartyIDSource': 'AcceptedMarketParticipant',
+                               'PartyRole': 'ContraFirm'}
 
 
 class OMSGatingRuleIDs(Enum):

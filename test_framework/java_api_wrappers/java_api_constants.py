@@ -14,6 +14,12 @@ class ExecutionReportConst(Enum):
     MiscFeeType_EXC = 'EXC'
     MiscFeeBasis_P = 'P'
     MiscFeeBasis_A = 'A'
+    LastCapacity_Principal = 'P'
+    LastCapacity_Principal_FULL_VALUE = 'Principal'
+    LastCapacity_Agency_FULL_VALUE = 'Agency'
+    LastCapacity_Agency = 'A'
+    ExecOrigin_M = 'M'
+    ExecOrigin_E = 'E'
 
 
 class BasketMessagesConst(Enum):
@@ -264,6 +270,10 @@ class JavaApiFields(Enum):
     QtyToTransfer = 'QtyToTransfer'
     TransferTransType = 'TransferTransType'
     BackOfficeNotes = 'BackOfficeNotes'
+    LastCapacity = 'LastCapacity'
+    ExecOrigin = 'ExecOrigin'
+    PartiesList = 'PartiesList'
+    PartiesBlock = 'PartiesBlock'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"
