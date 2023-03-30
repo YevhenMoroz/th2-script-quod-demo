@@ -11,8 +11,8 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
-from test_framework.java_api_wrappers.java_api_constants import ExecutionReportConst, OrderReplyConst, \
-    SubmitRequestConst, JavaApiFields, ExecutionPolicyConst
+from test_framework.java_api_wrappers.java_api_constants import ExecutionReportConst, SubmitRequestConst, JavaApiFields, \
+    OrderReplyConst
 from test_framework.java_api_wrappers.oms.es_messages.ExecutionReportOMS import ExecutionReportOMS
 from test_framework.java_api_wrappers.oms.ors_messges.DFDManagementBatchOMS import DFDManagementBatchOMS
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
@@ -23,7 +23,7 @@ logger.setLevel(logging.INFO)
 seconds, nanos = timestamps()
 
 
-class QAP_T8703(TestCase):
+class QAP_T8705(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
@@ -47,63 +47,25 @@ class QAP_T8703(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region create CO  order (precondition)
-        self.submit_request.set_default_care_limit(recipient=self.environment.get_list_fe_environment()[0].user_1,
-                                                   desk=self.environment.get_list_fe_environment()[0].desk_ids[0],
-                                                   role=SubmitRequestConst.USER_ROLE_1.value)
-        self.submit_request.update_fields_in_component('NewOrderSingleBlock',
-                                                       {'OrdCapacity': SubmitRequestConst.OrdCapacity_Agency.value,
-                                                        'OrdQty': self.qty,
-                                                        'AccountGroupID': self.client,
-                                                        'Price': self.price}
-                                                       )
-        self.submit_request.remove_fields_from_component('NewOrderSingleBlock', ['SettlCurrency'])
-        self.java_api_manager.send_message_and_receive_response(self.submit_request, response_time=20000)
-        order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+        # region step 1: create DMA  order )
+        self.submit_request.get_parameters().clear()
+        self.submit_request.set_default_dma_limit()
+        self.submit_request.update_fields_in_component('NewOrderSingleBlock', {
+            "OrdQty": self.qty,
+            "AccountGroupID": self.client,
+            "Price": self.price
+        })
+        self.java_api_manager.send_message_and_receive_response(self.submit_request)
+        ord_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
             JavaApiFields.OrdReplyBlock.value]
-        order_id = order_reply[JavaApiFields.OrdID.value]
-        cl_ord_id = order_reply[JavaApiFields.ClOrdID.value]
+        order_id = ord_reply[JavaApiFields.OrdID.value]
+        cl_ord_id = ord_reply[JavaApiFields.ClOrdID.value]
+        self.java_api_manager.compare_values({JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_SEN.value},
+                                             ord_reply,
+                                             'Verifying that DMA order created (step 2)')
         # endregion
 
-        # region step 1: Fully Fill CO order
-        contra_firm_counterpart = self.data_set.get_counterpart_id_java_api('counterpart_contra_firm')
-        executing_firm_counterpart = self.data_set.get_counterpart_id_java_api('counterpart_executing_firm')
-        counterpart_list = {JavaApiFields.CounterpartList.value: {
-            JavaApiFields.CounterpartBlock.value: [
-                contra_firm_counterpart,
-                executing_firm_counterpart,
-            ]}}
-        self.trade_entry_message.set_default_trade(order_id, self.price, self.qty)
-        self.trade_entry_message.update_fields_in_component(JavaApiFields.TradeEntryRequestBlock.value,
-                                                            counterpart_list)
-        self.java_api_manager.send_message_and_receive_response(self.trade_entry_message)
-        execution_report = \
-            self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
-                JavaApiFields.ExecutionReportBlock.value]
-        self._verify_that_counterpart_present(counterpart_list[JavaApiFields.CounterpartList.value][
-                                                          JavaApiFields.CounterpartBlock.value],
-                                                      execution_report[JavaApiFields.CounterpartList.value][
-                                                          JavaApiFields.CounterpartBlock.value], 'step 1')
-        self.java_api_manager.compare_values(
-            {JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_FIL.value},
-            execution_report,
-            f'Verifying that Order fully filled (step 1)')
-        # endregion
-
-        # region step 2: Complete CO order
-        self.java_api_manager.send_message_and_receive_response(self.complete_order.set_default_complete(order_id))
-        calculated_execution = \
-            self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
-                JavaApiFields.ExecutionReportBlock.value]
-
-        self._verify_that_counterpart_present(counterpart_list[JavaApiFields.CounterpartList.value][
-                                                  JavaApiFields.CounterpartBlock.value],
-                                              calculated_execution[JavaApiFields.CounterpartList.value][
-                                                  JavaApiFields.CounterpartBlock.value], 'step 2')
-        last_capacity_is_present = not JavaApiFields.LastCapacity.value in str(calculated_execution)
-        self.java_api_manager.compare_values({'LastCapacityIsAbsent': True},
-                                             {'LastCapacityIsAbsent': last_capacity_is_present},
-                                             f'Verify that only {JavaApiFields.LastCapacity.value} is absent (step 2)')
+        # region step 2: Fully Fill CO order
 
         # endregion
 
