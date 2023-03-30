@@ -158,6 +158,7 @@ class QAP_T10497(TestCase):
 
         change_parameters['AllocAccount'] = sec_acc_1
         change_parameters['AllocQty'] = self.qty
+        change_parameters['FrontOfficeNote'] = cd_ord_free_notes
         change_parameters[JavaApiFields.BackOfficeNotes.value] = back_office_notes
         change_parameters['Text'] = cd_ord_free_notes
         confirmation_report = FixMessageConfirmationReportOMS(self.data_set, change_parameters)
