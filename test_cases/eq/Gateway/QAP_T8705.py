@@ -51,7 +51,6 @@ class QAP_T8705(TestCase):
         try:
             trade_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(
                 self.bs_connectivity, self.client_venue, self.mic, float(self.price))
-            self.submit_request.get_parameters().clear()
             self.submit_request.set_default_dma_limit()
             self.submit_request.update_fields_in_component('NewOrderSingleBlock', {
                 "OrdQty": self.qty,
