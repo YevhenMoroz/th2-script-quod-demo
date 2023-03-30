@@ -102,13 +102,13 @@ class QAP_T4673(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Start/EndDate for algo
         utcnow = datetime.utcnow()
-        end_date = (utcnow + timedelta(minutes=5)).strftime("%Y%m%d-%H:%M:%S")
+        end_date = (utcnow + timedelta(minutes=self.waves)).strftime("%Y%m%d-%H:%M:%S")
         start_date = utcnow.strftime("%Y%m%d-%H:%M:%S")
         # endregion
 
         # region EndDate for TradingPhases
         now = datetime.now()
-        end_date_open = now + timedelta(minutes=5)
+        end_date_open = now + timedelta(minutes=self.waves)
         # endregion
 
         # region rules
