@@ -171,13 +171,13 @@ class QAP_T8741(TestCase):
                 JavaApiFields.ExecutionReportBlock.value]
         contra_firm_is_present = contra_firm_counterpart in calculated_execution[JavaApiFields.CounterpartList.value][
             JavaApiFields.CounterpartBlock.value]
-        executing_firm_counterpart_is_present = executing_firm_counterpart in \
+        executing_firm_counterpart_is_present = not executing_firm_counterpart in \
                                                 calculated_execution[JavaApiFields.CounterpartList.value][
                                                     JavaApiFields.CounterpartBlock.value]
-        executing_firm_counterpart2_is_present = executing_firm_counterpart2 in \
+        executing_firm_counterpart2_is_present = not executing_firm_counterpart2 in \
                                                  calculated_execution[JavaApiFields.CounterpartList.value][
                                                      JavaApiFields.CounterpartBlock.value]
-        last_capacity_is_present = JavaApiFields.LastCapacity.value in str(calculated_execution)
+        last_capacity_is_present = not JavaApiFields.LastCapacity.value in str(calculated_execution)
         self.java_api_manager.compare_values({'ContraFirmPresent': True,
                                               'ExecutionFirmIsAbsent': True,
                                               'ExecutionFirm2IsAbsent': True,
