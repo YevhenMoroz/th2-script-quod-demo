@@ -300,7 +300,7 @@ def clear_position():
     try:
         connection = psycopg2.connect(user="quod314prd",
                                       password="quod314prd",
-                                      host="10.0.22.42",
+                                      host="10.0.22.69",
                                       port="5432",
                                       database="quoddb")
         # Create a cursor to perform database operations
