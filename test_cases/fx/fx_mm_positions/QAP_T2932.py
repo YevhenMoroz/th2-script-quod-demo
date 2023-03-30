@@ -1,97 +1,147 @@
-from custom import tenor_settlement_date as tsd
-import logging
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from custom.verifier import Verifier
-from test_cases.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
-from test_cases.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
-from stubs import Stubs
-from win_gui_modules.dealing_positions_wrappers import GetOrdersDetailsRequest, ExtractionPositionsFieldsDetails, \
-    PositionsInfo, ExtractionPositionsAction
-
-from win_gui_modules.utils import prepare_fe_2, get_base_request, call, get_opened_fe
-from win_gui_modules.wrappers import set_base
-
-
-def get_dealing_positions_details(del_act, base_request, symbol, account):
-    dealing_positions_details = GetOrdersDetailsRequest()
-    dealing_positions_details.set_default_params(base_request)
-    extraction_id = bca.client_orderid(4)
-    dealing_positions_details.set_extraction_id(extraction_id)
-    dealing_positions_details.set_filter(["Symbol", symbol, "Account", account])
-    position = ExtractionPositionsFieldsDetails("dealingpositions.position", "Position")
-    dealing_positions_details.add_single_positions_info(
-        PositionsInfo.create(
-            action=ExtractionPositionsAction.create_extraction_action(extraction_details=[position])))
-
-    response = call(del_act.getFxDealingPositionsDetails, dealing_positions_details.request())
-    return float(response["dealingpositions.position"].replace(",", ""))
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.forex.FixMessageExecutionReportPrevQuotedFX import \
+    FixMessageExecutionReportPrevQuotedFX
+from test_framework.fix_wrappers.forex.FixMessageNewOrderSinglePrevQuotedFX import FixMessageNewOrderSinglePrevQuotedFX
+from test_framework.fix_wrappers.forex.FixMessagePositionReportFX import FixMessagePositionReportFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
+from test_framework.fix_wrappers.forex.FixMessageRequestForPositionsFX import FixMessageRequestForPositionsFX
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.fx.FixPositionMaintenanceRequestFX import FixPositionMaintenanceRequestFX
+from test_framework.positon_verifier_fx import PositionVerifier
 
 
-def compare_position(case_id, pos_before, position, pos_after):
-    expected_pos = pos_before - position
+class QAP_T2932(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.java_api_env = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.pks_connectivity = self.environment.get_list_fix_environment()[0].sell_side_pks
+        self.ss_rfq_connectivity = self.environment.get_list_fix_environment()[0].sell_side_rfq
+        self.java_api_manager = JavaApiManager(self.java_api_env, self.test_id)
+        self.maintenance_request_ext = FixPositionMaintenanceRequestFX()
+        self.maintenance_request_int = FixPositionMaintenanceRequestFX()
+        self.fix_manager = FixManager(self.pks_connectivity, self.test_id)
+        self.fix_manager_gtw = FixManager(self.ss_rfq_connectivity, self.test_id)
+        self.fix_verifier = FixVerifier(self.pks_connectivity, self.test_id)
+        self.fix_verifier_gtw = FixVerifier(self.ss_rfq_connectivity, self.test_id)
+        self.position_verifier = PositionVerifier(self.test_id)
+        self.request_for_position_ext = FixMessageRequestForPositionsFX()
+        self.request_for_position_int = FixMessageRequestForPositionsFX()
+        self.position_report_ext = FixMessagePositionReportFX()
+        self.position_report_int = FixMessagePositionReportFX()
+        self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
+        self.new_order_single = FixMessageNewOrderSinglePrevQuotedFX()
+        self.execution_report = FixMessageExecutionReportPrevQuotedFX()
+        self.quote = FixMessageQuoteFX()
+        self.client_ext = self.data_set.get_client_by_name("client_mm_7")
+        self.account_ext = self.data_set.get_account_by_name("account_mm_7")
+        self.client_int = self.data_set.get_client_by_name("client_int_4")
+        self.account_int = self.data_set.get_account_by_name("account_int_4")
+        self.currency = self.data_set.get_currency_by_name("currency_gbp")
+        self.gbp_cad = self.data_set.get_symbol_by_name("symbol_synth_5")
+        self.sec_type_fwd = self.data_set.get_security_type_by_name("fx_fwd")
+        self.sec_type_java = self.data_set.get_fx_instr_type_ja("fx_fwd")
+        self.instrument = {
+            "SecurityType": self.sec_type_fwd,
+            "Symbol": self.gbp_cad
+        }
 
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Compare position")
-    verifier.compare_values("Quote position", str(round(expected_pos, 2)), str(pos_after))
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Clear position before start and check that they equal to 0
+        self.maintenance_request_ext.set_params_for_fwd()
+        self.maintenance_request_ext.change_account(self.account_ext)
+        self.maintenance_request_ext.change_client(self.client_ext)
+        self.maintenance_request_ext.change_instrument(self.gbp_cad, self.sec_type_java)
+        self.java_api_manager.send_message(self.maintenance_request_ext)
+        self.sleep(5)
+        self.maintenance_request_int.set_params_for_fwd()
+        self.maintenance_request_int.change_account(self.account_int)
+        self.maintenance_request_int.change_client(self.client_int)
+        self.maintenance_request_int.change_instrument(self.gbp_cad, self.sec_type_java)
+        self.java_api_manager.send_message(self.maintenance_request_int)
+        self.sleep(5)
 
-    verifier.verify()
+        self.request_for_position_ext.set_params_for_fwd()
+        self.request_for_position_ext.change_parameters({"Instrument": self.instrument, "Currency": self.currency,
+                                                         "Account": self.client_ext})
+        external_report: list = self.fix_manager.send_message_and_receive_response(self.request_for_position_ext,
+                                                                                   self.test_id)
+        self.position_report_ext.set_params_from_reqeust(self.request_for_position_ext)
+        self.position_report_ext.change_parameter("LastPositEventType", "11")
+        self.fix_verifier.check_fix_message(self.position_report_ext,
+                                            message_name=f"Check position for {self.client_ext} before start")
+        self.position_verifier.check_base_position(external_report, "0", text=f"Check base for {self.client_ext}")
+        self.sleep(1)
+        self.request_for_position_ext.set_unsubscribe()
+        self.fix_manager.send_message(self.request_for_position_ext)
+        self.sleep(1)
 
+        self.request_for_position_int.set_params_for_fwd()
+        self.request_for_position_int.change_parameters({"Instrument": self.instrument, "Currency": self.currency,
+                                                         "Account": self.client_int})
+        internal_report: list = self.fix_manager.send_message_and_receive_response(self.request_for_position_int,
+                                                                                   self.test_id)
+        self.position_report_int.set_params_from_reqeust(self.request_for_position_int)
+        self.position_report_int.change_parameter("LastPositEventType", "11")
+        self.fix_verifier.check_fix_message(self.position_report_int,
+                                            message_name=f"Check position for {self.client_int} before start")
+        self.position_verifier.check_base_position(internal_report, "0", text=f"Check base for {self.client_int}")
+        self.request_for_position_int.set_unsubscribe()
+        self.fix_manager.send_message(self.request_for_position_int)
+        self.sleep(1)
 
-def execute(report_id, session_id):
-    pos_service = Stubs.act_fx_dealing_positions
+        # endregion
+        # region Step 1
+        self.quote_request.set_rfq_params_fwd()
+        self.quote_request.update_repeating_group_by_index("NoRelatedSymbols", 0,
+                                                           Account=self.client_ext,
+                                                           Currency=self.currency,
+                                                           Instrument=self.instrument)
+        response: list = self.fix_manager_gtw.send_message_and_receive_response(self.quote_request)
+        self.quote.set_params_for_quote(self.quote_request)
+        self.new_order_single.set_default_prev_quoted(self.quote_request, response[0])
+        self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single)
+        self.execution_report.set_params_from_new_order_single(self.new_order_single)
+        self.fix_verifier_gtw.check_fix_message(self.execution_report)
+        # endregion
+        # region Step 2
+        self.request_for_position_ext.set_params_for_fwd()
+        self.request_for_position_ext.change_parameters({"Instrument": self.instrument, "Currency": self.currency,
+                                                         "Account": self.client_ext})
+        external_report: list = self.fix_manager.send_message_and_receive_response(self.request_for_position_ext,
+                                                                                   self.test_id)
+        self.position_report_ext.set_params_from_reqeust(self.request_for_position_ext)
+        self.position_report_ext.change_parameter("LastPositEventType", "5")
+        self.fix_verifier.check_fix_message(self.position_report_ext,
+                                            message_name=f"Check position for {self.client_ext} after order")
+        self.position_verifier.check_base_position(external_report, "1000000", text=f"Check base for {self.client_ext}")
+        self.sleep(1)
+        self.request_for_position_ext.set_unsubscribe()
+        self.fix_manager.send_message(self.request_for_position_ext)
+        self.sleep(1)
 
-    case_name = Path(__file__).name[:-3]
-
-    # Preconditions
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging.INFO)
-    client = "Silver1"
-    account = "Silver1_1"
-    settle_type = "W1"
-    symbol = "EUR/USD"
-    currency = "EUR"
-    security_type = "FXFWD"
-    side = "2"
-    order_qty = "1000000"
-    settle_date = tsd.wk1()
-
-    # Create sub-report for case
-    case_id = bca.create_event(case_name, report_id)
-
-    set_base(session_id, case_id)
-    case_base_request = get_base_request(session_id, case_id)
-
-    try:
-        rfq = FixClientSellRfq(
-            CaseParamsSellRfq(client, case_id, side=side, orderqty=order_qty, symbol=symbol, securitytype=security_type,
-                              settldate=settle_date,
-                              settltype=settle_type, currency=currency, account=account)). \
-            send_request_for_quote(). \
-            verify_quote_pending()
-        price = rfq.extract_filed("BidPx")
-        rfq.send_new_order_single(price). \
-            verify_order_pending(). \
-            verify_order_filled_fwd()
-        # Step 1
-        pos_before = get_dealing_positions_details(pos_service, case_base_request, symbol, client)
-
-        # Step 2
-        rfq = FixClientSellRfq(
-            CaseParamsSellRfq(client, case_id, side=side, orderqty=order_qty, symbol=symbol, securitytype=security_type,
-                              settldate=settle_date,
-                              settltype=settle_type, currency=currency, account=account)). \
-            send_request_for_quote(). \
-            verify_quote_pending()
-        price = rfq.extract_filed("BidPx")
-        rfq.send_new_order_single(price). \
-            verify_order_pending(). \
-            verify_order_filled_fwd()
-
-        position = float(order_qty)
-        position_after = get_dealing_positions_details(pos_service, case_base_request, symbol, client)
-        compare_position(case_id, pos_before, position, position_after)
-
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
+        self.request_for_position_int.set_params_for_fwd()
+        self.request_for_position_int.change_parameters({"Instrument": self.instrument, "Currency": self.currency,
+                                                         "Account": self.client_int})
+        internal_report: list = self.fix_manager.send_message_and_receive_response(self.request_for_position_int,
+                                                                                   self.test_id)
+        self.position_report_int.set_params_from_reqeust(self.request_for_position_int)
+        self.position_report_int.change_parameter("LastPositEventType", "5")
+        self.fix_verifier.check_fix_message(self.position_report_int,
+                                            message_name=f"Check position for {self.client_int} after order")
+        self.position_verifier.check_base_position(internal_report, "-1000000",
+                                                   text=f"Check base for {self.client_int}")
+        self.request_for_position_int.set_unsubscribe()
+        self.fix_manager.send_message(self.request_for_position_int)
+        self.sleep(1)
+        # endregion
