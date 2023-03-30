@@ -100,7 +100,7 @@ class QAP_T8703(TestCase):
 
         # endregion
 
-        # region step 3: Check 35=8 (39 = B message)
+        # region step 3: Check 35=8 (39 = B and 39 = 2 messages)
         list_of_counterparts = [
             self.data_set.get_counterpart_id_fix('counter_part_id_contra_firm'),
             self.data_set.get_counterpart_id_fix('counterpart_id_regulatory_body_venue_paris'),
