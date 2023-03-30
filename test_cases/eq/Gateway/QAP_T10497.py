@@ -57,7 +57,7 @@ class QAP_T10497(TestCase):
         })
         self.java_api_manager.send_message_and_receive_response(self.order_submit, response_time=20000)
         order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
-            JavaApiFields.OrdReplyBlock.value][JavaApiFields.OrdID.value]
+            JavaApiFields.OrdReplyBlock.value]
         order_id = order_reply[JavaApiFields.OrdID.value]
         cl_ord_id = order_reply[JavaApiFields.ClOrdID.value]
         # endregion

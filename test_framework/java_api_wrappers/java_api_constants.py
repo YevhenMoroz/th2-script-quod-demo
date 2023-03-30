@@ -70,6 +70,7 @@ class SubmitRequestConst(Enum):
 class AllocationReportConst(Enum):
     AllocStatus_ACK = 'ACK'
     MatchStatus_MAT = 'MAT'
+    MatchStatus_UNM = 'UNM'
     AllocSummaryStatus_MAG = 'MAG'
     AllocStatus_APP = 'APP'
     AllocStatus_CXL = 'CXL'
@@ -262,6 +263,7 @@ class JavaApiFields(Enum):
     TransferStatus = 'TransferStatus'
     QtyToTransfer = 'QtyToTransfer'
     TransferTransType = 'TransferTransType'
+    BackOfficeNotes = 'BackOfficeNotes'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"
@@ -285,6 +287,8 @@ class JavaApiFields(Enum):
     VenueID = 'VenueID'
     AlgoParametersBlock = 'AlgoParametersBlock'
     AlgoType = 'AlgoType'
+    LastPx = 'LastPx'
+    LastTradedQty = 'LastTradedQty'
 
     ComputeBookingFeesCommissionsReplyBlock = 'ComputeBookingFeesCommissionsReplyBlock'
     RootMiscFeeBasis = 'RootMiscFeeBasis'
