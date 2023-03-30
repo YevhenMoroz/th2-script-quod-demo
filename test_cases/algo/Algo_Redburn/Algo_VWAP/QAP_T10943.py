@@ -25,7 +25,7 @@ from test_framework.core.test_case import TestCase
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
 
 
-class QAP_T8892(TestCase):
+class QAP_T10943(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -44,13 +44,11 @@ class QAP_T8892(TestCase):
         # endregion
 
         # region order parameters
-        self.qty = 1200
-        self.waves = 2
+        self.qty = 1000
+        self.waves = 5
         self.percentage = 100
         self.price = 30
-        self.price2 = AFM.calc_ticks_offset_minus(self.price, 1, 0.005)
-        self.indicative_volume = 0
-        self.historical_volume = 1200.0
+
         self.tif_atc = TimeInForce.AtTheClose.value
         # endregion
 
@@ -100,32 +98,40 @@ class QAP_T8892(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        # region Rule creation
+        rule_manager = RuleManager(Simulators.algo)
+        self.rule_list = []
+        # endregion
 
         # region Update Trading Phase
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify trading phase profile", self.test_id))
-        trading_phases = AFM.get_timestamps_for_current_phase(TradingPhases.PreOpen)
+        trading_phases = AFM.get_timestamps_for_current_phase(TradingPhases.Open)
         self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
         # end region
 
+        # region insert data into mongoDB
+        self.db_manager.drop_collection(f"Q{self.listing_id}")
+        bca.create_event(f"Collection Q{self.listing_id} is dropped", self.test_id)
+        # endregion
+
         # region Send MarketDate
-        self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send trading phase - PreOpen", self.test_id))
+        self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send trading phase - Open", self.test_id))
 
         self.incremental_refresh = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative() \
-            .update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume) \
+            .update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', 0) \
             .update_MDReqID(self.listing_id, self.fix_env1.feed_handler) \
-            .set_phase(TradingPhases.PreOpen)
+            .set_phase(TradingPhases.Open)
         self.fix_manager_feed_handler.send_message(fix_message=self.incremental_refresh)
         # endregion
 
-        # region Send NewOrderSingle
-        case_id_1 = bca.create_event("Create VWAP Order", self.test_id)
+        case_id_1 = bca.create_event("Create Auction Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
         # region Send VWAP algo
         self.auction_algo = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_VWAP_auction_params()
         self.auction_algo.add_ClordId((os.path.basename(__file__)[:-3]))
         self.auction_algo.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.mic))
-        self.auction_algo.add_tag(dict(QuodFlatParameters=dict(ParticipateInClosingAuctions="Y", MaxParticipationClose=self.percentage, Waves=self.waves)))
+        self.auction_algo.add_tag(dict(QuodFlatParameters=dict(Waves=self.waves)))
         self.fix_manager_sell.send_message_and_receive_response(fix_message=self.auction_algo, case_id=case_id_1)
         # endregion
 
@@ -138,6 +144,10 @@ class QAP_T8892(TestCase):
 
         er_new = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_new)
         self.fix_verifier_sell.check_fix_message(fix_message=er_new, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
+        # endregion
+
+
+
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -154,6 +164,8 @@ class QAP_T8892(TestCase):
         self.fix_verifier_sell.check_fix_message(er_cancel_auction_order, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
 
+        rule_manager = RuleManager(Simulators.algo)
+        rule_manager.remove_rules(self.rule_list)
 
         self.db_manager.drop_collection(f"Q{self.listing_id}")
         bca.create_event(f"Collection QP{self.listing_id} is dropped", self.test_id)
@@ -163,4 +175,3 @@ class QAP_T8892(TestCase):
         trading_phases = AFM.get_default_timestamp_for_trading_phase()
         self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
         # end region
-
