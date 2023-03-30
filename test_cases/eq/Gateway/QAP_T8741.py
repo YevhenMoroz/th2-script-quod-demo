@@ -92,7 +92,7 @@ class QAP_T8741(TestCase):
                                                           JavaApiFields.CounterpartBlock.value])
         self.java_api_manager.compare_values({'CounterpartsArePresent': True},
                                              {'CounterpartsArePresent': value},
-                                             'Verifying that second Execution report has counterparts (step 3)')
+                                             'Verifying that  Execution report has counterparts (step 1)')
         self.java_api_manager.compare_values({JavaApiFields.ExecOrigin.value: ExecutionReportConst.ExecOrigin_M.value,
                                               JavaApiFields.LastCapacity.value: ExecutionReportConst.LastCapacity_Principal.value},
                                              execution_report,
