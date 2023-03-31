@@ -1,65 +1,50 @@
 <!--
-$HeadURL$
-$LastChangedDate$
-$LastChangedRevision$
-$LastChangedBy$
+$HeadURL: http://svnhost:3080/svn/quod/release/5.1.80.92/order/es/cfg/client_esfix.xml $
+$LastChangedDate: 2018-12-17 16:01:32 +0000 (Mon, 17 Dec 2018) $
+$LastChangedRevision: 136351 $
+$LastChangedBy: rheiss $
 
 Copyright Quod Financial
 -->
 <quod>
     <includes>
-        <include>${CFG_DIR}/${CFG_PREFIX}backend.xml</include>
-        <include>${CFG_DIR}/${CFG_PREFIX}persistence.xml</include>
-        <include>${CFG_DIR}/${CFG_PREFIX}gateways.xml</include>
-        <include>${CFG_DIR}/${CFG_PREFIX}routing.xml</include>
-        <include>${CFG_DIR}/${CFG_PREFIX}marketdata.xml</include>
-        <include>${CFG_DEFAULT}/es.xml</include>
+        <include>${CFG_DIR}/${CFG_PREFIX}es.xml</include>
     </includes>
+    <es>
+        <subjects>
+            <request>fixbuyTH2testgtwRequests</request><!--Use QuickfixBuy-->
+            <reply>fixbuyTH2testgtwReplies</reply>
+            <info>fixbuyTH2testgtwInfo</info>
+        </subjects>
+        <cancel>
+            <postpone>
+                <!-- In FIX, we don't rely on the venue order id but on
+                the client order id instead, so a forced cancel request
+                can be submitted even before order acknowledgement... -->
+                <forced>true</forced>
+                <!-- ... and potentially also for a normal cancel request,
+                at the risk of being rejected if the new order is rejected
+                (probably not a big deal) -->
+                <open>true</open>
 
-	<es>
-	    <execution>
-		    <ignoreTradeDate>true</ignoreTradeDate>
-		</execution>
-		<instrument>
-			<destination>
-				<!-- execution destination exchange nomenclature, can be :
-				- "none" to leave empty
-				- "name" to use venue's VenueName
-				- "MIC" to use route venue's or venue's MIC [default value]
-				- "SecExch" to use the listing's SecurityExchange
-				- "LREC" to use listing's ReutersExchCode (venue's Reuters Exchange Code)
-				- "LBEC" to use listing's BloombergExchCode (venue's Bloomberg Exchange Code)
-				- "SEREC" to use listing's SecurityExchange's Reuters Exchange Code
-				- "SEBEC" to use listing's SecurityExchange's Bloomberg Exchange Code
-				-->
-				<type>MIC</type>
-			</destination>
-
-				<!-- SecurityExchange code to send, can be :
-				- MIC : Market Identifier Code (standard listing's SecurityExchange)
-				- REC : Reuters Exchange Code
-				- BEC : Bloomberg Exchange Code
-				-->
-				<exchange>BEC</exchange>
-
-				<!-- [PDAT-732] whether the gateway/venue/broker/hub counterpart
-				can handle Reuters/Bloomberg's composite codes -->
-				<supportCompositeCodes>true</supportCompositeCodes>
-		</instrument>
-	<order>
-	<!-- whether to expect implicit/unsolicited orders, that is,
-	             when receiving reports on an unknown order, notify its creation
-				             to the ORS and let the system manage it as a normal DMA order. -->
-			<implicit>
-				<enabled>true</enabled>
-				<!-- The feature requires <sharedVenueAccount> to be false. -->
-				<!-- ORS instance to assign unsolicited orders to, only if implicit mode is enabled. -->
-				<originator>ORS</originator>
-				<!-- default UserID to provide for order -->
-				<user>JavaApiUser</user>
-				<!-- default RoleID enum to provide for order -->																																			
-				<role>HSD</role>
-			</implicit>
-	</order>
-	</es>
+                <!-- In FIX, we should postpone a cancel request when an order
+                has a modify request pending since the client order id may change
+                depending on the modify's outcome. -->
+                <modified>true</modified>
+            </postpone>
+        </cancel>
+        <!--order>
+            <implicit>
+                <enabled>true</enabled>
+                <originator>ORS</originator>
+                <user>vskulinec</user>
+                <role>HSD</role>
+                <unsolicited>false</unsolicited>
+            </implicit>
+        </order-->
+        <execution>
+        <duplicates>true</duplicates>
+        </execution>
+    </es>
 </quod>
+

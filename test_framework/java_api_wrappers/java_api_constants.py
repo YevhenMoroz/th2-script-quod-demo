@@ -277,6 +277,10 @@ class JavaApiFields(Enum):
     AllocFreeAccountID = 'AllocFreeAccountID'
     AllocSettlCurrency = 'AllocSettlCurrency'
     RouteList = 'RouteList'
+    VenueAccount = 'VenueAccount'
+    VenueActGrpName = 'VenueActGrpName'
+    LastVenueOrdID = 'LastVenueOrdID'
+    VenueExecID = 'VenueExecID'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"
