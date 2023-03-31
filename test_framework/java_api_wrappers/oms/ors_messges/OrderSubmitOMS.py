@@ -69,9 +69,22 @@ class OrderSubmitOMS(OrderSubmit):
             self.update_fields_in_component('NewOrderSingleBlock', algo_params)
         return self
 
-    def set_default_dma_limit(self):
+    def set_default_dma_limit(self, with_external_algo=False):
         self.change_parameters(self.base_parameters)
         self.update_fields_in_component('NewOrderSingleBlock', {"Price": '20', "OrdType": 'Limit'})
+        if with_external_algo:
+            strategy = {
+                'ExternalAlgoParametersBlock': {'ExternalAlgoParameterListBlock': {
+                    'ExternalAlgoParameterBlock': [{'AlgoParameterName': "StrategyTag",
+                                                    'AlgoParamString': "TWAP",
+                                                    'VenueScenarioParameterID': '7505'}]},
+                                                'ScenarioID': '102',
+                                                'ExternalAlgoPolicyID': '1000132',
+                                                'ScenarioIdentifier': "848",
+                                                'VenueScenarioID': "TWAP",
+                                                'VenueScenarioVersionID': "11945"}}
+                                                # 'VenueScenarioVersionValue': 'ATDLEQ5.5'}}
+            self.update_fields_in_component('NewOrderSingleBlock', strategy)
         return self
 
     def set_default_dma_market(self):
