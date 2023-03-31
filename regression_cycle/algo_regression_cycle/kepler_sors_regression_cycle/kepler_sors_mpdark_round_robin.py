@@ -37,6 +37,10 @@ from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10625 import QAP_T10625
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10664 import QAP_T10664
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10671 import QAP_T10671
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10679 import QAP_T10679
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10681 import QAP_T10681
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10682 import QAP_T10682
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10683 import QAP_T10683
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10684 import QAP_T10684
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10691 import QAP_T10691
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10694 import QAP_T10694
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10740 import QAP_T10740
@@ -93,6 +97,10 @@ def test_run(parent_id=None, version=None):
         QAP_T10664(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10671(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10679(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10681(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10682(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10683(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10684(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10691(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10694(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10740(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
