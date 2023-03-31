@@ -49,7 +49,7 @@ class QAP_T10575(TestCase):
                                     self.ssh_client_env.su_password)
         self.local_path = resource_filename("test_resources.be_configs.oms_be_configs",
                                             "client_es.xml")
-        self.remote_path = f"/home/{self.ssh_client_env.su_user}/quod/cfg/client_esbuyTH2test.xml"
+        self.remote_path = f"/home/{self.ssh_client_env.su_user}/quod/cfg/client_es.xml"
 
         # endregion
 
