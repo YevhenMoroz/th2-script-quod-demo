@@ -42,9 +42,6 @@ Copyright Quod Financial
                 <unsolicited>false</unsolicited>
             </implicit>
         </order-->
-        <execution>
-        <duplicates>true</duplicates>
-        </execution>
     </es>
 </quod>
 
