@@ -2,6 +2,7 @@ import logging
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_cases.algo.Algo_Redburn.Algo_VWAP import QAP_T4285
+from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T10943 import QAP_T10943
 from test_framework.configurations.component_configuration import ComponentConfigurationAlgo
 
 
@@ -15,12 +16,8 @@ def test_run(parent_id=None, version=None):
     report_id = bca.create_event(f"VWAP (verification) | {version}", parent_id)
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
-        # region Iceberg: Route/Venue
-        # configuration = ComponentConfiguration("Vwap")
         configuration = ComponentConfigurationAlgo("Vwap")
-        # QAP_T4872(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-
-        # QAP_T4285.execute(report_id)
+        QAP_T10943(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
     except Exception:
         # bca.create_event('Fail test event', status='FAILED', parent_id=parent_id)

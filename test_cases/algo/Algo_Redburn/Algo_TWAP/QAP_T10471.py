@@ -20,7 +20,7 @@ from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySid
 from datetime import datetime, timedelta
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
 
-class QAP_T4673(TestCase):
+class QAP_T10471(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -37,7 +37,7 @@ class QAP_T4673(TestCase):
         # endregion
 
         # region order parameters
-        self.order_type = OrderType.Limit.value
+        self.order_type_limit = OrderType.Limit.value
         self.tif_day = TimeInForce.Day.value
         self.tif_ioc = TimeInForce.ImmediateOrCancel.value
 
@@ -52,13 +52,14 @@ class QAP_T4673(TestCase):
 
         self.qty = 1_000_000
         self.price = 130
-        self.waves = 5
+        self.waves = 10
 
-        self.child_qty = AFM.get_next_twap_slice(self.qty, self.waves)
-        self.child_traded_qty = 50_000
+        self.twap_child_qty_list = AFM.get_all_twap_slices(self.qty, self.waves)
+        self.child_qty_1 = self.twap_child_qty_list[0]
+        self.child_qty_2 = self.twap_child_qty_list[1]
+        self.child_qty_3 = self.twap_child_qty_list[2]
         self.price_child = 29.995
-        self.price_child_neutral = 35
-        self.trade_delay = 0
+        self.price_child_2 = 35
         # endregion
 
         # region Venue params
@@ -102,22 +103,21 @@ class QAP_T4673(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Start/EndDate for algo
         utcnow = datetime.utcnow()
-        end_date = (utcnow + timedelta(minutes=self.waves)).strftime("%Y%m%d-%H:%M:%S")
+        end_date = (utcnow + timedelta(minutes=10)).strftime("%Y%m%d-%H:%M:%S")
         start_date = utcnow.strftime("%Y%m%d-%H:%M:%S")
         # endregion
 
         # region EndDate for TradingPhases
         now = datetime.now()
-        end_date_open = now + timedelta(minutes=self.waves)
+        end_date_open = now + timedelta(minutes=10)
         # endregion
 
         # region rules
         rule_manager = RuleManager(Simulators.algo)
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price_child)
-        nos_trade_rule = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price_child, self.price_child, self.child_qty, self.child_traded_qty, self.trade_delay)
-        ocrr_rule = rule_manager.add_OCRR(self.fix_env1.buy_side)
+        ocrr_rule = rule_manager.add_OrderCancelReplaceRequest_ExecutionReport(self.fix_env1.buy_side, False)
         ocr_rule = rule_manager.add_OCR(self.fix_env1.buy_side)
-        self.rule_list = [nos_rule, nos_trade_rule, ocrr_rule, ocr_rule]
+        self.rule_list = [nos_rule, ocrr_rule, ocr_rule]
         # endregion
 
         # region Update Trading Phase
@@ -171,7 +171,7 @@ class QAP_T4673(TestCase):
         self.fix_verifier_buy.set_case_id(self.case_id_2)
 
         self.twap_child_1 = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()
-        self.twap_child_1.change_parameters(dict(OrderQty=self.child_qty, Price=self.price_child, Account=self.account, ExDestination=self.ex_destination_1, Instrument=self.instrument))
+        self.twap_child_1.change_parameters(dict(OrderQty=self.child_qty_1, Price=self.price_child, Account=self.account, ExDestination=self.ex_destination_1, Instrument=self.instrument))
         self.fix_verifier_buy.check_fix_message(self.twap_child_1, key_parameters=self.key_params, message_name='Buy side NewOrderSingle TWAP child 1')
 
         pending_twap_child_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_child_1, self.gateway_side_buy, self.status_pending)
@@ -179,15 +179,36 @@ class QAP_T4673(TestCase):
 
         new_twap_child_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_child_1, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message(new_twap_child_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New TWAP child 1')
-        
-        partial_fill_twap_child_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_child_1, self.gateway_side_buy, self.status_partial_fill)
-        self.fix_verifier_buy.check_fix_message(partial_fill_twap_child_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport Partial Fill TWAP child 1')
 
-        time.sleep(40)
+        time.sleep(125)
 
-        neutral_twap_child_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_child_1, self.gateway_side_buy, self.status_replaces)
-        neutral_twap_child_1_params.change_parameters(dict(Price=self.price_child_neutral))
-        self.fix_verifier_buy.check_fix_message(neutral_twap_child_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport Neutral TWAP child 1')
+        self.case_id_3 = bca.create_event("TWAP DMA child order 2", self.test_id)
+        self.fix_verifier_buy.set_case_id(self.case_id_3)
+
+        self.twap_child_2 = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()
+        self.twap_child_2.change_parameters(dict(OrderQty=self.child_qty_2, Price=self.price_child, Account=self.account, ExDestination=self.ex_destination_1, Instrument=self.instrument))
+        self.fix_verifier_buy.check_fix_message(self.twap_child_2, key_parameters=self.key_params, message_name='Buy side NewOrderSingle TWAP child 2')
+
+        pending_twap_child_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_child_2, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message(pending_twap_child_2_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew TWAP child 2')
+
+        new_twap_child_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_child_2, self.gateway_side_buy, self.status_new)
+        self.fix_verifier_buy.check_fix_message(new_twap_child_2_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New TWAP child 2')
+
+
+        self.case_id_4 = bca.create_event("TWAP DMA child order 3", self.test_id)
+        self.fix_verifier_buy.set_case_id(self.case_id_4)
+
+        self.twap_child_3 = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()
+        self.twap_child_3.change_parameters(dict(OrderQty=self.child_qty_3, Price=self.price_child, Account=self.account, ExDestination=self.ex_destination_1, Instrument=self.instrument))
+        self.fix_verifier_buy.check_fix_message(self.twap_child_3, key_parameters=self.key_params, message_name='Buy side NewOrderSingle TWAP child 3')
+
+        pending_twap_child_3_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_child_3, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message(pending_twap_child_3_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew TWAP child 3')
+
+        new_twap_child_3_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_child_3, self.gateway_side_buy, self.status_new)
+        self.fix_verifier_buy.check_fix_message(new_twap_child_3_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New TWAP child 3')
+
     # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -210,9 +231,31 @@ class QAP_T4673(TestCase):
         self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
         # endregion
 
-        self.fix_verifier_buy.set_case_id(self.case_id_cancel)
+        self.fix_verifier_buy.set_case_id(self.case_id_2)
+        cancel_replace_twap_child_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_child_1, self.gateway_side_buy, self.status_replaces)
+        cancel_replace_twap_child_1_params.change_parameters(dict(Price=self.price, TimeInForce=self.tif_ioc))
+        self.fix_verifier_buy.check_fix_message(cancel_replace_twap_child_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport Cancel Replace TWAP child 1')
+
+        self.fix_verifier_buy.set_case_id(self.case_id_2)
         cancel_twap_child_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_child_1, self.gateway_side_buy, self.status_cancel)
+        cancel_twap_child_1_params.change_parameters(dict(Price=self.price, TimeInForce=self.tif_ioc))
+        cancel_twap_child_1_params.add_tag(dict(OrdType=self.order_type_limit))
         self.fix_verifier_buy.check_fix_message(cancel_twap_child_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport Cancel TWAP child 1')
+
+        self.fix_verifier_buy.set_case_id(self.case_id_3)
+        cancel_replace_twap_child_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_child_2, self.gateway_side_buy, self.status_replaces)
+        cancel_replace_twap_child_2_params.change_parameters(dict(Price=self.price, TimeInForce=self.tif_ioc))
+        self.fix_verifier_buy.check_fix_message(cancel_replace_twap_child_2_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport Cancel Replace TWAP child 2')
+
+        self.fix_verifier_buy.set_case_id(self.case_id_3)
+        cancel_twap_child_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_child_2, self.gateway_side_buy, self.status_cancel)
+        cancel_twap_child_2_params.change_parameters(dict(Price=self.price, TimeInForce=self.tif_ioc))
+        cancel_twap_child_2_params.add_tag(dict(OrdType=self.order_type_limit))
+        self.fix_verifier_buy.check_fix_message(cancel_twap_child_2_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport Cancel TWAP child 2')
+
+        self.fix_verifier_buy.set_case_id(self.case_id_4)
+        cancel_twap_child_3_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_child_3, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message(cancel_twap_child_3_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport Cancel TWAP child 3')
 
         cancel_twap_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_order, self.gateway_side_sell, self.status_cancel)
         self.fix_verifier_sell.check_fix_message(cancel_twap_order_params, key_parameters=self.key_params, message_name='Sell side ExecReport Cancel')

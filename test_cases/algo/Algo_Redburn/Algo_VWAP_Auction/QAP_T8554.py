@@ -1,17 +1,21 @@
 import os
 import sched
 import time
+from copy import deepcopy
 
 from pathlib import Path
 
 import pytz
 
 from test_framework.algo_formulas_manager import AlgoFormulasManager as AFM
+from test_framework.algo_mongo_manager import AlgoMongoManager as AMM
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, TradingPhases, TimeInForce
+from test_framework.db_wrapper.db_manager import DBManager
 from test_framework.fix_wrappers.algo.FixMessageMarketDataIncrementalRefreshAlgo import FixMessageMarketDataIncrementalRefreshAlgo
+from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import FixMessageMarketDataSnapshotFullRefreshAlgo
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
 from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
@@ -21,7 +25,7 @@ from test_framework.core.test_case import TestCase
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
 
 
-class QAP_T8928(TestCase):
+class QAP_T8554(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -35,19 +39,22 @@ class QAP_T8928(TestCase):
         self.fix_verifier_sell = FixVerifier(self.fix_env1.sell_side, self.test_id)
         self.fix_verifier_buy = FixVerifier(self.fix_env1.buy_side, self.test_id)
         self.restapi_env1 = self.environment.get_list_web_admin_rest_api_environment()[0]
+        self.db_manager = DBManager(self.environment.get_list_data_base_environment()[0])
+        self.rest_api_manager = RestApiAlgoManager(session_alias=self.restapi_env1.session_alias_wa, case_id=self.test_id)
 
 
         # endregion
 
         # region order parameters
         self.qty = 1200
-        self.waves = 5
+        self.waves = 2
         self.indicative_volume = 0
+        self.historical_volume = 1200.0
         self.percentage = 10
-        self.child_qty = AFM.get_next_twap_slice(self.qty, self.waves + 1)
-        self.child_qty_twap = AFM.get_next_twap_slice(self.qty, self.waves)
+        self.child_qty = AFM.get_child_qty_for_auction_historical_volume(self.historical_volume, self.percentage, self.qty)
         self.price = 30
         self.price2 = AFM.calc_ticks_offset_minus(self.price, 1, 0.005)
+
 
         self.tif_ato = TimeInForce.AtTheOpening.value
         # endregion
@@ -89,8 +96,10 @@ class QAP_T8928(TestCase):
         self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile1")
         self.rule_list = []
 
-        self.rest_api_manager = RestApiAlgoManager(session_alias=self.restapi_env1.session_alias_wa, case_id=self.test_id)
+        self.pre_filter = self.data_set.get_pre_filter("pre_filer_equal_D")
 
+
+        self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile1")
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -106,16 +115,27 @@ class QAP_T8928(TestCase):
 
 
         # region Update Trading Phase
-
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify trading phase profile", self.test_id))
         trading_phases = AFM.get_timestamps_for_previous_phase(TradingPhases.PreOpen)
         self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
         # end region
 
+        # region insert data into mongoDB
+        curve = AMM.get_straight_curve_for_mongo(trading_phases, volume=self.historical_volume)
+        self.db_manager.insert_many_to_mongodb_with_drop(curve, f"Q{self.listing_id}")
+        bca.create_event("Data in mongo inserted", self.test_id)
+        # endregion
 
         # region Send MarketDate
         self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send trading phase - Closed", self.test_id))
-        self.incremental_refresh = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', 0).update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase(TradingPhases.Closed)
+
+        self.snapshot_full_refresh = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data()
+        self.fix_manager_feed_handler.send_message(fix_message=self.snapshot_full_refresh)
+
+        self.incremental_refresh = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative() \
+            .update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', 1000) \
+            .update_MDReqID(self.listing_id, self.fix_env1.feed_handler) \
+            .set_phase(TradingPhases.Closed)
         self.fix_manager_feed_handler.send_message(fix_message=self.incremental_refresh)
         # endregion
 
@@ -123,76 +143,73 @@ class QAP_T8928(TestCase):
         case_id_1 = bca.create_event("Create Auction Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.auction_algo = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_TWAP_auction_params()
-        self.auction_algo.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.auction_algo.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.mic))
-        self.auction_algo.add_tag(dict(QuodFlatParameters=dict(ParticipateInOpeningAuctions="Y", Waves=self.waves)))
-        self.fix_manager_sell.send_message_and_receive_response(self.auction_algo, case_id_1)
 
-        # region Check Sell side
-        self.fix_verifier_sell.check_fix_message(self.auction_algo, key_parameters=self.key_params_NOS_parent, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
-        er_pending_new = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_pending)
-        self.fix_verifier_sell.check_fix_message(er_pending_new, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PendingNew')
-
-        er_new = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_new)
-        self.fix_verifier_sell.check_fix_message(er_new, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
-        # endregion
-
-        # region Check auction child order
         scheduler = sched.scheduler(time.time, time.sleep)
 
+        start_time_open = AFM.get_timestamp_from_list(phases=trading_phases, phase=TradingPhases.Open, start_time=True)
+        start_time_preopen = AFM.get_timestamp_from_list(phases=trading_phases, phase=TradingPhases.PreOpen, start_time=True)
 
-        start_time_pre_open = AFM.get_timestamp_from_list(phases=trading_phases, phase=TradingPhases.PreOpen, start_time=True)
-        end_time_pre_open = AFM.get_timestamp_from_list(phases=trading_phases, phase=TradingPhases.PreOpen, start_time=False)
-        self.checkpoint = end_time_pre_open + 5
+        # region Send VWAP algo
+        self.auction_algo = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_VWAP_auction_params()
+        self.auction_algo.add_ClordId((os.path.basename(__file__)[:-3]))
+        self.auction_algo.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.mic))
+        self.auction_algo.add_tag(dict(QuodFlatParameters=dict(ParticipateInOpeningAuctions="Y", MaxParticipationOpen=self.percentage, Waves=self.waves)))
+        self.fix_manager_sell.send_message_and_receive_response(fix_message=self.auction_algo, case_id=case_id_1)
+        # endregion
+
+        # region Check Sell side
+        self.auction_algo_verification = deepcopy(self.auction_algo)
+        scheduler.enterabs(start_time_open, 1, self.fix_verifier_sell.check_fix_message, kwargs=dict(fix_message=self.auction_algo_verification, key_parameters=self.key_params_NOS_parent, direction=self.ToQuod, message_name='Sell side NewOrderSingle'))
+
+        er_pending_new = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_pending)
+        scheduler.enterabs(start_time_open, 2, self.fix_verifier_sell.check_fix_message, kwargs=dict(fix_message=er_pending_new, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PendingNew'))
+
+        er_new = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_new)
+        scheduler.enterabs(start_time_open, 2, self.fix_verifier_sell.check_fix_message, kwargs=dict(fix_message=er_new, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New'))
+        # endregion
+
+        self.verify_time = start_time_open + 15
 
 
+        self.incremental_refresh_pre_closed = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative() \
+            .update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume) \
+            .update_MDReqID(self.listing_id, self.fix_env1.feed_handler) \
+            .set_phase(TradingPhases.Open)
+        scheduler.enterabs(start_time_open, 1, self.fix_manager_feed_handler.set_case_id, kwargs=dict(case_id=bca.create_event("Send trading phase - Open", self.test_id)))
+        scheduler.enterabs(start_time_open, 2, self.fix_manager_feed_handler.send_message, kwargs=dict(fix_message=self.incremental_refresh_pre_closed))
 
-        self.incremental_refresh_pre_open = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume).update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase(TradingPhases.PreOpen)
-        scheduler.enterabs(start_time_pre_open, 1, self.fix_manager_feed_handler.set_case_id, kwargs=dict(case_id=bca.create_event("Send trading phase - PreOpen", self.test_id)))
-        scheduler.enterabs(start_time_pre_open, 2, self.fix_manager_feed_handler.send_message, kwargs=dict(fix_message=self.incremental_refresh_pre_open))
+        self.incremental_refresh_pre_open = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative() \
+            .update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume) \
+            .update_MDReqID(self.listing_id, self.fix_env1.feed_handler) \
+            .set_phase(TradingPhases.PreOpen)
+        scheduler.enterabs(start_time_preopen, 1, self.fix_manager_feed_handler.set_case_id, kwargs=dict(case_id=bca.create_event("Send trading phase - PreOpen", self.test_id)))
+        scheduler.enterabs(start_time_preopen, 2, self.fix_manager_feed_handler.send_message, kwargs=dict(fix_message=self.incremental_refresh_pre_open))
 
-        self.incremental_refresh_open = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume).update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase(TradingPhases.Open)
-        scheduler.enterabs(end_time_pre_open, 1, self.fix_manager_feed_handler.set_case_id, kwargs=dict(case_id=bca.create_event("Send trading phase - Open", self.test_id)))
-        scheduler.enterabs(end_time_pre_open, 2, self.fix_manager_feed_handler.send_message, kwargs=dict(fix_message=self.incremental_refresh_open))
-
+        # region Check auction child order
         case_id_2 = bca.create_event("Check auction child order", self.test_id)
-        scheduler.enterabs(self.checkpoint, 1, self.fix_verifier_buy.set_case_id, kwargs=dict(case_id=case_id_2))
+        scheduler.enterabs(self.verify_time, 1, self.fix_verifier_buy.set_case_id, kwargs=dict(case_id=case_id_2))
 
         self.dma_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_RB_params()
         self.dma_order.change_parameters(dict(Account=self.account, ExDestination=self.mic, OrderQty=self.child_qty, Price=self.price, TimeInForce=self.tif_ato, Instrument=self.instrument))
-        scheduler.enterabs(self.checkpoint, 2, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=self.dma_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle child order'))
-
+        scheduler.enterabs(self.verify_time, 2, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=self.dma_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle child order'))
 
         er_pending_new_dma = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_pending)
-        scheduler.enterabs(self.checkpoint, 3, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=er_pending_new_dma, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew child order'))
+        scheduler.enterabs(self.verify_time, 3, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=er_pending_new_dma, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew child order'))
 
         er_new_dma = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_new)
-        scheduler.enterabs(self.checkpoint, 3, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=er_new_dma, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport child order'))
-
-        er_new_canceled = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_cancel)
-        scheduler.enterabs(self.checkpoint, 3, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=er_new_canceled, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Canceled child order'))
-
+        scheduler.enterabs(self.verify_time, 3, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=er_new_dma, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport child order'))
         # endregion
 
-        # region Check TWAP child order
-        case_id_3 = bca.create_event("Check twap child order", self.test_id)
-        scheduler.enterabs(self.checkpoint, 4, self.fix_verifier_buy.set_case_id, kwargs=dict(case_id=case_id_3))
+        # region Check vwap child order
+        case_id_2 = bca.create_event("Check vwap child order", self.test_id)
+        scheduler.enterabs(self.verify_time-5, 1, self.fix_verifier_buy.set_case_id, kwargs=dict(case_id=case_id_2))
 
-        self.dma_order_twap = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_RB_params()
-        self.dma_order_twap.change_parameters(dict(Account=self.account, ExDestination=self.mic, OrderQty=self.child_qty_twap, Price=self.price2, Instrument=self.instrument))
-        scheduler.enterabs(self.checkpoint, 5, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=self.dma_order_twap, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle child order'))
-
-        er_pending_new_dma_twap = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order_twap, self.gateway_side_buy, self.status_pending)
-        scheduler.enterabs(self.checkpoint, 6, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=er_pending_new_dma_twap, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew child order'))
-
-        er_new_dma_twap = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order_twap, self.gateway_side_buy, self.status_new)
-        scheduler.enterabs(self.checkpoint, 6, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=er_new_dma_twap, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport child order'))
-        # end region
+        self.dma_order_vwap = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_RB_params()
+        self.dma_order_vwap.change_parameters(dict(Account=self.account, ExDestination=self.mic, OrderQty='*', Price=self.price2, Instrument=self.instrument))
+        scheduler.enterabs(self.verify_time-5, 2, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=self.dma_order_vwap, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle child order'))
 
         scheduler.run()
-
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
@@ -208,6 +225,9 @@ class QAP_T8928(TestCase):
         time.sleep(2)
         rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)
+
+        self.db_manager.drop_collection(f"Q{self.listing_id}")
+        bca.create_event(f"Collection QP{self.listing_id} is dropped", self.test_id)
 
         # region Update Trading Phase
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Revert trading phase profile", self.test_id))

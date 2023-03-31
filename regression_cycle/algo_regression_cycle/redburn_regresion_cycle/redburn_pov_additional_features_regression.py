@@ -3,6 +3,7 @@ from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_cases.algo.Algo_Redburn.Algo_POV import QAP_T4333, QAP_T4330
 from test_cases.algo.Algo_PercentageVolume import QAP_T4573, QAP_T4574, QAP_T4580, QAP_T4599, QAP_T4604, QAP_T4629, QAP_T4631, QAP_T4648, QAP_T4659, QAP_T4660, QAP_T4556, QAP_T4661, QAP_T4565, QAP_T4662, QAP_T4566, QAP_T4567, QAP_T4568, QAP_T4569
+from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T10939 import QAP_T10939
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T8716 import QAP_T8716
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T8718 import QAP_T8718
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T8728 import QAP_T8728
@@ -26,6 +27,7 @@ def test_run(parent_id=None, version=None):
         QAP_T8716(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8718(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8728(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10939(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
         # QAP_T4333.execute(report_id)
         # QAP_T4330.execute(report_id)
