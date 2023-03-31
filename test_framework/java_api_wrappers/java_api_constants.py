@@ -274,6 +274,9 @@ class JavaApiFields(Enum):
     ExecOrigin = 'ExecOrigin'
     PartiesList = 'PartiesList'
     PartiesBlock = 'PartiesBlock'
+    AllocFreeAccountID = 'AllocFreeAccountID'
+    AllocSettlCurrency = 'AllocSettlCurrency'
+    RouteList = 'RouteList'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"
