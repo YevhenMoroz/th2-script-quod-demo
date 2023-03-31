@@ -21,6 +21,7 @@ class BasketMessagesConst(Enum):
     ListOrderStatus_EXE = 'EXE'
     ListOrderStatus_REJ = 'REJ'
     ListOrderStatus_DON = 'DON'
+    ListOrderStatus_CAN = 'CAN'
 
 
 class BagMessagesConst(Enum):
@@ -51,6 +52,7 @@ class OrderReplyConst(Enum):
     ExecType_REP = 'REP'
     ExecType_PCA = 'PCA'
     ExecType_PMO = 'PMO'
+    ExecType_CXL = 'CXL'
 
 
 class ExecutionPolicyConst(Enum):
