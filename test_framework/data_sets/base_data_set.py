@@ -70,6 +70,7 @@ class BaseDataSet:
     hierarchical_levels = None
     venue_client_account_name = None
     gating_rule_ids = None
+    counterpart_java_api_for_es = None
     # region fields added by Web Admin team
     user = None
     password = None
@@ -941,4 +942,9 @@ class BaseDataSet:
         if hasattr(self.venue_account_name, name):
             return getattr(self.venue_account_name, name).value
         return ValueError(f"{self.venue_account_name} not found!")
+
+    def get_counterpart_java_api_for_es(self, name: str):
+        if hasattr(self.counterpart_java_api_for_es, name):
+            return getattr(self.counterpart_java_api_for_es, name).value
+        return ValueError(f"{self.counterpart_java_api_for_es} not found!")
     # endregion
