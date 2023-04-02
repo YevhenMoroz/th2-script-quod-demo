@@ -26,7 +26,7 @@ from th2_grpc_sim_fix_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRR
     TemplateOrderCancelRequestWithQty, TemplateNewOrdSingleRQFRejected, TemplateNewOrdSingleExecutionReportOnlyPending, \
     TemplateExternalExecutionReport, TemplateNewOrdSingleExecutionReportTradeByOrdQtyRBCustom, \
     TemplateNOSExecutionReportTradeWithTradeDateFIXStandard, TemplateNewOrdSingleIOCTradeOnFullQty, \
-    TemplateNewOrdSingleExecutionReportDoneForDay, TemplateNewOrdSingleIOCTradeByOrderQty, TemplateFXOrderReject, TemplateNewOrdSingleTradeOnFullQty, TemplateNewOrdSingleExecutionReportAll
+    TemplateNewOrdSingleExecutionReportDoneForDay, TemplateNewOrdSingleIOCTradeByOrderQty, TemplateFXOrderReject, TemplateNewOrdSingleTradeOnFullQty, TemplateNewOrdSingleExecutionReportAll, TemplateNewOrdSingleExecutionReportIOCAll
 
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
@@ -672,6 +672,12 @@ class RuleManager:
     def add_NewOrdSingleExecutionReportAll(self, session: str, account: str, venue: str):
         return self.sim.createNewOrdSingleExecutionReportAll(
             request=TemplateNewOrdSingleExecutionReportAll(connection_id=ConnectionID(session_alias=session),
+                                                       account=account,
+                                                       venue=venue))
+
+    def add_NewOrdSingleExecutionReportIOCAll(self, session: str, account: str, venue: str):
+        return self.sim.createNewOrdSingleExecutionReportIOCAll(
+            request=TemplateNewOrdSingleExecutionReportIOCAll(connection_id=ConnectionID(session_alias=session),
                                                        account=account,
                                                        venue=venue))
 
