@@ -24,17 +24,15 @@ class TradeEntryRequestFX(JavaApiMessage):
                 "SettlDate": self.get_data_set().get_settle_date_by_name("spot_java_api"),
                 "TradeDate": self.get_data_set().get_settle_date_by_name("today_java_api"),
                 "Side": "B",
+                "Currency":self.get_data_set().get_currency_by_name("currency_eur"),
                 "AccountGroupID": "CLIENT_TEST_EXT",
-                # "ListingID": "506403761", # EUR/USD
-                "ListingID": "506404433",  # GBP/USD
+                "ListingID": "506403761",  # EUR/USD
+                # "ListingID": "506404433",  # GBP/USD
                 # "ListingID": "506409971", # USD/PHP
                 # "ListingID": "506403285", # EUR/GBP
                 "SettlCurrFxRate": "0",
-                "OrdrMiscBlock": {
-                    "OrdrMisc2": "test"
-                },
                 "ExecMiscBlock": {
-                    "ExecMisc2": "test2"
+                    "ExecMisc0": bca.client_orderid(10),
                 }
             }
         }
@@ -57,11 +55,8 @@ class TradeEntryRequestFX(JavaApiMessage):
                 "AccountGroupID": "CLIENT1",
                 "ListingID": "506403765",  # EUR/USD WK1
                 "SettlCurrFxRate": "0",
-                "OrdrMiscBlock": {
-                    "OrdrMisc2": "test"
-                },
                 "ExecMiscBlock": {
-                    "ExecMisc2": "test2"
+                    "ExecMisc0": bca.client_orderid(10),
                 }
             }
         }
@@ -71,5 +66,17 @@ class TradeEntryRequestFX(JavaApiMessage):
     def get_exec_id(self, response) -> str:
         return response[1].get_parameters()["ExecutionReportBlock"]["ExecID"]
 
+    def get_ah_exec_id(self, response) -> str:
+        return response[4].get_parameters()["ExecutionReportBlock"]["ExecID"]
+
+    def get_internal_exec_id(self, response) -> str:
+        return response[0].get_parameters()["ExecutionReportBlock"]["ExecID"]
+
     def get_termination_time(self, response) -> str:
         return response[1].get_parameters()["ExecutionReportBlock"]["TerminationTime"]
+
+    def get_venue_exec_id(self):
+        return self.get_parameters()["TradeEntryRequestBlock"]["VenueExecID"]
+
+    def get_exec_misc_0(self):
+        return self.get_parameters()["TradeEntryRequestBlock"]["ExecMiscBlock"]["ExecMisc0"]
