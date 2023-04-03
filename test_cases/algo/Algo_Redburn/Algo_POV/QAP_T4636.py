@@ -130,7 +130,6 @@ class QAP_T4636(TestCase):
         rule_manager = RuleManager(Simulators.algo)
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price_child_passive)
         nos_rule_arg = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price_child_aggressive)
-        # nos_reactive_rule = rule_manager.add_NewOrdSingle_reactive(self.fix_env1.buy_side, self.account, self.ex_destination_1, False, 0, self.price_child_aggressive)
         ocr_rule = rule_manager.add_OCR(self.fix_env1.buy_side)
         self.rule_list = [nos_rule, ocr_rule, nos_rule_arg]
         # endregion
