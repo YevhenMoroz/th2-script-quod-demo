@@ -5,7 +5,6 @@ from pathlib import Path
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
 from test_framework.algo_formulas_manager import AlgoFormulasManager as AFM
-
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets import constants
@@ -22,7 +21,7 @@ from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApi
 from test_framework.ssh_wrappers.ssh_client import SshClient
 
 
-class QAP_T4649(TestCase):
+class QAP_T4637(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -59,20 +58,18 @@ class QAP_T4649(TestCase):
 
         # order params
         self.qty = 300
-        self.price = 30
-        self.qty_child_passive = 23
-        self.price_child_passive = 20
+        self.price = 20
         self.qty_child_aggressive = 12
-        self.price_child_aggressive = 29.995
+        self.price_child_aggressive = 30.01
         self.aggressivity = constants.Aggressivity.Passive.value
-
+        self.side = 2
         # endregion
 
         # region Algo params
-        self.passive_reference_price = Reference.Market.value
+        self.passive_reference_price = Reference.Primary.value
         self.passive_offset = -1
-        self.limit_price_reference = Reference.Market.value
-        self.limit_price_offset = -2
+        self.limit_price_reference = Reference.Primary.value
+        self.limit_price_offset = 2
         # endregion
 
         # region Venue params
@@ -129,10 +126,9 @@ class QAP_T4649(TestCase):
 
         # region rules
         rule_manager = RuleManager(Simulators.algo)
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price_child_passive)
-        nos_rule_agr = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price_child_aggressive)
+        nos_rule_arg = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price_child_aggressive)
         ocr_rule = rule_manager.add_OCR(self.fix_env1.buy_side)
-        self.rule_list = [nos_rule_agr, ocr_rule, nos_rule]
+        self.rule_list = [ocr_rule, nos_rule_arg]
         # endregion
 
         # region Update Trading Phase
@@ -161,7 +157,7 @@ class QAP_T4649(TestCase):
 
         self.pov_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_POV_Redburn_params()
         self.pov_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.pov_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.ex_destination_1))
+        self.pov_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.ex_destination_1, Side=self.side))
         self.pov_order.update_fields_in_component('QuodFlatParameters', dict(LimitPriceReference=self.limit_price_reference, LimitPriceOffset=self.limit_price_offset, Passive=self.passive_reference_price, PassiveOffset=self.passive_offset, MaxPercentageVolume=self.percentage_volume, Aggressivity=self.aggressivity))
 
         self.fix_manager_sell.send_message_and_receive_response(self.pov_order, self.case_id_1)
@@ -178,32 +174,18 @@ class QAP_T4649(TestCase):
         self.fix_verifier_sell.check_fix_message(new_pov_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
 
-        # region Check Anticipative child order
-        self.fix_verifier_buy.set_case_id(bca.create_event("Check Anticipative child order", self.test_id))
-
-        self.anticipative_child_order = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()
-        self.anticipative_child_order .change_parameters(dict(Account=self.account, OrderQty=self.qty_child_passive, Price=self.price_child_passive, Instrument='*', ExDestination=self.ex_destination_1))
-        self.fix_verifier_buy.check_fix_message(self.anticipative_child_order , key_parameters=self.key_params, message_name='Buy side NewOrderSingle Anticipative Child')
-
-        pending_anticipative_child_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.anticipative_child_order , self.gateway_side_buy, self.status_pending)
-        self.fix_verifier_buy.check_fix_message(pending_anticipative_child_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew  Anticipative Child')
-
-        new_pov_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.anticipative_child_order , self.gateway_side_buy, self.status_new)
-        self.fix_verifier_buy.check_fix_message(new_pov_child_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New pov child')
-        # endregion
-
-        # region Check reactive child order
-        self.fix_verifier_buy.set_case_id(bca.create_event("Reactive child order", self.test_id))
+        # region Check Reactive child order
+        self.fix_verifier_buy.set_case_id(bca.create_event("reactive child order", self.test_id))
 
         self.reactive_child_order = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()
-        self.reactive_child_order.change_parameters(dict(Account=self.account, OrderQty=self.qty_child_aggressive, Price=self.price_child_aggressive, Instrument='*', ExDestination=self.ex_destination_1))
-        self.fix_verifier_buy.check_fix_message(self.reactive_child_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle reactive Child')
+        self.reactive_child_order.change_parameters(dict(Account=self.account, OrderQty=self.qty_child_aggressive, Price=self.price_child_aggressive, Instrument='*', ExDestination=self.ex_destination_1, Side=self.side))
+        self.fix_verifier_buy.check_fix_message(self.reactive_child_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Reactive Child')
 
         pending_reactive_child_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.reactive_child_order, self.gateway_side_buy, self.status_pending)
-        self.fix_verifier_buy.check_fix_message(pending_reactive_child_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew  reactive Child')
+        self.fix_verifier_buy.check_fix_message(pending_reactive_child_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew  Reactive Child')
 
         new_reactive_child_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.reactive_child_order, self.gateway_side_buy, self.status_new)
-        self.fix_verifier_buy.check_fix_message(new_reactive_child_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New  reactive Child')
+        self.fix_verifier_buy.check_fix_message(new_reactive_child_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New  Reactive Child')
 
         # endregion
 
@@ -235,13 +217,8 @@ class QAP_T4649(TestCase):
         # time.sleep(35)
         # self.ssh_client.close()
         # # endregion
-
-        self.fix_verifier_buy.set_case_id(self.case_id_cancel)
-        cancel_pov_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.anticipative_child_order , self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message(cancel_pov_child_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport Cancel pov child')
-
-        cancel_reactive_child_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.reactive_child_order, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message(cancel_reactive_child_order, self.key_params, self.ToQuod, "Buy Side ExecReport reactive Child")
+        self.reactive_child_order_2 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.reactive_child_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message(self.reactive_child_order_2, self.key_params, self.ToQuod, "Buy Side ExecReport Reactive Child")
 
         cancel_pov_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.pov_order, self.gateway_side_sell, self.status_cancel)
         self.fix_verifier_sell.check_fix_message(cancel_pov_order_params, key_parameters=self.key_params, message_name='Sell side ExecReport Cancel')
