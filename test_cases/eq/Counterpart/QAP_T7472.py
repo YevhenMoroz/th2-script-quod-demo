@@ -46,25 +46,20 @@ class QAP_T7472(TestCase):
         self.price = self.fix_message.get_parameter("Price")
         self.fix_message.change_parameters(self.change_params)
         self.rule_manager = RuleManager(Simulators.equity)
-        self.client_for_rule = self.data_set.get_venue_client_names_by_name("client_counterpart_1_venue_2")
+        self.client_for_rule = self.data_set.get_venue_client_names_by_name("client_counterpart_1_venue_1")
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Declaration
         try:
-            nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.fix_env.buy_side,
-                                                                                                  self.client_for_rule,
-                                                                                                  self.mic,
-                                                                                                  int(self.price))
             trade_rule = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.fix_env.buy_side,
                                                                                             self.client_for_rule,
-                                                                                            self.mic, int(self.price),
-                                                                                            int(self.qty), 1)
+                                                                                            self.mic, float(self.price),
+                                                                                            int(self.qty), 2)
 
             self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
         finally:
-            time.sleep(1)
-            self.rule_manager.remove_rule(nos_rule)
+            time.sleep(3)
             self.rule_manager.remove_rule(trade_rule)
         # endregion
         # region Set-up parameters for ExecutionReports

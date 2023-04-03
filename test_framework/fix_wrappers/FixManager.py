@@ -318,6 +318,7 @@ class FixManager:
             for message_type in response.response_messages_list
         ]
         response_fix_message = None
+        response_messages = []
         for message_type, fields in zip(message_types, fields_list):
             if message_type == FIXMessageType.NewOrderSingle.value:
                 response_fix_message = FixMessageNewOrderSingle()
@@ -330,7 +331,7 @@ class FixManager:
             elif message_type == FIXMessageType.Reject.value:
                 response_fix_message = FixMessageReject()
             response_fix_message.change_parameters(fields)
-        response_messages = [response_fix_message]
+            response_messages.append(response_fix_message)
         self.response = response_messages
         return response_messages
 

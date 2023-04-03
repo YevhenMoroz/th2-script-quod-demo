@@ -319,7 +319,8 @@ class QAP_T7021(TestCase):
                                   'OrdType', 'tag5120', 'LastMkt', 'OrderCapacity', 'QtyType',
                                   'ExecBroker', 'Price', 'VenueType', 'Instrument',
                                   'ExDestination', 'GrossTradeAmt', 'CommissionData',
-                                  'SecondaryOrderID', 'LastExecutionPolicy', 'SecondaryExecID','OrderAvgPx']
+                                  'SecondaryOrderID', 'LastExecutionPolicy', 'SecondaryExecID','OrderAvgPx',
+                                  'GatingRuleName', 'GatingRuleCondName']
 
         self.fix_execution_report.change_parameters({"ExecType": "F", "OrdStatus": "2", "ClOrdID": cl_order_id,
                                                      'NoMiscFees': no_misc_fee})
@@ -359,7 +360,7 @@ class QAP_T7021(TestCase):
                                                          ignored_fields=list_of_ignored_fields)
         # end region
         # pre step check 35=AK message
-        list_of_ignored_fields.extend(['CpctyConfGrp', 'ConfirmID', 'ConfirmType', 'AllocAccount'])
+        list_of_ignored_fields.extend(['CpctyConfGrp', 'ConfirmID', 'ConfirmType', 'AllocAccount','tag11245'])
         self.confirmation_report.change_parameters(
             {'NoOrders': [{'ClOrdID': cl_order_id, 'OrderID': order_id}],
              'ConfirmTransType': "0",

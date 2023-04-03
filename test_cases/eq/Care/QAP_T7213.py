@@ -30,7 +30,7 @@ class QAP_T7213(TestCase):
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.order_submit = FixNewOrderSingleOMS(self.data_set)
-        self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn_user2
+        self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
         self.fix_verifier = FixVerifier(self.fix_env.drop_copy, self.test_id)
         self.trade_entry = TradeEntryOMS(self.data_set)
