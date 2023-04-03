@@ -43,7 +43,7 @@ class FixMessageNewOrderSingleTakerDC(FixMessageNewOrderSingle):
             "HandlInst": "1",
             "Side": "1" if request["Side"] == "B" else "2",
             "OrderQty": request["ExecQty"],
-            "TimeInForce": "3",
+            "TimeInForce": "*",
             "OrdType": "2",
             "Currency": request["Currency"],
             "SettlCurrency": "*",
