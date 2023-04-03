@@ -18,25 +18,25 @@ def test_run(parent_id=None):
         version = root.find(".//version").text
 
         if eval(root.find(".//component[@name='DMA']").attrib["run"]):
-            dma_regression.test_run(report_id, version)
+            dma_regression.test_run(report_id, version, True)
         if eval(root.find(".//component[@name='Care']").attrib["run"]):
-            care_regression.test_run(report_id, version)
+            care_regression.test_run(report_id, version, True)
         if eval(root.find(".//component[@name='Counterparts']").attrib["run"]):
-            counterparts_regression.test_run(report_id, version)
+            counterparts_regression.test_run(report_id, version, True)
         if eval(root.find(".//component[@name='PostTrade']").attrib["run"]):
-            post_trade_regression.test_run(report_id, version)
+            post_trade_regression.test_run(report_id, version, True)
         if eval(root.find(".//component[@name='Commissions']").attrib["run"]):
-            commission_regression.test_run(report_id, version)
+            commission_regression.test_run(report_id, version, True)
         if eval(root.find(".//component[@name='BasketTrading']").attrib["run"]):
-            basket_regression.test_run(report_id, version)
+            basket_regression.test_run(report_id, version, True)
         if eval(root.find(".//component[@name='Gateway']").attrib["run"]):
-            gateway_regression.test_run(report_id, version)
+            gateway_regression.test_run(report_id, version, True)
         if eval(root.find(".//component[@name='Positions']").attrib["run"]):
-            positions_regression.test_run(report_id, version)
+            positions_regression.test_run(report_id, version, True)
         if eval(root.find(".//component[@name='GatingRules']").attrib["run"]):
-            gating_rule_regression.test_run(report_id, version)
+            gating_rule_regression.test_run(report_id, version, True)
         if eval(root.find(".//component[@name='Bag']").attrib["run"]):
-            bag_regression.test_run(report_id, version)
+            bag_regression.test_run(report_id, version, True)
 
     except Exception:
         logging.error("Error execution", exc_info=True)
