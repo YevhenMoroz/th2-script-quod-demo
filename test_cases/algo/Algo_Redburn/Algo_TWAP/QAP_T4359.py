@@ -59,23 +59,17 @@ class QAP_T4359(TestCase):
         self.child_qty_1 = self.twap_child_qty_list[0]
         self.child_qty_2 = self.twap_child_qty_list[1]
         self.child_qty_3 = self.twap_child_qty_list[2]
-        self.price_child = 29.99
+        self.price_child = 29.995
         self.price_child_2 = 35
         # endregion
 
         # region Venue params
-        # self.instrument = self.data_set.get_fix_instrument_by_name("instrument_1")
-        # self.ex_destination_1 = self.data_set.get_mic_by_name("mic_1")
-        # self.client = self.data_set.get_client_by_name("client_2")
-        # self.account = self.data_set.get_account_by_name('account_2')
-        # self.listing_id = self.data_set.get_listing_id_by_name("listing_36")
-        # endregion
-
-        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_21")
+        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_1")
+        self.ex_destination_1 = self.data_set.get_mic_by_name("mic_1")
         self.client = self.data_set.get_client_by_name("client_2")
-        self.account = self.data_set.get_account_by_name("account_18")
-        self.ex_destination_1 = self.data_set.get_mic_by_name("mic_31")
-        self.listing_id = self.data_set.get_listing_id_by_name("listing_37")
+        self.account = self.data_set.get_account_by_name('account_2')
+        self.listing_id = self.data_set.get_listing_id_by_name("listing_36")
+        # endregion
 
         # Key parameters
         self.key_params_cl = self.data_set.get_verifier_key_parameters_by_name('verifier_key_parameters_1')
@@ -101,8 +95,7 @@ class QAP_T4359(TestCase):
         self.ToQuod = DirectionEnum.ToQuod
         # endregion
 
-        # self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile1")
-        self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile2")
+        self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile1")
         self.rule_list = []
 
         self.rest_api_manager = RestApiAlgoManager(session_alias=self.restapi_env1.session_alias_wa, case_id=self.test_id)
