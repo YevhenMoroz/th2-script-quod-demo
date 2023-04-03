@@ -2,7 +2,6 @@ import importlib
 import logging
 import os
 from datetime import datetime
-from pathlib import Path
 
 from get_project_root import root_path
 

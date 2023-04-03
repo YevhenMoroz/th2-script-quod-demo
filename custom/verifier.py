@@ -74,4 +74,7 @@ class Verifier:
         event_batch = EventBatch()
         event_batch.events.append(event)
         event_store.send(event_batch)
-
+        for field in self.fields:
+            f = self.fields[f"{field}"]
+            if f["status"] == 'FAILED' and not self.success:
+                raise ValueError('\033[91m' + f'expected={f["expected"]}, actual={f["actual"]}' + '\033[0m')
