@@ -80,3 +80,6 @@ class TradeEntryRequestFX(JavaApiMessage):
 
     def get_exec_misc_0(self):
         return self.get_parameters()["TradeEntryRequestBlock"]["ExecMiscBlock"]["ExecMisc0"]
+
+    def get_exec_qty(self):
+        return self.get_parameters()["TradeEntryRequestBlock"]["ExecQty"]
