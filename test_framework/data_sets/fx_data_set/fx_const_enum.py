@@ -69,7 +69,7 @@ class FxClients(Enum):
     client_mm_5 = "Palladium2"  # For ESP_MM testing
     client_mm_6 = "Osmium1"  # For AutoHedger testing
     client_mm_7 = "Argentum1"  # Can be used for MM_Positions testing
-    client_mm_8 = "Aurum1"  # For AutoHedger testing
+    client_mm_8 = "AURUM1"  # For AutoHedger testing
     client_mm_9 = "SWEDCUST3"
     client_mm_10 = "CLIENT1"  # For Deposit And Loan
     client_mm_11 = "Platinum1"  # For Margin Format testing
@@ -102,7 +102,7 @@ class FxAccounts(Enum):
     account_mm_5 = "Palladium2_2"
     account_mm_6 = "Osmium1_1"
     account_mm_7 = "Argentum1_1"
-    account_mm_8 = "Aurum1_1"
+    account_mm_8 = "AURUM1_1"
 
 
 class FxClientTiers(Enum):
