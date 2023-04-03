@@ -1,6 +1,3 @@
-from datetime import datetime
-from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import spo
 from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
 from test_framework.fix_wrappers.FixMessageNewOrderSingle import FixMessageNewOrderSingle
@@ -46,7 +43,7 @@ class FixMessageNewOrderSingleTakerDC(FixMessageNewOrderSingle):
             "HandlInst": "1",
             "Side": "1" if request["Side"] == "B" else "2",
             "OrderQty": request["ExecQty"],
-            "TimeInForce": "4",
+            "TimeInForce": "3",
             "OrdType": "2",
             "Currency": request["Currency"],
             "SettlCurrency": "*",
