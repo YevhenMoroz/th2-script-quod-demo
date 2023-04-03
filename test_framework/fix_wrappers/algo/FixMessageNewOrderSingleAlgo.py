@@ -776,6 +776,29 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
+    def set_DMA_Dark_Child_Kepler_SORPING_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": 'KEPLER',
+            'ClOrdID': '*',
+            'Currency': 'EUR',
+            'HandlInst': '1',
+            'OrderQty': '1000',
+            'OrdType': '2',
+            'Price': '20',
+            'Side': '1',
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_6'),
+            'TimeInForce': '0',
+            "TransactTime": '*',
+            'ExDestination': 'BATD',
+            'OrderCapacity': 'A',
+            'ShortCode': '17536',
+            'IClOrdIdAO': 'OD_5fgfDXg-00',
+            'ChildOrderID': '*',
+            'misc5': '*',
+        }
+        super().change_parameters(base_parameters)
+        return self
+
     def set_RFQ_params(self):
         base_parameters = {
             # 'Account': self.get_data_set().get_account_by_name('account_9'),

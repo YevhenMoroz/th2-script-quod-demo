@@ -1,6 +1,8 @@
 import logging
 from custom import basic_custom_actions as bca
 from stubs import Stubs
+from test_cases.algo.Algo_Kepler.Algo_SynthMinQty.QAP_T10965 import QAP_T10965
+from test_cases.algo.Algo_Kepler.Algo_SynthMinQty.QAP_T10968 import QAP_T10968
 from test_cases.algo.Algo_Kepler.Algo_SynthMinQty.QAP_T8835 import QAP_T8835
 from test_cases.algo.Algo_Kepler.Algo_SynthMinQty.QAP_T8836 import QAP_T8836
 from test_framework.configurations.component_configuration import ComponentConfiguration
@@ -52,6 +54,8 @@ def test_run(parent_id=None, version=None):
         QAP_T4062(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8835(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8836(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10965(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10968(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
     except Exception:
