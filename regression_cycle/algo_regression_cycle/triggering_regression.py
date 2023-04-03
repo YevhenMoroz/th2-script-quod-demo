@@ -16,6 +16,8 @@ from test_cases.algo.Algo_Triggering.QAP_T9081 import QAP_T9081
 from test_cases.algo.Algo_Triggering.QAP_T9083 import QAP_T9083
 from test_cases.algo.Algo_Triggering.QAP_T9143 import QAP_T9143
 from test_cases.algo.Algo_Triggering.QAP_T9161 import QAP_T9161
+from test_cases.algo.Algo_Triggering.QAP_T7842 import QAP_T7842
+
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 timeouts = False
@@ -43,6 +45,7 @@ def test_run(parent_id=None, version=None):
         QAP_T9083(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T9143(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T9161(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T7842(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
     except Exception:
         logging.error("Error execution", exc_info=True)
 
