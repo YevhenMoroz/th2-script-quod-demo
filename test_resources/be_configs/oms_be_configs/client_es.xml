@@ -57,7 +57,7 @@ Copyright Quod Financial
 				<originator>ORS</originator>
 				<!-- default UserID to provide for order -->
 				<user>JavaApiUser</user>
-				<!-- default RoleID enum to provide for order -->																																			
+				<!-- default RoleID enum to provide for order -->
 				<role>HSD</role>
 			</implicit>
 	</order>

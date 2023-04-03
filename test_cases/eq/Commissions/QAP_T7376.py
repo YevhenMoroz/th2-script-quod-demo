@@ -48,7 +48,7 @@ class QAP_T7376(TestCase):
         self.rest_commission_sender.change_message_params(
             {
                 "venueID": self.data_set.get_venue_by_name("venue_2"),
-                "contraFirmCounterpartID": self.data_set.get_counterpart_id("contra_firm"),
+                "contraFirmCounterpartID": self.data_set.get_counterpart_id("contra_firm")
             }
         )
         self.rest_commission_sender.send_post_request()

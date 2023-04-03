@@ -69,9 +69,22 @@ class OrderSubmitOMS(OrderSubmit):
             self.update_fields_in_component('NewOrderSingleBlock', algo_params)
         return self
 
-    def set_default_dma_limit(self):
+    def set_default_dma_limit(self, with_external_algo=False):
         self.change_parameters(self.base_parameters)
         self.update_fields_in_component('NewOrderSingleBlock', {"Price": '20', "OrdType": 'Limit'})
+        if with_external_algo:
+            strategy = {
+                'ExternalAlgoParametersBlock': {'ExternalAlgoParameterListBlock': {
+                    'ExternalAlgoParameterBlock': [{'AlgoParameterName': "StrategyTag",
+                                                    'AlgoParamString': "TWAP",
+                                                    'VenueScenarioParameterID': '7505'}]},
+                                                'ScenarioID': '102',
+                                                'ExternalAlgoPolicyID': '1000132',
+                                                'ScenarioIdentifier': "848",
+                                                'VenueScenarioID': "TWAP",
+                                                'VenueScenarioVersionID': "11945"}}
+                                                # 'VenueScenarioVersionValue': 'ATDLEQ5.5'}}
+            self.update_fields_in_component('NewOrderSingleBlock', strategy)
         return self
 
     def set_default_dma_market(self):
@@ -108,7 +121,7 @@ class OrderSubmitOMS(OrderSubmit):
             params["CDOrdAssignInstructionsBlock"]["RecipientDeskID"] = desk
         if role:
             params["CDOrdAssignInstructionsBlock"]["RecipientRoleID"] = role
-        self.change_parameters(self.base_parameters)
+        self.change_parameters(deepcopy(self.base_parameters))
         parent_params = {"ParentOrdrBlock": [{"ParentOrdID": parent_id}]}
         self.update_fields_in_component('NewOrderSingleBlock',
                                         {"OrdType": 'Limit', "Price": "20", 'ExecutionPolicy': 'Care',
@@ -134,7 +147,7 @@ class OrderSubmitOMS(OrderSubmit):
 
     def set_default_child_dma(self, parent_id: str = None, client_order_id: str = None, external_algo_twap=False):
         cl_ord_id = client_order_id or basic_custom_actions.client_orderid(9)
-        self.change_parameters(self.base_parameters)
+        self.change_parameters(deepcopy(self.base_parameters))
         parent_params = {"ParentOrdrBlock": [{"ParentOrdID": parent_id}]}
         self.update_fields_in_component('NewOrderSingleBlock',
                                         {"OrdType": 'Limit', "Price": "20", "ParentOrdrList": parent_params,

@@ -6,7 +6,7 @@ from pathlib import Path
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
-from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
+from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, StrategyParameterType, TimeInForce, Aggressivity
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
 from test_framework.fix_wrappers.algo.FixMessageOrderCancelRejectReportAlgo import FixMessageOrderCancelRejectReportAlgo
@@ -16,7 +16,6 @@ from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlg
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
-from test_framework.data_sets import constants
 from test_framework.algo_formulas_manager import AlgoFormulasManager
 
 class QAP_T4704(TestCase):
@@ -40,14 +39,14 @@ class QAP_T4704(TestCase):
         self.price_ask = 40
         self.price_bid = 30
         self.qty_bid = self.qty_ask = 1_000_000
-        self.aggressivity = constants.Aggressivity.Neutral.value
-        self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
-        self.tif_day = constants.TimeInForce.Day.value
+        self.aggressivity = Aggressivity.Neutral.value
+        self.tif_ioc = TimeInForce.ImmediateOrCancel.value
+        self.tif_day = TimeInForce.Day.value
         self.waves = 2
         self.slice1_qty = self.slice2_qty = AlgoFormulasManager.get_next_twap_slice(self.qty, self.waves)
-        self.param_type_utctime = constants.StrategyParameterType.UTCTimeStamp.value
-        self.param_type_boolean = constants.StrategyParameterType.Boolean.value
-        self.param_type_int = constants.StrategyParameterType.Int.value
+        self.param_type_utctime = StrategyParameterType.UTCTimeStamp.value
+        self.param_type_boolean = StrategyParameterType.Boolean.value
+        self.param_type_int = StrategyParameterType.Int.value
 
         # region Gateway Side
         self.gateway_side_buy = GatewaySide.Buy
@@ -183,7 +182,7 @@ class QAP_T4704(TestCase):
         # region check sequence NOS DMA child orders
         self.fix_verifier_buy.set_case_id(bca.create_event("Check NOS DMA child orders sequence", self.test_id))
         self.fix_verifier_buy.check_fix_message_sequence([slice1_order, replace_slice1_order_params, cancel_request_slice1_order_params, slice2_order, replace_slice2_order_params],
-                                                         [None, None, None, None, None], self.FromQuod)
+                                                         [None, None, None, None, None], self.FromQuod, pre_filter=self.data_set.get_pre_filter('pre_filter_with_client_order_id'))
         # endregion
 
         # region check sequence ER child orders

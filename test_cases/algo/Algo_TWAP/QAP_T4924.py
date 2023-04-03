@@ -155,6 +155,8 @@ class QAP_T4924(TestCase):
         self.fix_verifier_sell.check_fix_message(cancel_request_twap_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
         # endregion
 
+        time.sleep(3)
+
         # region check cancellation child DMA slice 1
         cancel_slice1_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.slice1_order, self.gateway_side_buy, self.status_cancel)
         cancel_slice1_order.change_parameter('ExDestination', self.ex_destination_1)
@@ -162,7 +164,6 @@ class QAP_T4924(TestCase):
         # endregion
 
         # region check cancellation parent TWAP order
-        # self.fix_verifier_sell.set_case_id(bca.create_event("Eliminate Algo Order", self.test_id))
         cancel_twap_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_order, self.gateway_side_sell, self.status_cancel)
         cancel_twap_order.change_parameter('NoParty', '*')
         self.fix_verifier_sell.check_fix_message(cancel_twap_order, key_parameters=self.key_params_cl,  message_name='Sell side ExecReport Canceled')

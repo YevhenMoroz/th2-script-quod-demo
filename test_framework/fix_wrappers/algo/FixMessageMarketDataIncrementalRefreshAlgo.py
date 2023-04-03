@@ -69,24 +69,6 @@ class FixMessageMarketDataIncrementalRefreshAlgo(FixMessageMarketDataIncremental
         super().change_parameters(base_parameters)
         return self
 
-    def set_market_data_close_price(self) -> FixMessageMarketDataIncrementalRefresh:
-        base_parameters = {
-            'MDReqID': '555',
-            'NoMDEntriesIR': [
-                {
-                    'MDUpdateAction': '0',
-                    'MDEntryType': '5',
-                    'MDEntryPx': '40',
-                    'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
-                    'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S"),
-                    'TradingSessionSubID': '5',
-                    'SecurityTradingStatus': '3',
-                }
-            ]
-        }
-        super().change_parameters(base_parameters)
-        return self
-
     def check_MDReqID(self, symbol: str, session_alias: str):
         list_MDRefID = Stubs.simulator_algo.getAllMDRefID(request=RequestMDRefID(
             symbol=symbol,

@@ -226,8 +226,8 @@ class QAP_T4360(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Check that only 4 cancel requests received", self.test_id))
         rfq_cancel_trqx = FixMessageOrderCancelRequestAlgo().set_cancel_RFQ(nos_trql_rfq).change_parameter("ExDestination", self.ex_destination_trqx).add_header().add_DeliverToCompID(self.ex_destination_trql)
         rfq_cancel_chixlis = FixMessageOrderCancelRequestAlgo().set_cancel_RFQ(nos_trql_rfq).change_parameter("ExDestination", self.ex_destination_trqx).add_header().add_DeliverToCompID(self.ex_destination_chixlis)
-        order_cancel_chixdelta = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child(self.dma_1_chix_order).add_tag(dict(misc5='*'))
-        order_cancel_batsdark = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child(self.dma_1_bats_order).add_tag(dict(misc5='*'))
+        order_cancel_chixdelta = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child_kepler(self.dma_1_chix_order)
+        order_cancel_batsdark = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child_kepler(self.dma_1_bats_order)
         self.fix_verifier_buy.check_fix_message_sequence([rfq_cancel_chixlis, rfq_cancel_trqx, order_cancel_chixdelta,  order_cancel_batsdark], key_parameters_list=[None, None, None, None], direction=self.FromQuod, pre_filter=self.pre_filter_1)
         # endregion
 

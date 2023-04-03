@@ -71,3 +71,23 @@ class FixMessageOrderCancelRequestAlgo(FixMessageOrderCancelRequest):
         )
         super().change_parameters(temp)
         return self
+
+    def set_cancel_params_for_child_kepler(self, nos_child: FixMessageNewOrderSingle):
+        temp = dict()
+        temp.update(
+            Account=nos_child.get_parameter('Account'),
+            OrderQty=nos_child.get_parameter('OrderQty'),
+            ClOrdID='*',
+            OrderID='*',
+            TransactTime='*',
+            ChildOrderID='*',
+            Side=nos_child.get_parameter('Side'),
+            Instrument=nos_child.get_parameter('Instrument'),
+            ExDestination=nos_child.get_parameter('ExDestination'),
+            OrigClOrdID='*',
+            misc5='*',
+            ShortCode=nos_child.get_parameter('ShortCode'),
+            IClOrdIdAO=nos_child.get_parameter('IClOrdIdAO')
+        )
+        super().change_parameters(temp)
+        return self
