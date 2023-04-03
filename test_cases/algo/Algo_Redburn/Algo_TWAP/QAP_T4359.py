@@ -210,7 +210,7 @@ class QAP_T4359(TestCase):
         self.fix_verifier_buy.set_case_id(self.case_id_3)
 
         self.twap_child_2 = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()
-        self.twap_child_2.change_parameters(dict(OrderQty=self.child_qty_1, Price=self.price_child, Account=self.account, ExDestination=self.ex_destination_1, Instrument=self.instrument))
+        self.twap_child_2.change_parameters(dict(OrderQty=self.child_qty_2, Price=self.price_child, Account=self.account, ExDestination=self.ex_destination_1, Instrument=self.instrument))
         self.fix_verifier_buy.check_fix_message(self.twap_child_2, key_parameters=self.key_params, message_name='Buy side NewOrderSingle TWAP child 2')
 
         pending_twap_child_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_child_2, self.gateway_side_buy, self.status_pending)
@@ -249,8 +249,6 @@ class QAP_T4359(TestCase):
 
         self.fix_verifier_buy.set_case_id(self.case_id_3)
         cancel_twap_child_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_child_2, self.gateway_side_buy, self.status_cancel)
-        cancel_twap_child_1_params.change_parameters(dict(Price=self.price, TimeInForce=self.tif_ioc))
-        cancel_twap_child_1_params.add_tag(dict(OrdType=self.order_type_limit))
         self.fix_verifier_buy.check_fix_message(cancel_twap_child_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport Cancel TWAP child 2')
 
         cancel_twap_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_order, self.gateway_side_sell, self.status_cancel)
