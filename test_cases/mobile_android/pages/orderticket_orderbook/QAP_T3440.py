@@ -1,31 +1,18 @@
-import sys
-import time
-import traceback
-from datetime import datetime
-
-from custom import basic_custom_actions
 from test_cases.mobile_android.common_test_case import CommonTestCase
-from test_framework.mobile_android_core.pages.login.login_constant import LoginConstants
 from test_framework.mobile_android_core.pages.login.login_page import LoginPage
 
 from test_framework.mobile_android_core.pages.main_page.main_page_constants import MainPageConstants
 from test_framework.mobile_android_core.pages.main_page.main_page import MainPage
-from test_framework.mobile_android_core.pages.market.market_constants import MarketConstants
 from test_framework.mobile_android_core.pages.market.market_page import MarketPage
-from test_framework.mobile_android_core.pages.market.watchlists.market_watchlists_constants import \
-    MarketWatchlistsConstants
-from test_framework.mobile_android_core.pages.market.watchlists.market_watchlists_page import MarketWatchlistsPage
 
-from test_framework.mobile_android_core.pages.menu.menu_constants import MenuConstants
 from test_framework.mobile_android_core.pages.menu.menu_page import MenuPage
 from test_framework.mobile_android_core.pages.order_ticket.order_ticket_constants import OrderTicketConstants
 from test_framework.mobile_android_core.pages.order_ticket.order_ticket_page import OrderTicketPage
-from test_framework.mobile_android_core.pages.portfolio.portfolio_constants import PortfolioConstants
 
 from test_framework.mobile_android_core.utils.driver import AppiumDriver
 
 from pathlib import Path
-from test_framework.mobile_android_core.utils.try_except_decorator_mobile import try_except
+from test_framework.mobile_android_core.utils.decorators.try_except_decorator_mobile import try_except
 
 class QAP_T3440(CommonTestCase):
 

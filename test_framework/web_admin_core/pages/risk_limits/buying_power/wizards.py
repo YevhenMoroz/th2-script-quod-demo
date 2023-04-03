@@ -33,6 +33,12 @@ class MainWizard(CommonPage):
         time.sleep(1)
         return self.is_pdf_contains_value(value)
 
+    def get_footer_error_text(self):
+        return self.find_by_xpath(Constants.Wizard.FOOTER_ERROR_TEXT).text
+
+    def is_text_inside_wizard_found_by_patter(self, value):
+        return self.is_element_present(Constants.Wizard.TEXT_INSIDE_WIZARD.format(value))
+
 
 class ValuesTab(CommonPage):
     def set_name(self, value):
@@ -54,6 +60,9 @@ class AssignmentsTab(CommonPage):
 
     def get_institution(self):
         return self.get_text_by_xpath(Constants.Wizard.AssignmentsTab.INSTITUTION_FIELD)
+
+    def is_institution_field_enable(self):
+        return self.is_field_enabled(Constants.Wizard.AssignmentsTab.INSTITUTION_FIELD)
 
 
 class CashValuesTab(CommonPage):
@@ -111,6 +120,9 @@ class SecurityValuesTab(CommonPage):
     def set_haircut_value_filter(self, value):
         self.set_text_by_xpath(Constants.Wizard.SecurityValuesTab.Table.HAIRCUT_VALUE_FILTER, value)
 
+    def set_instrument_filter(self, value):
+        self.set_text_by_xpath(Constants.Wizard.SecurityValuesTab.Table.INSTRUMENT_FILTER, value)
+
     def set_instrument_type(self, value):
         self.select_value_from_dropdown_list(Constants.Wizard.SecurityValuesTab.Table.INSTRUMENT_TYPE_FIELD, value)
 
@@ -134,6 +146,12 @@ class SecurityValuesTab(CommonPage):
 
     def get_haircut_value(self):
         return self.get_text_by_xpath(Constants.Wizard.SecurityValuesTab.Table.HAIRCUT_VALUE_FIELD)
+
+    def set_instrument(self, value):
+        self.set_combobox_value(Constants.Wizard.SecurityValuesTab.Table.INSTRUMENT_FIELD, value)
+
+    def get_instrument(self):
+        return self.get_text_by_xpath(Constants.Wizard.SecurityValuesTab.Table.INSTRUMENT_FIELD)
 
 
 class RiskMarginTab(CommonPage):
@@ -159,8 +177,8 @@ class RiskMarginTab(CommonPage):
     def set_initial_margin_filter(self, value):
         self.set_text_by_xpath(Constants.Wizard.RiskMarginTab.Table.INITIAL_MARGIN_FILTER, value)
 
-    def set_maintenance_margin_filter(self, value):
-        self.set_text_by_xpath(Constants.Wizard.RiskMarginTab.Table.MAINTENANCE_MARGIN_FILTER, value)
+    # def set_maintenance_margin_filter(self, value):
+    #     self.set_text_by_xpath(Constants.Wizard.RiskMarginTab.Table.MAINTENANCE_MARGIN_FILTER, value)
 
     def set_instrument_type_filter(self, value):
         self.set_text_by_xpath(Constants.Wizard.RiskMarginTab.Table.INSTRUMENT_TYPE_FILTER, value)
@@ -186,11 +204,11 @@ class RiskMarginTab(CommonPage):
     def get_initial_margin(self):
         return self.get_text_by_xpath(Constants.Wizard.RiskMarginTab.Table.INITIAL_MARGIN_FIELD)
 
-    def set_maintenance_margin(self, value):
-        self.set_text_by_xpath(Constants.Wizard.RiskMarginTab.Table.MAINTENANCE_MARGIN_FIELD, value)
-
-    def get_maintenance_margin(self):
-        return self.get_text_by_xpath(Constants.Wizard.RiskMarginTab.Table.MAINTENANCE_MARGIN_FIELD)
+    # def set_maintenance_margin(self, value):
+    #     self.set_text_by_xpath(Constants.Wizard.RiskMarginTab.Table.MAINTENANCE_MARGIN_FIELD, value)
+    #
+    # def get_maintenance_margin(self):
+    #     return self.get_text_by_xpath(Constants.Wizard.RiskMarginTab.Table.MAINTENANCE_MARGIN_FIELD)
 
     def set_instrument_type(self, value):
         self.set_combobox_value(Constants.Wizard.RiskMarginTab.Table.INSTRUMENT_TYPE_FIELD, value)

@@ -187,6 +187,9 @@ class QAP_T4054(TestCase):
         # endregion
 
         # region Aggressive XPAR order
+        case_id_2 = bca.create_event("Check child order", self.test_id)
+        self.fix_verifier_buy.set_case_id(case_id_2)
+
         ioc_child_order_par_1 = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()
         ioc_child_order_par_1.change_parameters(dict(Account=self.account_xpar, OrderQty=self.qty, Price=self.price_ask, TimeInForce=self.tif_ioc, Instrument='*', ExDestination=self.ex_destination_xpar))
 

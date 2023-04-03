@@ -7,8 +7,11 @@ from test_framework.mobile_android_core.utils.waits import Waits
 import abc
 
 class CommonTestCase:
-    def __init__(self, driver:AppiumDriver, test_case_id, root_id, data_set: BaseDataSet = None,
+    def __init__(self, driver: AppiumDriver, test_case_id, root_id, data_set: BaseDataSet = None,
                  environment: FullEnvironment = None):
+        """
+        class is used to describe common behavior for each test case flow how it should be implemented
+        """
         ## event creation
         self.appium_driver = driver
         self.test_id = bca.create_event(test_case_id, root_id)
@@ -17,6 +20,9 @@ class CommonTestCase:
         self.Waiter = Waits(self.appium_driver.appium_driver, 10)
 
     def run(self):
+        """
+        default method that executes test context
+        """
         self.__start_driver()
         self.test_context()
         self.__stop_driver()
@@ -26,14 +32,24 @@ class CommonTestCase:
         raise NotImplementedError("Please implement this method!")
 
     def __start_driver(self):
+        """
+        used to generation focused capabilities for current test running
+        and launches application
+        """
         self.appium_driver.start_appium_service()
 
     def __stop_driver(self):
+        """
+        used to quit application from device and appium server
+        """
         self.appium_driver.stop_appium_service()
 
     ## verify methods
 
     def verify(self, event_name, expected_result, actual_result):
+        """
+        TH2 verifier
+        """
         verifier = Verifier(self.test_id)
         verifier.set_event_name(event_name)
         verifier.compare_values(event_name, str(expected_result), str(actual_result))

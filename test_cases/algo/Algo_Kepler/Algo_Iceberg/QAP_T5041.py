@@ -142,7 +142,7 @@ class QAP_T5041(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order", self.test_id))
 
         self.dma_1_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_child_of_Iceberg_Kepler_params()
-        self.dma_1_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_qdl12, OrderQty=self.display_qty, Price=self.price, Instrument=self.instrument))
+        self.dma_1_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_qdl12, OrderQty=self.display_qty, Price=self.price, Instrument=self.instrument)).remove_parameter('NoTradingSessions')
         self.fix_verifier_buy.check_fix_message(self.dma_1_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
         er_pending_new_dma_1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy, self.status_pending)

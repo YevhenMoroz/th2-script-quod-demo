@@ -25,20 +25,18 @@ class QAP_T4723(TestCase):
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
 
         self.fix_env1 = self.environment.get_list_fix_environment()[0]
-        self.restapi_env1 = self.environment.get_list_web_admin_rest_api_environment()[0]
 
         # region th2 components
         self.fix_manager_sell = FixManager(self.fix_env1.sell_side, self.test_id)
         self.fix_manager_feed_handler = FixManager(self.fix_env1.feed_handler, self.test_id)
         self.fix_verifier_sell = FixVerifier(self.fix_env1.sell_side, self.test_id)
         self.fix_verifier_buy = FixVerifier(self.fix_env1.buy_side, self.test_id)
-        self.rest_api_manager = RestApiAlgoManager(session_alias=self.restapi_env1.session_alias_wa)
         # endregion
 
         # region order parameters
         self.qty = 1000000
         self.price = 20
-        self.algopolicy = constants.ClientAlgoPolicy.qa_mpdark_11.value
+        self.algopolicy = constants.ClientAlgoPolicy.qa_mpdark_13.value
         self.weight_chix = 6
         self.weight_bats = 4
         self.qty_chix_child, self.qty_bats_child = AlgoFormulasManager.get_child_qty_on_venue_weights(self.qty, None, self.weight_chix, self.weight_bats)
@@ -89,11 +87,6 @@ class QAP_T4723(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region modify strategy
-        self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify strategy", self.test_id))
-        self.rest_api_manager.remove_parameters(self.algopolicy, "DarkPhase")
-        # endregion
-
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
         nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, self.price)
@@ -197,19 +190,6 @@ class QAP_T4723(TestCase):
         # endregion
 
         time.sleep(5)
-
-        # region Revert modifying strategy
-        new_parameter = {
-            "algoParameterValue": "N",
-            "isEditable": "false",
-            "isVisible": "false",
-            "scenarioParameterName": "DarkPhase",
-            "scenarioParameterRequired": "false",
-            "scenarioParameterType": "B",
-        }
-
-        self.rest_api_manager.add_parameter(self.algopolicy, new_parameter)
-        # endregion
 
         rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)

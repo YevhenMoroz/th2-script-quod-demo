@@ -99,10 +99,10 @@ class QAP_T4181(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
-        self.nos_trade_rule = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(self.fix_env1.buy_side, self.account, self.ex_destination_qdl1, self.price, self.price, self.display_qty, self.display_qty, self.delay)
+        nos_trade_rule = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(self.fix_env1.buy_side, self.account, self.ex_destination_qdl1, self.price, self.price, self.display_qty, self.display_qty, self.delay)
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_qdl1, self.price)
         ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_qdl1, True)
-        self.rule_list = [nos_rule, ocr_rule]
+        self.rule_list = [nos_rule, nos_trade_rule, ocr_rule]
         # endregion
 
         # region Send_MarketData
@@ -129,8 +129,6 @@ class QAP_T4181(TestCase):
         self.fix_manager_sell.send_message_and_receive_response(self.Iceberg_order, case_id_1)
 
         self.Iceberg_order.change_parameters(dict(ExpireDate=self.ExpireDate))
-
-        rule_manager.remove_rule(self.nos_trade_rule)
 
         time.sleep(3)
         # endregion
@@ -166,7 +164,6 @@ class QAP_T4181(TestCase):
 
         # region Check Partial Fill Iceberg algo order
         er_partial_fill_Iceberg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.Iceberg_order, self.gateway_side_sell, self.status_partial_fill)
-        er_partial_fill_Iceberg_order_params.add_tag(dict(misc5='*'))
         self.fix_verifier_sell.check_fix_message(er_partial_fill_Iceberg_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Partial Fill')
         # endregion
 
@@ -178,37 +175,25 @@ class QAP_T4181(TestCase):
         er_pending_new_dma_2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_order, self.gateway_side_buy, self.status_pending)
 
         er_new_dma_2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_order, self.gateway_side_buy, self.status_new)
+
+        er_fill_dma_2_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_order, self.gateway_side_buy, self.status_fill)
+        # endregion
+
+        # region Check Fill Iceberg algo order
+        er_fill_Iceberg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.Iceberg_order, self.gateway_side_sell, self.status_fill)
+        self.fix_verifier_sell.check_fix_message(er_fill_Iceberg_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Fill')
         # endregion
 
         # region Check childs
         self.fix_verifier_buy.set_case_id(bca.create_event("Check 2 DMA orders", self.test_id))
 
         self.fix_verifier_buy.check_fix_message_sequence([self.dma_1_order, self.dma_2_order], key_parameters_list=[None, None], direction=self.FromQuod, pre_filter=self.pre_filter, check_order=False)
-        self.fix_verifier_buy.check_fix_message_sequence([er_pending_new_dma_1_order_params, er_new_dma_1_order_params, er_fill_dma_1_order, er_pending_new_dma_2_order_params, er_new_dma_2_order_params], key_parameters_list=[None, None, None, None, None], direction=self.ToQuod, pre_filter=None)
+        self.fix_verifier_buy.check_fix_message_sequence([er_pending_new_dma_1_order_params, er_new_dma_1_order_params, er_fill_dma_1_order, er_pending_new_dma_2_order_params, er_new_dma_2_order_params, er_fill_dma_2_order], key_parameters_list=[self.key_params_ER_child, self.key_params_ER_child, self.key_params_ER_child, self.key_params_ER_child, self.key_params_ER_child, self.key_params_ER_child], direction=self.ToQuod, pre_filter=None)
         # endregion
 
         time.sleep(10)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        # region Cancel Algo Order
-        case_id_2 = bca.create_event("Cancel Algo Order", self.test_id)
-        self.fix_verifier_sell.set_case_id(case_id_2)
-        cancel_request_Iceberg_order = FixMessageOrderCancelRequest(self.Iceberg_order)
-
-        self.fix_manager_sell.send_message_and_receive_response(cancel_request_Iceberg_order, case_id_2)
-        self.fix_verifier_sell.check_fix_message(cancel_request_Iceberg_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
-
-        time.sleep(3)
-
-        # region check cancel 1st child DMA order
-        er_cancel_dma_2_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_order, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message(er_cancel_dma_2_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel child DMA 2 order")
-        # endregion
-
-        er_cancel_Iceberg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.Iceberg_order, self.gateway_side_sell, self.status_cancel)
-        self.fix_verifier_sell.check_fix_message(er_cancel_Iceberg_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
-        # endregion
-
         rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)

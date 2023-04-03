@@ -31,13 +31,13 @@ class PreConditionForPosition:
                         dailyagentfeeamt,dailyclientcommission,dailyrealizedgrosspl,dailyrealizednetpl, dailynetbuyexecamt,
                         dailynetsellexecamt,dailygrossbuyexecamt, dailygrosssellexecamt, currency, alive, originator)
                                            VALUES ('{account}','{instr_id}','N', '{today_date}','0','0','0','1','1','0','0','0','0','{currency}','Y','PKS');"""
-        self._db_manager.update_insert_query(query)
+        self._db_manager.execute_query(query)
 
     def _update_query(self, today_date, account, instr_id):
         query = f"""UPDATE  dailyposit SET  dailyrealizedgrosspl = 1, dailyrealizednetpl = 1, dailynetbuyexecamt=0,
                        dailynetsellexecamt = 0, dailygrossbuyexecamt=0 ,dailygrosssellexecamt=0 
                         WHERE accountid = '{account}' AND clearingbusinessdate = '{today_date}' AND instrid = '{instr_id}';"""
-        self._db_manager.update_insert_query(query)
+        self._db_manager.execute_query(query)
 
     def reset_values_for_posit_table(self, account, instr_id):
         try:
@@ -46,7 +46,30 @@ class PreConditionForPosition:
                                     transferredinamt = 0, transferredoutamt=0,
                                     buyavgpx = 0, sellavgpx = 0
                                     WHERE accountid = '{account}'  AND instrid = '{instr_id}';"""
-            self._db_manager.update_insert_query(query)
+            self._db_manager.execute_query(query)
         except Exception as e:
             logger.error(f'{e}', exc_info=True)
             self._db_manager.close_connection()
+
+    def get_common_daily_pl(self, account):
+        try:
+            today_date = datetime.strftime(datetime.now(), "%Y%m%d")
+            query = f"""SELECT SUM(dailyrealizednetpl) FROM dailyposit
+                                    WHERE accountid = '{account}'  AND clearingbusinessdate = '{today_date}';"""
+            out = self._db_manager.execute_query(query)
+            return out[0][0]
+        except Exception as e:
+            logger.error(f'{e}', exc_info=True)
+            self._db_manager.close_connection()
+
+    def get_posit_qty(self, account, instr_id):
+        query = f"""SELECT positqty FROM posit WHERE accountid = '{account}'  AND instrid = '{instr_id}';"""
+        out = self._db_manager.execute_query(query)
+        return out[0][0]
+
+    def set_posit_qty(self, account, instr_id, posit_qty):
+        query = f"""UPDATE posit SET positqty = '{posit_qty}', cumbuyqty={posit_qty}, cumsellqty='0'WHERE accountid = '{account}'  AND instrid = '{instr_id}';"""
+        self._db_manager.execute_query(query)
+
+    def close_connection(self):
+        self._db_manager.close_connection()

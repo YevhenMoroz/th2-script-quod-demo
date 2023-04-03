@@ -151,7 +151,6 @@ class QAP_T4111(TestCase):
 
         # region check parent Eliminate
         eliminate_multilisting_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.multilisting_order, self.gateway_side_sell, self.status_eliminate)
-        eliminate_multilisting_order.add_tag(dict(Text='*', LastMkt='*'))
         self.fix_verifier_sell.check_fix_message(eliminate_multilisting_order, key_parameters=self.key_params, message_name="Sell side ExecReport Eliminate")
         # endregion
 
