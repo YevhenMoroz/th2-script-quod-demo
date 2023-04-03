@@ -26,6 +26,19 @@ from test_cases.algo.Algo_PercentageVolume.QAP_T5049 import QAP_T5049
 from test_cases.algo.Algo_PercentageVolume.QAP_T8739 import QAP_T8739
 from test_cases.algo.Algo_PercentageVolume.QAP_T8880 import QAP_T8880
 from test_cases.algo.Algo_PercentageVolume.QAP_T9275 import QAP_T9275
+from test_cases.algo.Algo_PercentageVolume.QAP_T9158 import QAP_T9158
+from test_cases.algo.Algo_PercentageVolume.QAP_T9456 import QAP_T9456
+from test_cases.algo.Algo_PercentageVolume.QAP_T9454 import QAP_T9454
+from test_cases.algo.Algo_PercentageVolume.QAP_T9453 import QAP_T9453
+from test_cases.algo.Algo_PercentageVolume.QAP_T9232 import QAP_T9232
+from test_cases.algo.Algo_PercentageVolume.QAP_T9157 import QAP_T9157
+from test_cases.algo.Algo_PercentageVolume.QAP_T9156 import QAP_T9156
+from test_cases.algo.Algo_PercentageVolume.QAP_T9098 import QAP_T9098
+from test_cases.algo.Algo_PercentageVolume.QAP_T9094 import QAP_T9094
+from test_cases.algo.Algo_PercentageVolume.QAP_T9093 import QAP_T9093
+from test_cases.algo.Algo_PercentageVolume.QAP_T9084 import QAP_T9084
+from test_cases.algo.Algo_PercentageVolume.QAP_T4260 import QAP_T4260
+from test_cases.algo.Algo_PercentageVolume.QAP_T4261 import QAP_T4261
 
 from test_framework.configurations.component_configuration import ComponentConfiguration
 
@@ -58,9 +71,7 @@ def test_run(parent_id=None, version=None):
         QAP_T4914(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4915(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4933(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        # QAP_T5039(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute() need change config to test
         QAP_T5064(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T5088(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T5089(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4269(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4274(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
@@ -75,6 +86,23 @@ def test_run(parent_id=None, version=None):
         QAP_T8739(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8880(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T9275(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4261(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        if __name__ == '__main__':
+            # tests with config change
+            QAP_T5088(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+            QAP_T9158(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+            QAP_T9456(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+            QAP_T9454(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+            QAP_T9453(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+            QAP_T9232(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+            QAP_T9157(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+            QAP_T9156(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+            # QAP_T9098(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+            # QAP_T9094(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+            # QAP_T9093(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+            # QAP_T9084(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+            QAP_T4260(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+            QAP_T5039(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # FIX/FE
         # QAP_T5113.execute(report_id, session_id)
         # QAP_T5097.execute(report_id, session_id)
