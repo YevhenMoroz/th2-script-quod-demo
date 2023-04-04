@@ -386,9 +386,13 @@ class RestApiAlgoManager(RestApiManager):
 
 
         for index, phase in enumerate(trading_phase_profile["tradingPhaseSequence"]):
-            trading_phase_profile["tradingPhaseSequence"][index]['beginTime'] = str(AlgoFormulasManager.change_datetime_from_normal_to_epoch_with_milisecs(phase['beginTime']))
-            trading_phase_profile["tradingPhaseSequence"][index]['endTime'] = str(AlgoFormulasManager.change_datetime_from_normal_to_epoch_with_milisecs(phase['endTime']))
-            trading_phase_profile["tradingPhaseSequence"][index]['submitAllowed'] = phase['submitAllowed'].lower()
+            if 'beginTime' in trading_phase_profile["tradingPhaseSequence"][index]:
+                trading_phase_profile["tradingPhaseSequence"][index]['beginTime'] = str(AlgoFormulasManager.change_datetime_from_normal_to_epoch_with_milisecs(phase['beginTime']))
+                trading_phase_profile["tradingPhaseSequence"][index]['endTime'] = str(AlgoFormulasManager.change_datetime_from_normal_to_epoch_with_milisecs(phase['endTime']))
+                trading_phase_profile["tradingPhaseSequence"][index]['submitAllowed'] = phase['submitAllowed'].lower()
+            else:
+                trading_phase_profile["tradingPhaseSequence"][index]['phaseBeginTime'] = phase['phaseBeginTime']
+                trading_phase_profile["tradingPhaseSequence"][index]['phaseEndTime'] = phase['phaseEndTime']
 
         modifyTradingPhaseProfile = RestApiAlgoPolicyMessages().modify_trading_phase_profile(parameters=trading_phase_profile)
         self.send_post_request(modifyTradingPhaseProfile)
