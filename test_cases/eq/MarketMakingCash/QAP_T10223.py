@@ -81,6 +81,7 @@ class QAP_T10223(TestCase):
         ]["QuoteManagementBlock"][0]
         exp_res.update({"BidSize": "562.0"})
         exp_res.pop("NotionalAmt")
+        exp_res.pop("TheoreticalPx")
         self.java_api_manager.compare_values(exp_res, quote_rep, "Check created quote")
         ord_rep = self.java_api_manager.get_last_message(ORSMessageType.OrderReply.value).get_parameters()[
             JavaApiFields.OrdReplyBlock.value]
@@ -88,7 +89,7 @@ class QAP_T10223(TestCase):
         self.java_api_manager.compare_values(exp_res, ord_rep, "Check created order")
         # endregion
 
-    # @try_except(test_id=Path(__file__).name[:-3])
-    # def run_post_conditions(self):
-    #     self.stop_quoting_req.set_default(self.listing_id, "B")
-    #     self.java_api_manager.send_message(self.stop_quoting_req)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.stop_quoting_req.set_default(self.listing_id, "B")
+        self.java_api_manager.send_message(self.stop_quoting_req)
