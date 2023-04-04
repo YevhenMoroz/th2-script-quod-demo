@@ -9,7 +9,6 @@ from test_framework.fix_wrappers.oms.FixMessageOrderCancelReplaceRequestOMS impo
     FixMessageOrderCancelReplaceRequestOMS
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
-
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 timeouts = True
@@ -33,7 +32,7 @@ class QAP_T7665(TestCase):
         # region Declaration
         # region create CO order
         response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
-        exec_report_new = response[2].get_parameters()
+        exec_report_new = self.fix_manager.get_last_message("ExecutionReport").get_parameters()
         # endregion
 
         # region check order status
@@ -53,5 +52,3 @@ class QAP_T7665(TestCase):
         self.order_book.compare_values({'ExecType': '5', 'Price': self.price2, 'OrderQtyData': {'OrderQty': self.qty2}},
                                        exec_report_replaced, 'Check replaced values ')
         # endregion
-
-

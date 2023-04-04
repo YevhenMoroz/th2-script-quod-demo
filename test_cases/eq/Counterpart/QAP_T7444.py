@@ -66,7 +66,7 @@ class QAP_T7444(TestCase):
         # endregion
         # region Set-up parameters for ExecutionReports
         list_of_ignored_fields = ['Account', 'PartyRoleQualifier', 'ReplyReceivedTime', 'OrderAvgPx',
-                                  'GatingRuleCondName', 'GatingRuleName', 'tag11245']
+                                  'GatingRuleCondName', 'GatingRuleName', 'tag11245',"NoPartySubIDs"]
         party_stub_dict = {'PartyRole': "*",
                            'PartyID': "*",
                            'PartyIDSource': "*"}
@@ -131,7 +131,10 @@ class QAP_T7444(TestCase):
             market_maker_th2_route,
             custodian_user_2,
             regulatory_body,
-            investment_firm_client_counterpart
+            {'PartyRole': "67",
+             'PartyID': "InvestmentFirm - ClCounterpart_3",
+             'PartyIDSource': "C",
+             "NoPartySubIDs":"*"}
         ]
         alloc_grp = {'NoAllocs': [{'IndividualAllocID': "*",
                                    'AllocNetPrice': self.price,
