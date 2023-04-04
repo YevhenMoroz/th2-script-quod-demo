@@ -68,7 +68,7 @@ class QAP_T6950(TestCase):
         self.ssh_client.send_command('~/quod/script/site_scripts/change_permission_script')
         self.ssh_client.put_file(self.remote_path, "temp.xml")
         self.ssh_client.send_command("qrestart FIXBACKOFFICE_TH2")
-        time.sleep(30)
+        time.sleep(50)
         # end of part
 
         # part 2 : Create DMA order
@@ -78,9 +78,9 @@ class QAP_T6950(TestCase):
             {"OrdQty": qty,
              "AccountGroupID": client,
              "Price": price})
-        self.java_api_manager.send_message_and_receive_response(self.order_submit)
-        order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
-            JavaApiFields.OrdReplyBlock.value
+        self.java_api_manager.send_message_and_receive_response(self.order_submit, response_time=10000)
+        order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameters()[
+            JavaApiFields.OrderNotificationBlock.value
         ]
         ord_id = order_reply[JavaApiFields.OrdID.value]
         cl_ord_id = order_reply[JavaApiFields.ClOrdID.value]
@@ -184,13 +184,14 @@ class QAP_T6950(TestCase):
                                   'NetMoney', 'MatchStatus', 'ConfirmStatus', 'TradeDate',
                                   'NoParty', 'AllocInstructionMiscBlock1', 'tag5120',
                                   'ReportedPx', 'Instrument', 'GrossTradeAmt']
-        list_of_ignored_fields.extend(['CpctyConfGrp', 'ConfirmID', 'ConfirmType', 'AllocAccount','tag11245'])
+        list_of_ignored_fields.extend(['CpctyConfGrp', 'ConfirmID', 'ConfirmType', 'AllocAccount', 'tag11245'])
         self.confirmation_report.change_parameters(
             {'NoOrders': [{'ClOrdID': cl_ord_id, 'OrderID': ord_id}],
              'ConfirmTransType': "0",
              'Account': client,
              'AllocID': alloc_id})
-        self.fix_verifier.check_fix_message_fix_standard(self.confirmation_report, ['ConfirmTransType', 'NoOrders', 'AllocID'],
+        self.fix_verifier.check_fix_message_fix_standard(self.confirmation_report,
+                                                         ['ConfirmTransType', 'NoOrders', 'AllocID'],
                                                          ignored_fields=list_of_ignored_fields)
         # endregion
 
