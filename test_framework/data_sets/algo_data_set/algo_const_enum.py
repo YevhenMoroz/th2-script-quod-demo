@@ -623,6 +623,14 @@ class AlgoPreFilter(Enum):
         'OrdStatus': ('4', 'EQUAL')
     }
 
+    pre_filer_equal_ER_reject = {
+        'header': {
+            'MsgType': ('8', 'EQUAL')
+        },
+        'ExecType': ('8', 'EQUAL'),
+        'OrdStatus': ('8', 'EQUAL')
+    }
+
     pre_filter_check_events = {
         'OrderId': ('*', "EQUAL"),
         'Text': ('*', "EQUAL")

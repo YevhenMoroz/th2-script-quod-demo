@@ -2,6 +2,7 @@ import logging
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_cases.algo.Algo_Redburn.Algo_TWAP.QAP_T10471 import QAP_T10471
+from test_cases.algo.Algo_Redburn.Algo_TWAP.QAP_T4359 import QAP_T4359
 from test_cases.algo.Algo_Redburn.Algo_TWAP.QAP_T4673 import QAP_T4673
 from test_framework.configurations.component_configuration import ComponentConfigurationAlgo
 
@@ -19,7 +20,10 @@ def test_run(parent_id=None, version=None):
         configuration = ComponentConfigurationAlgo("Twap")
         QAP_T4673(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10471(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # endregion
 
+        # config change interslice = 20
+        QAP_T4359(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
     except Exception:

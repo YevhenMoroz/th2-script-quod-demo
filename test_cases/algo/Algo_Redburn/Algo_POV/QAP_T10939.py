@@ -121,7 +121,7 @@ class QAP_T10939(TestCase):
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify trading phase profile", self.test_id))
         trading_phases = AFM.get_timestamps_for_current_phase(TradingPhases.Open)
         self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
-        # end region
+        # endregion
 
         # region Clear Market Data
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data SnapShot to clear the MarketDepth", self.test_id))
