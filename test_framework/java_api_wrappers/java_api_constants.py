@@ -391,6 +391,11 @@ class BagChildCreationPolicy(Enum):
     Split = 'SPL'
     Group = "GRP"
     AVP = 'AVP'  # GroupByAvgPx
+    Smallest_to_Biggest = "GSB"
+    Biggest_to_Smallest = "GBS"
+    Last_to_First = "GLF"
+    First_to_Last = "GFL"
+    Equal = 'GEQ'
 
 
 class TimeInForces(Enum):

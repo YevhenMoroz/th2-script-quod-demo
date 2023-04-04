@@ -23,7 +23,7 @@ timeouts = True
 
 
 @try_except(test_id=Path(__file__).name[:-3])
-class QAP_T7124(TestCase):
+class QAP_T10326(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
@@ -32,14 +32,11 @@ class QAP_T7124(TestCase):
         self.order_submit = OrderSubmitOMS(self.data_set)
         self.order_submit2 = OrderSubmitOMS(self.data_set)
         self.rule_manager = RuleManager(Simulators.equity)
-        self.qty1 = '111'
-        self.qty2 = '222'
-        self.qty3 = '333'
-        self.qty_create_order_1 = '665'
-        self.price1 = '5'
-        self.price2 = '2'
-        self.qty_create_order_2 = '1'
-        self.bag_price = '4.995495495495495'
+        self.qty2 = '300'
+        self.qty1 = '200'
+        self.qty_create_order_1 = '150'
+        self.qty_create_order_2 = '100'
+        self.qty_create_order_3 = '250'
         self.desk = self.environment.get_list_fe_environment()[0].desk_ids[0]
         self.bs_connectivity = self.fix_env.buy_side
         self.venue_client_name = self.data_set.get_venue_client_names_by_name('client_1_venue_1')
@@ -55,14 +52,28 @@ class QAP_T7124(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Precondition
-        ord_id1 = self.__create_market_order(self.qty1)
-        ord_id2 = self.__create_market_order(self.qty2)
-        ord_id3 = self.__create_market_order(self.qty3)
-        orders_id = [ord_id1, ord_id2, ord_id3]
-        bag_name = 'Bag_for_QAP_T7124'
+        self.order_submit.set_default_care_limit(recipient=self.environment.get_list_fe_environment()[0].user_1,
+                                                 desk=self.desk,
+                                                 role=SubmitRequestConst.USER_ROLE_1.value)
+        self.order_submit.update_fields_in_component("NewOrderSingleBlock", {'OrdQty': self.qty1})
+        self.price = self.order_submit.get_parameter("NewOrderSingleBlock")["Price"]
+        self.java_api_manager.send_message_and_receive_response(self.order_submit)
+        ord_notif = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value)
+        ord_id = ord_notif.get_parameter("OrdNotificationBlock")["OrdID"]
+
+        self.order_submit.set_default_care_limit(recipient=self.environment.get_list_fe_environment()[0].user_1,
+                                                 desk=self.desk,
+                                                 role=SubmitRequestConst.USER_ROLE_1.value)
+        self.order_submit.update_fields_in_component("NewOrderSingleBlock",
+                                                     {'OrdQty': self.qty2, "ClOrdID": bca.client_orderid(9)})
+        self.java_api_manager.send_message_and_receive_response(self.order_submit)
+        ord_notif = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value)
+        ord_id2 = ord_notif.get_parameter("OrdNotificationBlock")["OrdID"]
+        orders_id = [ord_id, ord_id2]
+        bag_name = 'QAP_T10326'
 
         # region Step 2
-        self.bag_creation_request.set_default(BagChildCreationPolicy.AVP.value, bag_name, orders_id)
+        self.bag_creation_request.set_default(BagChildCreationPolicy.Smallest_to_Biggest.value, bag_name, orders_id)
         self.java_api_manager.send_message_and_receive_response(self.bag_creation_request)
         order_bag_notification = \
             self.java_api_manager.get_last_message(ORSMessageType.OrderBagNotification.value).get_parameter(
@@ -73,66 +84,68 @@ class QAP_T7124(TestCase):
         bag_order_id = order_bag_notification[JavaApiFields.OrderBagID.value]
         # endregion
 
-        # region Step 4-5
-        sliced_ord_id_1 = self.__create_order_action(bag_order_id, self.qty_create_order_1, self.price1)
+        # region Step 3-4
+        sliced_ord_id_1 = self.__create_order_action(bag_order_id, self.qty_create_order_1)
 
         # region check orders sts after trade
         # first CO
-        self.__check_order_sts(ord_id1, ExecutionReportConst.TransExecStatus_FIL.value, self.price1 + '.0',
-                               5)
+        self.__check_order_sts(ord_id, ExecutionReportConst.TransExecStatus_PFL.value, self.qty_create_order_1 + '.0')
 
         # second CO
-        self.__check_order_sts(ord_id1, ExecutionReportConst.TransExecStatus_FIL.value, self.price1 + '.0',
-                               5)
+        exec_for_order_2 = self.java_api_manager.get_last_message(ORSMessageType.OrdUpdate.value,
+                                                                  ord_id2).get_parameter(
+            JavaApiFields.OrdUpdateBlock.value)
+        self.java_api_manager.compare_values(
+            {JavaApiFields.CumQty.value: '0.0'}, exec_for_order_2,
+            'Check second CO after sliced order trade')
+
         # sliced order
         self.__check_order_sts(sliced_ord_id_1, ExecutionReportConst.TransExecStatus_FIL.value,
-                               self.price1 + '.0', 4)
-
-        # check bag avg px
-        self.__check_bag_avg_price(self.price1 + '.0', 5)
+                               self.qty_create_order_1 + '.0')
         # endregion
 
-        # region Step 6-7
-        sliced_ord_id_2 = self.__create_order_action(bag_order_id, self.qty_create_order_2, self.price2)
+        # region Step 5-6
+        sliced_ord_id_2 = self.__create_order_action(bag_order_id, self.qty_create_order_2)
 
         # region check orders sts after trade
-        # third CO
-        self.__check_order_sts(ord_id3, ExecutionReportConst.TransExecStatus_FIL.value, self.price2 + '.0', 7)
+        # first CO
+        self.__check_order_sts(ord_id, ExecutionReportConst.TransExecStatus_FIL.value, self.qty1 + '.0')
+
+        # second CO
+        self.__check_order_sts(ord_id2, ExecutionReportConst.TransExecStatus_PFL.value, '50.0')
 
         # sliced order
         self.__check_order_sts(sliced_ord_id_2, ExecutionReportConst.TransExecStatus_FIL.value,
-                               self.price2 + '.0', 7)
-
-        # check bag avg px
-        self.__check_bag_avg_price(self.bag_price, 7)
+                               self.qty_create_order_2 + '.0')
         # endregion
 
-    def __create_market_order(self, qty):
-        self.order_submit.set_default_care_market(recipient=self.environment.get_list_fe_environment()[0].user_1,
-                                                  desk=self.desk,
-                                                  role=SubmitRequestConst.USER_ROLE_1.value)
-        self.order_submit.update_fields_in_component("NewOrderSingleBlock",
-                                                     {'OrdQty': qty, "ClOrdID": bca.client_orderid(9)})
-        self.java_api_manager.send_message_and_receive_response(self.order_submit)
-        ord_notif = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value)
-        ord_id = ord_notif.get_parameter("OrdNotificationBlock")["OrdID"]
-        return ord_id
+        # region Step 7-8
+        sliced_ord_id_3 = self.__create_order_action(bag_order_id, self.qty_create_order_3)
 
-    def __create_order_action(self, bag_order_id, qty, price):
+        # region check orders sts after trade
+
+        # second CO
+        self.__check_order_sts(ord_id2, ExecutionReportConst.TransExecStatus_FIL.value, self.qty2 + '.0')
+
+        # sliced order
+        self.__check_order_sts(sliced_ord_id_3, ExecutionReportConst.TransExecStatus_FIL.value,
+                               self.qty_create_order_3 + '.0')
+        # endregion
+
+    def __create_order_action(self, bag_order_id, qty):
         self.order_submit2.set_default_dma_limit()
         self.order_submit2.update_fields_in_component("NewOrderSingleBlock", {'OrdQty': qty,
                                                                               'AvgPriceType': "BA",
                                                                               'ExternalCare': 'N',
                                                                               "SlicedOrderBagID": bag_order_id,
-                                                                              "ClOrdID": bca.client_orderid(9),
-                                                                              "Price": price})
+                                                                              "ClOrdID": bca.client_orderid(9)})
         slice_order_id = None
         nos_rule = None
         try:
             nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.bs_connectivity,
                                                                                           self.venue_client_name,
                                                                                           self.mic,
-                                                                                          int(price),
+                                                                                          int(self.price),
                                                                                           int(qty),
                                                                                           0)
             self.java_api_manager.send_message_and_receive_response(self.order_submit2)
@@ -145,18 +158,11 @@ class QAP_T7124(TestCase):
             self.rule_manager.remove_rule(nos_rule)
         return slice_order_id
 
-    def __check_order_sts(self, order_id, sts, price, step):
+    def __check_order_sts(self, order_id, sts, cum_qty):
         exec_for_order = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value,
                                                                 order_id).get_parameter(
             JavaApiFields.ExecutionReportBlock.value)
         self.java_api_manager.compare_values(
             {JavaApiFields.TransExecStatus.value: sts,
-             JavaApiFields.ExecPrice.value: price}, exec_for_order,
-            f'Check {sts} for {order_id} after sliced order trade (step {step})')
-
-    def __check_bag_avg_price(self, price, step):
-        bag_notif = self.java_api_manager.get_last_message(ORSMessageType.OrderBagNotification.value).get_parameter(
-            JavaApiFields.OrderBagNotificationBlock.value)
-        self.java_api_manager.compare_values(
-            {JavaApiFields.AvgPrice.value: price}, bag_notif,
-            f'Check AVG price for bag (step {step})')
+             JavaApiFields.CumQty.value: cum_qty}, exec_for_order,
+            f'Check {sts} for {order_id} after sliced order trade')
