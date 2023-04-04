@@ -32,7 +32,7 @@ def test_run(parent_id=None):
         if eval(root.find(".//component[@name='Gateway']").attrib["run"]):
             gateway_regression.test_run(report_id, version, only_ssh=True)
         if eval(root.find(".//component[@name='Positions']").attrib["run"]):
-            positions_regression.test_run(report_id, version, only_ssh=True)
+            positions_regression.test_run(report_id, version)
         if eval(root.find(".//component[@name='GatingRules']").attrib["run"]):
             gating_rule_regression.test_run(report_id, version, only_ssh=True)
         if eval(root.find(".//component[@name='Bag']").attrib["run"]):
