@@ -19,7 +19,7 @@ class FixMessageMarketDataIncrementalRefreshOMS(FixMessageMarketDataIncrementalR
             'MDReqID': md_req_id,
             'NoMDEntriesIR': [
                 {
-                    'MDUpdateAction': md_update_action, # 1
+                    'MDUpdateAction': md_update_action,
                     'MDEntryType': md_entry_type,
                     'MDEntryPx': mf_entry_px,
                     'MDEntrySize': md_entry_size,
