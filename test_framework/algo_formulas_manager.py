@@ -447,7 +447,7 @@ class AlgoFormulasManager:
                 },
                 {
                     "phaseBeginTime": clo_start.strftime("%H:%M:%S"),
-                    "phaseEndTime": datetime.time(hour=23, minute=0, second=0),
+                    "phaseEndTime": "23:00:00",
                     "tradingPhase": "CLO",
                     "standardTradingPhase": "CLO",
                 },
