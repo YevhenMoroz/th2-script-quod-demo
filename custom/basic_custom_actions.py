@@ -10,6 +10,7 @@ from th2_grpc_check1.check1_pb2 import PreFilter
 from th2_grpc_check1.check1_pb2 import CheckRuleRequest
 from th2_grpc_check1.check1_pb2 import CheckSequenceRuleRequest
 from th2_grpc_check1.check1_pb2 import CheckpointRequest
+from th2_grpc_check1.check1_pb2 import NoMessageCheckRequest
 
 from th2_grpc_act_fix_quod.act_fix_pb2 import PlaceMessageRequest
 from stubs import Stubs
@@ -512,6 +513,19 @@ def create_check_sequence_rule(description: str, prefilter: PreFilter, msg_filte
         direction=direction
     )
 
+def create_check_no_message_found(description: str, prefilter: PreFilter, message_timeout: 5000, checkpoint: Checkpoint, connectivity: str, event_id: EventID, timeout=10000,
+                               direction=Direction.Value("FIRST")) -> NoMessageCheckRequest:
+    return NoMessageCheckRequest(
+        connectivity_id=ConnectionID(session_alias=connectivity),
+        pre_filter=prefilter,
+        message_timeout=message_timeout,
+        timeout=timeout,
+        checkpoint=checkpoint,
+        chain_id=None,
+        parent_event_id=event_id,
+        description=description,
+        direction=direction
+    )
 
 def create_event_id() -> EventID:
     """ Creates unique id for event.
