@@ -321,7 +321,7 @@ class FixVerifier:
         if message_name is None:
             message_name = "Check no message found"
 
-        self.__verifier.submitCheckSequenceRule(
+        self.__verifier.submitNoMessageCheck (
             basic_custom_actions.create_check_no_message_found(
                 description=message_name,
                 prefilter=pre_filter_req,
