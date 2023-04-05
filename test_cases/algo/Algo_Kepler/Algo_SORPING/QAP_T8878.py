@@ -171,7 +171,7 @@ class QAP_T8878(TestCase):
 
         self.fix_manager_sell.send_message_and_receive_response(self.SORPING_order, case_id_1)
 
-        time.sleep(1)
+        time.sleep(2)
 
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Update Market Data", self.test_id))
         market_data_snap_shot_xpar = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_xpar, self.fix_env1.feed_handler)
