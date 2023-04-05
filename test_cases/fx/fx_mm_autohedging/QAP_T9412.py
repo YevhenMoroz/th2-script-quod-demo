@@ -105,7 +105,7 @@ class QAP_T9412(TestCase):
         self.trade_request.update_fields_in_component("TradeEntryRequestBlock", {"AccountGroupID": self.client_ext})
         response: list = self.java_api_manager.send_message_and_receive_response(self.trade_request)
         ah_exec_id = self.trade_request.get_ah_exec_id(response)
-        self.ah_exec_report.set_params_from_trade(self.trade_request)
+        self.ah_exec_report.set_params_from_trade_sor(self.trade_request)
         self.ah_exec_report.change_parameter("ExecID", ah_exec_id)
         self.ah_exec_report.change_parameter("Account", self.account_int)
         ah_exec_params = ["ExecID"]

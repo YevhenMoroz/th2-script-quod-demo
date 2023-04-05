@@ -127,7 +127,7 @@ class QAP_T9464(TestCase):
                                                                pre_filter=prefilter,
                                                                message_name="Check that we create AH order and send child to market")
 
-        self.ah_exec_report.set_params_from_trade(self.trade_request)
+        self.ah_exec_report.set_params_from_trade_sor(self.trade_request)
         self.ah_exec_report.change_parameter("ExecID", ah_exec_id)
         self.ah_exec_report.change_parameter("Account", self.account_int)
         ah_exec_params = ["ExecID"]
