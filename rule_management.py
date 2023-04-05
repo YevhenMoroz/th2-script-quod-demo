@@ -26,7 +26,7 @@ from th2_grpc_sim_fix_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRR
     TemplateOrderCancelRequestWithQty, TemplateNewOrdSingleRQFRejected, TemplateNewOrdSingleExecutionReportOnlyPending, \
     TemplateExternalExecutionReport, TemplateNewOrdSingleExecutionReportTradeByOrdQtyRBCustom, \
     TemplateNOSExecutionReportTradeWithTradeDateFIXStandard, TemplateNewOrdSingleIOCTradeOnFullQty, \
-    TemplateNewOrdSingleExecutionReportDoneForDay, TemplateNewOrdSingleIOCTradeByOrderQty, TemplateFXOrderReject, TemplateNewOrdSingleTradeOnFullQty, TemplateNewOrdSingleExecutionReportAll, TemplateNewOrdSingleExecutionReportIOCAll
+    TemplateNewOrdSingleExecutionReportDoneForDay, TemplateNewOrdSingleIOCTradeByOrderQty, TemplateFXOrderReject, TemplateNewOrdSingleTradeOnFullQty, TemplateNewOrdSingleExecutionReportAll, TemplateNewOrdSingleExecutionReportIOCAll, TemplateMarketDataRequestWithTimeout
 
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
@@ -681,6 +681,13 @@ class RuleManager:
                                                        account=account,
                                                        venue=venue,
                                                        delay=delay))
+
+    def add_MarketDataRequestWithTimeout(self, session: str, symbols: list):
+        return self.sim.createMarketDataRequestWithTimeout(
+            request=TemplateMarketDataRequestWithTimeout(connection_id=ConnectionID(session_alias=session),
+                                            symbols=symbols
+                                            ))
+
 
 
 if __name__ == '__main__':
