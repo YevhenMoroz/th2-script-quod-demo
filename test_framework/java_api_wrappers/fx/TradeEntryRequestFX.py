@@ -24,7 +24,7 @@ class TradeEntryRequestFX(JavaApiMessage):
                 "SettlDate": self.get_data_set().get_settle_date_by_name("spot_java_api"),
                 "TradeDate": self.get_data_set().get_settle_date_by_name("today_java_api"),
                 "Side": "B",
-                "Currency":self.get_data_set().get_currency_by_name("currency_eur"),
+                "Currency": self.get_data_set().get_currency_by_name("currency_eur"),
                 "AccountGroupID": "CLIENT_TEST_EXT",
                 "ListingID": "506403761",  # EUR/USD
                 # "ListingID": "506404433",  # GBP/USD
@@ -63,12 +63,47 @@ class TradeEntryRequestFX(JavaApiMessage):
         super().change_parameters(request_params)
         return self
 
+    # region Setters
+    def set_exec_misc0(self, misc):
+        self.get_parameters()["TradeEntryRequestBlock"]["ExecMiscBlock"]["ExecMisc0"] = misc
+
+    def set_exec_misc1(self, misc):
+        self.get_parameters()["TradeEntryRequestBlock"]["ExecMiscBlock"]["ExecMisc1"] = misc
+
+    def set_exec_misc2(self, misc):
+        self.get_parameters()["TradeEntryRequestBlock"]["ExecMiscBlock"]["ExecMisc2"] = misc
+
+    def set_exec_misc3(self, misc):
+        self.get_parameters()["TradeEntryRequestBlock"]["ExecMiscBlock"]["ExecMisc3"] = misc
+
+    def set_exec_misc4(self, misc):
+        self.get_parameters()["TradeEntryRequestBlock"]["ExecMiscBlock"]["ExecMisc4"] = misc
+
+    def set_exec_misc5(self, misc):
+        self.get_parameters()["TradeEntryRequestBlock"]["ExecMiscBlock"]["ExecMisc5"] = misc
+
+    def set_exec_misc6(self, misc):
+        self.get_parameters()["TradeEntryRequestBlock"]["ExecMiscBlock"]["ExecMisc6"] = misc
+
+    def set_exec_misc7(self, misc):
+        self.get_parameters()["TradeEntryRequestBlock"]["ExecMiscBlock"]["ExecMisc7"] = misc
+
+    def set_exec_misc8(self, misc):
+        self.get_parameters()["TradeEntryRequestBlock"]["ExecMiscBlock"]["ExecMisc8"] = misc
+
+    def set_exec_misc9(self, misc):
+        self.get_parameters()["TradeEntryRequestBlock"]["ExecMiscBlock"]["ExecMisc9"] = misc
+
+    # endregion
+    # region Getters
     def get_exec_id(self, response) -> str:
         return response[1].get_parameters()["ExecutionReportBlock"]["ExecID"]
 
     def get_ah_exec_id(self, response) -> str:
         return response[4].get_parameters()["ExecutionReportBlock"]["ExecID"]
 
+    def get_ah_ord_id(self, response) -> str:
+        return response[-1].get_parameters()["ExecutionReportBlock"]["OrdID"]
     def get_internal_exec_id(self, response) -> str:
         return response[0].get_parameters()["ExecutionReportBlock"]["ExecID"]
 
@@ -83,3 +118,4 @@ class TradeEntryRequestFX(JavaApiMessage):
 
     def get_exec_qty(self):
         return self.get_parameters()["TradeEntryRequestBlock"]["ExecQty"]
+    # endregion
