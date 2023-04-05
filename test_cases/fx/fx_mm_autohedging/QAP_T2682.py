@@ -99,7 +99,8 @@ class QAP_T2682(TestCase):
         # region Step 1
         self.sleep(1)
         self.trade_request.set_default_params()
-        self.trade_request.update_fields_in_component("TradeEntryRequestBlock", {"AccountGroupID": self.client_ext,                                                                   "ExecQty": self.qty})
+        self.trade_request.update_fields_in_component("TradeEntryRequestBlock",
+                                                      {"AccountGroupID": self.client_ext, "ExecQty": self.qty})
         response: list = self.java_api_manager.send_message_and_receive_response(self.trade_request)
         ord_id = self.trade_request.get_ah_ord_id(response)
         # endregion
