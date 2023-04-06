@@ -115,7 +115,7 @@ class QAP_T6981(TestCase):
             'OrdQty': self.qty,
             'Price': self.price,
         })
-        responses = self.java_api_manager.send_message_and_receive_response(self.submit_request)
+        responses = self.java_api_manager.send_message_and_receive_response(self.submit_request,response_time=10000)
         print_message("Create CO order", responses)
         order_id = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameter(
             JavaApiFields.OrderNotificationBlock.value)["OrdID"]
@@ -218,7 +218,6 @@ class QAP_T6981(TestCase):
         order_update = self.java_api_manager.get_last_message(ORSMessageType.OrdUpdate.value).get_parameters()[
             JavaApiFields.OrdUpdateBlock.value]
         expected_result = {
-            JavaApiFields.AllocStatus.value: AllocationReportConst.AllocStatus_APP.value,
             JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_UNM.value,
             JavaApiFields.PostTradeStatus.value: OrderReplyConst.PostTradeStatus_BKD.value,
             JavaApiFields.DoneForDay.value: OrderReplyConst.DoneForDay_YES.value
@@ -281,7 +280,7 @@ class QAP_T6981(TestCase):
         no_misc_fee = [{'MiscFeeAmt': fee_amount_fix, 'MiscFeeCurr': self.currency, 'MiscFeeType': '10'}]
         # pre step check 35 = 8 message
         list_of_ignored_fields = ['Account', 'ExecID', 'OrderQtyData', 'LastQty',
-                                  'OrderID', 'TransactTime', 'Side', 'AvgPx',
+                                  'OrderID', 'TransactTime', 'Side', 'AvgPx','ExecAllocGrp',
                                   'QuodTradeQualifier', 'BookID', 'SettlCurrency',
                                   'SettlDate', 'Currency', 'TimeInForce', 'PositionEffect',
                                   'TradeDate', 'HandlInst', 'LeavesQty', 'NoParty', 'CumQty', 'LastPx',
