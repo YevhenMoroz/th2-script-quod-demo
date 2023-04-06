@@ -99,7 +99,7 @@ class QAP_T10725(TestCase):
         nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, self.price)
         ocrr_rule = rule_manager.add_OrderCancelReplaceRequest(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, False, self.delay_for_modify_rejection)
         rfq_rule = rule_manager.add_NewOrdSingleRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_chixlis, self.qty, self.qty, self.new_reply, self.restated_reply)
-        rfq_ocr_rule = rule_manager.add_OrderCancelRequestRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_trqx, True, self.delay_for_cancel_rfq)
+        rfq_ocr_rule = rule_manager.add_OrderCancelRequestRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_trqx, True)
         nos_2_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_bats, self.ex_destination_bats, self.price)
         ocr_1_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, True)
         ocr_2_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_bats, self.ex_destination_bats, True)
@@ -258,8 +258,10 @@ class QAP_T10725(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Check that are no LIS child", self.test_id))
 
         self.dma_1_chix_order.change_parameters(dict(Price=self.price))
-        self.fix_verifier_buy.check_fix_message_sequence([self.dma_1_chix_order, nos_chixlis_rfq, nos_trql_rfq], [self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child], self.FromQuod, pre_filter=self.pre_filter, check_order=False)
+        self.fix_verifier_buy.check_fix_message_sequence([self.dma_1_chix_order, nos_chixlis_rfq, nos_trql_rfq, self.dma_2_chix_order], [self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child], self.FromQuod, pre_filter=self.pre_filter, check_order=False)
         # endregion
+
+        time.sleep(3)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
