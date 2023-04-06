@@ -21,7 +21,7 @@ logger.setLevel(logging.INFO)
 seconds, nanos = timestamps()  # Test case start time
 
 
-class QAP_T10251(TestCase):
+class QAP_T10249(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
