@@ -256,6 +256,7 @@ class FxSymbols(Enum):
     symbol_22 = "THB/TWD"
     symbol_23 = "USD/THB"
     symbol_24 = "USD/TWD"
+    symbol_25 = "GBP/DKK"
 
     symbol_ndf_1 = "USD/PHP"
     symbol_ndf_2 = "EUR/PHP"
@@ -353,5 +354,7 @@ class FXListings(Enum):
     gbp_usd_wk2 = "506404438"
     gbp_cad_spo = "506403873"
     gbp_cad_wk1 = "506403877"
+    gbp_dkk_spo = "506403957"
+    usd_zar_spo = "506406757"
 
     #TODO add more listings
