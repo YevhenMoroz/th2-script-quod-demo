@@ -18,25 +18,25 @@ def test_run(parent_id=None):
         version = root.find(".//version").text
 
         if eval(root.find(".//component[@name='DMA']").attrib["run"]):
-            dma_regression.test_run(report_id, version, only_ssh=True)
+            dma_regression.test_run(report_id, version, skip_ssh=True)
         if eval(root.find(".//component[@name='Care']").attrib["run"]):
-            care_regression.test_run(report_id, version, only_ssh=True)
+            care_regression.test_run(report_id, version, skip_ssh=True)
         if eval(root.find(".//component[@name='Counterparts']").attrib["run"]):
-            counterparts_regression.test_run(report_id, version, only_ssh=True)
+            counterparts_regression.test_run(report_id, version, skip_ssh=True)
         if eval(root.find(".//component[@name='PostTrade']").attrib["run"]):
-            post_trade_regression.test_run(report_id, version, only_ssh=True)
+            post_trade_regression.test_run(report_id, version, skip_ssh=True)
         if eval(root.find(".//component[@name='Commissions']").attrib["run"]):
-            commission_regression.test_run(report_id, version, only_ssh=True)
+            commission_regression.test_run(report_id, version, skip_ssh=True)
         if eval(root.find(".//component[@name='BasketTrading']").attrib["run"]):
-            basket_regression.test_run(report_id, version, only_ssh=True)
+            basket_regression.test_run(report_id, version, skip_ssh=True)
         if eval(root.find(".//component[@name='Gateway']").attrib["run"]):
-            gateway_regression.test_run(report_id, version, only_ssh=True)
+            gateway_regression.test_run(report_id, version, skip_ssh=True)
         if eval(root.find(".//component[@name='Positions']").attrib["run"]):
-            positions_regression.test_run(report_id, version)
+            positions_regression.test_run(report_id, version, skip_ssh=True)
         if eval(root.find(".//component[@name='GatingRules']").attrib["run"]):
-            gating_rule_regression.test_run(report_id, version, only_ssh=True)
+            gating_rule_regression.test_run(report_id, version, skip_ssh=True)
         if eval(root.find(".//component[@name='Bag']").attrib["run"]):
-            bag_regression.test_run(report_id, version, only_ssh=True)
+            bag_regression.test_run(report_id, version, skip_ssh=True)
 
     except Exception:
         logging.error("Error execution", exc_info=True)
