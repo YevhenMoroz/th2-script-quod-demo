@@ -64,6 +64,7 @@ class QAP_T4890(TestCase):
         self.status_cancel = Status.Cancel
         self.status_cancel_replace = Status.CancelReplace
         self.status_eliminate = Status.Eliminate
+        self.status_partfill = Status.PartialFill
         # endregion
 
         # region instrument
@@ -120,11 +121,11 @@ class QAP_T4890(TestCase):
         case_id_1 = bca.create_event("Create POV Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.POV_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Iceberg_params()
+        self.POV_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_POV_params()
         self.POV_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.POV_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
-        # self.POV_order.update_repeating_group('NoStrategyParameters', [dict(StrategyParameterName='PercentageVolume', StrategyParameterType=6, StrategyParameterValue=self.pct)])
-        # self.POV_order.add_fields_into_repeating_group('NoStrategyParameters', [{'StrategyParameterName': 'Aggressivity', 'StrategyParameterType': 1, 'StrategyParameterValue': self.aggressivity_neut}])
+        self.POV_order.update_repeating_group('NoStrategyParameters', [dict(StrategyParameterName='PercentageVolume', StrategyParameterType=6, StrategyParameterValue=self.pct)])
+        self.POV_order.add_fields_into_repeating_group('NoStrategyParameters', [{'StrategyParameterName': 'Aggressivity', 'StrategyParameterType': 1, 'StrategyParameterValue': self.aggressivity_neut}])
         self.fix_manager_sell.send_message_and_receive_response(self.POV_order, case_id_1)
         # endregion
 
@@ -186,8 +187,7 @@ class QAP_T4890(TestCase):
         self.POV_order_replace_params.change_parameter('TransactTime', '*')
         self.fix_verifier_sell.check_fix_message(self.POV_order_replace_params, direction=self.ToQuod, message_name='Sell side OrderCancelReplaceRequest')
 
-        replaced_twap_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.POV_order_replace_params, self.gateway_side_sell, self.status_cancel_replace)
-        replaced_twap_order_params.change_parameters({'NoParty': '*', 'OrdStatus': 1})
+        replaced_twap_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.POV_order_replace_params, self.gateway_side_sell, self.status_partfill)
         self.fix_verifier_sell.check_fix_message(replaced_twap_order_params, key_parameters=self.key_params_cl, message_name='Sell Side ExecReport Replace Request')
         # endregion
 
@@ -248,7 +248,7 @@ class QAP_T4890(TestCase):
 
         # region check cancellation parent POV order
         cancel_pov_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.POV_order, self.gateway_side_sell, self.status_cancel)
-        cancel_pov_order.change_parameters({'NoParty': '*', 'SettlType': 'B'})
+        cancel_pov_order.change_parameter('SettlType', '*')
         self.fix_verifier_sell.check_fix_message(cancel_pov_order, key_parameters=self.key_params_cl,  message_name='Sell side ExecReport Canceled')
         # endregion
 
