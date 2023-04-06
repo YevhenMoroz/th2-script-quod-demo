@@ -119,11 +119,9 @@ class QAP_T7732(TestCase):
         self.fix_verifier_sell.check_fix_message(self.litdark_order, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
         pending_litdark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.litdark_order, self.gateway_side_sell, self.status_pending)
-        pending_litdark_order_params.remove_parameter('NoParty')
         self.fix_verifier_sell.check_fix_message(pending_litdark_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew')
 
         new_litdark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.litdark_order, self.gateway_side_sell, self.status_new)
-        new_litdark_order_params.change_parameter('SecondaryAlgoPolicyID', '*').remove_parameters(['NoParty'])
         self.fix_verifier_sell.check_fix_message(new_litdark_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
 

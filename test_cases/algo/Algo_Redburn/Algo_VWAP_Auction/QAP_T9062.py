@@ -190,8 +190,6 @@ class QAP_T9062(TestCase):
         er_new_dma = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_new)
         scheduler.enterabs(self.verify_time, 3, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=er_new_dma, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport child order'))
         # endregion
-
-
         scheduler.run()
 
 
