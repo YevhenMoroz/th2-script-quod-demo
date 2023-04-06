@@ -111,6 +111,11 @@ class QAP_T4359(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        # region precondition: Prepare SATS configuration
+        self.ssh_client.send_command("qrestart SATS")
+        time.sleep(35)
+        # endregion
+
         # region Start/EndDate for algo
         utcnow = datetime.utcnow()
         end_date = (utcnow + timedelta(minutes=10)).strftime("%Y%m%d-%H:%M:%S")
