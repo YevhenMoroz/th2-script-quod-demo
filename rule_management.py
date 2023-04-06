@@ -186,13 +186,12 @@ class RuleManager:
                 traded_qty=traded_qty,
                 delay=delay))
 
-    def add_NewOrdSingleExecutionReportPendingAndNew(self, session: str, account: str, venue: str, price: float, delay: int = 0):
+    def add_NewOrdSingleExecutionReportPendingAndNew(self, session: str, account: str, venue: str, price: float):
         return self.sim.createNewOrdSingleExecutionReportPendingAndNew(
             request=TemplateNewOrdSingleExecutionReportPendingAndNew(connection_id=ConnectionID(session_alias=session),
                                                                      account=account,
                                                                      venue=venue,
-                                                                     price=price,
-                                                                     delay=delay))
+                                                                     price=price))
 
     def add_NewOrdSingleExecutionReportOnlyPending(self, session: str, account: str, venue: str, price: float):
         return self.sim.createNewOrdSingleExecutionReportOnlyPending(
