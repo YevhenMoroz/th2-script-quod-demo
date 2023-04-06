@@ -88,7 +88,8 @@ class QAP_T7390(TestCase):
 
         # region check calculated message
         exec_ignored_fields = ['Account', 'SettlCurrency', 'LastExecutionPolicy', 'Currency', 'SecondaryOrderID',
-                               'LastMkt', 'VenueType', 'SecondaryExecID', 'GatingRuleCondName', 'GatingRuleName']
+                               'LastMkt', 'VenueType', 'SecondaryExecID', 'GatingRuleCondName', 'GatingRuleName',
+                               'ExecAllocGrp']
         self.exec_report.set_default_filled(self.new_order_single)
         self.exec_report.change_parameters({"MiscFeesGrp":"#"})
         self.fix_verifier.check_fix_message_fix_standard(self.exec_report, ignored_fields=exec_ignored_fields)

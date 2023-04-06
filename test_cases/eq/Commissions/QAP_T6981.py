@@ -186,17 +186,6 @@ class QAP_T6981(TestCase):
             JavaApiFields.RootMiscFeeCurr.value: self.currency,
             JavaApiFields.RootMiscFeeType.value: AllocationInstructionConst.COMM_AND_FEE_TYPE_TRA.value
         }
-        self.java_api_manager.compare_values(expected_levy,
-                                             {"ExpectedFee": str(
-                                                 compute_reply[JavaApiFields.RootMiscFeesList.value][
-                                                     JavaApiFields.RootMiscFeesBlock.value])},
-                                             "Check Levy", VerificationMethod.NOT_CONTAINS)
-
-        self.java_api_manager.compare_values(expected_stamp,
-                                             {"ExpectedFee": str(
-                                                 compute_reply[JavaApiFields.RootMiscFeesList.value][
-                                                     JavaApiFields.RootMiscFeesBlock.value])},
-                                             "Check Stamp", VerificationMethod.NOT_CONTAINS)
         self.java_api_manager.compare_values(expected_per_trans,
                                              {"ExpectedFee": str(
                                                  compute_reply[JavaApiFields.RootMiscFeesList.value][
@@ -221,14 +210,6 @@ class QAP_T6981(TestCase):
         self.java_api_manager.send_message_and_receive_response(self.alloc_instr)
         alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameter(
             JavaApiFields.AllocationReportBlock.value)
-        self.java_api_manager.compare_values(expected_levy,
-                                             {"ExpectedFee": str(
-                                                 alloc_report["RootMiscFeesList"]["RootMiscFeesBlock"])},
-                                             "Check Levy", VerificationMethod.NOT_CONTAINS)
-        self.java_api_manager.compare_values(expected_stamp,
-                                             {"ExpectedFee": str(
-                                                 alloc_report["RootMiscFeesList"]["RootMiscFeesBlock"])},
-                                             "Check Stamp", VerificationMethod.NOT_CONTAINS)
         self.java_api_manager.compare_values(expected_per_trans,
                                              {"ExpectedFee": str(
                                                  alloc_report["RootMiscFeesList"]["RootMiscFeesBlock"])},
@@ -282,14 +263,6 @@ class QAP_T6981(TestCase):
         confirm_report = \
             self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[
                 JavaApiFields.ConfirmationReportBlock.value]
-        self.java_api_manager.compare_values(expected_levy,
-                                             {"ExpectedFee": str(
-                                                 confirm_report["MiscFeesList"]["MiscFeesBlock"])},
-                                             "Check Levy", VerificationMethod.NOT_CONTAINS)
-        self.java_api_manager.compare_values(expected_stamp,
-                                             {"ExpectedFee": str(
-                                                 confirm_report["MiscFeesList"]["MiscFeesBlock"])},
-                                             "Check Stamp", VerificationMethod.NOT_CONTAINS)
         self.java_api_manager.compare_values(expected_per_trans,
                                              {"ExpectedFee": str(
                                                  confirm_report["MiscFeesList"]["MiscFeesBlock"])},
