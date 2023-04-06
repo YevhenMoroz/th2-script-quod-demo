@@ -58,6 +58,9 @@ class QAP_T7359(TestCase):
                 "NewOrderSingleBlock",
                 {"OrdQty": qty,
                  "AccountGroupID": client,
+                 JavaApiFields.RouteList.value: {JavaApiFields.RouteBlock.value: [{
+                     JavaApiFields.RouteID.value: self.data_set.get_route_id_by_name('route_1')
+                 }]},
                  "Price": price,
                  "ClOrdID": bca.client_orderid(9)})
             self.java_api_manager.send_message_and_receive_response(self.order_submit)
