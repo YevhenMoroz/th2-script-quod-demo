@@ -160,7 +160,7 @@ class QAP_T4276(TestCase):
         pending_slice1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice1_order, self.gateway_side_buy, self.status_pending)
         self.fix_verifier_buy.check_fix_message(pending_slice1_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA Slice 1')
 
-        new_slice1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice1_order, self.gateway_side_buy, self.status_pending)
+        new_slice1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice1_order, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message(new_slice1_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA Slice 1')
         
         eliminate_slice1_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice1_order, self.gateway_side_buy, self.status_eliminate)
@@ -174,13 +174,13 @@ class QAP_T4276(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order - Slice 2", self.test_id))
 
         slice2_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        slice2_order.change_parameters(dict(OrderQty=self.slice2_qty, Price=self.price, Instrument='*', TimeInForce=self.tif_day))
+        slice2_order.change_parameters(dict(OrderQty=self.slice2_qty, Price=self.mid_price, Instrument='*', TimeInForce=self.tif_day))
         self.fix_verifier_buy.check_fix_message(slice2_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Child DMA Slice 2')
 
         pending_slice2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice2_order, self.gateway_side_buy, self.status_pending)
         self.fix_verifier_buy.check_fix_message(pending_slice2_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA Slice 2')
 
-        new_slice2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice2_order, self.gateway_side_buy, self.status_pending)
+        new_slice2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice2_order, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message(new_slice2_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA Slice 2')
                 
         eliminate_slice2_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice2_order, self.gateway_side_buy, self.status_eliminate)
@@ -194,13 +194,13 @@ class QAP_T4276(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order - Slice 3", self.test_id))
 
         slice3_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        slice3_order.change_parameters(dict(OrderQty=self.slice3_qty, Price=self.price, Instrument='*', TimeInForce=self.tif_day)) #slice3_
+        slice3_order.change_parameters(dict(OrderQty=self.slice3_qty, Price=self.mid_price, Instrument='*', TimeInForce=self.tif_day)) #slice3_
         self.fix_verifier_buy.check_fix_message(slice3_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Child DMA Slice 3')
 
         pending_slice3_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice3_order, self.gateway_side_buy, self.status_pending)
         self.fix_verifier_buy.check_fix_message(pending_slice3_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA Slice 3')
 
-        new_slice3_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice3_order, self.gateway_side_buy, self.status_pending)
+        new_slice3_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice3_order, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message(new_slice3_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA Slice 3')
         
         eliminate_slice3_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice3_order, self.gateway_side_buy, self.status_eliminate)
@@ -214,13 +214,13 @@ class QAP_T4276(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order - Slice 4", self.test_id))
 
         slice4_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        slice4_order.change_parameters(dict(OrderQty=self.slice4_qty, Price=self.price, Instrument='*', TimeInForce=self.tif_day)) #slice4_
+        slice4_order.change_parameters(dict(OrderQty=self.slice4_qty, Price=self.mid_price, Instrument='*', TimeInForce=self.tif_day)) #slice4_
         self.fix_verifier_buy.check_fix_message(slice4_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Child DMA Slice 4')
 
         pending_slice4_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice4_order, self.gateway_side_buy, self.status_pending)
         self.fix_verifier_buy.check_fix_message(pending_slice4_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA Slice 4')
 
-        new_slice4_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice4_order, self.gateway_side_buy, self.status_pending)
+        new_slice4_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice4_order, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message(new_slice4_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA Slice 4')
         
         eliminate_slice4_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice4_order, self.gateway_side_buy, self.status_eliminate)
@@ -234,13 +234,13 @@ class QAP_T4276(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order - Slice 5", self.test_id))
 
         slice5_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        slice5_order.change_parameters(dict(OrderQty=self.slice5_qty, Price=self.price, Instrument='*', TimeInForce=self.tif_day)) #slice5_
+        slice5_order.change_parameters(dict(OrderQty=self.slice5_qty, Price=self.mid_price, Instrument='*', TimeInForce=self.tif_day)) #slice5_
         self.fix_verifier_buy.check_fix_message(slice5_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Child DMA Slice 5')
 
         pending_slice5_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice5_order, self.gateway_side_buy, self.status_pending)
         self.fix_verifier_buy.check_fix_message(pending_slice5_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA Slice 5')
 
-        new_slice5_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice5_order, self.gateway_side_buy, self.status_pending)
+        new_slice5_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice5_order, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message(new_slice5_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA Slice 5')
         
         eliminate_slice5_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice5_order, self.gateway_side_buy, self.status_eliminate)
@@ -252,7 +252,7 @@ class QAP_T4276(TestCase):
     def run_post_conditions(self):
         # region check elimination parent TWAP order
         eliminate_twap_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_order, self.gateway_side_sell, self.status_eliminate)
-        eliminate_twap_order.change_parameters(dict(NoParty='*', Price=self.price, LastMkt='*', Text='reached end time'))
+        eliminate_twap_order.change_parameters(dict(NoParty='*', Price=self.price, LastMkt='*', Text='reached end time', SettlType='*'))
         self.fix_verifier_sell.check_fix_message(eliminate_twap_order, key_parameters=self.key_params_cl,  message_name='Sell side ExecReport eliminated')
         # endregion
 

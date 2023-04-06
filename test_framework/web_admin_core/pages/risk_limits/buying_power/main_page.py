@@ -10,16 +10,16 @@ class MainPage(CommonPage):
         super().__init__(web_driver_container)
 
     def click_on_more_actions(self):
-        self.find_by_xpath(Constants.MainPage.MoreActions.MORE_ACTIONS_BUTTON).click()
+        self.find_by_xpath(Constants.MainPage.MORE_ACTIONS_BUTTON).click()
 
     def click_on_edit(self):
-        self.find_by_xpath(Constants.MainPage.MoreActions.EDIT_BUTTON).click()
+        self.find_by_xpath(Constants.MainPage.EDIT_BUTTON).click()
 
     def click_on_clone(self):
-        self.find_by_xpath(Constants.MainPage.MoreActions.CLONE_BUTTON).click()
+        self.find_by_xpath(Constants.MainPage.CLONE_BUTTON).click()
 
     def click_on_delete(self, confirmation):
-        self.find_by_xpath(Constants.MainPage.MoreActions.DELETE_BUTTON).click()
+        self.find_by_xpath(Constants.MainPage.DELETE_BUTTON).click()
         if confirmation:
             self.find_by_xpath(Constants.MainPage.OK_BUTTON).click()
         else:
@@ -27,7 +27,7 @@ class MainPage(CommonPage):
 
     def click_download_pdf_entity_button_and_check_pdf(self, value):
         self.clear_download_directory()
-        self.find_by_xpath(Constants.MainPage.MoreActions.DOWNLOAD_PDF_BUTTON).click()
+        self.find_by_xpath(Constants.MainPage.DOWNLOAD_PDF_BUTTON).click()
         time.sleep(1)
         return self.is_pdf_contains_value(value)
 
@@ -38,7 +38,7 @@ class MainPage(CommonPage):
         return self.get_csv_context()
 
     def click_on_pin_row(self):
-        self.find_by_xpath(Constants.MainPage.MoreActions.PIN_BUTTON).click()
+        self.find_by_xpath(Constants.MainPage.PIN_BUTTON).click()
 
     def click_on_new_button(self):
         self.find_by_xpath(Constants.MainPage.NEW_BUTTON).click()

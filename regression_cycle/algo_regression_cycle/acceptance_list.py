@@ -12,11 +12,14 @@ from test_cases.algo.Algo_TWAP.QAP_T4988 import QAP_T4988
 from test_cases.algo.Algo_TWAP.QAP_T4884 import QAP_T4884
 from test_cases.algo.Algo_TWAP.QAP_T4887 import QAP_T4887
 from test_cases.algo.Algo_PercentageVolume.QAP_T4879 import QAP_T4879
+from test_cases.algo.Algo_PercentageVolume.QAP_T4890 import QAP_T4890
+from test_cases.algo.Algo_PercentageVolume.QAP_T4911 import QAP_T4911
 from test_cases.algo.Algo_PercentageVolume import QAP_T4950
 # from test_cases.algo.Algo_PercentageVolume.QAP_T5083 import QAP_T5083 # not automated yet
 # from test_cases.algo.Algo_PercentageVolume.QAP_T5085 import QAP_T5085 # not automated yet
 from test_cases.algo.Algo_PercentageVolume import QAP_T5113
 from test_cases.algo.Algo_Multilisted import QAP_T4093
+from test_cases.algo.Algo_Multilisted.QAP_T4091 import QAP_T4091
 from test_cases.algo.Algo_Multilisted.QAP_T4120 import QAP_T4120
 from test_cases.algo.Algo_Multilisted.QAP_T4115 import QAP_T4115
 from test_cases.algo.Algo_Multilisted.QAP_T4106 import QAP_T4106
@@ -60,6 +63,8 @@ def test_run(parent_id=None, version=None):
         QAP_T4887(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # POV
         QAP_T4879(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4890(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4911(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # QAP_T5113.execute(report_id, session_id) # session ID error (line 44)
         # Iceberg
         QAP_T4925(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
@@ -71,6 +76,7 @@ def test_run(parent_id=None, version=None):
         QAP_T4114(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4117(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4115(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4091(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # TradLim and CumTradLim
         # QAP_T4949.execute(report_id, session_id) # session ID error (line 44)
         # QAP_T4948.execute(report_id, session_id) # session ID error (line 44)

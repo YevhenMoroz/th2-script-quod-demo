@@ -14,13 +14,12 @@ class Constants:
         SEARCHED_ENTITY = '//*[text()="{}"]'
         PINNED_ENTITY = '//*[@ref="eTop"]//*[@col-id="buyingPowerLimitName"]//span[normalize-space()="{}"]'
 
-        class MoreActions:
-            MORE_ACTIONS_BUTTON = '//*[@data-name="more-vertical"]'
-            EDIT_BUTTON = '//nb-overlay-container//*[@data-name="edit"]'
-            CLONE_BUTTON = '//nb-overlay-container//*[@data-name="copy"]'
-            DELETE_BUTTON = '//nb-overlay-container//*[@data-name="trash-2"]'
-            DOWNLOAD_PDF_BUTTON = '//nb-overlay-container//*[@data-name="download"]'
-            PIN_BUTTON = '//nb-overlay-container//*[@icon="unpinned-outline"]'
+        MORE_ACTIONS_BUTTON = '//*[@data-name="more-vertical"]'
+        EDIT_BUTTON = '//nb-overlay-container//*[@data-name="edit"]'
+        CLONE_BUTTON = '//nb-overlay-container//*[@data-name="copy"]'
+        DELETE_BUTTON = '//nb-overlay-container//*[@data-name="trash-2"]'
+        DOWNLOAD_PDF_BUTTON = '//nb-overlay-container//*[@data-name="download"]'
+        PIN_BUTTON = '//nb-overlay-container//*[@icon="unpinned-outline"]'
 
     class Wizard:
         HELP_ICON = '//nb-card-header//*[@nbtooltip="Help"]/a'
@@ -33,6 +32,8 @@ class Constants:
         REVERT_CHANGES = '//button[normalize-space()="Revert Changes"]'
         NO_BUTTON = '//button[normalize-space()="No"]'
         DROP_DOWN_MENU = '//*[@class="option-list"]//span'
+        FOOTER_ERROR_TEXT = '//app-footer-form//*[@outline="danger"]//span'
+        TEXT_INSIDE_WIZARD = '//*[normalize-space(text())="{}"]'
 
         class ValuesTab:
             NAME_FIELD = '//input[@id="buyingPowerLimitName"]'
@@ -56,15 +57,17 @@ class Constants:
                 EDIT_BUTTON = '//*[normalize-space()="Security Values"]//..//td//*[@data-name="edit"]'
                 DELETE_BUTTON = '//*[normalize-space()="Security Values"]//..//td//*[@data-name="trash-2"]'
 
-                INSTRUMENT_TYPE_FILTER = '(//*[normalize-space()="Security Values"]//..//thead//input[@placeholder="Filter"])[1]'
-                INSTRUMENT_GROUP_FILTER = '(//*[normalize-space()="Security Values"]//..//thead//input[@placeholder="Filter"])[2]'
-                UNDERLYING_LISTING_FILTER = '(//*[normalize-space()="Security Values"]//..//thead//input[@placeholder="Filter"])[3]'
-                HAIRCUT_VALUE_FILTER = '(//*[normalize-space()="Security Values"]//..//thead//input[@placeholder="Filter"])[4]'
+                HAIRCUT_VALUE_FILTER = '(//*[normalize-space()="Security Values"]//..//thead//input[@placeholder="Filter"])[1]'
+                INSTRUMENT_TYPE_FILTER = '(//*[normalize-space()="Security Values"]//..//thead//input[@placeholder="Filter"])[2]'
+                INSTRUMENT_GROUP_FILTER = '(//*[normalize-space()="Security Values"]//..//thead//input[@placeholder="Filter"])[3]'
+                INSTRUMENT_FILTER = '(//*[normalize-space()="Security Values"]//..//thead//input[@placeholder="Filter"])[3]'
+                UNDERLYING_LISTING_FILTER = '(//*[normalize-space()="Security Values"]//..//thead//input[@placeholder="Filter"])[5]'
 
-                INSTRUMENT_TYPE_FIELD = '//*[normalize-space()="Security Values"]//..//*[@id="instrType"]'
-                INSTRUMENT_GROUP_FIELD = '//*[normalize-space()="Security Values"]//..//input[@id="instrumentGroup"]'
-                UNDERLYING_LISTING_FIELD = '//*[normalize-space()="Security Values"]//..//input[@id="account"]'
                 HAIRCUT_VALUE_FIELD = '//input[@placeholder="Haircut Value"]'
+                INSTRUMENT_TYPE_FIELD = '//*[normalize-space()="Security Values"]//..//button[contains(@class, "select-button")]'
+                INSTRUMENT_GROUP_FIELD = '//*[normalize-space()="Security Values"]//..//input[@id="instrumentGroup"]'
+                INSTRUMENT_FIELD = '//input[@id="instr"]'
+                UNDERLYING_LISTING_FIELD = '//*[normalize-space()="Security Values"]//..//input[@id="account"]'
 
         class RiskMarginTab:
             class Table:
@@ -76,15 +79,15 @@ class Constants:
 
                 MARGIN_METHOD_FILTER = '(//*[normalize-space()="Risk Margin"]//..//thead//*[@placeholder="Filter"])[1]'
                 INITIAL_MARGIN_FILTER = '(//*[normalize-space()="Risk Margin"]//..//thead//*[@placeholder="Filter"])[2]'
-                MAINTENANCE_MARGIN_FILTER = '(//*[normalize-space()="Risk Margin"]//..//thead//*[@placeholder="Filter"])[3]'
-                INSTRUMENT_TYPE_FILTER = '(//*[normalize-space()="Risk Margin"]//..//thead//*[@placeholder="Filter"])[4]'
-                INSTRUMENT_GROUP_FILTER = '(//*[normalize-space()="Risk Margin"]//..//thead//*[@placeholder="Filter"])[5]'
-                INSTRUMENT_FILTER = '(//*[normalize-space()="Risk Margin"]//..//thead//*[@placeholder="Filter"])[6]'
-                UNDERLYING_INSTRUMENT_FILTER = '(//*[normalize-space()="Risk Margin"]//..//thead//*[@placeholder="Filter"])[7]'
+                # MAINTENANCE_MARGIN_FILTER = '(//*[normalize-space()="Risk Margin"]//..//thead//*[@placeholder="Filter"])[3]'
+                INSTRUMENT_TYPE_FILTER = '(//*[normalize-space()="Risk Margin"]//..//thead//*[@placeholder="Filter"])[3]'
+                INSTRUMENT_GROUP_FILTER = '(//*[normalize-space()="Risk Margin"]//..//thead//*[@placeholder="Filter"])[4]'
+                INSTRUMENT_FILTER = '(//*[normalize-space()="Risk Margin"]//..//thead//*[@placeholder="Filter"])[5]'
+                UNDERLYING_INSTRUMENT_FILTER = '(//*[normalize-space()="Risk Margin"]//..//thead//*[@placeholder="Filter"])[6]'
 
-                MARGIN_METHOD_FIELD = '//*[@id="marginMethod"]'
-                INITIAL_MARGIN_FIELD = '//input[@placeholder="Initial Margin *"]'
-                MAINTENANCE_MARGIN_FIELD = '//input[@placeholder="Maintenance Margin *"]'
+                MARGIN_METHOD_FIELD = '//*[normalize-space()="Risk Margin"]//..//button[contains(@class, "select-button")]'
+                INITIAL_MARGIN_FIELD = '//input[contains(@placeholder, "Initial Margin")]'
+                # MAINTENANCE_MARGIN_FIELD = '//input[@placeholder="Maintenance Margin *"]'
                 INSTRUMENT_TYPE_FIELD = '//*[normalize-space()="Risk Margin"]//..//input[@id="instrType"]'
                 INSTRUMENT_GROUP_FIELD = '//*[normalize-space()="Risk Margin"]//..//input[@id="instrumentGroup"]'
                 INSTRUMENT_FIELD = '//*[normalize-space()="Risk Margin"]//..//input[@id="account"]'

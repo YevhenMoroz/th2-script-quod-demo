@@ -392,8 +392,8 @@ class WebTradingURL(Enum):
 class SshClientEnv(Enum):
     HOST_317 = "10.0.22.35"
     PORT_317 = 22
-    USER_317 = ""
-    PASSWORD_317 = ""
+    USER_317 = "ymoroz"
+    PASSWORD_317 = "1DfXtWYOF9"
     SU_USER_317 = "quod317"
     SU_PASSWORD_317 = "quod317"
 
@@ -429,6 +429,12 @@ class DataBaseEnv(Enum):
     PORT_316 = 27316
     NAME_316 = "filteredQuoteDB"
     DB_TYPE_316 = "mongo"
+    # 320 postgres
+    HOST_320 = "10.0.22.69"
+    NAME_320 = "quoddb"
+    USER_320 = "quod320prd"
+    PASS_320 = "quod320prd"
+    DB_TYPE_320 = "postgresql"
 
 
 class FreeNotesReject(Enum):

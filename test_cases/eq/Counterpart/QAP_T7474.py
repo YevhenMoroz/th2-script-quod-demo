@@ -109,9 +109,6 @@ class QAP_T7474(TestCase):
              'NoPartySubIDs': '*',
              'PartyID': '*',
              'PartyIDSource': '*'},
-            {'PartyRole': '*',
-             'PartyID': '*',
-             'PartyIDSource': '*'},
         ]
         list_of_counterparts_confirmation = [
             self.data_set.get_counterpart_id_fix('counterpart_id_investment_firm_cl_counterpart_sa1'),

@@ -14,6 +14,12 @@ class ExecutionReportConst(Enum):
     MiscFeeType_EXC = 'EXC'
     MiscFeeBasis_P = 'P'
     MiscFeeBasis_A = 'A'
+    LastCapacity_Principal = 'P'
+    LastCapacity_Principal_FULL_VALUE = 'Principal'
+    LastCapacity_Agency_FULL_VALUE = 'Agency'
+    LastCapacity_Agency = 'A'
+    ExecOrigin_M = 'M'
+    ExecOrigin_E = 'E'
 
 
 class BasketMessagesConst(Enum):
@@ -21,6 +27,7 @@ class BasketMessagesConst(Enum):
     ListOrderStatus_EXE = 'EXE'
     ListOrderStatus_REJ = 'REJ'
     ListOrderStatus_DON = 'DON'
+    ListOrderStatus_CAN = 'CAN'
 
 
 class BagMessagesConst(Enum):
@@ -51,6 +58,7 @@ class OrderReplyConst(Enum):
     ExecType_REP = 'REP'
     ExecType_PCA = 'PCA'
     ExecType_PMO = 'PMO'
+    ExecType_CXL = 'CXL'
 
 
 class ExecutionPolicyConst(Enum):
@@ -70,6 +78,7 @@ class SubmitRequestConst(Enum):
 class AllocationReportConst(Enum):
     AllocStatus_ACK = 'ACK'
     MatchStatus_MAT = 'MAT'
+    MatchStatus_UNM = 'UNM'
     AllocSummaryStatus_MAG = 'MAG'
     AllocStatus_APP = 'APP'
     AllocStatus_CXL = 'CXL'
@@ -253,6 +262,27 @@ class JavaApiFields(Enum):
     TradeEntryRequestBlock = 'TradeEntryRequestBlock'
     LastMkt = 'LastMkt'
     BuyAvgPx = 'BuyAvgPx'
+    TransferredInAmt = 'TransferredInAmt'
+    TransferredOutAmt = 'TransferredOutAmt'
+    SecurityAccountPLBlock = 'SecurityAccountPLBlock'
+    TodayRealizedPL = 'TodayRealizedPL'
+    PositionTransferReportBlock = 'PositionTransferReportBlock'
+    PositionTransferID = 'PositionTransferID'
+    TransferStatus = 'TransferStatus'
+    QtyToTransfer = 'QtyToTransfer'
+    TransferTransType = 'TransferTransType'
+    BackOfficeNotes = 'BackOfficeNotes'
+    LastCapacity = 'LastCapacity'
+    ExecOrigin = 'ExecOrigin'
+    PartiesList = 'PartiesList'
+    PartiesBlock = 'PartiesBlock'
+    AllocFreeAccountID = 'AllocFreeAccountID'
+    AllocSettlCurrency = 'AllocSettlCurrency'
+    RouteList = 'RouteList'
+    VenueAccount = 'VenueAccount'
+    VenueActGrpName = 'VenueActGrpName'
+    LastVenueOrdID = 'LastVenueOrdID'
+    VenueExecID = 'VenueExecID'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"
@@ -276,6 +306,8 @@ class JavaApiFields(Enum):
     VenueID = 'VenueID'
     AlgoParametersBlock = 'AlgoParametersBlock'
     AlgoType = 'AlgoType'
+    LastPx = 'LastPx'
+    LastTradedQty = 'LastTradedQty'
 
     ComputeBookingFeesCommissionsReplyBlock = 'ComputeBookingFeesCommissionsReplyBlock'
     RootMiscFeeBasis = 'RootMiscFeeBasis'
@@ -409,3 +441,7 @@ class SubscriptionRequestTypes(Enum):
 
 class PosReqTypes(Enum):
     PosReqType_POS = 'POS'
+
+
+class PositionTransferReportConst(Enum):
+    TransferTransType_NEW = 'NEW'
