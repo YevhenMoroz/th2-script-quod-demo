@@ -2,6 +2,7 @@ import logging
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T10674 import QAP_T10674
+from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T11006 import QAP_T11006
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T4201 import QAP_T4201
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T4202 import QAP_T4202
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T4256 import QAP_T4256
@@ -56,6 +57,7 @@ def test_run(parent_id=None, version=None):
         # region Auction Volume
         QAP_T9332(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T9087(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T11006(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
         # region AuctionInitialSliceMultiplier
