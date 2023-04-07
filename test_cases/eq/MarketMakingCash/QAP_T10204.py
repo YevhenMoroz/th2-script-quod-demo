@@ -22,7 +22,7 @@ logger.setLevel(logging.INFO)
 seconds, nanos = timestamps()  # Test case start time
 
 
-class QAP_T10220(TestCase):
+class QAP_T10204(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
@@ -41,14 +41,12 @@ class QAP_T10220(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        nat_amt = "5000"
-        best_bid = "10"
-        best_ask = "11"
-        close_px = "10.2"
+        best_bid = "10.0"
+        best_ask = "11.0"
         size = "200"
-        spread = "1.0"
-        bid_size = "544.0"
-        offer_size = "447.0"
+        spread = "1.1"
+        bid_size = "1000.0"
+        offer_size = "1000.0"
         # region Precondition
 
         md_req_id = self.market_data_refresh.get_MDReqID(self.listing_id, self.fix_env.feed_handler)
@@ -56,11 +54,9 @@ class QAP_T10220(TestCase):
         self.fix_manager_fh.send_message(self.market_data_refresh)
         self.market_data_refresh.set_market_data_incr_refresh(md_req_id, "1", "0", best_bid, size)
         self.fix_manager_fh.send_message(self.market_data_refresh)
-        self.market_data_refresh.set_market_data_incr_refresh(md_req_id, "1", "5", close_px, size)
-        self.fix_manager_fh.send_message(self.market_data_refresh)
         # endregion
         # region Step 1
-        self.listing_quote.set_default(self.listing_id, quoting_px_ref_type="CLO", spread_px_type="PRC",
+        self.listing_quote.set_default(self.listing_id, quoting_px_ref_type="BID", spread_px_type="PRC",
                                        bid_spread=spread, offer_spead=spread)
         self.java_api_manager.send_message_and_receive_response(self.listing_quote)
         quot_notify = self.java_api_manager.get_last_message(QSMessageType.ListingQuotingNotification.value)
@@ -70,10 +66,9 @@ class QAP_T10220(TestCase):
                                              "check quote setup")
         # endregion
         # region Step 2
-        bid_px = str(float(close_px) - float(spread))
-        offer_px = str(float(close_px) + float(spread))
-        self.quote_request.set_default(self.listing_id, offer_px, bid_px, notional_amt=nat_amt,
-                                       th_px=str(float(close_px)))
+        bid_px = str(float(best_bid) - float(spread))
+        offer_px = str(float(best_bid) + float(spread))
+        self.quote_request.set_default(self.listing_id, offer_px, bid_px, offer_size, bid_size, th_px=best_bid)
         self.java_api_manager.send_message_and_receive_response(self.quote_request)
         # endregion
         # region Step 3
@@ -81,8 +76,7 @@ class QAP_T10220(TestCase):
         )["QuoteStatusReportBlock"]
         exp_res = self.quote_request.get_parameters()["QuoteManagementRequestBlock"]["QuoteManagementList"
         ]["QuoteManagementBlock"][0]
-        exp_res.update({"BidSize": bid_size, "OfferSize": offer_size})
-        exp_res.pop("NotionalAmt")
+        # exp_res.update({"BidSize": bid_size, "OfferSize": offer_size})
         self.java_api_manager.compare_values(exp_res, quote_rep, "Check created quote")
         ord_id = quote_rep["SimulatingOrderList"]["SimulatingOrderBlock"][0]["OrdID"]
         ord_id2 = quote_rep["SimulatingOrderList"]["SimulatingOrderBlock"][1]["OrdID"]
@@ -92,7 +86,7 @@ class QAP_T10220(TestCase):
         self.java_api_manager.compare_values(exp_res, ord_rep, "Check created order")
         ord_rep = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value, ord_id2).get_parameters()[
             JavaApiFields.OrderNotificationBlock.value]
-        exp_res = {"OrdQty":offer_size, "Price": offer_px, "Side": "S"}
+        exp_res = {"OrdQty": offer_size, "Price": offer_px, "Side": "S"}
         self.java_api_manager.compare_values(exp_res, ord_rep, "Check created order 2")
         # endregion
 
