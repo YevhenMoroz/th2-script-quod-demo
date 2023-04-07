@@ -11,6 +11,7 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.SessionAlias import SessionAliasFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestRejectFX import FixMessageMarketDataRequestRejectFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
     FixMessageMarketDataSnapshotFullRefreshBuyFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
@@ -37,6 +38,7 @@ class QAP_T2637(TestCase):
         self.rates_tile = RatesTile(self.test_id, self.session_id)
         self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
         self.fix_md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
+        self.md_reject = FixMessageMarketDataRequestRejectFX()
         self.symbol = self.data_set.get_symbol_by_name('symbol_2')
         self.tenor_spot = self.data_set.get_tenor_by_name('tenor_spot')
         self.settle_type = self.data_set.get_settle_type_by_name("spot")
@@ -44,7 +46,7 @@ class QAP_T2637(TestCase):
         self.instr_type_wa = self.data_set.get_fx_instr_type_wa('fx_spot')
         self.venue = self.data_set.get_venue_by_name('venue_8')
         self.rest_message = RestApiPriceCleansingStaleRatesMessages(data_set=self.data_set)
-        self.rest_manager = RestApiManager(session_alias=self.rest_env)
+        self.rest_manager = RestApiManager(self.rest_env, self.test_id)
         self.rest_message_params = None
         self.instrument = {
             "Symbol": self.symbol,
@@ -125,9 +127,8 @@ class QAP_T2637(TestCase):
         self.fix_manager_marketdata_th2.send_message_and_receive_response(self.md_request, self.test_id)
         # endregion
         # region Step 3
-        self.fix_md_snapshot.set_params_for_md_response(self.md_request, [])
-        self.fix_md_snapshot.add_tag({'PriceCleansingReason': '*'})
-        self.fix_verifier.check_fix_message(fix_message=self.fix_md_snapshot,
+        self.md_reject.set_md_reject_params(self.md_request, text="feed stale").remove_parameter("MDReqRejReason")
+        self.fix_verifier.check_fix_message(fix_message=self.md_reject,
                                             direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])
 
