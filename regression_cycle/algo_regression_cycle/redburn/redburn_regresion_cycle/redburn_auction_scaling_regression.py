@@ -6,6 +6,7 @@ from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T10273 import QAP_T10
 from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T10976 import QAP_T10976
 from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T10977 import QAP_T10977
 from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T10978 import QAP_T10978
+from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T4149 import QAP_T4149
 from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T4348 import QAP_T4348
 from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T4364 import QAP_T4364
 from test_cases.algo.Algo_Redburn.Algo_Auction_Scaling.QAP_T4390 import QAP_T4390
@@ -67,6 +68,7 @@ def test_run(parent_id=None, version=None):
         QAP_T10976(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10977(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10978(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4149(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10278(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10273(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10488(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
