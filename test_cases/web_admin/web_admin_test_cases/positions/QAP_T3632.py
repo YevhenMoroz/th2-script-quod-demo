@@ -11,8 +11,8 @@ from test_framework.web_admin_core.pages.clients_accounts.clients.clients_values
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_assignments_sub_wizard \
     import ClientsAssignmentsSubWizard
 
-from test_framework.web_admin_core.pages.positions.cash_positions.cash_postitions_page import CashPositionsPage
-from test_framework.web_admin_core.pages.positions.cash_positions.cash_positions_wizard import CashPositionsWizard
+from test_framework.web_admin_core.pages.positions.cash_positions.main_page import *
+from test_framework.web_admin_core.pages.positions.cash_positions.wizards import *
 
 from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
@@ -82,16 +82,17 @@ class QAP_T3632(CommonTestCase):
 
         side_menu.open_cash_positions_page()
         time.sleep(2)
-        cash_positions_page = CashPositionsPage(self.web_driver_container)
+        cash_positions_page = MainPage(self.web_driver_container)
         cash_positions_page.set_name(self.test_data['cash_position']['name'])
         cash_positions_page.click_on_new()
         time.sleep(2)
-        cash_positions_wizard = CashPositionsWizard(self.web_driver_container)
-        cash_positions_wizard.set_name(self.test_data['cash_position']['name'])
-        cash_positions_wizard.set_client_cash_account_id(self.test_data['cash_position']['client_cash_account_id'])
-        cash_positions_wizard.set_venue_cash_account_id(self.test_data['cash_position']['venue_cash_account_id'])
-        cash_positions_wizard.set_currency(self.test_data['cash_position']['currency'])
-        cash_positions_wizard.set_client(self.test_data['cash_position']['client'])
+        cash_positions_values_tab = ValuesTab(self.web_driver_container)
+        cash_positions_values_tab.set_name(self.test_data['cash_position']['name'])
+        cash_positions_values_tab.set_client_cash_account_id(self.test_data['cash_position']['client_cash_account_id'])
+        cash_positions_values_tab.set_venue_cash_account_id(self.test_data['cash_position']['venue_cash_account_id'])
+        cash_positions_values_tab.set_currency(self.test_data['cash_position']['currency'])
+        cash_positions_values_tab.set_client(self.test_data['cash_position']['client'])
+        cash_positions_wizard = MainWizard(self.web_driver_container)
         cash_positions_wizard.click_on_save_changes()
         time.sleep(2)
 
@@ -112,17 +113,17 @@ class QAP_T3632(CommonTestCase):
             side_menu = SideMenu(self.web_driver_container)
             side_menu.open_cash_positions_page()
             time.sleep(2)
-            cash_positions_page = CashPositionsPage(self.web_driver_container)
+            cash_positions_page = MainPage(self.web_driver_container)
             cash_positions_page.set_name(self.test_data['cash_position']['name'])
             time.sleep(2)
             cash_positions_page.click_on_more_actions()
             time.sleep(1)
             cash_positions_page.click_on_edit()
             time.sleep(2)
-            cash_positions_wizard = CashPositionsWizard(self.web_driver_container)
+            cash_positions_values_tab = ValuesTab(self.web_driver_container)
 
             self.verify("Client field displays pre-set Client value for User",
-                        self.test_data['cash_position']['client'], cash_positions_wizard.get_client())
+                        self.test_data['cash_position']['client'], cash_positions_values_tab.get_client())
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

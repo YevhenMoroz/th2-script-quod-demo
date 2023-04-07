@@ -111,6 +111,7 @@ class QAP_T7028(TestCase):
         stamp_rate = str(5)
         stamp_amount = str(int((float(self.qty) * float(self.price) * float(stamp_rate) / 10000)))
         exec_id = exec_report["ExecID"]
+
         self.java_api_manager.compare_values(
             {'ExecType': exec_report["ExecType"], 'OrdStatus': exec_report["OrdStatus"],
              'MiscFeesGrp': {'NoMiscFees': [{'MiscFeeAmt': stamp_amount, 'MiscFeeCurr': 'GBP', 'MiscFeeType': '5'}]}},
@@ -201,6 +202,7 @@ class QAP_T7028(TestCase):
                 self.result = response
 
     def __get_fix_message(self, parameter: dict):
+        self.response.reverse()
         for i in range(len(self.response)):
             for j in parameter.keys():
                 if self.response[i].get_parameters()[j] == parameter[j]:

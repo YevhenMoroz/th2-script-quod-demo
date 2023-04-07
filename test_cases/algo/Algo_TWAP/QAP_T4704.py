@@ -182,14 +182,14 @@ class QAP_T4704(TestCase):
         # region check sequence NOS DMA child orders
         self.fix_verifier_buy.set_case_id(bca.create_event("Check NOS DMA child orders sequence", self.test_id))
         self.fix_verifier_buy.check_fix_message_sequence([slice1_order, replace_slice1_order_params, cancel_request_slice1_order_params, slice2_order, replace_slice2_order_params],
-                                                         [None, None, None, None, None], self.FromQuod, pre_filter=self.data_set.get_pre_filter('pre_filter_with_client_order_id'))
+                                                         [None, None, None, None, None], self.FromQuod, check_order=False)
         # endregion
 
         # region check sequence ER child orders
         self.fix_verifier_buy.set_case_id(bca.create_event("Check slices' ER sequence", self.test_id))
         self.fix_verifier_buy.check_fix_message_sequence([pending_slice1_order_params, new_slice1_order_params, reject_replace_slice1_order_params, cancel_slice1_order_params,
                                                           pending_slice2_order_params, new_slice2_order_params, reject_replace_slice2_order_params, cancel_slice2_order_params],
-                                                         [None, None, None, None, None, None, None, None], self.ToQuod)
+                                                         [self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], self.ToQuod, check_order=False)
         # endregion
 
         # region Eliminate Algo Order
