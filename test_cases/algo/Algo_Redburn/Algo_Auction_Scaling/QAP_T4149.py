@@ -80,20 +80,12 @@ class QAP_T4149(TestCase):
         # endregion
 
         # # region venue param
-        # self.instrument = self.data_set.get_fix_instrument_by_name("instrument_1")
-        # self.client = self.data_set.get_client_by_name("client_2")
-        # self.account = self.data_set.get_account_by_name("account_2")
-        # self.ex_destination_1 = self.data_set.get_mic_by_name("mic_1")
-        # self.listing_id = self.data_set.get_listing_id_by_name("listing_36")
-        # # endregion
-
-        # region venue param
-        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_21")
+        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_1")
         self.client = self.data_set.get_client_by_name("client_2")
-        self.account = self.data_set.get_account_by_name("account_18")
-        self.ex_destination_1 = self.data_set.get_mic_by_name("mic_31")
-        self.listing_id = self.data_set.get_listing_id_by_name("listing_37")
-        # endregion
+        self.account = self.data_set.get_account_by_name("account_2")
+        self.ex_destination_1 = self.data_set.get_mic_by_name("mic_1")
+        self.listing_id = self.data_set.get_listing_id_by_name("listing_36")
+        # # endregion
 
         # region Key parameters
         self.key_params_cl = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_1")
@@ -107,8 +99,7 @@ class QAP_T4149(TestCase):
         self.pre_fileter_35_8_Eliminate = self.data_set.get_pre_filter('pre_filer_equal_ER_eliminate')
         # endregion
 
-        # self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile1")
-        self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile2")
+        self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile1")
         self.rule_list = []
 
         self.rest_api_manager = RestApiAlgoManager(session_alias=self.restapi_env1.session_alias_wa, case_id=self.test_id)
