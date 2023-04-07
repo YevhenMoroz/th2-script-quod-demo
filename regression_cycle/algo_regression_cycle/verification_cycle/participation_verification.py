@@ -86,6 +86,7 @@ def test_run(parent_id=None, version=None):
         QAP_T8739(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8880(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T9275(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4261(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         if __name__ == '__main__':
             # tests with config change
             QAP_T5088(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
@@ -101,7 +102,6 @@ def test_run(parent_id=None, version=None):
             # QAP_T9093(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
             # QAP_T9084(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
             QAP_T4260(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-            QAP_T4261(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
             QAP_T5039(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # FIX/FE
         # QAP_T5113.execute(report_id, session_id)
