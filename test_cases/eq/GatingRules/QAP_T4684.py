@@ -10,6 +10,7 @@ from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
 from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
 from test_framework.rest_api_wrappers.oms.RestApiModifyGatingRuleMessage import RestApiModifyGatingRuleMessage
@@ -64,11 +65,10 @@ class QAP_T4684(TestCase):
         # endregion
 
         # region Check that the Gating rule is applied to the order
-        order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
-            "OrdReplyBlock"
-        ]
+        order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameters()[
+            JavaApiFields.OrderNotificationBlock.value]
         self.java_api_manager.compare_values(
-            {"GatingRuleCondName": "All Orders", "ExecType": "OPN", "OrdQty": "20.0", "Price": str(float(price))},
+            {"GatingRuleCondName": "All Orders", "OrdQty": "20.0", "Price": str(float(price))},
             order_reply,
             "Check that the Gating rule is applied to the order",
         )

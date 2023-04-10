@@ -295,6 +295,36 @@ class FixManager:
                                                          fix_message.get_parameters(),
                                                          self.__session_alias)
                 ))
+        elif fix_message.get_message_type() == FIXMessageType.MarketDataSnapshotFullRefresh.value:
+            response = self.act.sendMessage(
+                request=basic_custom_actions.convert_to_request(
+                    "Send MarketDataSnapshotFullRefresh",
+                    self.__session_alias,
+                    self.__case_id,
+                    basic_custom_actions.message_to_grpc(FIXMessageType.MarketDataSnapshotFullRefresh.value,
+                                                         fix_message.get_parameters(),
+                                                         self.__session_alias)
+                ))
+        elif fix_message.get_message_type() == FIXMessageType.MarketDataIncrementalRefresh.value:
+            response = self.act.sendMessage(
+                request=basic_custom_actions.convert_to_request(
+                    "Send MarketDataIncrementalRefresh",
+                    self.__session_alias,
+                    self.__case_id,
+                    basic_custom_actions.message_to_grpc(FIXMessageType.MarketDataIncrementalRefresh.value,
+                                                         fix_message.get_parameters(),
+                                                         self.__session_alias)
+                ))
+        elif fix_message.get_message_type() == FIXMessageType.MarketDataRequest.value:
+            response = self.act.placeMarketDataRequestFIX(
+                request=basic_custom_actions.convert_to_request(
+                    "Send MarketDataRequest",
+                    self.__session_alias,
+                    self.__case_id,
+                    basic_custom_actions.message_to_grpc(FIXMessageType.MarketDataRequest.value,
+                                                         fix_message.get_parameters(),
+                                                         self.__session_alias)
+                ))
         else:
             response = None
 
