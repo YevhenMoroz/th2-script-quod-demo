@@ -176,6 +176,7 @@ class JavaApiFields(Enum):
     ComputeBookingFeesCommissionsRequestBlock = 'ComputeBookingFeesCommissionsRequestBlock'
     ClOrdID = 'ClOrdID'
     OrdReplyBlock = 'OrdReplyBlock'
+    EffectiveDate = 'EffectiveDate'
     OrdStatus = 'OrdStatus'
     ExecType = 'ExecType'
     NewOrderListReplyBlock = 'NewOrderListReplyBlock'
@@ -283,6 +284,7 @@ class JavaApiFields(Enum):
     VenueActGrpName = 'VenueActGrpName'
     LastVenueOrdID = 'LastVenueOrdID'
     VenueExecID = 'VenueExecID'
+    RouteBlock = 'RouteBlock'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"
@@ -402,6 +404,7 @@ class TimeInForces(Enum):
     DAY = 'DAY'
     GTD = 'GTD'
     ATC = 'ATC'
+    GTC = 'GTC'
 
 
 class OrdTypes(Enum):
