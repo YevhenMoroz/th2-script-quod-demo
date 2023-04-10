@@ -59,6 +59,7 @@ class QAP_T3920(CommonTestCase):
         time.sleep(2)
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.user_for_login, self.password_for_login)
+        side_menu = SideMenu(self.web_driver_container)
         side_menu.open_users_page()
 
     def test_context(self):

@@ -30,6 +30,7 @@ class QAP_T8813(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.disclose_exec = self.data_set.get_disclose_exec("disclose_exec_1")
         self.ext_id_client = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        self.desk = self.data_set.get_desk("desk_1")
 
         self.venues = list
         self.venue_client_name = [''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
@@ -48,12 +49,14 @@ class QAP_T8813(CommonTestCase):
         values_sub_wizard = ClientsValuesSubWizard(self.web_driver_container)
         wizard = ClientsWizard(self.web_driver_container)
         venues_sub_wizard = ClientsVenuesSubWizard(self.web_driver_container)
+        assignments_tab = ClientsAssignmentsSubWizard(self.web_driver_container)
 
         main_page.click_on_new()
         values_sub_wizard.set_id(self.id)
         values_sub_wizard.set_name(self.name)
         values_sub_wizard.set_disclose_exec(self.disclose_exec)
         values_sub_wizard.set_ext_id_client(self.ext_id_client)
+        assignments_tab.set_desk(self.desk)
 
         self.venues = venues_sub_wizard.get_all_venue_from_drop_menu()
         venues_sub_wizard.create_new_venue(self.venues[0], self.venue_client_name[0], self.venue_client_account_group_name[0])
