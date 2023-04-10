@@ -153,13 +153,13 @@ class QAP_T10447(TestCase):
                                                                self.venue_client_names, ord_venue_id,
                                                                venue_exec_id_second)
         self.java_api_manager.send_message_and_receive_response(self.exec_rep, filter_dict)
-        execution_report_fourth_step = \
+        execution_report = \
             self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value,
-                                                   ExecutionReportConst.ExecType_TRD.value).get_parameters()[
+                                                   ExecutionReportConst.ExecType_CAN.value).get_parameters()[
                 JavaApiFields.ExecutionReportBlock.value]
         day_cum_amt = str(float(qty) * float(price))
         self.java_api_manager.compare_values(
             {JavaApiFields.DayCumAmt.value: day_cum_amt,
              JavaApiFields.DayCumQty.value: qty},
-            execution_report_fourth_step,
+            execution_report,
             f'Verifying that {JavaApiFields.DayCumQty.value} and {JavaApiFields.DayCumQty.value} has properly valeus ({step})')
