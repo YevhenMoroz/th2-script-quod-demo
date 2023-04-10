@@ -64,7 +64,7 @@ class QAP_T10251(TestCase):
         # region Step 3
         quote_rep = self.java_api_manager.get_last_message(QSMessageType.QuoteStatusReport.value).get_parameters(
         )["QuoteStatusReportBlock"]
-        exp_res = {"QuoteStatus": "ACK"}
+        exp_res = {"QuoteStatus": "OFT"}
         self.java_api_manager.compare_values(exp_res, quote_rep, "Check created quote")
         # endregion
 
