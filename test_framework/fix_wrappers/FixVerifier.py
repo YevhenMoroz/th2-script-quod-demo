@@ -309,6 +309,32 @@ class FixVerifier:
             )
         )
 
+    def check_no_message_found(self, message_timeout: 10000, direction: DirectionEnum = DirectionEnum.FromQuod, message_name: str = None, pre_filter: dict = None):
+        if pre_filter is None:
+            pre_filter = {
+                'header': {
+                    'MsgType': ('0', "NOT_EQUAL")
+                }
+            }
+        pre_filter_req = basic_custom_actions.prefilter_to_grpc(pre_filter)
+
+        if message_name is None:
+            message_name = "Check no message found"
+
+        self.__verifier.submitNoMessageCheck (
+            basic_custom_actions.create_check_no_message_found(
+                description=message_name,
+                prefilter=pre_filter_req,
+                message_timeout=message_timeout,
+                checkpoint=self.__checkpoint,
+                connectivity=self.__session_alias,
+                event_id=self.__case_id,
+                timeout=20000,
+                direction=Direction.Value(direction.value)
+            )
+        )
+
+
     def check_fix_message_fix_standard(self, fix_message: FixMessage, key_parameters: list = None,
                                        direction: DirectionEnum = DirectionEnum.FromQuod, ignored_fields: list = None):
         if fix_message.get_message_type() == FIXMessageType.NewOrderSingle.value:
