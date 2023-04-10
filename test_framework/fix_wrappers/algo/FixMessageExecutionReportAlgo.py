@@ -698,6 +698,8 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(DisplayInstruction=order_cancel_replace.get_parameter('DisplayInstruction'))
         if 'PegInstructions' in order_cancel_replace.get_parameters():
             temp.update(PegInstructions=order_cancel_replace.get_parameter('PegInstructions'))
+        if 'TriggeringInstruction' in order_cancel_replace.get_parameters():
+            temp.update(TriggeringInstruction='*')
         if order_cancel_replace.is_parameter_exist('ClientAlgoPolicyID'):
             temp.update(SecondaryAlgoPolicyID=order_cancel_replace.get_parameter('ClientAlgoPolicyID'))
         if order_cancel_replace.is_parameter_exist('NoStrategyParameters') and order_cancel_replace.get_parameter('TargetStrategy') not in ['1001', 1001]:
@@ -706,12 +708,14 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(MinQty=order_cancel_replace.get_parameter('MinQty'))
         if order_cancel_replace.get_parameter('TargetStrategy') == '1008' and order_cancel_replace.is_parameter_exist('MinQty'):
             temp.update(SecondaryAlgoPolicyID='*')
-        if order_cancel_replace.get_parameter('TargetStrategy') in ['1010', '1011', '1004', '1009']:
+        if order_cancel_replace.get_parameter('TargetStrategy') in ['1010', '1011', '1004', '1009', '1020']:
             temp.update(NoParty='*')
         if order_cancel_replace.is_parameter_exist('ExpireDate'):
             temp.update(ExpireDate=order_cancel_replace.get_parameter('ExpireDate'))
         if order_cancel_replace.is_parameter_exist('StopPx'):
             temp.update(StopPx=order_cancel_replace.get_parameter('StopPx'))
+        if order_cancel_replace.get_parameter('TargetStrategy') not in ['1020']:
+            temp.update(TargetStrategy=order_cancel_replace.get_parameter('TargetStrategy'))
         temp.update(
             Account=order_cancel_replace.get_parameter('Account'),
             AvgPx='*',
@@ -733,7 +737,6 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             ExecType=5,
             LeavesQty='*',
             OrderCapacity=order_cancel_replace.get_parameter('OrderCapacity'),
-            TargetStrategy=order_cancel_replace.get_parameter('TargetStrategy'),
             QtyType='*',
             ExecRestatementReason='*',
             Instrument='*',

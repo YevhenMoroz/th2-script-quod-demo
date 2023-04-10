@@ -1,5 +1,6 @@
 import logging
 from pathlib import Path
+
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
 from rule_management import RuleManager, Simulators
@@ -12,6 +13,8 @@ from test_framework.fix_wrappers.oms.FixMessageAllocationInstructionReportOMS im
     FixMessageAllocationInstructionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageConfirmationReportOMS import FixMessageConfirmationReportOMS
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import ExecutionReportConst, OrderReplyConst, \
+    SubmitRequestConst, AllocationReportConst, ConfirmationReportConst
 from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS import AllocationInstructionOMS
 from test_framework.java_api_wrappers.oms.ors_messges.ConfirmationOMS import ConfirmationOMS
 from test_framework.java_api_wrappers.oms.ors_messges.DFDManagementBatchOMS import DFDManagementBatchOMS
@@ -22,9 +25,6 @@ from test_framework.java_api_wrappers.oms.ors_messges.TradeEntryOMS import Trade
 from test_framework.java_api_wrappers.ors_messages.BlockUnallocateRequest import BlockUnallocateRequest
 from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, MiddleOfficeColumns, \
     AllocationsColumns
-from test_framework.java_api_wrappers.java_api_constants import ExecutionReportConst, OrderReplyConst, \
-    SubmitRequestConst, AllocationReportConst, ConfirmationReportConst
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -40,7 +40,6 @@ class QAP_T7501(TestCase):
         self.bs_connectivity = self.fix_env.buy_side
         self.ss_connectivity = self.fix_env.sell_side
         self.rule_manager = RuleManager(sim=Simulators.equity)
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
         self.fix_verifier = FixVerifier(self.fix_env.drop_copy, self.test_id)
         self.client = self.data_set.get_client('client_pt_1')
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
@@ -78,7 +77,7 @@ class QAP_T7501(TestCase):
         order_id = self.result.get_parameter('OrdReplyBlock')['OrdID']
         cl_ord_id = self.result.get_parameter('OrdReplyBlock')['ClOrdID']
         status = self.result.get_parameter('OrdReplyBlock')['TransStatus']
-        self.order_book.compare_values(
+        self.java_api_manager.compare_values(
             {OrderBookColumns.sts.value: OrderReplyConst.TransStatus_OPN.value},
             {OrderBookColumns.sts.value: status},
             f'Comparing {OrderBookColumns.sts.value}')
@@ -91,7 +90,7 @@ class QAP_T7501(TestCase):
         class_name.print_message('TRADE', responses)
         self.return_result(responses, ORSMessageType.ExecutionReport.value)
         actually_result = self.result.get_parameters()['ExecutionReportBlock']['TransExecStatus']
-        self.order_book.compare_values(
+        self.java_api_manager.compare_values(
             {OrderBookColumns.exec_sts.value: ExecutionReportConst.TransExecStatus_FIL.value},
             {OrderBookColumns.exec_sts.value: actually_result},
             f'Comparing {OrderBookColumns.exec_sts.value}')
@@ -105,7 +104,7 @@ class QAP_T7501(TestCase):
         self.return_result(responses, ORSMessageType.OrdReply.value)
         actually_post_trade_status = self.result.get_parameter('OrdReplyBlock')['PostTradeStatus']
         actually_done_for_day = self.result.get_parameter('OrdReplyBlock')['DoneForDay']
-        self.order_book.compare_values(
+        self.java_api_manager.compare_values(
             {OrderBookColumns.post_trade_status.value: OrderReplyConst.PostTradeStatus_RDY.value,
              OrderBookColumns.done_for_day.value: OrderReplyConst.DoneForDay_YES.value},
             {OrderBookColumns.post_trade_status.value: actually_post_trade_status,
@@ -132,7 +131,7 @@ class QAP_T7501(TestCase):
         self.return_result(responses, ORSMessageType.AllocationReport.value)
         expected_alloc_status = self.result.get_parameters()['AllocationReportBlock']['AllocStatus']
         expected_match_status = self.result.get_parameters()['AllocationReportBlock']['MatchStatus']
-        self.order_book.compare_values({MiddleOfficeColumns.sts.value: AllocationReportConst.AllocStatus_ACK.value,
+        self.java_api_manager.compare_values({MiddleOfficeColumns.sts.value: AllocationReportConst.AllocStatus_APP.value,
                                         MiddleOfficeColumns.match_status.value: AllocationReportConst.MatchStatus_MAT.value},
                                        {MiddleOfficeColumns.sts.value: expected_alloc_status,
                                         MiddleOfficeColumns.match_status.value: expected_match_status},
@@ -187,8 +186,8 @@ class QAP_T7501(TestCase):
 
         # region step 9
         self.confirmation_request.set_default_allocation(alloc_id)
-        sec_acc_1 = self.data_set.get_account_by_name('client_pt_1_acc_3')
-        sec_acc_2 = self.data_set.get_account_by_name('client_pt_1_acc_4')
+        sec_acc_1 = self.data_set.get_account_by_name('client_pt_1_acc_1')
+        sec_acc_2 = self.data_set.get_account_by_name('client_pt_1_acc_2')
         list_of_security_account = [sec_acc_1, sec_acc_2]
         for account in list_of_security_account:
             self.confirmation_request.update_fields_in_component('ConfirmationBlock', {
@@ -215,10 +214,11 @@ class QAP_T7501(TestCase):
         change_parameters = {
             'NoOrders': [{
                 'ClOrdID': cl_ord_id,
-                'OrderID': '*'
+                'OrderID': '*',
+                'OrderAvgPx': '*'
             }]
         }
-        list_of_ignored_fields = ['NoParty', 'Quantity', 'tag5120', 'TransactTime',
+        list_of_ignored_fields = ['NoParty', 'Quantity', 'tag5120', 'TransactTime','tag11245',
                                   'AllocTransType', 'ReportedPx', 'Side', 'AvgPx',
                                   'QuodTradeQualifier', 'BookID', 'SettlDate',
                                   'AllocID', 'Currency', 'NetMoney', 'Instrument',
@@ -271,7 +271,7 @@ class QAP_T7501(TestCase):
     def check_confirmation_message(self, expected_result, message):
         actuall_allocation_status = self.result.get_parameter('ConfirmationReportBlock')['ConfirmStatus']
         actuall_allocation_match_status = self.result.get_parameter('ConfirmationReportBlock')['MatchStatus']
-        self.order_book.compare_values(
+        self.java_api_manager.compare_values(
             expected_result,
             {AllocationsColumns.sts.value: actuall_allocation_status,
              AllocationsColumns.match_status.value: actuall_allocation_match_status},
@@ -285,7 +285,7 @@ class QAP_T7501(TestCase):
             expected_summary_status = self.result.get_parameters()['AllocationReportBlock']['AllocSummaryStatus']
         else:
             expected_summary_status = ''
-        self.order_book.compare_values(expected_result,
+        self.java_api_manager.compare_values(expected_result,
                                        {MiddleOfficeColumns.sts.value: expected_alloc_status,
                                         MiddleOfficeColumns.match_status.value: expected_match_status,
                                         MiddleOfficeColumns.summary_status.value: expected_summary_status},

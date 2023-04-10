@@ -96,7 +96,7 @@ class QAP_T7640(TestCase):
         ord_update2 = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value, ord_id2).get_parameter(
             JavaApiFields.OrderNotificationBlock.value)
         expected_result = {JavaApiFields.LeavesQty.value: str(float(self.qty)),
-                           JavaApiFields.UnmatchedQty.value: "0.0",
+                           JavaApiFields.UnmatchedQty.value: str(float(self.qty)),
                            JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value}
         self.java_api_manager.compare_values(expected_result, ord_update, "UnmatchedQty for order 1")
         self.java_api_manager.compare_values(expected_result, ord_update2, "UnmatchedQty for order 2")

@@ -324,8 +324,8 @@ class AlgoFixInstruments(Enum):
 
 
 class AlgoVenues(Enum):
-    venue_1 = ""
-    venue_2 = ""
+    venue_1 = "QUODDKP1"
+    venue_2 = "QUODDKP2"
     venue_3 = ""
 
 
@@ -363,6 +363,9 @@ class AlgoAccounts(Enum):
     account_22 = "QLV1_CLIENT2"
     account_23 = "QLV2_CLIENT2"
     account_24 = "QLV3_CLIENT2"
+    account_25 = "QDV1_CLIENT2"
+    account_26 = "QDV2_CLIENT2"
+    account_27 = "QDV3_CLIENT2"
 
 
 class AlgoWashbookAccounts(Enum):
@@ -618,6 +621,14 @@ class AlgoPreFilter(Enum):
         },
         'ExecType': ('4', 'EQUAL'),
         'OrdStatus': ('4', 'EQUAL')
+    }
+
+    pre_filer_equal_ER_reject = {
+        'header': {
+            'MsgType': ('8', 'EQUAL')
+        },
+        'ExecType': ('8', 'EQUAL'),
+        'OrdStatus': ('8', 'EQUAL')
     }
 
     pre_filter_check_events = {

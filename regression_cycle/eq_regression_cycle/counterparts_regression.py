@@ -2,7 +2,6 @@ import importlib
 import logging
 import os
 from datetime import datetime
-from pathlib import Path
 
 from get_project_root import root_path
 
@@ -22,7 +21,7 @@ def check_ssh(file):
 
 
 def test_run(parent_id=None, version=None, skip_ssh=False, only_ssh=False):
-    report_id = bca.create_event(f"Counterpart Analysis" if version is None else f"Counterpart Analysis | {version}",
+    report_id = bca.create_event(f"Counterpart Analysis" if version is None else f"Counterparts | {version}",
                                  parent_id)
     seconds, nanos = timestamps()  # Store case start time
     configuration = ComponentConfiguration("Counterparts")
