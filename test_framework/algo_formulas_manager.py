@@ -447,7 +447,7 @@ class AlgoFormulasManager:
                 },
                 {
                     "phaseBeginTime": clo_start.strftime("%H:%M:%S"),
-                    "phaseEndTime": datetime.time(hour=23, minute=0, second=0),
+                    "phaseEndTime": "23:00:00",
                     "tradingPhase": "CLO",
                     "standardTradingPhase": "CLO",
                 },
@@ -711,8 +711,8 @@ class AlgoFormulasManager:
         return new_phase_list
 
     @staticmethod
-    def get_litdark_child_price(ord_side: int, bid_price: float, ask_price: float, parent_qty: int, cost_per_trade: float , comm_per_unit: float = 12,
-                                    comm_basis_point: float = 16, is_comm_per_unit: bool = False, spread_disc_proportion: int = 0) -> float:
+    def get_litdark_child_price(ord_side: int, bid_price: float, ask_price: float, parent_qty: int, cost_per_trade: float, comm_per_unit: float,
+                                    comm_basis_point: float, is_comm_per_unit: bool, spread_disc_proportion: int) -> float:
         if ord_side == 1:
             lit_touch = bid_price
         else:
@@ -724,9 +724,9 @@ class AlgoFormulasManager:
             commission = comm_per_unit
         custom_adjustment = (ask_price - bid_price) * spread_disc_proportion
         if ord_side == 1:
-            return round((lit_touch + giveup_cost + commission + custom_adjustment), 4)
+            return lit_touch + giveup_cost + commission + custom_adjustment
         else:
-            return round((lit_touch - giveup_cost - commission - custom_adjustment), 4)
+            return lit_touch - giveup_cost - commission - custom_adjustment
 
     @staticmethod
     def get_child_qty_for_auction(indicative_volume, percentage, parent_qty):

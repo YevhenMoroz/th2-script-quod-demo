@@ -3,14 +3,18 @@ import time
 
 from custom import basic_custom_actions as bca
 from stubs import Stubs
+from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T10336 import QAP_T10336
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T10393 import QAP_T10393
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T10416 import QAP_T10416
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T10420 import QAP_T10420
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T10421 import QAP_T10421
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T10428 import QAP_T10428
+from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T10912 import QAP_T10912
+from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T10913 import QAP_T10913
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4957 import QAP_T4957
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4959 import QAP_T4959
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T9011 import QAP_T9011
+from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T9166 import QAP_T9166
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T9274 import QAP_T9274
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T9305 import QAP_T9305
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T9308 import QAP_T9308
@@ -253,6 +257,8 @@ def test_run(parent_id=None, version=None):
         time.sleep(3)
         QAP_T9011(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         time.sleep(3)
+        QAP_T9166(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        time.sleep(3)
         QAP_T9198(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         time.sleep(3)
         QAP_T9274(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
@@ -279,6 +285,8 @@ def test_run(parent_id=None, version=None):
         time.sleep(3)
         QAP_T9365(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         time.sleep(3)
+        QAP_T10336(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        time.sleep(3)
         QAP_T10393(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         time.sleep(3)
         QAP_T10416(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
@@ -288,6 +296,10 @@ def test_run(parent_id=None, version=None):
         QAP_T10421(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         time.sleep(3)
         QAP_T10428(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        time.sleep(3)
+        QAP_T10912(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        time.sleep(3)
+        QAP_T10913(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
     except Exception:

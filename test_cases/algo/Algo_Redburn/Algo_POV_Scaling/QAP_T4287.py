@@ -11,12 +11,10 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import FixMessageMarketDataSnapshotFullRefreshAlgo
 from test_framework.core.test_case import TestCase
-from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
+from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, TradingPhases
 from test_framework.data_sets import constants
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-timeouts = True
+from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
+from test_framework.algo_formulas_manager import AlgoFormulasManager as AFM
 
 
 class QAP_T4287(TestCase):
@@ -32,6 +30,7 @@ class QAP_T4287(TestCase):
         self.fix_manager_feed_handler = FixManager(self.fix_env1.feed_handler, self.test_id)
         self.fix_verifier_sell = FixVerifier(self.fix_env1.sell_side, self.test_id)
         self.fix_verifier_buy = FixVerifier(self.fix_env1.buy_side, self.test_id)
+        self.restapi_env1 = self.environment.get_list_web_admin_rest_api_environment()[0]
         # endregion
 
         self.qty = 100000
@@ -66,11 +65,22 @@ class QAP_T4287(TestCase):
 
         self.text_reject_invalid_price_point_2_participation = constants.FreeNotesReject.InvalidPricePoint2Participation.value
 
+        self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile1")
+        self.rule_list = []
+
+        self.rest_api_manager = RestApiAlgoManager(session_alias=self.restapi_env1.session_alias_wa, case_id=self.test_id)
+
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        # region Update Trading Phase
+        self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify trading phase profile", self.test_id))
+        trading_phases = AFM.get_timestamps_for_current_phase(TradingPhases.Open)
+        self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
+        # endregion
+
         # Send_MarkerData
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
-        market_data_snapshot = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
+        market_data_snapshot = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, self.fix_env1.feed_handler).set_phase(TradingPhases.Open)
         self.fix_manager_feed_handler.send_message(market_data_snapshot)
 
         time.sleep(3)
@@ -102,4 +112,8 @@ class QAP_T4287(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        pass
+        # region Update Trading Phase
+        self.rest_api_manager.set_case_id(case_id=bca.create_event("Revert trading phase profile", self.test_id))
+        trading_phases = AFM.get_default_timestamp_for_trading_phase()
+        self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
+        # endregion

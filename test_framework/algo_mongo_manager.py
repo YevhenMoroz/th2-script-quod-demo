@@ -25,13 +25,13 @@ class AlgoMongoManager:
         current_time = pop_end
         # region add POP curve
         mongo_list.append({
-            "LastTradedTime": pop_start,
+            "LastTradedTime": pop_end,
             "LastAuctionPhase": "PRE",
             "LastTradedQty": volume,
             "LastAuctionVolume": volume,
             "LastTradedPrice": price,
-            "MDTime": pop_start,
-            "creationTime": pop_start
+            "MDTime": pop_end,
+            "creationTime": pop_end
         })
 
         # region add OPN curve
