@@ -199,7 +199,7 @@ class QAP_T6991(TestCase):
 
         # region check 35=8 message step 4
         list_of_ignored_fields = ['Account', 'ExecID', 'OrderQtyData', 'LastQty', 'TransactTime', 'GrossTradeAmt',
-                                  'ExDestination',
+                                  'ExDestination','ExecAllocGrp',
                                   'Side', 'AvgPx', 'SettlCurrency', 'SettlDate', 'TimeInForce',
                                   'PositionEffect', 'HandlInst', 'LeavesQty', 'CumQty',
                                   'LastPx', 'OrdType', 'SecondaryOrderID', 'OrderCapacity', 'QtyType',

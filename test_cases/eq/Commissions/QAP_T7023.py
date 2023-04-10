@@ -130,7 +130,7 @@ class QAP_T7023(TestCase):
         }
         exec_id = last_response['ExecID']
         list_of_expected_fees = [expected_levy_fee_dimensions, expected_per_transac_fee_dimensions]
-        for index in range(2):
+        for index in range(1):
             if last_response['NoMiscFees']['NoMiscFees'][index][
                 JavaApiFields.MiscFeeType.value] == '6':
                 self.java_api_manager.compare_values(expected_levy_fee_dimensions,

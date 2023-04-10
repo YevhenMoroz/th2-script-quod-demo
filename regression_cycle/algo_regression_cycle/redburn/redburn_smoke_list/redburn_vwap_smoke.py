@@ -1,9 +1,8 @@
 import logging
 from custom import basic_custom_actions as bca
 from stubs import Stubs
-from test_cases.algo.Algo_Redburn.Algo_VWAP_Auction.QAP_T10708 import QAP_T10708
-from test_cases.algo.Algo_Redburn.Algo_VWAP_Auction.QAP_T4209 import QAP_T4209
-from test_cases.algo.Algo_Redburn.Algo_VWAP_Auction.QAP_T8892 import QAP_T8892
+from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T10943 import QAP_T10943
+from test_cases.algo.Algo_Redburn.Algo_VWAP_Auction.QAP_T8554 import QAP_T8554
 from test_cases.algo.Algo_Redburn.Algo_VWAP_Auction.QAP_T9062 import QAP_T9062
 from test_framework.configurations.component_configuration import ComponentConfigurationAlgo
 
@@ -15,16 +14,35 @@ logging.getLogger().setLevel(logging.WARN)
 
 def test_run(parent_id=None, version=None):
     # Generation id and time for test run
-    report_id = bca.create_event(f"VWAP - Auction (verification) | {version}", parent_id)
+    report_id = bca.create_event(f"VWAP (verification) | {version}", parent_id)
     logger.info(f"Root event was created (id = {report_id.id})")
     try:
-        # region Iceberg: Route/Venue
-        # configuration = ComponentConfiguration("Vwap")
         configuration = ComponentConfigurationAlgo("Vwap")
+
+        # region Basic
+        QAP_T10943(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # endregion
+
+        # region Sub-slice
+        # endregion
+
+        # region Would
+        # endregion
+
+        # region Navigator
+        # endregion
+
+        # region Auction
+        QAP_T8554(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T9062(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T10708(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4209(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T8892(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # endregion
+
+        # region MinParticipation
+        # endregion
+
+        # region MaxParticipation
+        # endregion
+
 
     except Exception:
         # bca.create_event('Fail test event', status='FAILED', parent_id=parent_id)

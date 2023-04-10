@@ -104,7 +104,7 @@ class QAP_T7149(TestCase):
             "Comparing Execution status (TransExecStatus)",
         )
         self.java_api_manager.compare_values(
-            {"CommissionRate": "1.0", "CommissionAmount": "0.1"},
+            {"CommissionRate": "5.0", "CommissionAmount": "0.5"},
             exec_report["ClientCommissionList"]["ClientCommissionBlock"][0],
             "Comparing Client Commission",
         )
@@ -136,10 +136,10 @@ class QAP_T7149(TestCase):
                     "ClientCommissionBlock": [
                         {
                             "CommissionAmountType": CommissionAmountTypeConst.CommissionAmountType_BRK.value,
-                            "CommissionAmount": "0.1",
+                            "CommissionAmount": "0.5",
                             "CommissionBasis": "BPS",
                             "CommissionCurrency": self.data_set.get_currency_by_name("currency_1"),  # EUR
-                            "CommissionRate": "1",
+                            "CommissionRate": "5",
                         }
                     ]
                 },
@@ -154,7 +154,7 @@ class QAP_T7149(TestCase):
             "ClientCommission"
         ]
         self.java_api_manager.compare_values(
-            {"ClientCommission": "0.1"}, {"ClientCommission": client_comm}, "Comparing Client Commission after Book"
+            {"ClientCommission": "0.5"}, {"ClientCommission": client_comm}, "Comparing Client Commission after Book"
         )
         # endregion
 
@@ -180,7 +180,7 @@ class QAP_T7149(TestCase):
         ).get_parameters()["ConfirmationReportBlock"]
         conf_id = conf_report_message['ConfirmationID']
         self.java_api_manager.compare_values(
-            {"ClientCommission": "0.1"},
+            {"ClientCommission": "0.5"},
             {"ClientCommission": conf_report_message["ClientCommissionDataBlock"]["ClientCommission"]},
             "Comparing Client Commission after Allocate block",
         )

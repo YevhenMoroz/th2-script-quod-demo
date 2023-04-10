@@ -194,6 +194,11 @@ class QSMessageType(Enum):
     QuoteAdjustmentRequest = "Order_QuoteAdjustmentRequest"
     QuoteManualSettingsRequest = "Order_QuoteManualSettingsRequest"
     Quote = "Order_Quote"
+    QuoteManagementRequest = "Order_QuoteManagementRequest"
+    QuoteStatusReport = "Order_QuoteStatusReport"
+    ListingQuotingModificationRequest = "Order_ListingQuotingModificationRequest"
+    ListingQuotingNotification = "Order_ListingQuotingNotification"
+    StopQuotingRequest = "Order_StopQuotingRequest"
 
 
 class ReadLogMessageType(Enum):

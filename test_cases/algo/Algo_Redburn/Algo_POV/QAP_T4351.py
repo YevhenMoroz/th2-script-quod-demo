@@ -6,7 +6,7 @@ from pathlib import Path
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
-from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
+from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, TradingPhases
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
 from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import FixMessageMarketDataSnapshotFullRefreshAlgo
@@ -16,7 +16,8 @@ from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
 from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
-from test_framework.algo_formulas_manager import AlgoFormulasManager
+from test_framework.algo_formulas_manager import AlgoFormulasManager as AFM
+from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
 
 
 class QAP_T4351(TestCase):
@@ -32,6 +33,7 @@ class QAP_T4351(TestCase):
         self.fix_manager_feed_handler = FixManager(self.fix_env1.feed_handler, self.test_id)
         self.fix_verifier_sell = FixVerifier(self.fix_env1.sell_side, self.test_id)
         self.fix_verifier_buy = FixVerifier(self.fix_env1.buy_side, self.test_id)
+        self.restapi_env1 = self.environment.get_list_web_admin_rest_api_environment()[0]
         # endregion
 
         # region order parameters
@@ -88,7 +90,10 @@ class QAP_T4351(TestCase):
         self.key_params = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_2")
         # endregion
 
+        self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile1")
         self.rule_list = []
+
+        self.rest_api_manager = RestApiAlgoManager(session_alias=self.restapi_env1.session_alias_wa, case_id=self.test_id)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -99,6 +104,12 @@ class QAP_T4351(TestCase):
         self.rule_list = [nos_ioc_rule, ocr_rule]
         # endregion
 
+        # region Update Trading Phase
+        self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify trading phase profile", self.test_id))
+        trading_phases = AFM.get_timestamps_for_current_phase(TradingPhases.Open)
+        self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
+        # endregion
+
         # region Clear Market Data
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data SnapShot to clear the MarketDepth", self.test_id))
         market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
@@ -107,7 +118,7 @@ class QAP_T4351(TestCase):
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
 
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data Incremental to clear the MarketDepth", self.test_id))
-        market_data_incremental_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
+        market_data_incremental_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.s_par, self.fix_env1.feed_handler).set_phase(TradingPhases.Open)
         market_data_incremental_par.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
         self.fix_manager_feed_handler.send_message(market_data_incremental_par)
 
@@ -146,7 +157,7 @@ class QAP_T4351(TestCase):
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
 
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data Incremental to clear the MarketDepth", self.test_id))
-        market_data_incremental_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
+        market_data_incremental_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.s_par, self.fix_env1.feed_handler).set_phase(TradingPhases.Open)
         market_data_incremental_par.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
         self.fix_manager_feed_handler.send_message(market_data_incremental_par)
 
@@ -186,6 +197,11 @@ class QAP_T4351(TestCase):
 
         RuleManager(Simulators.algo).remove_rules(self.rule_list)
 
+        # region Update Trading Phase
+        self.rest_api_manager.set_case_id(case_id=bca.create_event("Revert trading phase profile", self.test_id))
+        trading_phases = AFM.get_default_timestamp_for_trading_phase()
+        self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
+        # endregion
 
         # region check cancellation parent POV order
         cancel_pov_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.pov_order, self.gateway_side_sell, self.status_cancel)
