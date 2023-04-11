@@ -18,6 +18,7 @@ class EnvironmentType(Enum):
     quod315_fe = "quod315_fe"
     quod317_fe = "quod317_fe"
     quod316_fe = "quod316_fe"
+    quod319_fe = "quod319_fe"
     quod320_fe = "quod320_fe"
     quod315_luna_trading_desktop = "quod315_luna_trading_desktop"
     quod314_luna_fe = "quod314_luna_fe"
@@ -60,6 +61,7 @@ class EnvironmentType(Enum):
     quod317_ssh_client = "quod317_ssh_client"
     quod310_ssh_client = "quod310_ssh_client"
     quod316_ssh_client = "quod316_ssh_client"
+    quod319_ssh_client = "quod319_ssh_client"
     # endregion
 
     # region data base

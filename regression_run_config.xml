@@ -125,6 +125,9 @@
                         <rest_environments>
                             <web_admin_rest_api_environment>quod319_kuiper_web_admin_site</web_admin_rest_api_environment>
                         </rest_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod319_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
                     </environments>
                 </component>
                 <component name="Synth_min_qty" run="False">
