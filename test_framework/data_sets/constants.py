@@ -368,6 +368,7 @@ class ReadLogVerifiers(Enum):
     log_319_check_party_info_buy_side = "log319-check-party-info-buy-side"
     log_319_check_exec_type = "log319-check-exec-type"
     log_319_cancel_child = "log319-cancel-child"
+    log_319_check_dfd_mapping_buy_side = "log319-check-dfd-mapping-buy-side"
 
 
 class ExecType(Enum):
