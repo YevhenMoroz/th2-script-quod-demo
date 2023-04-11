@@ -15,6 +15,7 @@ from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
 from test_framework.fix_wrappers.algo.FixMessageOrderCancelReplaceRequestAlgo import FixMessageOrderCancelReplaceRequestAlgo
 from test_framework.fix_wrappers.algo.FixMessageOrderCancelRequestAlgo import FixMessageOrderCancelRequestAlgo
+from test_framework.ssh_wrappers.ssh_client import SshClient
 
 
 class QAP_T10591(TestCase):
@@ -84,12 +85,24 @@ class QAP_T10591(TestCase):
         self.key_params_rfq_cancel = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_RFQ_canceled")
         # endregion
 
+        # region SSH
+        self.config_file = "client_sats.xml"
+        self.xpath = ".//DarkPool/tolerance"
+        self.new_config_value = "3"
+        self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
+        self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user, self.ssh_client_env.password, self.ssh_client_env.su_user, self.ssh_client_env.su_password)
+        self.default_config_value = self.ssh_client.get_and_update_file(self.config_file, {self.xpath: self.new_config_value})
+        # endregion
+
         self.pre_filter = self.data_set.get_pre_filter("pre_filer_equal_D")
         self.rule_list = []
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # TODO Change tolerance parameter to 3
+        # region precondition: Prepare SATS configuration
+        self.ssh_client.send_command("qrestart SORS")
+        time.sleep(180)
+        # endregion
         # TODO Add nos_reject_rule for 1 time
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
@@ -274,6 +287,15 @@ class QAP_T10591(TestCase):
 
         er_cancel_MPDark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MPDark_order, self.gateway_side_sell, self.status_cancel)
         self.fix_verifier_sell.check_fix_message(er_cancel_MPDark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
+        # endregion
+
+        time.sleep(3)
+
+        # region config reset
+        self.ssh_client.get_and_update_file(self.config_file, {self.xpath: self.default_config_value})
+        self.ssh_client.send_command("qrestart SORS")
+        time.sleep(180)
+        self.ssh_client.close()
         # endregion
 
         rule_manager = RuleManager(Simulators.algo)
