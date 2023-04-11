@@ -15,6 +15,8 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
+from test_framework.read_log_wrappers.algo.ReadLogVerifierAlgo import ReadLogVerifierAlgo
+from test_framework.read_log_wrappers.algo_messages.ReadLogMessageAlgo import ReadLogMessageAlgo
 
 
 class QAP_T4959(TestCase):
@@ -90,6 +92,16 @@ class QAP_T4959(TestCase):
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
         self.key_params_ER_eliminate_or_cancel_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_2_child")
         self.key_params_ER_eliminate_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_cancel_reject_child")
+        # endregion
+
+        # region Read log verifier params
+        self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_check_dfd_mapping_buy_side.value
+        self.read_log_verifier = ReadLogVerifierAlgo(self.log_verifier_by_name, report_id)
+        # endregion
+
+        # region Compare message params
+        self.exec_type = "Eliminated"
+        self.elimination_handling = "StopChildCreation"
         # endregion
 
         self.rule_list = []
@@ -225,6 +237,16 @@ class QAP_T4959(TestCase):
         # region Check that the parent is still Open
         self.fix_verifier_sell.set_case_id(bca.create_event("Check that the parent is still Open", self.test_id))
         self.fix_verifier_sell.check_fix_message_sequence([er_pending_new_SORPING_order_params, er_new_SORPING_order_params], key_parameters_list=[None, None], direction=self.FromQuod, pre_filter=None)
+        # endregion
+
+        # region Check Read log
+        time.sleep(70)
+
+        compare_message = ReadLogMessageAlgo().set_compare_message_for_check_dfd_mapping_buy_side()
+        compare_message.change_parameters(dict(ClOrdID='*', ExecType=self.exec_type, EliminationHandling=self.elimination_handling))
+
+        self.read_log_verifier.set_case_id(bca.create_event("ReadLog", self.test_id))
+        self.read_log_verifier.check_read_log_message(compare_message)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
