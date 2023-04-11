@@ -42,6 +42,7 @@ def _which_is_day_today():
 def _get_fix_message(parameter: dict, response):
     for i in range(len(response)):
         for j in parameter.keys():
+            print(response[i].get_parameters())
             if response[i].get_parameters()[j] == parameter[j]:
                 return response[i].get_parameters()
 
@@ -78,9 +79,9 @@ class QAP_T8909(TestCase):
         # end_of_part
 
         # part 2 : Create CO order via FIX
-        responses = self.fix_manager.send_message_and_receive_response(self.fix_new_ord_single)
+        responses = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_new_ord_single)
         expected_values = {'ExecType': '0'}
-        response = _get_fix_message({'ExecType': '0'}, responses)
+        response = _get_fix_message(expected_values, responses)
         self.fix_manager.compare_values(
             expected_values,
             response, f'Verifying that order created (step 1)')
