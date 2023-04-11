@@ -105,7 +105,3 @@ class QAP_T8910(TestCase):
         self.db_manager.execute_query(f"""UPDATE  venue SET  weekendday = null
                                                             WHERE venueid = 'PARIS'""")
         self.ssh_client.close()
-
-    def _convert_mounts_to_world(self, date: str):
-
-        return date.replace('')
