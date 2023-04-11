@@ -744,3 +744,13 @@ class AlgoFormulasManager:
     @staticmethod
     def get_bi_lateral_auction_qty(indicative_volume, percentage, tradeable_qty, parent_qty):
         return AlgoFormulasManager.get_child_qty_for_auction((indicative_volume - tradeable_qty), percentage, parent_qty)
+
+    @staticmethod
+    def calculate_how_many_sec_to_this_time(phases, phase, start_time):
+        now = datetime.datetime.now()
+        for phase_from_list in phases:
+            if phase_from_list['tradingPhase'] == phase.value:
+                if start_time:
+                    return (phase_from_list['beginTime'] - now).seconds
+                else:
+                    return (phase_from_list['endTime'] - now).seconds
