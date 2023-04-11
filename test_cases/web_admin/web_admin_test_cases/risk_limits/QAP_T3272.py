@@ -24,7 +24,7 @@ class QAP_T3272(CommonTestCase):
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.instrument_type = 'Bond'
         self.trading_phase = 'Open'
-        self.route = 'JP Morgan'
+        self.route = self.data_set.get_route("route_1")
         self.execution_policy = 'Care'
 
     def precondition(self):

@@ -70,7 +70,6 @@ class QAP_T8458(TestCase):
         self.trade_entry = TradeEntryOMS(self.data_set)
         self.allocation_instruction = AllocationInstructionOMS(self.data_set)
         self.compute_booking_fee_commission_request = ComputeBookingFeesCommissionsRequestOMS(self.data_set)
-        self.allocation_instruction_message = AllocationInstructionOMS(self.data_set)
         self.confirmation_request = ConfirmationOMS(self.data_set)
         self.approve_block = ForceAllocInstructionStatusRequestOMS(self.data_set)
         self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,

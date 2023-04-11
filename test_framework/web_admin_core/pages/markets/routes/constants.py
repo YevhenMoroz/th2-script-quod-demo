@@ -1,5 +1,5 @@
 class RoutesConstants:
-    ROUTES_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Routes ']"
+    ROUTES_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][normalize-space()='Routes']"
     #   -----Main page-----
     NAME_FILTER_XPATH = '//*[@ref="headerRoot"]//*[@class="ag-header-container"]/div[2]/div[1]//input'
     DESCRIPTION_FILTER_XPATH = '//*[@class="ag-header-container"]//div[2]/div[2]//*[@class="ag-input-old_wrappers"]//input'
@@ -137,4 +137,4 @@ class RoutesConstants:
     # --Strategy Type--
     STRATEGY_TYPE_AT_STRATEGY_TYPE_TAB_XPATH = '//*[@formcontrolname ="routeScenario"]//button'
     DEFAULT_SCENARIO_AT_STRATEGY_TYPE_TAB_XPATH = '//*[text()="Default Scenario"]/preceding-sibling::input'
-    CHECKBOX_LIST_AT_STRATEGY_TYPE_TAB_XPATH = '//*[@formcontrolname="routeScenario"]'
+    CHECKBOX_LIST_AT_STRATEGY_TYPE_TAB_XPATH = '//*[@id="Strategy Type"]'

@@ -2,7 +2,6 @@ import importlib
 import logging
 import os
 from datetime import datetime
-from pathlib import Path
 
 from get_project_root import root_path
 
@@ -16,20 +15,26 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-def test_run(parent_id=None, version=None):
-    report_id = bca.create_event(f"GatingRules Analysis" if version is None else f"GatingRules | {version}",
+def check_ssh(file):
+    with open(file) as f:
+        return 'ssh' in f.read()
+
+
+def test_run(parent_id=None, version=None, skip_ssh=False, only_ssh=False):
+    report_id = bca.create_event(f"GatingRules Analysis" if version is None else f"GatingRules Analysis | {version}",
                                  parent_id)
     seconds, nanos = timestamps()  # Store case start time
     configuration = ComponentConfiguration("GatingRules")
-    fe_env = configuration.environment.get_list_fe_environment()[0]
-    session_id = None  #set_session_id(fe_env.target_server_win)
     data_set = configuration.data_set
-    test_id = bca.create_event(Path(__file__).name[:-3], report_id)
+
     try:
-        tests = os.listdir(root_path(ignore_cwd=True) + '/test_cases/eq/GatingRules')
+        tests = os.listdir(f'{root_path(ignore_cwd=True)}/test_cases/eq/GatingRules')
         for test in tests:
             class_ = getattr(importlib.import_module(f"test_cases.eq.GatingRules.{test[:-3]}"), test[:-3])
-            class_(report_id, session_id, data_set, configuration.environment).execute()
+            ssh_test = check_ssh(f'{root_path(ignore_cwd=True)}/test_cases/eq/GatingRules/{test}')
+
+            if (skip_ssh and not ssh_test) or (only_ssh and ssh_test) or (not skip_ssh and not only_ssh):
+                class_(report_id, None, data_set, configuration.environment).execute()
 
     except Exception:
         logging.error("Error execution", exc_info=True)

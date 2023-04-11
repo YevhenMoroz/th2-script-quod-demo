@@ -32,7 +32,7 @@ class QAP_T3322(CommonTestCase):
         self.sub_venues = list
         self.accounts = list
         self.listing_group = list
-        self.listing = "USDT"
+        self.listing = "testX"
         self.account_dimensions = ["Clients", "ClientList", "Accounts"]
         self.user_dimension = ["Desks", "Users"]
         self.reference_data_dimension = ["Venue", "SubVenue", "Listing"]
@@ -77,6 +77,7 @@ class QAP_T3322(CommonTestCase):
             time.sleep(1)
             self.desks = dimensions_tab.get_all_desks_from_drop_menu()
             dimensions_tab.set_desks([random.choice(self.desks)])
+            time.sleep(1)
             dimensions_tab.set_reference_data_dimension(self.reference_data_dimension[0])
             time.sleep(1)
             self.venues = dimensions_tab.get_all_venues_from_drop_menu()
@@ -94,16 +95,18 @@ class QAP_T3322(CommonTestCase):
             values_tab = ValuesTab(self.web_driver_container)
             values_tab.set_name(self.name[1])
             values_tab.set_cum_trading_limits([random.choice(self.cum_trading_limits)])
-
+            time.sleep(1)
             dimensions_tab = DimensionsTab(self.web_driver_container)
             dimensions_tab.set_accounts_dimension(self.account_dimensions[1])
             time.sleep(1)
             self.client_list = dimensions_tab.get_all_client_list_from_drop_menu()
             dimensions_tab.set_client_list(random.choice(self.client_list))
+            time.sleep(1)
             dimensions_tab.set_users_dimension(self.user_dimension[1])
             time.sleep(1)
             self.user = dimensions_tab.get_all_user_from_drop_menu()
             dimensions_tab.set_user([random.choice(self.user)])
+            time.sleep(1)
             dimensions_tab.set_reference_data_dimension(self.reference_data_dimension[1])
             time.sleep(1)
             self.sub_venues = dimensions_tab.get_all_sub_venues_from_drop_menu()
@@ -129,7 +132,9 @@ class QAP_T3322(CommonTestCase):
             dimensions_tab.set_accounts([random.choice(self.accounts)])
             time.sleep(1)
             dimensions_tab.set_users_dimension(self.user_dimension[1])
+            time.sleep(1)
             dimensions_tab.set_user([random.choice(self.user)])
+            time.sleep(1)
             dimensions_tab.set_reference_data_dimension(self.reference_data_dimension[1])
             time.sleep(1)
             self.sub_venues = dimensions_tab.get_all_sub_venues_from_drop_menu()
@@ -147,13 +152,16 @@ class QAP_T3322(CommonTestCase):
             values_tab = ValuesTab(self.web_driver_container)
             values_tab.set_name(self.name[3])
             values_tab.set_cum_trading_limits([random.choice(self.cum_trading_limits)])
-
+            time.sleep(1)
             dimensions_tab = DimensionsTab(self.web_driver_container)
             dimensions_tab.set_accounts_dimension(self.account_dimensions[2])
+            time.sleep(1)
             dimensions_tab.set_accounts([random.choice(self.accounts)])
             time.sleep(1)
             dimensions_tab.set_users_dimension(self.user_dimension[1])
+            time.sleep(1)
             dimensions_tab.set_user([random.choice(self.user)])
+            time.sleep(1)
             dimensions_tab.set_reference_data_dimension(self.reference_data_dimension[2])
             dimensions_tab.set_listing(self.listing)
 

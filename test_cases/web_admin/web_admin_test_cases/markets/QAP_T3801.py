@@ -30,7 +30,7 @@ class QAP_T3801(CommonTestCase):
         self.symbol = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.lookup_symbol = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.instr_symbol = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.instr_type = ['FXNDF', 'FXForward', 'DepositLoanLeg']
+        self.instr_type = ['FXForward', 'DepositLoanLeg']
         self.tenor = 'Cash'
 
         self.venue = self.data_set.get_venue_by_name("venue_3")

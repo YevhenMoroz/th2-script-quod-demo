@@ -5,18 +5,26 @@ class WebAdminUsers(Enum):
     user_1 = "adm03"
     user_2 = "adm_loca"
     user_3 = "adm_desk"
-    user_4 = "adm01"
-    user_5 = "adm02"
+    user_4 = "adm_zone"
+    user_5 = "adm_inst"
     user_6 = "acameron"
     user_7 = "gbarrett"
     user_8 = "QA1"
     user_9 = "adm08"
     user_10 = "adm07"
+    user_11 = "adm01"
+    user_12 = "adm02"
+    user_13 = "QAP-T3920"
+    user_14 = "inst_user_autotest"
 
 
 class WebAdminPasswords(Enum):
     password_1 = "adm03"
-    password_2 = "adm02"
+    password_2 = "adm_loca"
+    password_3 = "adm_desk"
+    password_4 = "adm_zone"
+    password_5 = "adm_inst"
+    password_14 = "Qwerty123!"
 
 
 # region WaGeneral
@@ -34,6 +42,7 @@ class WebAdminSystemCommands(Enum):
 class WebAdminInstitutions(Enum):
     institution_1 = "QUOD FINANCIAL"
     institution_2 = "LOAD"
+    institution_3 = "TEST"
 
 
 class WebAdminDesks(Enum):
@@ -46,11 +55,14 @@ class WebAdminLocations(Enum):
     location_1 = "EAST-LOCATION-B"
     location_2 = "WEST-LOCATION-B"
     location_3 = "EAST-LOCATION-A"
+    location_4 = "WEST-LOCATION-A"
 
 
 class WebAdminZones(Enum):
     zone_1 = "WEST-ZONE"
     zone_2 = "EAST-ZONE"
+    zone_3 = "NORTH-ZONE"
+    zone_4 = "SOUTH-ZONE"
 
 
 # endregion
@@ -71,16 +83,18 @@ class WebAdminClientType(Enum):
 
 class WebAdminVenues(Enum):
     venue_1 = "AMEX"
-    venue_2 = "ASE"
-    venue_3 = "BRU"
-    venue_4 = "AMSTERDAM"
-    venue_5 = "BATS"
+    venue_2 = "COINBASE"
+    venue_3 = "BRUSSELS"
+    venue_4 = "UBST"
+    venue_5 = "BATSDARK"
     venue_6 = "ADX"
-    venue_7 = "Equiduct"
-    venue_8 = "AMERICAN STOCK EXCHANGE"
-    venue_9 = "EURONEXT AMSTERDAM"
+    venue_7 = "EUREX"
+    venue_8 = "AMSTERDAM"
+    venue_9 = "Reuters"
     venue_10 = "BINANCE"
     venue_11 = "Dubai Financial Exchange"
+    venue_12 = "EURONEXT AMSTERDAM"
+    venue_13 = "BATS Dark Pool"
 
 
 class WebAdminEmail(Enum):
@@ -137,7 +151,7 @@ class WebAdminTradingPhaseProfile(Enum):
 
 
 class WebAdminPriceLimitProfile(Enum):
-    price_limit_profile_1 = "test"
+    price_limit_profile_1 = "TestPriceLimitProfile"
 
 
 class WebAdminTickSizeProfile(Enum):
@@ -185,7 +199,7 @@ class WebAdminInstrType(Enum):
 class WebAdminPreferredVenue(Enum):
     preferred_venue_1 = "AMEX"
     preferred_venue_2 = "ADX"
-    preferred_venue_3 = "BAueTS"
+    preferred_venue_3 = "ASE"
 
 
 class WebAdminListingGroup(Enum):
@@ -231,8 +245,10 @@ class WebAdminRouteAccountName(Enum):
 
 
 class WebAdminRoute(Enum):
-    route_1 = "JP Morgan"
-    route_2 = "DB RFQ"
+    route_1 = "ESFSSO"
+    route_2 = "ESFIXED"
+    route_3 = "ESSIMXETRA"
+    route_4 = "ESDEMO"
 
 
 class WebAdminClearingAccountType(Enum):
@@ -251,7 +267,8 @@ class WebAdminAccountIdSource(Enum):
 
 
 class WebAdminDefaultRoute(Enum):
-    default_route_1 = "Direct"
+    default_route_1 = "ESDEMO"
+    default_route_2 = "ESFSSO"
 
 
 class WebAdminDefaultExecutionStrategy(Enum):
@@ -282,15 +299,15 @@ class WebAdminDefaultTif(Enum):
 
 
 class WebAdminStrategyType(Enum):
-    strategy_type_1 = "Quod MultiListing"
-    strategy_type_2 = "External AMBUSH"
-    strategy_type_3 = "Quod LitDark"
-    strategy_type_4 = "External CUSTOM1"
-    strategy_type_5 = "Quod DarkPool"
-    strategy_type_6 = "Quod TWAP"
+    strategy_type_1 = "Quod Financial Lit SOR"
+    strategy_type_2 = "Quod Financial Split Manager"
+    strategy_type_3 = "Quod Financial Lit and Dark SOR"
+    strategy_type_4 = "Quod Financial Internal Participate"
+    strategy_type_5 = "Quod Financial Dark SOR"
+    strategy_type_6 = "Quod Financial Internal TWAP"
     strategy_type_7 = "Custom one"
     strategy_type_8 = "Quod Auction"
-    strategy_type_9 = "Quod Synthetic OrdType"
+    strategy_type_9 = "Quod Financial Internal Synthetic Order Type"
 
 
 class WebAdminExecPolicy(Enum):
@@ -333,6 +350,10 @@ class WebAdminClientGroup(Enum):
 class WebAdminInstrument(Enum):
     instrument_1 = "EUR"
     instrument_2 = "INSURANCE"
+    instrument_3 = "USD/KRW"
+    instrument_4 = "USD/TWD"
+    instrument_5 = "BUN-CITQ"
+    instrument_6 = "GBP/BRL"
 
 
 class WebAdminInstrumentGroup(Enum):
@@ -371,3 +392,7 @@ class WebAdminPartyRole(Enum):
     party_role_2 = "GiveupClearingFirm"
 
 # endregion
+
+
+class WebAdminCounterpart(Enum):
+    counterpart_1 = "TCOther"

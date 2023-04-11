@@ -39,7 +39,6 @@ class QAP_T7930(CommonTestCase):
         login_page.check_is_login_successful()
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_execution_strategies_page()
-        side_menu.wait_for_button_to_become_active()
 
     def test_context(self):
         try:
@@ -85,13 +84,13 @@ class QAP_T7930(CommonTestCase):
             main_page.click_on_more_actions()
             main_page.click_on_edit_at_more_actions()
 
-            expected_parameter_and_value_at_dark_block = [f"{self.parameter}: ", f"{self.parameter_mode}",
-                                                          f"{self.second_parameter}: ", f"{self.qty}"]
+            expected_parameter_and_value_at_dark_block = sorted([f"{self.parameter}: "+f"{self.parameter_mode}",
+                                                          f"{self.second_parameter}: "+f"{self.qty}"])
             strategies_wizard = ExecutionStrategiesWizard(self.web_driver_container)
-            actual_parameter_and_value_at_dark_block = [strategies_wizard.get_parameter_name_at_dark_block(),
-                                                        strategies_wizard.get_parameter_value_at_dark_block()]
-            self.verify("After edit", expected_parameter_and_value_at_dark_block,
-                        actual_parameter_and_value_at_dark_block)
+            names = strategies_wizard.get_all_parameters_names_from_dark_block()
+            values = strategies_wizard.get_all_parameters_values_from_dark_block()
+            self.verify("Dark block after edit", expected_parameter_and_value_at_dark_block,
+                        sorted([a + " " + str(b) for a, b in zip(names, values)]))
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

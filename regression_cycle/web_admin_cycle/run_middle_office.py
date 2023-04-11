@@ -43,6 +43,8 @@ from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T8848 import QA
 from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T8849 import QAP_T8849
 from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T8857 import QAP_T8857
 from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T9132 import QAP_T9132
+from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T10629 import QAP_T10629
+from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T10639 import QAP_T10639
 
 
 class RunMiddleOffice:
@@ -131,6 +133,10 @@ class RunMiddleOffice:
                       environment=configuration.environment).run()
             QAP_T9132(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
+            QAP_T10629(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                       environment=configuration.environment).run()
+            QAP_T10639(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                       environment=configuration.environment).run()
 
             end_time = time.monotonic()
             print("Run Middle Office ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))

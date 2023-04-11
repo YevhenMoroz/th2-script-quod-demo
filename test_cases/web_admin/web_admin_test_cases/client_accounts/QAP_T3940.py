@@ -26,12 +26,17 @@ class QAP_T3940(CommonTestCase):
         self.password = self.data_set.get_password("password_1")
         self.account = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.ext_id_client = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.client = self.data_set.get_client("client_1")
+        self.client = str
         self.client_id_source = self.data_set.get_client_id_source("client_id_source_2")
         self.venue_account = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.venue = self.data_set.get_venue_by_name("venue_1")
+        self.venue = self.data_set.get_venue_by_name("venue_10")
         self.account_id_source = self.data_set.get_account_id_source("account_id_source_1")
-        self.default_route = "JP Morgan"
+        self.default_route = self.data_set.get_default_route("default_route_1")
+
+        self.new_venue_account = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        self.new_venue = self.data_set.get_venue_by_name("venue_8")
+        self.new_account_id_source = "Other"
+        self.new_default_route = self.data_set.get_default_route("default_route_2")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -50,6 +55,7 @@ class QAP_T3940(CommonTestCase):
         accounts_wizard = AccountsWizard(self.web_driver_container)
         accounts_wizard.set_id(self.account)
         accounts_wizard.set_ext_id_client(self.ext_id_client)
+        self.client = random.choice(accounts_wizard.get_all_clients_from_drop_menu())
         accounts_wizard.set_client(self.client)
         accounts_wizard.set_client_id_source(self.client_id_source)
 
@@ -68,11 +74,7 @@ class QAP_T3940(CommonTestCase):
         try:
             self.precondition()
 
-            new_venue_account = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-            new_venue = "ADX"
-            new_account_id_source = "Other"
-            new_default_route = "Credit Suisse"
-            expected_pdf_content = [new_venue_account, new_venue, new_account_id_source, new_default_route]
+            expected_pdf_content = [self.new_venue_account, self.new_venue, self.new_account_id_source]
 
             accounts_page = AccountsPage(self.web_driver_container)
             accounts_page.filter_grid(self.account)
@@ -85,10 +87,10 @@ class QAP_T3940(CommonTestCase):
             accounts_dimensions_subwizard.click_delete_button()
             time.sleep(1)
             accounts_dimensions_subwizard.click_on_plus()
-            accounts_dimensions_subwizard.set_venue_account(new_venue_account)
-            accounts_dimensions_subwizard.set_venue(new_venue)
-            accounts_dimensions_subwizard.set_account_id_source(new_account_id_source)
-            accounts_dimensions_subwizard.set_default_route(new_default_route)
+            accounts_dimensions_subwizard.set_venue_account(self.new_venue_account)
+            accounts_dimensions_subwizard.set_venue(self.new_venue)
+            accounts_dimensions_subwizard.set_account_id_source(self.new_account_id_source)
+            accounts_dimensions_subwizard.set_default_route(self.new_default_route)
             accounts_dimensions_subwizard.click_on_checkmark_button()
             accounts_wizard.click_save_button()
             time.sleep(2)
@@ -104,14 +106,14 @@ class QAP_T3940(CommonTestCase):
                         accounts_wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
 
             time.sleep(2)
-            accounts_dimensions_subwizard.filter_dimensions(venue_account=new_venue_account)
+            accounts_dimensions_subwizard.filter_dimensions(venue_account=self.new_venue_account)
 
             accounts_dimensions_subwizard.click_edit_button()
-            self.verify("Venue Account", new_venue_account, accounts_dimensions_subwizard.get_venue_account())
-            self.verify("Venue", new_venue, accounts_dimensions_subwizard.get_venue())
-            self.verify("Account ID Source", new_account_id_source,
+            self.verify("Venue Account", self.new_venue_account, accounts_dimensions_subwizard.get_venue_account())
+            self.verify("Venue", self.new_venue, accounts_dimensions_subwizard.get_venue())
+            self.verify("Account ID Source", self.new_account_id_source,
                         accounts_dimensions_subwizard.get_account_id_source())
-            self.verify("Default Route", new_default_route, accounts_dimensions_subwizard.get_default_route())
+            self.verify("Default Route", self.new_default_route, accounts_dimensions_subwizard.get_default_route())
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

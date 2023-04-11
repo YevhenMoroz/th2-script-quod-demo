@@ -111,8 +111,7 @@ class AutoHedgerInstrumentsSubWizard(CommonPage):
 
     def is_default_execution_strategy_has_italic_font(self, value):
         self.find_by_xpath(AutoHedgerConstants.INSTRUMENTS_TAB_HEDGING_EXECUTION_STRATEGY_FIELD_XPATH).click()
-        self.set_text_by_xpath(AutoHedgerConstants.INSTRUMENTS_TAB_HEDGING_EXECUTION_STRATEGY_FIELD_XPATH, value)
-        attribute_value = self.find_by_xpath(AutoHedgerConstants.DROP_DOWN_MENU_XPATH).get_attribute("class")
+        attribute_value = self.find_by_xpath(AutoHedgerConstants.INSTRUMENTS_TAB_DEFAULT_EXECUTION_STRATEGY_IN_DROP_MENU).get_attribute("class")
         return True if 'italic' in attribute_value else False
 
     def is_synthetic_combination_to_auto_hedge_field_displayed(self):

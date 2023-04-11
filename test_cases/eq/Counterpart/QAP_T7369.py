@@ -1,17 +1,19 @@
 import logging
 import time
-from copy import deepcopy
+import xml.etree.ElementTree as ET
+from pathlib import Path
+
+from pkg_resources import resource_filename
 
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
-from test_framework.data_sets.message_types import ORSMessageType, PKSMessageType
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from pathlib import Path
-from test_framework.core.test_case import TestCase
-from test_framework.core.try_exept_decorator import try_except
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, ExecutionPolicyConst
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
@@ -19,8 +21,6 @@ from test_framework.java_api_wrappers.ors_messages.UnMatchRequest import UnMatch
 from test_framework.ssh_wrappers.ssh_client import SshClient
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
-import xml.etree.ElementTree as ET
-from pkg_resources import resource_filename
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -41,7 +41,7 @@ class QAP_T7369(TestCase):
         self.account = self.data_set.get_account_by_name("client_counterpart_1_acc_3")
         self.qty = self.fix_message.get_parameter('OrderQtyData')['OrderQty']
         self.price = self.fix_message.get_parameter("Price")
-        self.client_for_rule = self.data_set.get_venue_client_names_by_name("client_counterpart_1_venue_2")
+        self.client_for_rule = self.data_set.get_venue_client_names_by_name("client_counterpart_1_venue_1")
         self.mic = self.data_set.get_mic_by_name("mic_2")
         self.cur = self.data_set.get_currency_by_name("currency_3")
         self.change_params = {'Account': self.client,
@@ -109,7 +109,7 @@ class QAP_T7369(TestCase):
                                                                                            "instrument_3")
                                                                                        })
             responses = self.java_api_manager.send_message_and_receive_response(self.child_order_submit)
-            class_name.__print_message(f'Report after trade CHILD DMA ORDER', responses)
+            class_name.__print_message('Report after trade CHILD DMA ORDER', responses)
             execution_report = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value, ExecutionPolicyConst.DMA.value)
             exec_id = execution_report.get_parameters()[JavaApiFields.ExecutionReportBlock.value][JavaApiFields.ExecID.value]
         finally:

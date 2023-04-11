@@ -41,6 +41,18 @@ class DataBaseEnvironment(BaseEnvironment):
                 )
                 DataBaseEnvironment.environment_instances.update({EnvironmentType.quod316_data_base_mongo.value: site_environment})
             return DataBaseEnvironment.environment_instances[EnvironmentType.quod316_data_base_mongo.value]
+        elif env.value == EnvironmentType.quod320_data_base.value:
+            if EnvironmentType.quod320_data_base.value not in DataBaseEnvironment.environment_instances.keys():
+                site_environment = DataBaseEnvironment(
+                    environment_type=EnvironmentType.quod320_fe.value,
+                    db_host=DataBaseEnv.HOST_320.value,
+                    db_name=DataBaseEnv.NAME_320.value,
+                    db_user=DataBaseEnv.USER_320.value,
+                    db_pass=DataBaseEnv.PASS_320.value,
+                    db_type=DataBaseEnv.DB_TYPE_320.value
+                )
+                DataBaseEnvironment.environment_instances.update({EnvironmentType.quod320_data_base.value: site_environment})
+            return DataBaseEnvironment.environment_instances[EnvironmentType.quod320_data_base.value]
         else:
             raise Exception('No such environment')
 

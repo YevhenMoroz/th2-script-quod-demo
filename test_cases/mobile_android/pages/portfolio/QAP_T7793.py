@@ -1,17 +1,11 @@
-import sys
-import time
-import traceback
 from datetime import datetime, timedelta
 
-from custom import basic_custom_actions
 from test_cases.mobile_android.common_test_case import CommonTestCase
-from test_framework.mobile_android_core.pages.login.login_constant import LoginConstants
 from test_framework.mobile_android_core.pages.login.login_page import LoginPage
 
 from test_framework.mobile_android_core.pages.main_page.main_page_constants import MainPageConstants
 from test_framework.mobile_android_core.pages.main_page.main_page import MainPage
 
-from test_framework.mobile_android_core.pages.menu.menu_constants import MenuConstants
 from test_framework.mobile_android_core.pages.menu.menu_page import MenuPage
 from test_framework.mobile_android_core.pages.portfolio.account_summary.account_summary_constants import \
     AccountSummaryConstants
@@ -20,7 +14,7 @@ from test_framework.mobile_android_core.pages.portfolio.account_summary.account_
 from test_framework.mobile_android_core.utils.driver import AppiumDriver
 
 from pathlib import Path
-from test_framework.mobile_android_core.utils.try_except_decorator_mobile import try_except
+from test_framework.mobile_android_core.utils.decorators.try_except_decorator_mobile import try_except
 
 class QAP_T7793(CommonTestCase):
 

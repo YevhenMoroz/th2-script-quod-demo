@@ -75,7 +75,7 @@ class ClientsVenuesSubWizard(CommonPage):
         self.set_combobox_value(ClientsConstants.VENUES_TAB_ROUTING_PARAM_GROUP_FILTER_XPATH, value)
 
     def set_max_commission_type(self, value):
-        self.set_combobox_value(ClientsConstants.VENUES_TAB_MAX_COMMISSION_TYPE_XPATH,value)
+        self.select_value_from_dropdown_list(ClientsConstants.VENUES_TAB_MAX_COMMISSION_TYPE_XPATH,value)
 
     def get_max_commission_type(self):
         self.get_text_by_xpath(ClientsConstants.VENUES_TAB_MAX_COMMISSION_TYPE_XPATH)

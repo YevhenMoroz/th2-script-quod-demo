@@ -153,7 +153,7 @@ class QAP_T4269(TestCase):
 
         self.POV_order_replace_params = FixMessageOrderCancelReplaceRequestAlgo(self.POV_order)
         self.POV_order_replace_params.add_fields_into_repeating_group('NoStrategyParameters', [dict(StrategyParameterName='StartDate', StrategyParameterType=19, StrategyParameterValue=start_time_mod)])
-        self.fix_manager_sell.send_message_and_receive_response(self.POV_order_replace_params, case_id_1)
+        self.fix_manager_sell.send_message_and_receive_response(self.POV_order_replace_params, case_id_2)
         time.sleep(5)
         self.fix_verifier_sell.check_fix_message(self.POV_order_replace_params, direction=self.ToQuod, message_name='Sell side OrderCancelReplaceRequest')
 

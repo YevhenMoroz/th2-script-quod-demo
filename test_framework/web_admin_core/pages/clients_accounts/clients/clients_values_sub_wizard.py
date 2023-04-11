@@ -28,7 +28,7 @@ class ClientsValuesSubWizard(CommonPage):
         return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_EXT_ID_CLIENT_XPATH)
 
     def set_clearing_account_type(self, value):
-        self.set_combobox_value(ClientsConstants.VALUES_TAB_CLEARING_ACCOUNT_TYPE_XPATH, value)
+        self.select_value_from_dropdown_list(ClientsConstants.VALUES_TAB_CLEARING_ACCOUNT_TYPE_XPATH, value)
 
     def get_clearing_account_type(self):
         return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_CLEARING_ACCOUNT_TYPE_XPATH)
@@ -40,10 +40,13 @@ class ClientsValuesSubWizard(CommonPage):
         return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_DESCRIPTION_XPATH)
 
     def set_disclose_exec(self, value):
-        self.set_combobox_value(ClientsConstants.VALUES_TAB_DISCLOSE_EXEC_XPATH, value)
+        self.select_value_from_dropdown_list(ClientsConstants.VALUES_TAB_DISCLOSE_EXEC_XPATH, value)
 
     def clear_disclose_exec(self):
-        self.set_text_by_xpath(ClientsConstants.VALUES_TAB_DISCLOSE_EXEC_XPATH, "")
+        self.find_by_xpath(ClientsConstants.VALUES_TAB_DISCLOSE_EXEC_XPATH).click()
+        time.sleep(0.5)
+        self.use_backspace_button_to_element()
+        self.find_by_xpath(ClientsConstants.VALUES_TAB_DISCLOSE_EXEC_XPATH).click()
 
     def get_disclose_exec(self):
         return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_DISCLOSE_EXEC_XPATH)
@@ -55,7 +58,7 @@ class ClientsValuesSubWizard(CommonPage):
         return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_CLIENT_GROUP_XPATH)
 
     def set_invalid_tick_size_policy(self, value):
-        self.set_combobox_value(ClientsConstants.VALUES_TAB_INVALID_TICK_SIZE_POLICY_XPATH, value)
+        self.select_value_from_dropdown_list(ClientsConstants.VALUES_TAB_INVALID_TICK_SIZE_POLICY_XPATH, value)
 
     def get_invalid_tick_size_policy(self):
         return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_INVALID_TICK_SIZE_POLICY_XPATH)
@@ -73,31 +76,31 @@ class ClientsValuesSubWizard(CommonPage):
         return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_EXTERNAL_ORD_ID_FORMAT_XPATH)
 
     def set_booking_inst(self, value):
-        self.set_combobox_value(ClientsConstants.VALUES_TAB_BOOKING_INST_XPATH, value)
+        self.select_value_from_dropdown_list(ClientsConstants.VALUES_TAB_BOOKING_INST_XPATH, value)
 
     def get_booking_inst(self):
         return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_BOOKING_INST_XPATH)
 
     def set_allocation_preference(self, value):
-        self.set_combobox_value(ClientsConstants.VALUES_TAB_ALLOCATION_PREFERENCE_XPATH, value)
+        self.select_value_from_dropdown_list(ClientsConstants.VALUES_TAB_ALLOCATION_PREFERENCE_XPATH, value)
 
     def get_allocation_preference(self):
         return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_ALLOCATION_PREFERENCE_XPATH)
 
     def set_confirmation_service(self, value):
-        self.set_combobox_value(ClientsConstants.VALUES_TAB_CONFIRMATION_SERVICE_XPATH, value)
+        self.select_value_from_dropdown_list(ClientsConstants.VALUES_TAB_CONFIRMATION_SERVICE_XPATH, value)
 
     def get_confirmation_service(self):
         return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_CONFIRMATION_SERVICE_XPATH)
 
     def set_block_approval(self, value):
-        self.set_combobox_value(ClientsConstants.VALUES_TAB_BLOCK_APPROVAL_XPATH, value)
+        self.select_value_from_dropdown_list(ClientsConstants.VALUES_TAB_BLOCK_APPROVAL_XPATH, value)
 
     def get_block_approval(self):
         return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_BLOCK_APPROVAL_XPATH)
 
     def set_rounding_direction(self, value):
-        self.set_combobox_value(ClientsConstants.VALUES_TAB_ROUNDING_DIRECTION_XPATH, value)
+        self.select_value_from_dropdown_list(ClientsConstants.VALUES_TAB_ROUNDING_DIRECTION_XPATH, value)
 
     def get_rounding_direction(self):
         return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_ROUNDING_DIRECTION_XPATH)
@@ -133,34 +136,38 @@ class ClientsValuesSubWizard(CommonPage):
         self.find_by_xpath(ClientsConstants.VALUES_TAB_DISCLOSE_EXEC_XPATH).clear()
 
     def set_allocation_matching_service(self, value):
-        self.set_combobox_value(ClientsConstants.VALUES_TAB_ALLOCATION_MATCHING_SERVICE_XPATH, value)
+        self.select_value_from_dropdown_list(ClientsConstants.VALUES_TAB_ALLOCATION_MATCHING_SERVICE_XPATH, value)
 
     def get_allocation_matching_service(self):
         return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_ALLOCATION_MATCHING_SERVICE_XPATH)
 
     def clear_allocation_matching_service_field(self):
-        self.set_text_by_xpath(ClientsConstants.VALUES_TAB_ALLOCATION_MATCHING_SERVICE_XPATH, "")
+        self.find_by_xpath(ClientsConstants.VALUES_TAB_ALLOCATION_MATCHING_SERVICE_XPATH).click()
+        time.sleep(0.5)
+        self.use_backspace_button_to_element()
+        self.find_by_xpath(ClientsConstants.VALUES_TAB_ALLOCATION_MATCHING_SERVICE_XPATH).click()
 
     def set_external_allocation_matching_service(self, value):
-        self.set_combobox_value(ClientsConstants.VALUES_TAB_EXTERNAL_ALLOCATION_MATCHING_SERVICE_XPATH, value)
+        self.set_multiselect_field_value(ClientsConstants.VALUES_TAB_EXTERNAL_ALLOCATION_MATCHING_SERVICE_XPATH, value)
 
     def get_external_allocation_matching_service(self):
         return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_EXTERNAL_ALLOCATION_MATCHING_SERVICE_XPATH)
 
     def is_external_allocation_matching_service_field_enable(self):
-        return self.is_field_enabled(ClientsConstants.VALUES_TAB_EXTERNAL_ALLOCATION_MATCHING_SERVICE_XPATH)
+        return 'disabled' not in self.find_by_xpath(ClientsConstants.VALUES_TAB_EXTERNAL_ALLOCATION_MATCHING_SERVICE_XPATH)\
+            .get_attribute('class')
 
     def click_on_manage_external_allocation_matching_service(self):
         self.find_by_xpath(ClientsConstants.VALUES_TAB_MANAGE_EXTERNAL_ALLOCATION_MATCHING_SERVICE_BUTTON_XPATH).click()
 
     def set_give_up_service(self, value):
-        self.set_combobox_value(ClientsConstants.VALUES_TAB_GIVE_UP_SERVICE, value)
+        self.select_value_from_dropdown_list(ClientsConstants.VALUES_TAB_GIVE_UP_SERVICE, value)
 
     def get_give_up_service(self):
         return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_GIVE_UP_SERVICE)
 
     def get_all_give_up_service_from_drop_menu(self):
-        self.set_text_by_xpath(ClientsConstants.VALUES_TAB_GIVE_UP_SERVICE, "")
+        self.find_by_xpath(ClientsConstants.VALUES_TAB_GIVE_UP_SERVICE).click()
         time.sleep(1)
         return self.get_all_items_from_drop_down(ClientsConstants.DROP_DOWN_MENU_XPATH)
 
@@ -192,7 +199,7 @@ class ClientsValuesSubWizard(CommonPage):
         self.set_text_by_xpath(ClientsConstants.VALUES_TAB_DEFAULT_ACCOUNT_XPATH, "")
 
     def set_order_attribute(self, name):
-        self.set_combobox_value(ClientsConstants.VALUES_TAB_ORDER_ATTRIBUTE, name)
+        self.select_value_from_dropdown_list(ClientsConstants.VALUES_TAB_ORDER_ATTRIBUTE, name)
 
     def get_order_attribute(self):
         return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_ORDER_ATTRIBUTE)

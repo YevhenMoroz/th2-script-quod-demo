@@ -30,7 +30,6 @@ class QAP_T7728(TestCase):
         self.fix_verifier_buy = FixVerifier(self.fix_env1.buy_side, self.test_id)
         # endregion
 
-        #TODO restapi wrapper for venue/listing commisions set up
         # region listing parameters
         self.cost_per_trade = 0
         self.comm_per_unit = 12
@@ -45,7 +44,7 @@ class QAP_T7728(TestCase):
         self.qty = 1_000_000
         self.price = 70
         self.price_ask = 40
-        self.price_bid = 28
+        self.price_bid = 30
         self.qty_bid = self.qty_ask = 1_000_000
         self.visibility = 1
         self.imbalance_tolerance = 0
@@ -68,7 +67,7 @@ class QAP_T7728(TestCase):
         # endregion
 
         # region instrument
-        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_8")
+        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_36")
         # endregion
 
         # region Direction
@@ -77,9 +76,9 @@ class QAP_T7728(TestCase):
         # endregion
 
         # region venue param
-        self.s_lit = self.data_set.get_listing_id_by_name("listing_qdl_1")
-        self.ex_destination_dark = self.data_set.get_mic_by_name("mic_14")
-        self.account = self.data_set.get_account_by_name("account_20")
+        self.s_lit = self.data_set.get_listing_id_by_name("listing_53")
+        self.ex_destination_dark = self.data_set.get_mic_by_name("mic_44")
+        self.account = self.data_set.get_account_by_name("account_25")
         self.client = self.data_set.get_client_by_name("client_2")
         # endregion
 
@@ -128,11 +127,9 @@ class QAP_T7728(TestCase):
         self.fix_verifier_sell.check_fix_message(self.litdark_order, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
         pending_litdark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.litdark_order, self.gateway_side_sell, self.status_pending)
-        pending_litdark_order_params.remove_parameter('NoParty')
         self.fix_verifier_sell.check_fix_message(pending_litdark_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew')
 
         new_litdark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.litdark_order, self.gateway_side_sell, self.status_new)
-        new_litdark_order_params.remove_parameter('NoParty')
         self.fix_verifier_sell.check_fix_message(new_litdark_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
 
@@ -157,7 +154,6 @@ class QAP_T7728(TestCase):
 
         # region check parent order filled
         fill_litdark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.litdark_order, self.gateway_side_sell, self.status_fill)
-        fill_litdark_order_params.change_parameters(dict(ReplyReceivedTime='*', TradeReportingIndicator='*')).remove_parameters(['IClOrdIdAO', 'ShortCode', 'ChildOrderID'])
         self.fix_verifier_sell.check_fix_message(fill_litdark_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport Filled')
         # endregion
 

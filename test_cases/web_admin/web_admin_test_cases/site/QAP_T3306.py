@@ -36,6 +36,7 @@ class QAP_T3306(CommonTestCase):
 
         values_tab = InstitutionsValuesSubWizard(self.web_driver_container)
         values_tab.click_at_cross_currency_settlement_checkbox()
+        time.sleep(1)
         values_tab.set_cash_account_currency_rate_source(self.cash_account_currency_rate_source[0])
         values_tab.set_cross_currency_hair_cut(self.cross_currency_hair_cut[0])
         values_tab.set_institution_name(self.name)

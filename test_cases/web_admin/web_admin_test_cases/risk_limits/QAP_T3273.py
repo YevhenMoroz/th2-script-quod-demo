@@ -20,7 +20,7 @@ class QAP_T3273(CommonTestCase):
         self.password = self.data_set.get_password("password_1")
 
         self.account_dimensions = ["Accounts", "Clients"]
-        self.account_field_options = ["Select All", "De-Select All"]
+        self.pattern = ["account", "client"]
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -36,13 +36,15 @@ class QAP_T3273(CommonTestCase):
             main_page.click_on_new_button()
             dimensions_tab = DimensionsTab(self.web_driver_container)
             dimensions_tab.set_accounts_dimension(self.account_dimensions[0])
-            dimensions_tab.set_accounts([self.account_field_options[0]])
+            dimensions_tab.select_all_accounts_by_pattern([self.pattern[0]])
+            time.sleep(2)
             selected_accounts = dimensions_tab.get_accounts().split(",")
+            time.sleep(2)
             excepted_result = dimensions_tab.get_all_accounts_from_drop_menu()
 
-            self.verify("All Accounts has been selected", len(excepted_result)-2, len(selected_accounts))
+            self.verify("All Accounts has been selected", len(excepted_result), len(selected_accounts))
 
-            dimensions_tab.set_accounts([self.account_field_options[1]])
+            dimensions_tab.select_all_accounts_by_pattern()
             time.sleep(1)
             selected_accounts = dimensions_tab.get_accounts().split(",")
             time.sleep(2)
@@ -50,15 +52,16 @@ class QAP_T3273(CommonTestCase):
             self.verify("All Accounts has been deselected", True, 1 == len(selected_accounts))
 
             dimensions_tab.set_accounts_dimension(self.account_dimensions[1])
-            dimensions_tab.set_clients([self.account_field_options[0]])
+            time.sleep(2)
+            dimensions_tab.select_all_clients_by_pattern([self.pattern[1]])
             time.sleep(1)
             selected_accounts = dimensions_tab.get_clients().split(",")
             time.sleep(2)
             excepted_result = dimensions_tab.get_all_clients_from_drop_menu()
 
-            self.verify("All Clients has been selected", len(excepted_result) - 2, len(selected_accounts))
+            self.verify("All Clients has been selected", len(excepted_result), len(selected_accounts))
 
-            dimensions_tab.set_clients([self.account_field_options[1]])
+            dimensions_tab.select_all_clients_by_pattern()
             time.sleep(1)
             selected_accounts = dimensions_tab.get_clients().split(",")
             time.sleep(2)

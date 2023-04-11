@@ -173,9 +173,6 @@ class QAP_T7471(TestCase):
             {'PartyRole': "*",
              'PartyID': "*",
              'PartyIDSource': "*"},
-            {'PartyRole': "*",
-             'PartyID': "*",
-             'PartyIDSource': "*"}
         ]
         self.alloc_report.add_tag(
             {"NoParty": {"NoParty": parties}, "RootCommTypeClCommBasis": "*", "tag5120": "*",

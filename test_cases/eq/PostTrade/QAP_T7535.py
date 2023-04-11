@@ -139,8 +139,8 @@ class QAP_T7535(TestCase):
             "AllocQty": self.qty,
             "AvgPx": new_avg_px,
             "InstrID": self.instr_id})
-        responses = self.java_api_manager.send_message_and_receive_response(self.confirmation_request)
-        print_message('Allocate block', responses)
+        resp = self.java_api_manager.send_message_and_receive_response(self.confirmation_request)
+        print(resp)
         allocation_report = \
             self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
                 JavaApiFields.AllocationReportBlock.value]

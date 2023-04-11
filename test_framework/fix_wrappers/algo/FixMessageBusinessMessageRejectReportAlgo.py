@@ -18,3 +18,14 @@ class FixMessageBusinessMessageRejectReportAlgo(FixMessageBusinessMessageRejectR
         )
         super().change_parameters(temp)
         return self
+
+    def set_params_for_business_message_reject_kepler(self):
+        temp = dict()
+        temp.update(
+            RefSeqNum='*',
+            Text='*',
+            RefMsgType='G',
+            BusinessRejectReason='5',
+        )
+        super().change_parameters(temp)
+        return self

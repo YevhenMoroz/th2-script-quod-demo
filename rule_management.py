@@ -26,7 +26,7 @@ from th2_grpc_sim_fix_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRR
     TemplateOrderCancelRequestWithQty, TemplateNewOrdSingleRQFRejected, TemplateNewOrdSingleExecutionReportOnlyPending, \
     TemplateExternalExecutionReport, TemplateNewOrdSingleExecutionReportTradeByOrdQtyRBCustom, \
     TemplateNOSExecutionReportTradeWithTradeDateFIXStandard, TemplateNewOrdSingleIOCTradeOnFullQty, \
-    TemplateNewOrdSingleExecutionReportDoneForDay, TemplateNewOrdSingleIOCTradeByOrderQty, TemplateFXOrderReject
+    TemplateNewOrdSingleExecutionReportDoneForDay, TemplateNewOrdSingleIOCTradeByOrderQty, TemplateFXOrderReject, TemplateNewOrdSingleTradeOnFullQty, TemplateNewOrdSingleExecutionReportAll, TemplateNewOrdSingleExecutionReportIOCAll, TemplateMarketDataRequestWithTimeout
 
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
@@ -559,12 +559,13 @@ class RuleManager:
                                                       venue=venue))
 
     def add_OrderCancelRequestRFQExecutionReport(self, session: str, account: str, ex_destination: str,
-                                                 acceptCancel: bool):
+                                                 acceptCancel: bool, delay: int = 0):
         return self.sim.createOrderCancelRequestRFQExecutionReport(
             request=TemplateOrderCancelRFQRequest(connection_id=ConnectionID(session_alias=session),
                                                   account=account,
                                                   exdestination=ex_destination,
-                                                  acceptCancel=acceptCancel
+                                                  acceptCancel=acceptCancel,
+                                                  delay=delay
                                                   ))
 
     def add_NewOrdSingleExecutionReportEliminateFixStandard(self, session: str, account: str, ex_destination: str,
@@ -661,6 +662,33 @@ class RuleManager:
                                             delay=delay
                                             ))
 
+    def add_NewOrdSingleExecutionReportTradeOnFullQty(self, session: str, account: str, venue: str, delay: int = 0):
+        return self.sim.createNewOrdSingleTradeOnFullQty(
+            request=TemplateNewOrdSingleTradeOnFullQty(connection_id=ConnectionID(session_alias=session),
+                                                             account=account,
+                                                             venue=venue,
+                                                             delay=delay))
+
+    def add_NewOrdSingleExecutionReportAll(self, session: str, account: str, venue: str):
+        return self.sim.createNewOrdSingleExecutionReportAll(
+            request=TemplateNewOrdSingleExecutionReportAll(connection_id=ConnectionID(session_alias=session),
+                                                       account=account,
+                                                       venue=venue))
+
+    def add_NewOrdSingleExecutionReportIOCAll(self, session: str, account: str, venue: str, delay: int = 0):
+        return self.sim.createNewOrdSingleExecutionReportIOCAll(
+            request=TemplateNewOrdSingleExecutionReportIOCAll(connection_id=ConnectionID(session_alias=session),
+                                                       account=account,
+                                                       venue=venue,
+                                                       delay=delay))
+
+    def add_MarketDataRequestWithTimeout(self, session: str, symbols: list):
+        return self.sim.createMarketDataRequestWithTimeout(
+            request=TemplateMarketDataRequestWithTimeout(connection_id=ConnectionID(session_alias=session),
+                                            symbols=symbols
+                                            ))
+
+
 
 if __name__ == '__main__':
     rule_manager = RuleManager()
@@ -670,3 +698,4 @@ if __name__ == '__main__':
     # print("_________________________")
     # rule_manager_eq.print_active_rules()
     Stubs.factory.close()
+

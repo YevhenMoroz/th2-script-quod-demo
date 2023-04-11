@@ -8,6 +8,7 @@ from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
 from test_framework.web_admin_core.pages.middle_office.fees.fees_page import FeesPage
+from test_framework.web_admin_core.pages.middle_office.fees.fees_wizard import FeesWizard
 from test_framework.web_admin_core.pages.middle_office.fees.fees_values_sub_wizard import FeesValuesSubWizard
 from test_framework.web_admin_core.pages.middle_office.fees.fees_exec_fee_profile_sub_wizard \
     import FeesExecFeeProfileSubWizard
@@ -61,9 +62,9 @@ class QAP_T8848(CommonTestCase):
             commission_profile_points.set_base_value(self.base_values)
             commission_profile_points.click_on_checkmark()
             exec_fee_profile.click_on_checkmark()
-
+            wizard = FeesWizard(self.web_driver_container)
             self.verify(f"Commission Profiles not save with Comm Type = {comm_type}", True,
-                        common_act.is_error_message_displayed())
+                        wizard.is_footer_error_warning_displayed())
 
             exec_fee_profile.set_comm_type(self.comm_type)
             time.sleep(0.5)

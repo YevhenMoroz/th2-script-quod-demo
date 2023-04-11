@@ -24,7 +24,7 @@ class QAP_T3932(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.user_id = "QAP2259"
+        self.user_id = "QAP-T3932"
         self.venue = self.data_set.get_venue_by_name("venue_1")
         self.venue_trader_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.user_ext_id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))

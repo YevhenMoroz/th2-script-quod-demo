@@ -69,10 +69,10 @@ class QAP_T3296(CommonTestCase):
                 translation_tab_listing.click_on_checkmark()
 
             translation_tab_instrument = TranslationTab.InstrumentTable(self.web_driver_container)
-            for i in range(len(self.listing_languages)):
+            for i in range(len(self.instrument_languages)):
                 translation_tab_instrument.click_on_plus()
-                translation_tab_instrument.set_language(self.listing_languages[i])
-                translation_tab_instrument.set_description(self.listing_description[i])
+                translation_tab_instrument.set_language(self.instrument_languages[i])
+                translation_tab_instrument.set_description(self.instrument_description[i])
                 translation_tab_instrument.click_on_checkmark()
 
             attachment_tab = ListingsAttachmentSubWizard(self.web_driver_container)
@@ -88,7 +88,7 @@ class QAP_T3296(CommonTestCase):
             expected_result_listing = [a+": "+str(b) for a, b in zip(self.listing_languages, [True for _ in range(3)])]
             saved_listing_languages = []
             for i in range(len(self.listing_languages)):
-                translation_tab_listing.set_language(self.listing_languages[i])
+                translation_tab_listing.set_language_filter(self.listing_languages[i])
                 time.sleep(0.5)
                 if translation_tab_listing.is_searched_listing_entity_displayed(self.listing_languages[i]):
                     saved_listing_languages.append(self.listing_languages[i]+": True")
@@ -96,10 +96,10 @@ class QAP_T3296(CommonTestCase):
                     saved_listing_languages.append(self.listing_languages[i] + ": False")
             self.verify("Listing entities saved and displayed", expected_result_listing, saved_listing_languages)
 
-            expected_result_instrument = [a+": "+str(b) for a, b in zip(self.listing_languages, [True for _ in range(3)])]
+            expected_result_instrument = [a+": "+str(b) for a, b in zip(self.instrument_languages, [True for _ in range(3)])]
             saved_instrument_languages = []
             for i in range(len(self.instrument_languages)):
-                translation_tab_instrument.set_language(self.instrument_languages[i])
+                translation_tab_instrument.set_language_filter(self.instrument_languages[i])
                 time.sleep(0.5)
                 if translation_tab_instrument.is_searched_instrument_entity_displayed(self.instrument_languages[i]):
                     saved_instrument_languages.append(self.instrument_languages[i] + ": True")
@@ -108,14 +108,14 @@ class QAP_T3296(CommonTestCase):
             self.verify("Instrument languages and description save correct", expected_result_instrument,
                         saved_instrument_languages)
 
-            translation_tab_listing.set_language(self.listing_languages[0])
+            translation_tab_listing.set_language_filter(self.listing_languages[0])
             time.sleep(0.5)
             translation_tab_listing.click_on_delete()
 
-            translation_tab_instrument.set_language(self.instrument_languages[0])
+            translation_tab_instrument.set_language_filter(self.instrument_languages[0])
             time.sleep(0.5)
             translation_tab_instrument.click_on_delete()
-            translation_tab_instrument.set_language(self.instrument_languages[1])
+            translation_tab_instrument.set_language_filter(self.instrument_languages[1])
             time.sleep(0.5)
             translation_tab_instrument.click_on_delete()
             wizard.click_on_save_changes()
@@ -124,16 +124,16 @@ class QAP_T3296(CommonTestCase):
             page.click_on_more_actions()
             page.click_on_edit()
 
-            translation_tab_listing.set_language(self.listing_languages[0])
+            translation_tab_listing.set_language_filter(self.listing_languages[0])
             time.sleep(0.5)
             self.verify(f"Listing {self.listing_languages[0]} language deleted", False,
                         translation_tab_listing.is_searched_listing_entity_displayed(self.listing_languages[0]))
 
-            translation_tab_instrument.set_language(self.instrument_languages[0])
+            translation_tab_instrument.set_language_filter(self.instrument_languages[0])
             time.sleep(0.5)
             self.verify(f"Listing {self.instrument_languages[0]} language deleted", False,
                         translation_tab_instrument.is_searched_instrument_entity_displayed(self.instrument_languages[0]))
-            translation_tab_instrument.set_language(self.instrument_languages[1])
+            translation_tab_instrument.set_language_filter(self.instrument_languages[1])
             time.sleep(0.5)
             self.verify(f"Listing {self.listing_languages[1]} language deleted", False,
                         translation_tab_instrument.is_searched_instrument_entity_displayed(self.instrument_languages[1]))
