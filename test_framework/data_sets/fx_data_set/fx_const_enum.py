@@ -356,5 +356,6 @@ class FXListings(Enum):
     gbp_cad_wk1 = "506403877"
     gbp_dkk_spo = "506403957"
     usd_zar_spo = "506406757"
+    eur_gbp_spo = "506403285"
 
     #TODO add more listings
