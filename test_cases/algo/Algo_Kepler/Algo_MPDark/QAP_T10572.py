@@ -99,7 +99,8 @@ class QAP_T10572(TestCase):
         self.default_config_value = self.ssh_client.get_and_update_file(self.config_file, {self.xpath: self.new_config_value})
         # endregion
 
-        self.pre_filter = self.data_set.get_pre_filter("pre_filer_equal_D")
+        self.pre_filter_1 = self.data_set.get_pre_filter("pre_filer_equal_D")
+        self.pre_filter_2 = self.data_set.get_pre_filter("pre_filer_equal_ER_reject")
         self.rule_list = []
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -171,8 +172,8 @@ class QAP_T10572(TestCase):
         # endregion
 
         # region Check all childs on the venue DARKPOOL UK
-        self.fix_verifier_buy.check_fix_message_sequence([self.dma_1_chix_order, self.dma_2_chix_order, self.dma_3_chix_order], [self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child], self.FromQuod, pre_filter=self.pre_filter)
-        self.fix_verifier_buy.check_fix_message_sequence([er_reject_dma_1_chix_order_params, er_reject_dma_2_chix_order_params, er_reject_dma_3_chix_order_params], [self.key_params_ER_child, self.key_params_ER_child, self.key_params_ER_child], self.ToQuod, pre_filter=None)
+        self.fix_verifier_buy.check_fix_message_sequence([self.dma_1_chix_order, self.dma_2_chix_order, self.dma_3_chix_order], [self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child], self.FromQuod, pre_filter=self.pre_filter_1)
+        self.fix_verifier_buy.check_fix_message_sequence([er_reject_dma_1_chix_order_params, er_reject_dma_2_chix_order_params, er_reject_dma_3_chix_order_params], [self.key_params_ER_child, self.key_params_ER_child, self.key_params_ER_child], self.ToQuod, pre_filter=self.pre_filter_2)
         # endregion
 
         # region Check child DMA order on venue BATS DARKPOOL UK
