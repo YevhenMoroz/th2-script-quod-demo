@@ -76,7 +76,7 @@ class QAP_T8910(TestCase):
                                                                                                   int(price))
             self.java_api_manager.send_message_and_receive_response(self.order_submit)
             order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value). \
-                get_parameters()[JavaApiFields.OrdReplyBlock.value]
+                get_parameters()[JavaApiFields.OrdNotificationBlock.value]
             expected_message = f'11662 Current day ({today_date}) is not a trading day / Current day ({today_date}) is not a trading day'
             self.java_api_manager.compare_values(
                 {JavaApiFields.OrdStatus.value: OrderReplyConst.OrdStatus_REJ.value,
