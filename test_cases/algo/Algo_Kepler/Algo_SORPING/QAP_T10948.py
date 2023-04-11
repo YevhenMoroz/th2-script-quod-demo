@@ -16,6 +16,7 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
+from test_framework.ssh_wrappers.ssh_client import SshClient
 
 
 class QAP_T10948(TestCase):
@@ -49,10 +50,10 @@ class QAP_T10948(TestCase):
         self.tif_gtc = constants.TimeInForce.GoodTillCancel.value
         self.algopolicy = constants.ClientAlgoPolicy.qa_sorping_9.value
         self.sell = constants.OrderSide.Sell.value
-        self.delay_for_dfd = 360000                                     # 6 minutes, should be later than the ClosingTime
+        self.delay_for_dfd = 21000
 
         utc = datetime.utcnow()
-        self.closing_time = (utc + timedelta(minutes=5)).strftime("%H:%M:%S")
+        self.closing_time = (utc + timedelta(minutes=3, seconds=20)).strftime("%H:%M:%S")
 
         # endregion
 
@@ -98,12 +99,23 @@ class QAP_T10948(TestCase):
         self.key_params_ER_eliminate_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_cancel_reject_child")
         # endregion
 
+        # region SSH
+        self.config_file = "client_sats.xml"
+        self.xpath = ".//mktData/closingTime"
+        self.new_config_value = self.closing_time
+        self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
+        self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user, self.ssh_client_env.password, self.ssh_client_env.su_user, self.ssh_client_env.su_password)
+        self.default_config_value = self.ssh_client.get_and_update_file(self.config_file, {self.xpath: self.new_config_value})
+        # endregion
+
         self.rule_list = []
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # TODO Need to change config ClosingTime, maybe need to recalculate the timing
-        # For manual executing use the timing from the QAP-T4959. If the ClosingTime = 09:00:00 -> send order in 08:59:50
+        # region precondition: Prepare SATS configuration
+        self.ssh_client.send_command("qrestart SORS")
+        time.sleep(180)
+        # endregion
 
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
@@ -214,7 +226,7 @@ class QAP_T10948(TestCase):
         self.fix_verifier_buy.check_fix_message(er_new_dma_qdl8_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA order on primary venue')
         # endregion
 
-        time.sleep(350)
+        time.sleep(5)
 
         # region Set up CLO phase
         market_data_snap_shot_qdl8 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_qdl8, self.fix_env1.feed_handler)
@@ -222,7 +234,7 @@ class QAP_T10948(TestCase):
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl8)
         # endregion
 
-        time.sleep(2)
+        time.sleep(15)
 
         # region check eliminate with DFD second dma child order
         er_eliminate_with_dfd_dma_qdl8_order = FixMessageExecutionReportAlgo().set_params_for_nos_dfd_rule(self.dma_qdl8_order)
@@ -256,6 +268,13 @@ class QAP_T10948(TestCase):
         market_data_snap_shot_qdl8 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_qdl8, self.fix_env1.feed_handler)
         market_data_snap_shot_qdl8.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.px_for_incr, MDEntrySize=self.qty_for_incr)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl8)
+        # endregion
+
+        # region config reset
+        self.ssh_client.get_and_update_file(self.config_file, {self.xpath: self.default_config_value})
+        self.ssh_client.send_command("qrestart SORS")
+        time.sleep(180)
+        self.ssh_client.close()
         # endregion
 
         rule_manager = RuleManager(Simulators.algo)
