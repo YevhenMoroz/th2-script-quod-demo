@@ -80,7 +80,7 @@ class QAP_T8910(TestCase):
             expected_message = f'11662 Current day ({today_date}) is not a trading day / Current day ({today_date}) is not a trading day'
             self.java_api_manager.compare_values(
                 {JavaApiFields.OrdStatus.value: OrderReplyConst.OrdStatus_REJ.value,
-                 JavaApiFields.FreeNotes: expected_message},
+                 JavaApiFields.FreeNotes.value: expected_message},
                 order_reply, f'Verifying that order created and has properly {JavaApiFields.EffectiveDate.value}')
 
         except Exception:
