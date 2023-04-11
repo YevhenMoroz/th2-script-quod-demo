@@ -154,6 +154,7 @@ class QtyPercentageProfile(Enum):
 
 class JavaApiFields(Enum):
     ExecCommission = 'ExecCommission'
+    AllocationInstructionBlock = 'AllocationInstructionBlock'
     TransExecStatus = 'TransExecStatus'
     TransStatus = 'TransStatus'
     ExecutionReportBlock = 'ExecutionReportBlock'
@@ -345,6 +346,7 @@ class JavaApiFields(Enum):
     SettlLocationID = 'SettlLocationID'
     SettlementModelID = 'SettlementModelID'
     Qty = 'Qty'
+    TradeDate = 'TradeDate'
     Side = 'Side'
     AllocationInstructionQtyList = 'AllocationInstructionQtyList'
     AllocationInstructionQtyBlock = 'AllocationInstructionQtyBlock'
