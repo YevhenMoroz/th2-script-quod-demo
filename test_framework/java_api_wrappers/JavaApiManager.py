@@ -10,7 +10,7 @@ from custom import basic_custom_actions as bca
 from custom.verifier import VerificationMethod, Verifier
 from stubs import Stubs
 from test_framework.data_sets.message_types import ORSMessageType, CSMessageType, ESMessageType, PKSMessageType, \
-    MDAMessageType, AQSMessageType
+    MDAMessageType, AQSMessageType, QSMessageType
 from test_framework.java_api_wrappers.JavaApiMessage import JavaApiMessage
 
 
@@ -434,6 +434,12 @@ class JavaApiManager:
                     parent_event_id=self.get_case_id()))
         elif message.get_message_type() == PKSMessageType.RequestForPositions.value:
             response = self.act.submitRequestForPosition(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict, response_time=response_time))
+        elif message.get_message_type() == ORSMessageType.FixNewOrderList.value:
+            response = self.act.submitFixNewOrderList(
                 request=ActJavaSubmitMessageRequest(
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
