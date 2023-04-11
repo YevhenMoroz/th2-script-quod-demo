@@ -124,5 +124,5 @@ class QAP_T8909(TestCase):
         self.ssh_client.close()
 
     def _get_effective_date(self, cl_ord_id):
-        result = self.db_manager.execute_query(f"SELECT effectivedate FROM ordr WHERE clordid = {cl_ord_id}'")
+        result = self.db_manager.execute_query(f"SELECT effectivedate FROM ordr WHERE clordid = '{cl_ord_id}'")
         return result[0][0]
