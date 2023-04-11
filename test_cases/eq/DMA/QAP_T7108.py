@@ -169,16 +169,16 @@ class QAP_T7108(TestCase):
         confirmation_report = FixMessageConfirmationReportOMS(self.data_set)
         list_of_ignored_fields = ['ConfirmType', 'MatchStatus', 'ConfirmStatus',
                                   'CpctyConfGrp', 'ConfirmID', 'ConfirmTransType',
-                                  'AllocQty', 'AllocAccount', 'AvgPx'
-                                                              'TransactTime', 'Side', 'IndividualAllocID',
+                                  'AllocQty', 'AllocAccount', 'AvgPx',
+                                  'TransactTime', 'Side', 'IndividualAllocID',
                                   'BookID', 'SettlDate', 'AllocID',
                                   'Currency', 'NetMoney', 'NoParty', 'ReportedPx',
-                                  'Instrument', 'GrossTradeAmt'
+                                  'Instrument', 'GrossTradeAmt','OrderAvgPx'
                                   ]
         confirmation_report.change_parameters({'NoOrders': [{
             'ClOrdID': cl_ord_id,
             'OrderID': order_id,
-        }], 'TradeDate': trade_date_new[:10]})
+        }], 'TradeDate': str(trade_date_new[:10]).replace('-', '')})
         self.fix_verifier.check_fix_message_fix_standard(confirmation_report, ['ClOrdID', 'AllocAccount'],
                                                          ignored_fields=list_of_ignored_fields)
         # endregion
