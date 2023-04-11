@@ -281,6 +281,9 @@ Copyright Quod Financial
             <ManualOrderCross>true</ManualOrderCross>
         </counterpartEnrichment>
 		<acceptFreeAllocAccountID>false</acceptFreeAllocAccountID>
+		<delayGTCOrders>false</delayGTCOrders>
+        <delayGTDOrders>false</delayGTDOrders>
+		<delayDayOrders>false</delayDayOrders>
 	</ors>
 
 </quod>
