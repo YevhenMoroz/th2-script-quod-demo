@@ -1,7 +1,7 @@
 from enum import Enum
 
 from custom.tenor_settlement_date import spo, wk1, wk2, wk3, today, tom, wk1_ndf, wk2_ndf, spo_ndf, broken_1, broken_2, \
-    broken_w1w2, broken_w2w3, spo_ndf, spo_java_api, wk1_java_api, wk2_java_api, today_java_api, tom_java_api
+    broken_w1w2, broken_w2w3, broken_w3m1, spo_ndf, spo_java_api, wk1_java_api, wk2_java_api, today_java_api, tom_java_api
 
 
 class FxInstruments(Enum):
@@ -228,6 +228,7 @@ class FxSettleDates(Enum):
     broken_2 = broken_2()
     broken_w1w2 = broken_w1w2()
     broken_w2w3 = broken_w2w3()
+    broken_w3m1 = broken_w3m1()
     # TODO add more settle dates
 
 
@@ -257,6 +258,8 @@ class FxSymbols(Enum):
     symbol_23 = "USD/THB"
     symbol_24 = "USD/TWD"
     symbol_25 = "GBP/DKK"
+    symbol_25 = "USD/DKK"
+    symbol_26 = "AUD/GBP"
 
     symbol_ndf_1 = "USD/PHP"
     symbol_ndf_2 = "EUR/PHP"

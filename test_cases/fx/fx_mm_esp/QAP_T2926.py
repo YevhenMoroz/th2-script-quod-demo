@@ -325,11 +325,11 @@ class QAP_T2926(TestCase):
 
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.account).change_parameter(
             'NoRelatedSymbols', self.no_related_symbols)
-        self.fix_manager_mm.send_message_and_receive_response(self.md_request, self.test_id)
+        response = self.fix_manager_mm.send_message_and_receive_response(self.md_request, self.test_id)
         # endregion
         # region Step 3
 
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"])
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"], response=response[0])
         self.md_snapshot.change_parameter("NoMDEntries", self.no_md_entries)
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])

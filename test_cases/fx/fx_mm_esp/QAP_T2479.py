@@ -50,13 +50,11 @@ class QAP_T2479(TestCase):
     def run_pre_conditions_and_steps(self):
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.client).change_parameter(
             'NoRelatedSymbols', self.no_related_symbols)
-        self.fix_manager_mm.send_message_and_receive_response(self.md_request, self.test_id)
+        response = self.fix_manager_mm.send_message_and_receive_response(self.md_request, self.test_id)
 
-        self.md_snapshot.set_params_for_md_response(self.md_request, ['*', '*', '*'])
+        self.md_snapshot.set_params_for_md_response(self.md_request, ['*', '*', '*'], response=response[0])
         self.md_snapshot.get_parameter("Instrument").update({'MaturityDate': self.maturity_date})
-        self.fix_verifier.check_fix_message(fix_message=self.md_snapshot,
-                                            direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
+        self.fix_verifier.check_fix_message(self.md_snapshot)
 
         self.new_order_single.set_default().change_parameters(
             {"Account": self.client,

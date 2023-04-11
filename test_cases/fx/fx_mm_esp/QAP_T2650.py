@@ -71,8 +71,8 @@ class QAP_T2650(TestCase):
         # region Step 6
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.client_palladium1)
         self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols_1w)
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
-        self.md_snapshot_2.set_params_for_empty_md_response(self.md_request, ["*"])
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        self.md_snapshot_2.set_params_for_empty_md_response(self.md_request, ["*"], response=response[0])
         self.fix_verifier.check_fix_message(self.md_snapshot)
         # endregion
 
