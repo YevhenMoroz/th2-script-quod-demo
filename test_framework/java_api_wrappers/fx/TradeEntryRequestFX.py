@@ -104,6 +104,10 @@ class TradeEntryRequestFX(JavaApiMessage):
 
     def get_ah_ord_id(self, response) -> str:
         return response[-1].get_parameters()["ExecutionReportBlock"]["OrdID"]
+
+    def get_ord_id_from_held(self, response) -> str:
+        return response[-1].get_parameters()["HeldOrderNotifBlock"]["OrdID"]
+
     def get_internal_exec_id(self, response) -> str:
         return response[0].get_parameters()["ExecutionReportBlock"]["ExecID"]
 
