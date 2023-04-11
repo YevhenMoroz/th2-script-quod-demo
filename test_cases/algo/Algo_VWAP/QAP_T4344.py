@@ -24,8 +24,7 @@ from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApi
 
 from test_framework.ssh_wrappers.ssh_client import SshClient
 
-
-class QAP_T4611(TestCase):
+class QAP_T4344(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -46,7 +45,7 @@ class QAP_T4611(TestCase):
         self.price_ask = 20
         self.qty_ask = 2000
 
-        self.price_bid = 19.98
+        self.price_bid = 19.995
         self.qty_bid = 2000
         # endregion
 
@@ -66,8 +65,8 @@ class QAP_T4611(TestCase):
         # endregion
 
         # region Algo params
-        self.would_reference_price = Reference.Mid.value
-        self.would_price_offset = -2
+        self.would_reference_price = Reference.Market.value
+        self.would_price_offset = 0
         # endregion
 
 
@@ -162,6 +161,7 @@ class QAP_T4611(TestCase):
         self.incremental_refresh = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id, self.fix_env1.feed_handler).update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.last_trade_qty).update_value_in_repeating_group('NoMDEntriesIR', 'MDEntryPx', self.last_trade_price)
         self.fix_manager_feed_handler.send_message(fix_message=self.incremental_refresh)
         # endregion
+
 
         # region Send NewOrderSingle (35=D)
         self.case_id_1 = bca.create_event("Create Algo Order", self.test_id)

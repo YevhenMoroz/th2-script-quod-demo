@@ -24,8 +24,7 @@ from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApi
 
 from test_framework.ssh_wrappers.ssh_client import SshClient
 
-
-class QAP_T4611(TestCase):
+class QAP_T4610(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -43,16 +42,17 @@ class QAP_T4611(TestCase):
         # endregion
 
         # region Market data params
-        self.price_ask = 20
+        self.price_ask = 19.995
         self.qty_ask = 2000
 
-        self.price_bid = 19.98
+        self.price_bid = 19.99
         self.qty_bid = 2000
         # endregion
 
         self.last_trade_price = 20
         self.last_trade_qty = 1000
 
+        self.open_px = 20
         self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
         self.historical_volume = 15.0
         self.aggressivity = constants.Aggressivity.Passive.value
@@ -66,8 +66,8 @@ class QAP_T4611(TestCase):
         # endregion
 
         # region Algo params
-        self.would_reference_price = Reference.Mid.value
-        self.would_price_offset = -2
+        self.would_reference_price = Reference.Open.value
+        self.would_price_offset = -1
         # endregion
 
 
@@ -163,6 +163,12 @@ class QAP_T4611(TestCase):
         self.fix_manager_feed_handler.send_message(fix_message=self.incremental_refresh)
         # endregion
 
+        # region send openPX
+        self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send trading phase", self.test_id))
+        self.incremental_refresh = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_open_px().update_MDReqID(self.listing_id, self.fix_env1.feed_handler).update_value_in_repeating_group('NoMDEntriesIR', 'MDEntryPx', self.open_px)
+        self.fix_manager_feed_handler.send_message(fix_message=self.incremental_refresh)
+        # endregion
+
         # region Send NewOrderSingle (35=D)
         self.case_id_1 = bca.create_event("Create Algo Order", self.test_id)
         self.fix_verifier_sell.set_case_id(self.case_id_1)
@@ -172,6 +178,7 @@ class QAP_T4611(TestCase):
         self.vwap_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.ex_destination_1))
         self.vwap_order.update_fields_in_component('QuodFlatParameters', dict(Waves=self.waves, WouldPriceReference=self.would_reference_price, WouldPriceOffset=self.would_price_offset, StartDate2=self.start_date, EndDate2=self.end_date))
 
+        # self.vwap_order.update_fields_in_component('QuodFlatParameters', dict(Waves=self.waves, StartDate2=self.start_date, EndDate2=self.end_date))
         self.vwap_order.update_fields_in_component('QuodFlatParameters', dict(Waves=self.waves, StartDate2=self.start_date, EndDate2=self.end_date, WouldPriceReference=self.would_reference_price, WouldPriceOffset=self.would_price_offset))
 
         self.fix_manager_sell.send_message_and_receive_response(self.vwap_order, self.case_id_1)

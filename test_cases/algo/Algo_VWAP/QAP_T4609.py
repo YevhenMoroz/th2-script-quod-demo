@@ -12,7 +12,7 @@ from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMes
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.data_sets.constants import TradingPhases, Reference
+from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, TradingPhases, Reference
 from test_framework.algo_formulas_manager import AlgoFormulasManager as AFM
 from test_framework.algo_mongo_manager import AlgoMongoManager as AMM
 from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import \
@@ -24,8 +24,7 @@ from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApi
 
 from test_framework.ssh_wrappers.ssh_client import SshClient
 
-
-class QAP_T4611(TestCase):
+class QAP_T4609(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -53,6 +52,7 @@ class QAP_T4611(TestCase):
         self.last_trade_price = 20
         self.last_trade_qty = 1000
 
+        self.closing_px = 20
         self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
         self.historical_volume = 15.0
         self.aggressivity = constants.Aggressivity.Passive.value
@@ -66,8 +66,8 @@ class QAP_T4611(TestCase):
         # endregion
 
         # region Algo params
-        self.would_reference_price = Reference.Mid.value
-        self.would_price_offset = -2
+        self.would_reference_price = Reference.Close.value
+        self.would_price_offset = -1
         # endregion
 
 
@@ -163,6 +163,12 @@ class QAP_T4611(TestCase):
         self.fix_manager_feed_handler.send_message(fix_message=self.incremental_refresh)
         # endregion
 
+        # region send closing_px
+        self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send trading phase", self.test_id))
+        self.incremental_refresh = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_close_px().update_MDReqID(self.listing_id, self.fix_env1.feed_handler).update_value_in_repeating_group('NoMDEntriesIR', 'MDEntryPx', self.closing_px)
+        self.fix_manager_feed_handler.send_message(fix_message=self.incremental_refresh)
+        # endregion
+
         # region Send NewOrderSingle (35=D)
         self.case_id_1 = bca.create_event("Create Algo Order", self.test_id)
         self.fix_verifier_sell.set_case_id(self.case_id_1)
@@ -208,6 +214,10 @@ class QAP_T4611(TestCase):
         # region cancel Order
         self.case_id_cancel = bca.create_event("Check Fill Algo Order", self.test_id)
         self.fix_verifier_sell.set_case_id(self.case_id_cancel)
+        # cancel_request_twap_order = FixMessageOrderCancelRequest(self.twap_order)
+        #
+        # self.fix_manager_sell.send_message_and_receive_response(cancel_request_twap_order, self.case_id_cancel)
+        # self.fix_verifier_sell.check_fix_message(cancel_request_twap_order, direction=ToQuod, message_name='Sell side Cancel Request')
 
         time.sleep(3)
         rule_manager = RuleManager(Simulators.algo)
