@@ -73,7 +73,7 @@ class QAP_T7351(TestCase):
             self.java_api_manager.compare_values({JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value},
                                                  ord_reply,
                                                  f'Verify that order created (step 2)')
-            actually_alloc_account = ord_reply[JavaApiFields.PreTradeAllocationBlock.value][JavaApiFields.PreTradeAllocationList.value][JavaApiFields.PreTradeAllocAccountBlock][JavaApiFields.AllocAccountID.value]
+            actually_alloc_account = ord_reply[JavaApiFields.PreTradeAllocationBlock.value][JavaApiFields.PreTradeAllocationList.value][JavaApiFields.PreTradeAllocAccountBlock][0][JavaApiFields.AllocAccountID.value]
             self.java_api_manager.compare_values({JavaApiFields.AllocAccountID.value: self.alloc_account},
                                                  {JavaApiFields.AllocAccountID.value: actually_alloc_account},
                                                  f'Verify that order has properly {JavaApiFields.AllocAccountID.value} (step 2)')
