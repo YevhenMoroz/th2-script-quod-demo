@@ -160,6 +160,7 @@ class JavaApiFields(Enum):
     ExecutionReportBlock = 'ExecutionReportBlock'
     CounterpartList = "CounterpartList"
     CounterpartBlock = "CounterpartBlock"
+    ClientAccountGroupID = 'ClientAccountGroupID'
     PartyRole = "PartyRole"
     CounterpartID = "CounterpartID"
     OrderNotificationBlock = "OrdNotificationBlock"

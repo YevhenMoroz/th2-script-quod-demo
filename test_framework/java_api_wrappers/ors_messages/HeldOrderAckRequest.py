@@ -8,7 +8,7 @@ class HeldOrderAckRequest(JavaApiMessage):
         super().__init__(message_type=ORSMessageType.HeldOrderAckRequest.value)
         super().change_parameters(parameters)
 
-    def set_default(self, order_id, client) -> None:
+    def set_default(self, order_id, client, account=None):
         base_parameters = {
             'SEND_SUBJECT': 'QUOD.ORS.FE',
             'REPLY_SUBJECT': 'QUOD.FE.ORS',
@@ -20,4 +20,12 @@ class HeldOrderAckRequest(JavaApiMessage):
             }
         }
         super().change_parameters(base_parameters)
+        if account:
+            super().update_fields_in_component('HeldOrderAckBlock', {
+                'PreTradeAllocationBlock': {
+                    'PreTradeAllocationList': {'PreTradeAllocAccountBlock': [
+                        {
+                            'AllocAccountID': account,
+                            'AllocQty': '100'}]}}
+            })
         return self
