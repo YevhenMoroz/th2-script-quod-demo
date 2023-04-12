@@ -803,7 +803,8 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'ShortCode': '17536',
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ChildOrderID': '*',
-            'misc5': '*'
+            'misc5': '*',
+            'NoTradingSessions': '*'
         }
         super().change_parameters(base_parameters)
         return self
@@ -922,6 +923,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ShortCode': '17536',
             'misc5': '*',
+            'NoTradingSessions': '*'
         }
         super().change_parameters(base_parameters)
         return self
@@ -966,6 +968,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'OrderCapacity': 'A',
             'ChildOrderID': '*',
             'misc5': '*',
+            'NoTradingSessions': '*'
         }
         super().change_parameters(base_parameters)
         return self
@@ -1022,6 +1025,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'ShortCode': '17536',
             'IClOrdIdTO': '19864',
             'misc5': '*',
+            'NoTradingSessions': '*'
         }
         super().change_parameters(base_parameters)
         return self
@@ -1075,6 +1079,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'OrderCapacity': 'A',
             'ChildOrderID': '*',
             'misc5': '*',
+            'NoTradingSessions': '*',
             'NoParty': [
                 {
                     'PartyID': 'TestINITIATOR-UTI',
@@ -1138,6 +1143,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ShortCode': '17536',
             'misc5': '*',
+            'NoTradingSessions': '*',
             'NoParty': [
                 {
                     'PartyID': 'TestINITIATOR-UTI',
@@ -1191,6 +1197,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'OrderCapacity': 'A',
             'ChildOrderID': '*',
             'misc5': '*',
+            'NoTradingSessions': '*'
         }
         super().change_parameters(base_parameters)
         return self
@@ -1239,6 +1246,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'ShortCode': '17536',
             'IClOrdIdTO': '19864',
             'misc5': '*',
+            'NoTradingSessions': '*'
         }
         super().change_parameters(base_parameters)
         return self
@@ -1284,6 +1292,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ShortCode': '17536',
             'misc5': '*',
+            'NoTradingSessions': '*'
         }
         super().change_parameters(base_parameters)
         return self
@@ -1329,6 +1338,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ShortCode': '17536',
             'misc5': '*',
+            'NoTradingSessions': '*'
         }
         super().change_parameters(base_parameters)
         return self
@@ -1384,6 +1394,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'ShortCode': '17536',
             'NoParty': '*',
             'misc5': '*',
+            'NoTradingSessions': '*'
         }
         super().change_parameters(base_parameters)
         return self
@@ -1426,6 +1437,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'OrderCapacity': 'A',
             'ChildOrderID': '*',
             'misc5': '*',
+            'NoTradingSessions': '*'
         }
         super().change_parameters(base_parameters)
         return self
