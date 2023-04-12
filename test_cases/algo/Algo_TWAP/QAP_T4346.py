@@ -23,7 +23,7 @@ from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApi
 from test_framework.ssh_wrappers.ssh_client import SshClient
 
 
-class QAP_T4664(TestCase):
+class QAP_T4346(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -42,7 +42,7 @@ class QAP_T4664(TestCase):
 
         # region Market data params
         self.price_ask = 20
-        self.qty_ask = 2000
+        self.qty_ask = 3000
 
         self.price_bid = 19.98
         self.qty_bid = 2000
@@ -63,10 +63,9 @@ class QAP_T4664(TestCase):
         # endregion
 
         # region Algo params
-        self.would_reference_price = Reference.Mid.value
-        self.would_price_offset = -2
+        self.would_reference_price = Reference.Market.value
+        self.would_price_offset = 0
         # endregion
-
 
         # region Venue params
         self.instrument = self.data_set.get_fix_instrument_by_name("instrument_1")
