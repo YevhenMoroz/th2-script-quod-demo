@@ -142,4 +142,5 @@ class QAP_T10685(TestCase):
         self.ssh_client.send_command("qrestart all")
         time.sleep(250)
         os.remove("temp.xml")
+        self.db_manager.close_connection()
         self.ssh_client.close()
