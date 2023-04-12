@@ -34,7 +34,7 @@ class QAP_T8058(TestCase):
         self.settle_type_spot = self.data_set.get_settle_type_by_name("spot")
         self.settle_date_spot = self.data_set.get_settle_date_by_name("spot")
         self.settle_date_fwd = self.data_set.get_settle_date_by_name("wk1")
-        self.usd_dkk = self.data_set.get_symbol_by_name("symbol_25")
+        self.usd_dkk = self.data_set.get_symbol_by_name("symbol_27")
         self.sec_type_swap = self.data_set.get_security_type_by_name("fx_swap")
         self.sec_type_spot = self.data_set.get_security_type_by_name("fx_spot")
         self.hsbc = "HSBC"
