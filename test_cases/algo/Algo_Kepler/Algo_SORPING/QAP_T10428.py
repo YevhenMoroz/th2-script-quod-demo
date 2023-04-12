@@ -173,10 +173,10 @@ class QAP_T10428(TestCase):
 
         self.dma_1_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_Kepler_params()
         self.dma_1_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit1, OrderQty=self.qty, Price=self.price))
-        self.fix_verifier_buy.check_fix_message(self.dma_1_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Passive Child DMA 1 order')
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_1_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Passive Child DMA 1 order')
 
         er_reject_dma_1_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy, self.status_reject)
-        self.fix_verifier_buy.check_fix_message(er_reject_dma_1_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Reject Passive child DMA 1 order")
+        self.fix_verifier_buy.check_fix_message_kepler(er_reject_dma_1_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Reject Passive child DMA 1 order")
         # endregion
 
         time.sleep(3)

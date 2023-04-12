@@ -133,7 +133,7 @@ class QAP_T9274(TestCase):
 
         self.dma_1_qdl1_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_Kepler_params()
         self.dma_1_qdl1_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit1, OrderQty=self.qty, Price=self.price))
-        self.fix_verifier_buy.check_fix_message(self.dma_1_qdl1_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_1_qdl1_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
         er_eliminate_dma_1_qdl1_order_params = FixMessageExecutionReportAlgo().set_params_for_nos_eliminate_rule(self.dma_1_qdl1_order)
         # endregion
@@ -141,7 +141,7 @@ class QAP_T9274(TestCase):
         # region Check 2nd child DMA order on the QUODLIT1
         self.dma_2_qdl1_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_Kepler_params()
         self.dma_2_qdl1_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit1, OrderQty=self.qty, Price=self.price))
-        self.fix_verifier_buy.check_fix_message(self.dma_2_qdl1_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_2_qdl1_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
         er_eliminate_dma_2_qdl1_order_params = FixMessageExecutionReportAlgo().set_params_for_nos_eliminate_rule(self.dma_2_qdl1_order)
         # endregion
@@ -149,7 +149,7 @@ class QAP_T9274(TestCase):
         # region Check 3rd child DMA order on the QUODLIT1
         self.dma_3_qdl1_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_Kepler_params()
         self.dma_3_qdl1_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit1, OrderQty=self.qty, Price=self.price))
-        self.fix_verifier_buy.check_fix_message(self.dma_3_qdl1_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_3_qdl1_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
         er_eliminate_dma_3_qdl1_order_params = FixMessageExecutionReportAlgo().set_params_for_nos_eliminate_rule(self.dma_3_qdl1_order)
         # endregion
@@ -157,7 +157,7 @@ class QAP_T9274(TestCase):
         # region Check 1st child DMA order on the QUODLIT2
         self.dma_1_qdl2_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_Kepler_params()
         self.dma_1_qdl2_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit2, OrderQty=self.qty, Price=self.price))
-        self.fix_verifier_buy.check_fix_message(self.dma_1_qdl2_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_1_qdl2_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
         er_eliminate_dma_1_qdl2_order_params = FixMessageExecutionReportAlgo().set_params_for_nos_eliminate_rule(self.dma_1_qdl2_order)
         # endregion
@@ -165,7 +165,7 @@ class QAP_T9274(TestCase):
         # region Check 2nd child DMA order on the QUODLIT2
         self.dma_2_qdl2_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_Kepler_params()
         self.dma_2_qdl2_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit2, OrderQty=self.qty, Price=self.price))
-        self.fix_verifier_buy.check_fix_message(self.dma_2_qdl2_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_2_qdl2_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
         er_eliminate_dma_2_qdl2_order_params = FixMessageExecutionReportAlgo().set_params_for_nos_eliminate_rule(self.dma_2_qdl2_order)
         # endregion
@@ -173,7 +173,7 @@ class QAP_T9274(TestCase):
         # region Check 3rd child DMA order on the QUODLIT2
         self.dma_3_qdl2_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_Kepler_params()
         self.dma_3_qdl2_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit2, OrderQty=self.qty, Price=self.price))
-        self.fix_verifier_buy.check_fix_message(self.dma_3_qdl2_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_3_qdl2_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
         er_eliminate_dma_3_qdl2_order_params = FixMessageExecutionReportAlgo().set_params_for_nos_eliminate_rule(self.dma_3_qdl2_order)
         # endregion
