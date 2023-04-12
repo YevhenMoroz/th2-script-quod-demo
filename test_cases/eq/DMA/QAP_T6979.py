@@ -73,17 +73,18 @@ class QAP_T6979(TestCase):
         responses = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_nos)
         response = _get_fix_message(expected_values, responses)
 
-        self.fix_manager.compare_values({expected_values},
-                                        responses, 'Verifying that order is reject (step 1)')
+        self.fix_manager.compare_values(expected_values,
+                                        response, 'Verifying that order is reject (step 1)')
         # endregion
 
         # region step 2: Create DMA order with Account
+        self.fix_new_ord_single.set_default_dma_limit()
         self.fix_new_ord_single.update_fields_in_component(JavaApiFields.NewOrderSingleBlock.value,
                                                            {JavaApiFields.ClientAccountGroupID.value: 'WRONG_CLIENT'})
         self.java_api_manager.send_message_and_receive_response(self.fix_new_ord_single)
         order_notification = \
-        self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameters()[
-            JavaApiFields.OrdNotificationBlock.value]
+            self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameters()[
+                JavaApiFields.OrdNotificationBlock.value]
         self.java_api_manager.compare_values({JavaApiFields.OrdStatus.value: OrderReplyConst.OrdStatus_REJ.value},
                                              order_notification,
                                              'Verifying that FIX Order with 1 tag rejected (step 2)')
