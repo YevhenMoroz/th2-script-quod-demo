@@ -48,10 +48,10 @@ class QAP_T7348(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region precondition:
-        # self.db_manager.execute_query(f"""UPDATE  venue SET  valvenueclientaccountname  = 'Y'
-        #                                     WHERE venueid = 'PARIS'""")
-        # self.ssh_client.send_command("qrestart all")
-        # time.sleep(250)
+        self.db_manager.execute_query(f"""UPDATE  venue SET  valvenueclientaccountname  = 'Y'
+                                            WHERE venueid = 'PARIS'""")
+        self.ssh_client.send_command("qrestart all")
+        time.sleep(250)
         # endregion
 
         # region step 1-2: Create CO order with wrong  NIN (VenueClientAccountGroupName (VenueClientAccountName))
@@ -90,11 +90,11 @@ class QAP_T7348(TestCase):
                                              f'Verify that order has properly {JavaApiFields.AllocAccountID.value} (step 4)')
         # endregion
 
-    # @try_except(test_id=Path(__file__).name[:-3])
-    # def run_post_conditions(self):
-    #     self.db_manager.execute_query(f"""UPDATE  venue SET  valvenueclientaccountname  = 'N'
-    #                                                 WHERE venueid = 'PARIS'""")
-    #     self.ssh_client.send_command("qrestart all")
-    #     time.sleep(250)
-    #     self.db_manager.close_connection()
-    #     self.ssh_client.close()
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.db_manager.execute_query(f"""UPDATE  venue SET  valvenueclientaccountname  = 'N'
+                                                    WHERE venueid = 'PARIS'""")
+        self.ssh_client.send_command("qrestart all")
+        time.sleep(250)
+        self.db_manager.close_connection()
+        self.ssh_client.close()
