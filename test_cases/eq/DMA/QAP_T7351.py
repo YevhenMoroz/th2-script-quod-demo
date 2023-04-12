@@ -51,7 +51,7 @@ class QAP_T7351(TestCase):
         time.sleep(200)
         # endregion
 
-        # region step 1-2: Create DMA order with wrong NIN (VenueClientAccountGroupName (VenueClientAccountName))
+        # region step 1-2: Create DMA order with  NIN (VenueClientAccountGroupName (VenueClientAccountName))
         try:
             self.new_order_single.set_default_dma_limit()
             self.new_order_single.update_fields_in_component(JavaApiFields.NewOrderSingleBlock.value,
