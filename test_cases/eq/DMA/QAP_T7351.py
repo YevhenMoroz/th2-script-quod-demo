@@ -48,7 +48,7 @@ class QAP_T7351(TestCase):
         self.db_manager.execute_query(f"""UPDATE  venue SET  valvenueclientaccountname  = 'Y'
                                             WHERE venueid = 'PARIS'""")
         self.ssh_client.send_command("qrestart all")
-        time.sleep(200)
+        time.sleep(250)
         # endregion
 
         # region step 1-2: Create DMA order with  NIN (VenueClientAccountGroupName (VenueClientAccountName))
@@ -73,7 +73,7 @@ class QAP_T7351(TestCase):
             self.java_api_manager.compare_values({JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value},
                                                  ord_reply,
                                                  f'Verify that order created (step 2)')
-            actually_alloc_account = ord_reply[JavaApiFields.PreTradeAllocationBlock.value][JavaApiFields.PreTradeAllocationList.value][JavaApiFields.PreTradeAllocAccountBlock][0][JavaApiFields.AllocAccountID.value]
+            actually_alloc_account = ord_reply[JavaApiFields.PreTradeAllocationBlock.value][JavaApiFields.PreTradeAllocationList.value][JavaApiFields.PreTradeAllocAccountBlock.value][0][JavaApiFields.AllocAccountID.value]
             self.java_api_manager.compare_values({JavaApiFields.AllocAccountID.value: self.alloc_account},
                                                  {JavaApiFields.AllocAccountID.value: actually_alloc_account},
                                                  f'Verify that order has properly {JavaApiFields.AllocAccountID.value} (step 2)')
@@ -87,6 +87,6 @@ class QAP_T7351(TestCase):
         self.db_manager.execute_query(f"""UPDATE  venue SET  valvenueclientaccountname  = 'N'
                                                     WHERE venueid = 'PARIS'""")
         self.ssh_client.send_command("qrestart all")
-        time.sleep(200)
+        time.sleep(250)
         self.db_manager.close_connection()
         self.ssh_client.close()
