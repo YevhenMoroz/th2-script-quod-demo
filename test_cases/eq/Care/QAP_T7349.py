@@ -52,7 +52,7 @@ class QAP_T7349(TestCase):
         time.sleep(250)
         # endregion
 
-        # region step 1-2-3: Create CO order with  NIN (VenueClientAccountGroupName (VenueClientAccountName))
+        # region step 1: Create CO order with  NIN (VenueClientAccountGroupName (VenueClientAccountName))
         self.new_order_single.set_default_care_limit()
         self.new_order_single.update_fields_in_component(JavaApiFields.NewOrderSingleBlock.value,
                                                          {JavaApiFields.ClientAccountGroupID.value: self.client,
