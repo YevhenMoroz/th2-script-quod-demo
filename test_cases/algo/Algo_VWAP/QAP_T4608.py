@@ -24,8 +24,7 @@ from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApi
 
 from test_framework.ssh_wrappers.ssh_client import SshClient
 
-
-class QAP_T4611(TestCase):
+class QAP_T4608(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -53,6 +52,7 @@ class QAP_T4611(TestCase):
         self.last_trade_price = 20
         self.last_trade_qty = 1000
 
+        self.day_highest = 20
         self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
         self.historical_volume = 15.0
         self.aggressivity = constants.Aggressivity.Passive.value
@@ -66,8 +66,8 @@ class QAP_T4611(TestCase):
         # endregion
 
         # region Algo params
-        self.would_reference_price = Reference.Mid.value
-        self.would_price_offset = -2
+        self.would_reference_price = Reference.DayHight.value
+        self.would_price_offset = -1
         # endregion
 
 
@@ -160,6 +160,12 @@ class QAP_T4611(TestCase):
         # region send trading phase
         self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send trading phase", self.test_id))
         self.incremental_refresh = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id, self.fix_env1.feed_handler).update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.last_trade_qty).update_value_in_repeating_group('NoMDEntriesIR', 'MDEntryPx', self.last_trade_price)
+        self.fix_manager_feed_handler.send_message(fix_message=self.incremental_refresh)
+        # endregion
+
+        # region send day high
+        self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send trading phase", self.test_id))
+        self.incremental_refresh = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_high_px().update_MDReqID(self.listing_id, self.fix_env1.feed_handler).update_value_in_repeating_group('NoMDEntriesIR', 'MDEntryPx', self.day_highest)
         self.fix_manager_feed_handler.send_message(fix_message=self.incremental_refresh)
         # endregion
 
