@@ -54,13 +54,25 @@ class QAP_T6979(TestCase):
         time.sleep(50)
         # endregion
 
-        # region step 1: Create DMA order
+        # region step 1: Create DMA order without Account
         self.fix_new_ord_single.set_default_dma_limit()
-        self.fix_new_ord_single.update_fields_in_component(JavaApiFields.NewOrderSingleBlock.value, {JavaApiFields.ClientAccountGroupID.value: 'WRONG_CLIENT'})
+        self.fix_new_ord_single.remove_fields_from_component(JavaApiFields.NewOrderSingleBlock.value,
+                                                           [JavaApiFields.ClientAccountGroupID.value])
+        self.java_api_manager.send_message_and_receive_response(self.fix_new_ord_single)
+        order_notification = \
+        self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameters()[
+            JavaApiFields.OrdNotificationBlock.value]
+        self.java_api_manager.compare_values({JavaApiFields.OrdStatus.value: OrderReplyConst.OrdStatus_REJ.value},
+                                             order_notification, 'Verifying that FIX Order without 1 tag rejected (step 1)')
+        # endregion
+
+        # region step 2: Create DMA order with Account
+        self.fix_new_ord_single.update_fields_in_component(JavaApiFields.NewOrderSingleBlock.value, {JavaApiFields.ClientAccountGroupID.value: 'WRONG_CLIENT',
+                                                                                                     JavaApiFields.ClOrdID.value: bca.client_orderid(9)})
         self.java_api_manager.send_message_and_receive_response(self.fix_new_ord_single)
         order_notification = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameters()[JavaApiFields.OrdNotificationBlock.value]
         self.java_api_manager.compare_values({JavaApiFields.OrdStatus.value: OrderReplyConst.OrdStatus_REJ.value},
-                                             order_notification, 'Verifying that FIX Order rejected (step 1)')
+                                             order_notification, 'Verifying that FIX Order with 1 tag rejected (step 2)')
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
