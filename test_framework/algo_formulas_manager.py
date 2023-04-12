@@ -324,7 +324,10 @@ class AlgoFormulasManager:
 
     @staticmethod
     def get_timestamps_for_current_phase(phase: TradingPhases, dateformat="full"):
-        tm = dt.now()
+        if dateformat == "full":
+            tm = dt.now()
+        else:
+            tm = dt.utcnow()
         if phase == TradingPhases.PreOpen:
             pop_start = tm - datetime.timedelta(seconds=tm.second, microseconds=tm.microsecond)
             opn_start = pop_start + timedelta(minutes=4)
