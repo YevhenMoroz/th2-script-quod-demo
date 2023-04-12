@@ -61,7 +61,6 @@ class QAP_T6979(TestCase):
         order_notification = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameters()[JavaApiFields.OrdNotificationBlock.value]
         self.java_api_manager.compare_values({JavaApiFields.OrdStatus.value: OrderReplyConst.OrdStatus_REJ.value},
                                              order_notification, 'Verifying that FIX Order rejected (step 1)')
-        print(order_notification)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
