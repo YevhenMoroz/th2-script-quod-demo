@@ -1,6 +1,5 @@
 import os
 import time
-from datetime import datetime, timedelta
 
 from pathlib import Path
 
@@ -140,7 +139,28 @@ class QAP_T9093(TestCase):
         er_new_POV_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.POV_order, self.gateway_side_sell, self.status_new)
         self.fix_verifier_sell.check_fix_message(er_new_POV_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
         # endregion
-        
+
+        time.sleep(10)
+
+        # region Check auction child DMA order
+        self.fix_verifier_buy.set_case_id(bca.create_event("Auction Child DMA order", self.test_id))
+
+        self.dma_1_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        self.dma_1_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_1, OrderQty=self.auc_child_qty, Price=self.price, Instrument='*', TimeInForce=self.tif_ato))
+        self.fix_verifier_buy.check_fix_message(self.dma_1_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA order')
+
+        er_pending_dma_1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message(er_pending_dma_1_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA order')
+
+        er_new_dma_1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy, self.status_new)
+        self.fix_verifier_buy.check_fix_message(er_new_dma_1_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA order')
+        # endregion
+
+        # region Check that only one child DMA order was generated
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check that only one child DMA order was generated during POP auction", self.test_id))
+        self.fix_verifier_buy.check_fix_message_sequence([self.dma_1_order], [self.key_params_ER_child], self.FromQuod)
+        # endregion
+
         time.sleep(240)
 
         # region Send_MarkerData
@@ -156,22 +176,6 @@ class QAP_T9093(TestCase):
         market_data_incr_xpar = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
         market_data_incr_xpar.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.price, MDEntrySize=self.indicative_volume)
         self.fix_manager_feed_handler.send_message(market_data_incr_xpar)
-        # endregion
-
-        time.sleep(10)
-        
-        # region Check auction child DMA order
-        self.fix_verifier_buy.set_case_id(bca.create_event("Auction Child DMA order", self.test_id))
-
-        self.dma_1_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        self.dma_1_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_1, OrderQty=self.auc_child_qty, Price=self.price, Instrument='*', TimeInForce=self.tif_ato))
-        self.fix_verifier_buy.check_fix_message(self.dma_1_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA order')
-
-        er_pending_dma_1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy, self.status_pending)
-        self.fix_verifier_buy.check_fix_message(er_pending_dma_1_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA order')
-
-        er_new_dma_1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy, self.status_new)
-        self.fix_verifier_buy.check_fix_message(er_new_dma_1_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA order')
         # endregion
 
         # region Check passive child DMA order
