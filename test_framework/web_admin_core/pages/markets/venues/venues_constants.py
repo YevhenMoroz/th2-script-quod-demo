@@ -1,5 +1,5 @@
 class VenuesConstants:
-    VENUES_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Venues ']"
+    VENUES_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][normalize-space()='Venues']"
     VENUE_ID_XPATH = '//*[@class="breadcrumbs entity-title"]'
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"
@@ -56,7 +56,7 @@ class VenuesConstants:
     VALUES_TAB_COUNTERPART_XPATH = '//*[@id="counterpart"]'
     VALUES_TAB_COUNTERPART_MANAGE_XPATH = '//*[@class="venue-detail-settings"]//nb-accordion//nb-accordion-item[1]//*[text()="Manage"]'
     VALUES_TAB_BIC_XPATH = '//*[@formcontrolname="BIC"]'
-    VALUES_TAB_MANAGE_MIC_BUTTON_XPATH ='//*[@class="venue-detail-settings"]//nb-accordion//nb-accordion-item[1]//div[5]//div[2]//button'
+    VALUES_TAB_MANAGE_MIC_BUTTON_XPATH ='//*[@id="MIC"]//ancestor::div[@class="row"]//button'
     VALUES_TAB_POSITION_FLATTENING_PERIOD_XPATH = '//*[@formcontrolname="venuePosValidity"]//button'
     VALUES_TAB_POSITION_FLATTENING_PERIOD_DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//nb-option'
     VALUES_TAB_POSITION_FLATTENING_PERIOD_CHECKBOXES_AT_DROP_DOWN_XPATH = '//*[@class="option-list"]//nb-option//span[1]'
@@ -360,13 +360,13 @@ class VenuesConstants:
     PHASE_SESSION_TAB_EDIT_BUTTON_XPATH = '//*[normalize-space()="Phase Session"]//..//*[@data-name="edit"]'
     PHASE_SESSION_TAB_DELETE_BUTTON_XPATH = '//*[normalize-space()="Phase Session"]//..//*[@data-name="trash-2"]'
 
-    PHASE_SESSION_TAB_TRADING_PHASE_XPATH = '//*[@placeholder="Trading Phase *"]'
+    PHASE_SESSION_TAB_TRADING_PHASE_XPATH = '(//*[normalize-space()="Phase Session"]//..//nb-select)[1]'
     PHASE_SESSION_TAB_TRADING_PHASE_FILTER_XPATH = '(//*[normalize-space()="Phase Session"]//..//*[@placeholder="Filter"])[1]'
     PHASE_SESSION_TAB_TRADING_SESSION_XPATH = '//*[@placeholder="Trading Session *"]'
     PHASE_SESSION_TAB_TRADING_SESSION_FILTER_XPATH = '(//*[normalize-space()="Phase Session"]//..//*[@placeholder="Filter"])[2]'
     PHASE_SESSION_TAB_SUPPORT_MIN_QUANTITY_XPATH = '(//*[normalize-space()="Phase Session"]//..//*[contains(@class, "custom-checkbox")])[1]'
     PHASE_SESSION_TAB_SUPPORT_MIN_QUANTITY_FILTER_XPATH = '(//*[normalize-space()="Phase Session"]//..//*[@placeholder="Filter"])[3]'
-    PHASE_SESSION_TAB_PEG_PRICE_TYPE_XPATH = '//*[normalize-space()="Phase Session"]//..//nb-select/button'
+    PHASE_SESSION_TAB_PEG_PRICE_TYPE_XPATH = '(//*[normalize-space()="Phase Session"]//..//nb-select/button)[2]'
     PHASE_SESSION_TAB_PEG_PRICE_TYPE_FILTER_XPATH = '(//*[normalize-space()="Phase Session"]//..//*[@placeholder="Filter"])[4]'
 
     # --Type tif sub tab--
@@ -376,9 +376,9 @@ class VenuesConstants:
     TYPE_TIF_TAB_EDIT_BUTTON_XPATH = '//*[contains(normalize-space(text()), "Type TIF")]//following-sibling::*//*[@data-name="edit"]'
     TYPE_TIF_TAB_DELETE_BUTTON_XPATH = '//*[contains(normalize-space(text()), "Type TIF")]//following-sibling::*//*[@data-name="trash-2"]'
 
-    TYPE_TIF_TAB_TIME_IN_FORCE_XPATH = '//*[@placeholder="Time In Force *"]'
+    TYPE_TIF_TAB_TIME_IN_FORCE_XPATH = '(//*[normalize-space()="Phase Session"]//..//nb-select)[3]'
     TYPE_TIF_TAB_TIME_IN_FORCE_FILTER_XPATH = '(//*[normalize-space()="Phase Session"]//..//*[@placeholder="Filter"])[5]'
-    TYPE_TIF_TAB_ORD_TYPE_XPATH = '//*[@placeholder="Ord Type *"]'
+    TYPE_TIF_TAB_ORD_TYPE_XPATH = '(//*[normalize-space()="Phase Session"]//..//nb-select)[4]'
     TYPE_TIF_TAB_ORD_TYPE_FILTER_XPATH = '(//*[normalize-space()="Phase Session"]//..//*[@placeholder="Filter"])[6]'
     TYPE_TIF_TAB_SUPPORT_DISPLAY_QUANTITY_CHECKBOX_XPATH = '//*[contains(normalize-space(text()), "Type TIF")]//following-sibling::*//*[contains(@class, "custom-checkbox")]'
     TYPE_TIF_TAB_SUPPORT_DISPLAY_QUANTITY_CHECKBOX_FILTER_XPATH = '(//*[normalize-space()="Phase Session"]//..//*[@placeholder="Filter"])[7]'

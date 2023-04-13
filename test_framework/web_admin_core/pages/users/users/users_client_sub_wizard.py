@@ -35,7 +35,9 @@ class UsersClientSubWizard(CommonPage):
         return self.get_text_by_xpath(UsersConstants.CLIENT_AT_CLIENT_SUB_WIZARD)
 
     def set_type(self, value):
-        self.set_combobox_value(UsersConstants.TYPE_AT_CLIENT_SUB_WIZARD, value)
+        self.find_by_xpath(UsersConstants.TYPE_AT_CLIENT_SUB_WIZARD).click()
+        time.sleep(0.5)
+        self.select_value_from_dropdown_list(UsersConstants.TYPE_AT_CLIENT_SUB_WIZARD, value)
 
     def get_type(self):
         return self.get_text_by_xpath(UsersConstants.TYPE_AT_CLIENT_SUB_WIZARD)
@@ -49,13 +51,12 @@ class UsersClientSubWizard(CommonPage):
     def is_such_record_already_exist(self):
         return self.find_by_xpath(UsersConstants.RECORD_EXIST_EXCEPTION).text == "Such a record already exists"
 
-    # Корректно ли название?
     def get_error_message(self):
         return self.find_by_xpath(UsersConstants.ERROR_MESSAGE_IN_FOOTER).text
 
     def add_new_client(self, client, type):
         self.set_combobox_value(UsersConstants.CLIENT_AT_CLIENT_SUB_WIZARD, client)
-        self.set_combobox_value(UsersConstants.TYPE_AT_CLIENT_SUB_WIZARD, type)
+        self.select_value_from_dropdown_list(UsersConstants.TYPE_AT_CLIENT_SUB_WIZARD, type)
         time.sleep(1)
         self.click_on_checkmark_button()
 

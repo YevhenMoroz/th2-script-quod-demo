@@ -26,18 +26,18 @@ class QAP_T3602(CommonTestCase):
 
         self.test_data = {
             "adm_user": {
-                "login": "adm03",
-                "password": "adm03"
+                "login": self.data_set.get_user("user_1"),
+                "password": self.data_set.get_password("password_1")
             },
             "location_user": {
-                "login": "adm_loca",
-                "password": "adm_loca"
+                "login": self.data_set.get_user("user_2"),
+                "password": self.data_set.get_password("password_2")
             },
             "user": {
-                "user_id": 'QAP5534',
+                "user_id": 'QAP-T3602',
                 "ext_id_client": ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6)),
                 "email": '2@2',
-                "desk": 'Quod Desk'
+                "desk": self.data_set.get_desk("desk_3")
             }
         }
 

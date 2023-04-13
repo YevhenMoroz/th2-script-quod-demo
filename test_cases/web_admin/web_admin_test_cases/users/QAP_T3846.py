@@ -18,7 +18,7 @@ class QAP_T3846(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
-        self.user_id = self.data_set.get_user("user_5")
+        self.user_id = self.data_set.get_user("user_12")
         self.perm_role = self.data_set.get_perm_role("perm_role_1")
         self.email = self.data_set.get_email("email_1")
         self.user = self.data_set.get_user("user_1")

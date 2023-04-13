@@ -25,7 +25,7 @@ class QAP_T3702(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
 
-        self.institution_name = "QAP4664"
+        self.institution_name = "QAP-T3702"
         self.new_institution_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.lei = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.new_lei = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))

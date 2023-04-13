@@ -22,7 +22,7 @@ class QAP_T7932(CommonTestCase):
 
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.description = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.venue_list = ["BATS", "BINANCE"]
+        self.venue_list = "BINANCE"
         self.basic_fields = ["Name", 'Description']
 
     def precondition(self):
@@ -46,9 +46,10 @@ class QAP_T7932(CommonTestCase):
             wizard.set_name(self.name)
             wizard.set_description(self.description)
             wizard.set_venue_list(self.venue_list)
+            expected_result = [self.name, self.description, self.venue_list]
 
             self.verify("The PDF file contains all fields name with/without data", True,
-                        wizard.click_download_pdf_entity_button_and_check_pdf(self.venue_list + self.basic_fields))
+                        wizard.click_download_pdf_entity_button_and_check_pdf(expected_result))
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

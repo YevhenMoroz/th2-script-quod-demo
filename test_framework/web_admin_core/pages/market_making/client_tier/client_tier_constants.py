@@ -1,5 +1,5 @@
 class ClientTierConstants:
-    CLIENT_TIER_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Client Tiers ']"
+    CLIENT_TIER_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][normalize-space(text())='Client Tiers']"
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"
     SAVE_CHANGES_BUTTON_XPATH = "//*[text()='Save Changes']"
@@ -64,7 +64,7 @@ class ClientTierConstants:
     CLIENT_TIER_SCHEDULES_TAB_EDIT_BUTTON_XPATH = '//*[normalize-space()="Schedules"]//..//*[@data-name="edit"]'
     CLIENT_TIER_SCHEDULES_TAB_DELETE_BUTTON_XPATH = '//*[normalize-space()="Schedules"]//..//*[@data-name="trash-2"]'
 
-    CLIENT_TIER_SCHEDULES_TAB_DAY_XPATH = "//*[@class='schedule']//*[@placeholder='Day *']"
+    CLIENT_TIER_SCHEDULES_TAB_DAY_XPATH = '//*[@class="schedule"]//*[@id="weekDay"]'
     CLIENT_TIER_SCHEDULES_TAB_DAY_FILTER_XPATH = "//*[@class='schedule']//*[@class='ng2-smart-th weekDay ng-star-inserted']//input-filter"
     CLIENT_TIER_SCHEDULES_TAB_FROM_TIME_XPATH = "//*[@class='schedule']//*[@placeholder='From Time *']"
     CLIENT_TIER_SCHEDULES_TAB_FROM_TIME_FILTER_XPATH = "//*[@class='schedule']//*[@class='ng2-smart-th scheduleFromTime ng-star-inserted']//input-filter"
@@ -92,7 +92,7 @@ class ClientTierConstants:
     MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_DOWNLOAD_PDF_XPATH = "//*[@nbtooltip='Download PDF']//*[@data-name='download']"
     MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_PIN_ROW_XPATH = "//*[@class='cdk-overlay-container']//*[@nbtooltip='Click to Pin Row']"
     MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_DOWNLOAD_CSV_XPATH = "//*[@class='ctis-grid']//*[@data-name='download']"
-    MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_NEW_BUTTON_XPATH = "//*[@class='ctis-grid']//*[text()='New']"
+    MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_NEW_BUTTON_XPATH = "//[@class='ctis-grid']//[normalize-space()='New']"
 
     MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_SYMBOL_FILTER_XPATH = "//*[@class='ctis-grid']//*[@class='ag-header-container']/div[2]/div[1]//input"
     MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_RFQ_RESPONSE_STREAM_TTL_FILTER_XPATH = "//*[@class='ctis-grid']//*[@class='ag-header-container']/div[2]/div[2]//input"

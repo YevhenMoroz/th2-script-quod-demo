@@ -16,10 +16,13 @@ class DBManager:
 
     def execute_query(self, query: str = None):
         out = tuple()
-        self.my_db.execute(query)
-        for value in self.my_db: out += (value, )
-        self.my_db.close()
-        return out
+        if 'SELECT' in query.upper():
+            self.my_db.execute(query)
+            for value in self.my_db:
+                out += (value,)
+            return out
+        else:
+            self.my_db.execute(query)
 
     def get_collection(self, collection_name):
         if self.db_type != "mongo":
@@ -58,4 +61,7 @@ class DBManager:
         self.insert_one(collection, data)
 
     def create_empty_collection(self, collection_name):
-        self.insert_one_to_mongodb_with_drop({},collection_name)
+        self.insert_one_to_mongodb_with_drop({}, collection_name)
+
+    def close_connection(self):
+        self.my_db.close()

@@ -42,10 +42,6 @@ class QAP_T3719(CommonTestCase):
             self.verify("Displays 'Not Found' in the Country if the entered data is not valid", "Not found",
                         values_sub_wizard.is_not_found_present_in_drop_menu())
             time.sleep(1)
-            values_sub_wizard.set_type_custom_value(self.test_data)
-            self.verify("Displays 'Not Found' in the Type if the entered data is not valid", "Not found",
-                        values_sub_wizard.is_not_found_present_in_drop_menu())
-            time.sleep(1)
             values_sub_wizard.set_counterpart_custom_value(self.test_data)
             self.verify("Displays 'Not Found' in the Counterpart if the entered data is not valid", "Not found",
                         values_sub_wizard.is_not_found_present_in_drop_menu())

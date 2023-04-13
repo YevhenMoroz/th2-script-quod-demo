@@ -314,7 +314,8 @@ class QAP_T6981(TestCase):
                                   'TradeDate', 'HandlInst', 'LeavesQty', 'NoParty', 'CumQty', 'LastPx',
                                   'OrdType', 'tag5120', 'LastMkt', 'OrderCapacity', 'QtyType',
                                   'ExecBroker', 'Price', 'VenueType', 'Instrument',
-                                  'ExDestination', 'GrossTradeAmt', 'CommissionData','OrderAvgPx']
+                                  'ExDestination', 'GrossTradeAmt', 'CommissionData', 'OrderAvgPx',
+                                  'GatingRuleName', 'GatingRuleCondName']
 
         self.fix_execution_report.change_parameters({"ExecType": "F", "OrdStatus": "2", "ClOrdID": cl_order_id,
                                                      'NoMiscFees': no_misc_fee})

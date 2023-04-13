@@ -92,7 +92,7 @@ class QAP_T9031(TestCase):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
         nos_dma_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price)
-        trade_dma_rule = rule_manager.add_NewOrdSingleExecutionReportTrade(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price, self.qty, 0)
+        trade_dma_rule = rule_manager.add_NewOrdSingleExecutionReportTrade(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price, self.qty, 2000)
         ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_1, True)
 
         self.rule_list = [ocr_rule, nos_dma_rule, trade_dma_rule]
@@ -152,7 +152,7 @@ class QAP_T9031(TestCase):
 
         # region Check child DMA order
         self.dma_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        self.dma_order.change_parameters(dict(OrderQty=self.qty, Price=self.price, Instrument='*', Side=self.side))
+        self.dma_order.change_parameters(dict(OrderQty=self.qty, Price=self.price, Instrument='*', Side=self.side, MinQty=self.min_trig_qty))
         self.fix_verifier_buy.check_fix_message(self.dma_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Child DMA')
 
         self.pending_dma_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_pending)

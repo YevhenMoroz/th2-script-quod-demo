@@ -82,5 +82,10 @@ class FixMessageOrderCancelReplaceRequestAlgo(FixMessageOrderCancelReplaceReques
                 OrderID='*',
                 TransactTime='*',
             )
+            if new_order_single.get_parameter('Account') == 'KEPLER':
+                temp.update(
+                    ChildOrderID='*',
+                    misc5='*'
+                )
         super().change_parameters(temp)
         return self

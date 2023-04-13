@@ -7,10 +7,10 @@ class PositionVerifier:
         self.test_id = test_id
         self.verifier = Verifier(test_id)
 
-    def check_base_position(self, report, expected_value):
+    def check_base_position(self, report, expected_value, text="Check Base Position"):
         pos_amount_date = report[0].get_parameters()["PositionAmountData"][0]
         amount = pos_amount_date["PosAmt"]
-        self.verifier.set_event_name("Check Base Position")
+        self.verifier.set_event_name(text)
         self.verifier.compare_values("Compare Base", expected_value, amount)
         self.verifier.verify()
         self.verifier = Verifier(self.test_id)
@@ -39,4 +39,12 @@ class PositionVerifier:
         self.verifier.verify()
         self.verifier = Verifier(self.test_id)
 
+    def check_transact_time(self, report, expected_value):
+        transact_time = report[0].get_parameters()["TransactTime"]
+        transact_time = transact_time[0:19]
+        expected_value = expected_value[0:19]
+        self.verifier.set_event_name("Check Transact time")
+        self.verifier.compare_values("Compare time", expected_value, transact_time)
+        self.verifier.verify()
+        self.verifier = Verifier(self.test_id)
     # TODO Add new fields to check

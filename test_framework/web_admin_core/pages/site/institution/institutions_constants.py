@@ -1,5 +1,5 @@
 class InstitutionsConstants:
-    INSTITUTIONS_PAGE_TITLE_XPATH = "//span[@class= 'entity-title left']//*[text()='Institutions']"
+    INSTITUTIONS_PAGE_TITLE_XPATH = '//span[@class="entity-title left"][normalize-space()="Institutions"]'
 
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"

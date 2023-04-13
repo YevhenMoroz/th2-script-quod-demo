@@ -55,6 +55,7 @@ class QAP_T4477(TestCase):
         self.status_pending = Status.Pending
         self.status_new = Status.New
         self.status_cancel = Status.Cancel
+        self.status_reached_uncross = Status.ReachedUncross
         # endregion
 
         # region instrument
@@ -133,6 +134,6 @@ class QAP_T4477(TestCase):
         self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
         # end region
 
-        er_cancel_auction_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_cancel)
-        er_cancel_auction_order.change_parameters(dict(TimeInForce=self.tif_atc, Text='reached uncross'))
+        er_cancel_auction_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_reached_uncross)
+        er_cancel_auction_order.change_parameters(dict(TimeInForce=self.tif_atc))
         self.fix_verifier_sell.check_fix_message(er_cancel_auction_order, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')

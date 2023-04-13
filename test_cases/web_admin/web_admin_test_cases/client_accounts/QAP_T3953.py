@@ -45,8 +45,8 @@ class QAP_T3953(CommonTestCase):
         self.new_venue_client_account_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
 
         self.route_account_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.route = 'Credit Suisse'
-        self.default_route = 'Credit Suisse'
+        self.route = 'ESDEMO'
+        self.default_route = 'ESDEMO'
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

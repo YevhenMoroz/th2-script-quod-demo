@@ -91,8 +91,8 @@ class WebAdminRestApiEnvironment(BaseEnvironment):
                     session_alias_wa=Connectivity.Columbia_310_web_admin_site.value
                 )
                 WebAdminRestApiEnvironment.environment_instances.update(
-                    {EnvironmentType.quod319_kuiper_web_admin_site.value: site_environment})
-            return WebAdminRestApiEnvironment.environment_instances[EnvironmentType.quod319_kuiper_web_admin_site.value]
+                    {EnvironmentType.quod310_columbia_web_admin_site.value: site_environment})
+            return WebAdminRestApiEnvironment.environment_instances[EnvironmentType.quod310_columbia_web_admin_site.value]
         elif env.value == EnvironmentType.quod316_ganymede_web_admin_site.value:
             if EnvironmentType.quod316_ganymede_redburn.value not in WebAdminRestApiEnvironment.environment_instances.keys():
                 site_environment = WebAdminRestApiEnvironment(

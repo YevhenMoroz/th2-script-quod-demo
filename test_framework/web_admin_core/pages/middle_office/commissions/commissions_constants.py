@@ -1,5 +1,5 @@
 class CommissionsConstants:
-    COMMISSIONS_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Commissions ']"
+    COMMISSIONS_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][normalize-space()='Commissions']"
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//nb-icon[@icon='download-outline']//*[@data-name='download']"
     DOWNLOAD_PDF_IN_EDIT_WIZARD_XPATH ="//*[@data-name='download']"
@@ -20,7 +20,7 @@ class CommissionsConstants:
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
     INCORRECT_OR_MISSING_VALUES_XPATH = "//*[text()='Incorrect or missing values']"
     HORIZONTAL_SCROLL = "//*[@class='ag-body-horizontal-scroll']"
-    DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span'
+    DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//nb-option | span'
 
     # main page
     MAIN_PAGE_NAME_FILTER_XPATH = '//*[text()="Name"]//following::*[contains(@style, "left: 0px;")]//input'

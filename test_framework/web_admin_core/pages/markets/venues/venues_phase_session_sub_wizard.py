@@ -23,7 +23,7 @@ class VenuesPhaseSessionSubWizard(CommonPage):
         self.find_by_xpath(VenuesConstants.PHASE_SESSION_TAB_DELETE_BUTTON_XPATH).click()
 
     def set_trading_phase(self, value):
-        self.set_combobox_value(VenuesConstants.PHASE_SESSION_TAB_TRADING_PHASE_XPATH, value)
+        self.select_value_from_dropdown_list(VenuesConstants.PHASE_SESSION_TAB_TRADING_PHASE_XPATH, value)
 
     def set_trading_phase_filter(self, value):
         self.set_text_by_xpath(VenuesConstants.PHASE_SESSION_TAB_TRADING_PHASE_FILTER_XPATH, value)
@@ -76,7 +76,7 @@ class VenuesPhaseSessionSubWizard(CommonPage):
         self.find_by_xpath(VenuesConstants.TYPE_TIF_TAB_DELETE_BUTTON_XPATH).click()
 
     def set_time_in_force(self, value):
-        self.set_combobox_value(VenuesConstants.TYPE_TIF_TAB_TIME_IN_FORCE_XPATH, value)
+        self.select_value_from_dropdown_list(VenuesConstants.TYPE_TIF_TAB_TIME_IN_FORCE_XPATH, value)
 
     def set_time_in_force_filter(self, value):
         self.set_text_by_xpath(VenuesConstants.TYPE_TIF_TAB_TIME_IN_FORCE_FILTER_XPATH, value)
@@ -85,7 +85,7 @@ class VenuesPhaseSessionSubWizard(CommonPage):
         return self.get_text_by_xpath(VenuesConstants.TYPE_TIF_TAB_TIME_IN_FORCE_XPATH)
 
     def set_ord_type(self, value):
-        self.set_combobox_value(VenuesConstants.TYPE_TIF_TAB_ORD_TYPE_XPATH, value)
+        self.select_value_from_dropdown_list(VenuesConstants.TYPE_TIF_TAB_ORD_TYPE_XPATH, value)
 
     def set_ord_type_filter(self, value):
         self.set_text_by_xpath(VenuesConstants.TYPE_TIF_TAB_ORD_TYPE_FILTER_XPATH, value)

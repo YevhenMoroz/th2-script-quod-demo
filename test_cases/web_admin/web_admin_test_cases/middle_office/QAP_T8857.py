@@ -65,7 +65,7 @@ class QAP_T8857(CommonTestCase):
         time.sleep(1)
         self.create_new_exec_fee_profile(self.commission_profile_name[1], self.comm_type[1], self.comm_xunit[1],
                                          self.comm_algorithm, self.base_values)
-
+        time.sleep(2)
         wizard = FeesWizard(self.web_driver_container)
         wizard.click_on_go_back()
 

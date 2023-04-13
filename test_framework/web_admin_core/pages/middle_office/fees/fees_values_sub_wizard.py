@@ -13,24 +13,26 @@ class FeesValuesSubWizard(CommonPage):
         self.set_text_by_xpath(FeesConstants.VALUES_TAB_DESCRIPTION_XPATH, value)
 
     def set_misc_fee_type(self, value):
-        self.set_combobox_value(FeesConstants.VALUES_TAB_MISC_FEE_TYPE_XPATH, value)
+        self.select_value_from_dropdown_list(FeesConstants.VALUES_TAB_MISC_FEE_TYPE_XPATH, value)
 
     def get_misc_fee_type(self):
         return self.get_text_by_xpath(FeesConstants.VALUES_TAB_MISC_FEE_TYPE_XPATH)
 
     def get_all_misc_fee_type_from_drop_menu(self):
-        self.set_text_by_xpath(FeesConstants.VALUES_TAB_MISC_FEE_TYPE_XPATH, "")
+        self.find_by_xpath(FeesConstants.VALUES_TAB_MISC_FEE_TYPE_XPATH).click()
         time.sleep(1)
-        return self.get_all_items_from_drop_down(FeesConstants.DROP_DOWN_MENU_XPATH)
+        items = self.get_all_items_from_drop_down(FeesConstants.DROP_DOWN_MENU_XPATH)
+        self.find_by_xpath(FeesConstants.VALUES_TAB_MISC_FEE_TYPE_XPATH).click()
+        return items
 
     def set_charge_type(self, value):
-        self.set_combobox_value(FeesConstants.VALUES_TAB_CHARGE_TYPE_XPATH, value)
+        self.select_value_from_dropdown_list(FeesConstants.VALUES_TAB_CHARGE_TYPE_XPATH, value)
 
     def get_charge_type(self):
         return self.get_text_by_xpath(FeesConstants.VALUES_TAB_CHARGE_TYPE_XPATH)
 
     def set_order_scope(self, value):
-        self.set_combobox_value(FeesConstants.VALUES_TAB_ORDER_SCOPE_XPATH, value)
+        self.select_value_from_dropdown_list(FeesConstants.VALUES_TAB_ORDER_SCOPE_XPATH, value)
 
     def get_order_scope(self):
         return self.get_text_by_xpath(FeesConstants.VALUES_TAB_ORDER_SCOPE_XPATH)
@@ -42,7 +44,7 @@ class FeesValuesSubWizard(CommonPage):
         return self.get_text_by_xpath(FeesConstants.VALUES_TAB_ORDER_FEE_PROFILE_XPATH)
 
     def set_exec_scope(self, value):
-        self.set_combobox_value(FeesConstants.VALUES_TAB_EXEC_SCOPE_XPATH, value)
+        self.select_value_from_dropdown_list(FeesConstants.VALUES_TAB_EXEC_SCOPE_XPATH, value)
 
     def get_exec_scope(self):
         return self.get_text_by_xpath(FeesConstants.VALUES_TAB_EXEC_SCOPE_XPATH)

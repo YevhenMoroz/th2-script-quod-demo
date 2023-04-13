@@ -24,7 +24,7 @@ class QAP_T3786(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
 
-        self.institution_name = "QAP4174"
+        self.institution_name = "QAPT3786"
         self.new_institution_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.client_time_zone = ''
 

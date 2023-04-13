@@ -77,6 +77,28 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
+    def set_TWAP_Redburn_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            'Account': self.get_data_set().get_account_by_name("account_1"),
+            'ClOrdID': basic_custom_actions.client_orderid(9),
+            "HandlInst": "2",
+            "Side": "1",
+            "OrderQty": "1000",
+            "TimeInForce": "0",
+            "OrdType": "2",
+            "TransactTime": datetime.utcnow().isoformat(),
+            "OrderCapacity": "A",
+            "Price": "20",
+            'Currency': self.get_data_set().get_currency_by_name("currency_1"),
+            'ExDestination': self.get_data_set().get_mic_by_name("mic_1"),
+            "Instrument": self.get_data_set().get_fix_instrument_by_name("instrument_1"),
+            "TargetStrategy": "1005",
+            'QuodFlatParameters': {
+            }
+        }
+        super().change_parameters(base_parameters)
+        return self
+
     def set_TWAP_auction_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             'Account': self.get_data_set().get_account_by_name('account_1'),
@@ -92,7 +114,35 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'ExDestination': self.get_data_set().get_mic_by_name('mic_1'),
             "Currency": self.get_data_set().get_currency_by_name('currency_1'),
             'Instrument': self.get_data_set().get_fix_instrument_by_name("instrument_1"),
-            "TargetStrategy": "1005"
+            "TargetStrategy": "1005",
+            'QuodFlatParameters': {
+                "ParticipateInOpeningAuctions": "Y",
+                "ParticipateInClosingAuctions": "Y"
+            }
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_VWAP_auction_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            'Account': self.get_data_set().get_account_by_name('account_1'),
+            'ClOrdID': basic_custom_actions.client_orderid(9),
+            "HandlInst": "2",
+            "Side": "1",
+            "OrderQty": "1000",
+            "TimeInForce": "0",
+            "OrdType": "2",
+            "TransactTime": datetime.utcnow().isoformat(),
+            "OrderCapacity": "A",
+            "Price": "20",
+            'ExDestination': self.get_data_set().get_mic_by_name('mic_1'),
+            "Currency": self.get_data_set().get_currency_by_name('currency_1'),
+            'Instrument': self.get_data_set().get_fix_instrument_by_name("instrument_1"),
+            "TargetStrategy": "1",
+            'QuodFlatParameters': {
+                "ParticipateInOpeningAuctions": "Y",
+                "ParticipateInClosingAuctions": "Y"
+            }
         }
         super().change_parameters(base_parameters)
         return self
@@ -186,6 +236,31 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "TargetStrategy": "2",
             'QuodFlatParameters': {
                 'MaxPercentageVolume': '10'
+            }
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_POV_auction_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            'Account': self.get_data_set().get_account_by_name("account_1"),
+            'ClOrdID': basic_custom_actions.client_orderid(9),
+            "HandlInst": "2",
+            "Side": "1",
+            "OrderQty": "1000",
+            "TimeInForce": "0",
+            "OrdType": "2",
+            "TransactTime": datetime.utcnow().isoformat(),
+            "OrderCapacity": "A",
+            "Price": "20",
+            'Currency': self.get_data_set().get_currency_by_name("currency_1"),
+            'ExDestination': self.get_data_set().get_mic_by_name("mic_1"),
+            "Instrument": self.get_data_set().get_fix_instrument_by_name("instrument_1"),
+            "TargetStrategy": "2",
+            'QuodFlatParameters': {
+                'MaxPercentageVolume': '10',
+                "ParticipateInOpeningAuctions": "Y",
+                "ParticipateInClosingAuctions": "Y"
             }
         }
         super().change_parameters(base_parameters)
@@ -563,6 +638,30 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
+    def set_Multilisting_RB_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            'Account': self.get_data_set().get_account_by_name('account_1'),
+            'ClOrdID': basic_custom_actions.client_orderid(9),
+            'HandlInst': '2',
+            'Side': '1',
+            'OrderQty': '500000',
+            'TimeInForce': '0',
+            'OrdType': '2',
+            'TransactTime': datetime.utcnow().isoformat(),
+            "OrderCapacity": "A",
+            "Price": "30",
+            "Currency": self.get_data_set().get_currency_by_name('currency_1'),
+            "ExDestination": self.get_data_set().get_mic_by_name('mic_1'),
+            'Instrument': self.get_data_set().get_fix_instrument_by_name("instrument_1"),
+            'TargetStrategy': '1008',
+            'QuodFlatParameters': {
+                'AvailableVenues': 'True',
+                'AllowMissingPrimary': 'True'
+            }
+        }
+        super().change_parameters(base_parameters)
+        return self
+
     def set_Multilisting_spraying_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             'Account': self.get_data_set().get_account_by_name('account_1'),
@@ -704,7 +803,31 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'ShortCode': '17536',
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ChildOrderID': '*',
-            'misc5': '*'
+            'misc5': '*',
+            'NoTradingSessions': '*'
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_DMA_Dark_Child_Kepler_SORPING_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": 'KEPLER',
+            'ClOrdID': '*',
+            'Currency': 'EUR',
+            'HandlInst': '1',
+            'OrderQty': '1000',
+            'OrdType': '2',
+            'Price': '20',
+            'Side': '1',
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_6'),
+            'TimeInForce': '0',
+            "TransactTime": '*',
+            'ExDestination': 'BATD',
+            'OrderCapacity': 'A',
+            'ShortCode': '17536',
+            'IClOrdIdAO': 'OD_5fgfDXg-00',
+            'ChildOrderID': '*',
+            'misc5': '*',
         }
         super().change_parameters(base_parameters)
         return self
@@ -799,7 +922,8 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'ChildOrderID': '*',
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ShortCode': '17536',
-            'misc5': '*'
+            'misc5': '*',
+            'NoTradingSessions': '*'
         }
         super().change_parameters(base_parameters)
         return self
@@ -844,6 +968,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'OrderCapacity': 'A',
             'ChildOrderID': '*',
             'misc5': '*',
+            'NoTradingSessions': '*'
         }
         super().change_parameters(base_parameters)
         return self
@@ -899,7 +1024,8 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ShortCode': '17536',
             'IClOrdIdTO': '19864',
-            'misc5': '*'
+            'misc5': '*',
+            'NoTradingSessions': '*'
         }
         super().change_parameters(base_parameters)
         return self
@@ -953,7 +1079,8 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'OrderCapacity': 'A',
             'ChildOrderID': '*',
             'misc5': '*',
-                     'NoParty': [
+            'NoTradingSessions': '*',
+            'NoParty': [
                 {
                     'PartyID': 'TestINITIATOR-UTI',
                     'PartyIDSource': 'D',
@@ -1016,6 +1143,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ShortCode': '17536',
             'misc5': '*',
+            'NoTradingSessions': '*',
             'NoParty': [
                 {
                     'PartyID': 'TestINITIATOR-UTI',
@@ -1068,7 +1196,8 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'ExDestination': "XPAR",
             'OrderCapacity': 'A',
             'ChildOrderID': '*',
-            'misc5': '*'
+            'misc5': '*',
+            'NoTradingSessions': '*'
         }
         super().change_parameters(base_parameters)
         return self
@@ -1116,7 +1245,8 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ShortCode': '17536',
             'IClOrdIdTO': '19864',
-            'misc5': '*'
+            'misc5': '*',
+            'NoTradingSessions': '*'
         }
         super().change_parameters(base_parameters)
         return self
@@ -1161,7 +1291,8 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'ChildOrderID': '*',
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ShortCode': '17536',
-            'misc5': '*'
+            'misc5': '*',
+            'NoTradingSessions': '*'
         }
         super().change_parameters(base_parameters)
         return self
@@ -1206,7 +1337,8 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'ChildOrderID': '*',
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ShortCode': '17536',
-            'misc5': '*'
+            'misc5': '*',
+            'NoTradingSessions': '*'
         }
         super().change_parameters(base_parameters)
         return self
@@ -1261,7 +1393,8 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ShortCode': '17536',
             'NoParty': '*',
-            'misc5': '*'
+            'misc5': '*',
+            'NoTradingSessions': '*'
         }
         super().change_parameters(base_parameters)
         return self
@@ -1303,7 +1436,8 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'ExDestination': "QDL11",
             'OrderCapacity': 'A',
             'ChildOrderID': '*',
-            'misc5': '*'
+            'misc5': '*',
+            'NoTradingSessions': '*'
         }
         super().change_parameters(base_parameters)
         return self

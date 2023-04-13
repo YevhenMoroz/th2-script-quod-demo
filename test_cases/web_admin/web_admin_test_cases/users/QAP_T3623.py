@@ -26,23 +26,23 @@ class QAP_T3623(CommonTestCase):
 
         self.test_data = {
             "adm_user": {
-                "login": "adm03",
-                "password": "adm03"
+                "login": self.data_set.get_user("user_1"),
+                "password": self.data_set.get_password("password_1")
             },
             "test_user": {
-                "login": "adm_loca",
-                "password": "adm_loca"
+                "login": self.data_set.get_user("user_2"),
+                "password": self.data_set.get_password("password_2")
             },
             "user": {
-                "user_id": 'QAP5466',
+                "user_id": 'QAP-T3623',
                 "ext_id_client": ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6)),
                 "email": '2@2',
-                "location": 'WEST-LOCATION-A'
+                "location": self.data_set.get_location("location_1")
             },
-            "desk_user": "adm_desk",
-            "zone_user": "adm_zone",
-            "location_user": "adm_loca",
-            "institution_user": "adm_inst"
+            "desk_user": self.data_set.get_user("user_3"),
+            "zone_user": self.data_set.get_user("user_4"),
+            "location_user": self.data_set.get_user("user_2"),
+            "inst_user": self.data_set.get_user("user_5")
         }
 
     def precondition(self):
@@ -104,10 +104,10 @@ class QAP_T3623(CommonTestCase):
             self.verify("User assignee to Zone is not displayed", False,
                         user_page.is_searched_user_found(self.test_data['zone_user']))
 
-            user_page.set_user_id(self.test_data['institution_user'])
+            user_page.set_user_id(self.test_data['inst_user'])
             time.sleep(1)
             self.verify("User assignee to Institution is not displayed", False,
-                        user_page.is_searched_user_found(self.test_data['institution_user']))
+                        user_page.is_searched_user_found(self.test_data['inst_user']))
 
             user_page.set_user_id(self.test_data['desk_user'])
             time.sleep(1)

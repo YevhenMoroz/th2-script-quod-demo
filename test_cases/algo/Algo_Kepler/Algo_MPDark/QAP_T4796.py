@@ -180,8 +180,8 @@ class QAP_T4796(TestCase):
         self.fix_verifier_buy.check_fix_message(er_fill_dma_1_chix_order, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Fill')
 
         self.fix_verifier_sell.set_case_id(case_id_5)
-        er_fill_MP_Dark = FixMessageExecutionReportAlgo().set_params_full_fill_MPDark(self.MP_Dark_order)
-        self.fix_verifier_sell.check_fix_message(er_fill_MP_Dark, key_parameters=self.key_params_ER_child, direction=self.FromQuod, message_name='Sell side ExecReport Fill')
+        er_fill_MP_Dark = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_fill)
+        self.fix_verifier_sell.check_fix_message(er_fill_MP_Dark, key_parameters=self.key_params_ER_parent, direction=self.FromQuod, message_name='Sell side ExecReport Fill')
 
         # endregion
         time.sleep(3)

@@ -27,8 +27,10 @@ class QAP_T3644(CommonTestCase):
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
-        self.users = {"adm_user": {"login": "adm03", "password": "adm03"},
-                      "desk_user": {"login": "adm_desk", "password": "adm_desk"}}
+        self.users = {"adm_user": {"login": self.data_set.get_user("user_1"),
+                                   "password": self.data_set.get_password("password_1")},
+                      "desk_user": {"login": self.data_set.get_user("user_3"),
+                                    "password": self.data_set.get_password("password_3")}}
 
         self.client_name = 'QAP_T3644'
 
@@ -36,7 +38,7 @@ class QAP_T3644(CommonTestCase):
         self.id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.ext_id_client = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.disclose_exec = 'Manual'
-        self.desk = 'Quod Desk'
+        self.desk = self.data_set.get_desk("desk_3")
         self.client_id_source = 'BIC'
 
     def precondition(self):

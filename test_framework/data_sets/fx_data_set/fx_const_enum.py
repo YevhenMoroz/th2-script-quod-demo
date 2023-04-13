@@ -69,7 +69,7 @@ class FxClients(Enum):
     client_mm_5 = "Palladium2"  # For ESP_MM testing
     client_mm_6 = "Osmium1"  # For AutoHedger testing
     client_mm_7 = "Argentum1"  # Can be used for MM_Positions testing
-    client_mm_8 = "Aurum1"  # For AutoHedger testing
+    client_mm_8 = "AURUM1"  # For AutoHedger testing
     client_mm_9 = "SWEDCUST3"
     client_mm_10 = "CLIENT1"  # For Deposit And Loan
     client_mm_11 = "Platinum1"  # For Margin Format testing
@@ -102,7 +102,7 @@ class FxAccounts(Enum):
     account_mm_5 = "Palladium2_2"
     account_mm_6 = "Osmium1_1"
     account_mm_7 = "Argentum1_1"
-    account_mm_8 = "Aurum1_1"
+    account_mm_8 = "AURUM1_1"
 
 
 class FxClientTiers(Enum):
@@ -313,8 +313,8 @@ class DaysOfWeek(Enum):
 
 
 class FXAutoHedgers(Enum):
-    auto_hedger_1 = "OsmiumAH"
-    auto_hedger_2 = "AURUM_AH"
+    auto_hedger_1 = "BackToBack AH"
+    auto_hedger_2 = "Position AH (Osmium)"
     auto_hedger_3 = "DEFAULT"
     auto_hedger_4 = "Internal"
     auto_hedger_5 = "AUTOHEDGER1"
@@ -355,5 +355,11 @@ class FXListings(Enum):
     gbp_usd_spo = "506404433"
     gbp_usd_wk1 = "506404437"
     gbp_usd_wk2 = "506404438"
+    gbp_cad_spo = "506403873"
+    gbp_cad_wk1 = "506403877"
+    gbp_dkk_spo = "506403957"
+    usd_zar_spo = "506406757"
+    eur_gbp_spo = "506403285"
     usd_spo = "1106818783"
-    #TODO add more listings
+
+    # TODO add more listings

@@ -23,7 +23,7 @@ class QAP_T3356(CommonTestCase):
         self.password = "adm03"
         self.account_id = ''
         self.route_account_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.route = 'Credit Suisse'
+        self.route = 'ESDEMO'
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

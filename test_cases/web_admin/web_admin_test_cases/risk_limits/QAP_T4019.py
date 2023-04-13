@@ -31,7 +31,7 @@ class QAP_T4019(CommonTestCase):
         self.currency = self.data_set.get_currency_by_name("currency_3")
         self.max_amount = "1500"
         self.venue = self.data_set.get_venue_by_name("venue_1")
-        self.user = self.data_set.get_user("user_4")
+        self.user = self.data_set.get_user("user_11")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

@@ -26,7 +26,7 @@ class QAP_T3996(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.user = self.data_set.get_user("user_4")
+        self.user = self.data_set.get_user("user_11")
         self.strategy_type = self.data_set.get_strategy_type("strategy_type_4")
 
     def precondition(self):

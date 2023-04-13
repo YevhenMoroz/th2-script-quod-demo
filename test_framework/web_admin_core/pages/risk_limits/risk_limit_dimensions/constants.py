@@ -1,6 +1,6 @@
 class Constants:
     class MainPage:
-        TITLE = '//span[@class="entity-title left"][text()="Risk Limit Dimensions "]'
+        TITLE = '//span[@class="entity-title left"][normalize-space()="Risk Limit Dimensions"]'
 
         USER_ICON_AT_RIGHT_CORNER = '//*[@class="control-item icon-btn context-menu-host"]'
         LOGOUT_BUTTON = '//*[text()="Logout"]'
@@ -48,29 +48,30 @@ class Constants:
         OK_BUTTON = '//*[text()="Ok" or text()="OK"]'
         CANCEL_BUTTON = '//*[normalize-space()="Cancel"]'
         REVERT_CHANGES = '//*[normalize-space()="Revert Changes"]'
-        CHECKBOX_DROP_DOWN_MENU = '//*[@class="option-list"]//nb-option'
+        CHECKBOX_DROP_DOWN_MENU = '//p-multiselectitem//li[@style="display: block;"]//span[@id]'
         DROP_DOWN_MENU = '//nb-option//span'
         DIMENSIONS_LIMIT_INFO_MESSAGE = '//*[text()="Maximum 4 different dimensions"]'
         SELECT_ALL_CHECKBOX = '//div[contains(@class, "ui-widget-header")]//span[contains(@class, "ui-chkbox")]'
         MULTISELECT_FRAME_FILTER = '//input[contains(@class, "ui-inputtext")]'
         MULTISELECT_FRAME_ENTITY_CHECKBOX = '//span[normalize-space()="{}"]//..//span[contains(@class, "ui-chkbox")]'
+        MULTISELECT_FRAME_SELECT_ALL_CHECKBOX = '//div[contains(@class, "ui-multiselect-header")]//div[@role="checkbox"]'
 
         class ValuesTab:
             NAME = '//*[@formcontrolname="riskLimitDimensionName"]'
             DESCRIPTION = '//*[@formcontrolname="riskLimitDimensionDesc"]'
-            TRADING_LIMITS = '//*[@formcontrolname="riskLimitDimTradLimit_ext"]//button'
-            CUM_TRADING_LIMITS = '//*[@formcontrolname="riskLimitDimCumTrdLmt_ext"]//button'
-            POSITION_LIMITS = '//*[@formcontrolname="riskLimitDimPositLmt_ext"]//button'
-            BUYING_POWERS = '//*[@formcontrolname="riskLimitDimBuyingPowerLimit_ext"]//button'
+            TRADING_LIMITS = '//*[@id="Trading Limits"]'
+            CUM_TRADING_LIMITS = '//*[@id="Cum Trading Limits"]'
+            POSITION_LIMITS = '//*[@id="Position Limits"]'
+            BUYING_POWERS = '//*[@id="Buying Powers"]'
 
         class DimensionsTab:
             ACCOUNT_DIMENSIONS = '//*[@id="typeCCA"]'
-            ACCOUNTS = '//*[@formcontrolname="riskLimitDimSecurityAccount_ext"]'
-            CLIENTS = '//*[@id="riskLimitDimAccountGroup_ext"]//button'
+            ACCOUNTS = '//*[@id="Accounts"]'
+            CLIENTS = '//*[@id="Clients"]'
             CLIENT_LIST = '//*[@id="clientList"]'
             USER_DIMENSIONS = '//*[@id="typeDU"]'
-            DESKS = '//*[@id="riskLimitDimDesk_ext"]//button'
-            USERS = '//*[@id="riskLimitDimUserLogin_ext"]//button'
+            DESKS = '//*[@id="Desks"]'
+            USERS = '//*[@id="Users"]'
             REFERENCE_DATA_DIMENSIONS = '//*[@id="typeVSLL"]'
             VENUES = '//*[@id="venue"]'
             SUB_VENUE = '//*[@id="subVenue"]'

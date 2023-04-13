@@ -330,7 +330,7 @@ def clear_position():
     try:
         connection = psycopg2.connect(user="quod314prd",
                                       password="quod314prd",
-                                      host="10.0.22.42",
+                                      host="10.0.22.69",
                                       port="5432",
                                       database="quoddb")
         # Create a cursor to perform database operations
@@ -385,14 +385,20 @@ def restart_qs_rfq_fix_th2():
 
 def restart_pks():
     """
-    Restart QS_RFQ_STANDARD_SELL component on quod314 backend
+    Restart PKS component on quod314 backend
     """
     login_and_execute("qrestart QUOD.PKS")
 
 
+def restart_mpas():
+    """
+    Restart MPAS component on quod314 backend
+    """
+    login_and_execute("qrestart QUOD.PKS")
+
 def stop_fxfh():
     """
-    Restart QS_RFQ_STANDARD_SELL component on quod314 backend
+    Stop FXFH component on quod314 backend
     """
     login_and_execute("qstop -id QUOD.FXFH")
     time.sleep(10)
@@ -400,7 +406,7 @@ def stop_fxfh():
 
 def start_fxfh():
     """
-    Restart QS_RFQ_STANDARD_SELL component on quod314 backend
+    Start FXFH component on quod314 backend
     """
     login_and_execute("qstart FXFH")
     time.sleep(10)

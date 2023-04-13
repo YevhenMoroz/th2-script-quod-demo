@@ -10,7 +10,7 @@ class CommissionsDimensionsSubWizard(CommonPage):
         super().__init__(web_driver_container)
 
     def set_instr_type(self, value):
-        self.set_combobox_value(CommissionsConstants.DIMENSIONS_TAB_INSTR_TYPE_XPATH, value)
+        self.select_value_from_dropdown_list(CommissionsConstants.DIMENSIONS_TAB_INSTR_TYPE_XPATH, value)
 
     def get_instr_type(self):
         return self.get_text_by_xpath(CommissionsConstants.DIMENSIONS_TAB_INSTR_TYPE_XPATH)
@@ -46,7 +46,7 @@ class CommissionsDimensionsSubWizard(CommonPage):
         return self.is_element_present(CommissionsConstants.VALUES_TAB_VENUE_LIST_XPATH)
 
     def set_side(self, value):
-        self.set_combobox_value(CommissionsConstants.DIMENSIONS_TAB_SIDE_XPATH, value)
+        self.select_value_from_dropdown_list(CommissionsConstants.DIMENSIONS_TAB_SIDE_XPATH, value)
 
     def get_side(self):
         return self.get_text_by_xpath(CommissionsConstants.DIMENSIONS_TAB_SIDE_XPATH)
@@ -57,7 +57,7 @@ class CommissionsDimensionsSubWizard(CommonPage):
         return self.get_all_items_from_drop_down(CommissionsConstants.DROP_DOWN_MENU_XPATH)
 
     def set_execution_policy(self, value):
-        self.set_combobox_value(CommissionsConstants.DIMENSIONS_TAB_EXECUTION_POLICY_XPATH, value)
+        self.select_value_from_dropdown_list(CommissionsConstants.DIMENSIONS_TAB_EXECUTION_POLICY_XPATH, value)
 
     def get_execution_policy(self):
         return self.get_text_by_xpath(CommissionsConstants.DIMENSIONS_TAB_EXECUTION_POLICY_XPATH)
@@ -95,6 +95,11 @@ class CommissionsDimensionsSubWizard(CommonPage):
 
     def get_client_list(self):
         return self.get_text_by_xpath(CommissionsConstants.DIMENSIONS_TAB_CLIENT_LIST_XPATH)
+
+    def get_all_client_list_from_drop_menu(self):
+        self.find_by_xpath(CommissionsConstants.DIMENSIONS_TAB_CLIENT_LIST_XPATH).click()
+        time.sleep(1)
+        return self.get_all_items_from_drop_down(CommissionsConstants.DROP_DOWN_MENU_XPATH)
 
     def clear_client_list_field(self):
         self.set_text_by_xpath(CommissionsConstants.DIMENSIONS_TAB_CLIENT_LIST_XPATH, "")

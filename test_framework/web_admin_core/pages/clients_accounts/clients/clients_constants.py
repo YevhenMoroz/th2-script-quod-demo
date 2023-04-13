@@ -1,5 +1,5 @@
 class ClientsConstants:
-    CLIENTS_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][text()='Clients ']"
+    CLIENTS_PAGE_TITLE_XPATH = '//span[@class="entity-title left"][normalize-space()="Clients"]'
     WIZARD_PAGE_TITLE_XPATH = '//*[@class="breadcrumbs entity-title"]'
 
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
@@ -27,7 +27,7 @@ class ClientsConstants:
     POPUP_TEXT_XPATH = "//nb-toast//span[@class='title subtitle']"
     DISPLAYED_CLIENT_XPATH = "//*[text()='{}']"
     FOOTER_WARNING_XPATH = '//nb-card-footer//nb-alert[@outline="danger"]'
-    DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span'
+    DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span | //nb-option'
 
 
     # main page
@@ -67,17 +67,17 @@ class ClientsConstants:
     VALUES_TAB_GIVE_UP_SERVICE = '//*[@id="giveUpService"]'
     VALUES_TAB_EXTERNAL_GIVE_UP_SERVICE = '//*[@id="extGiveUpService"]'
     VALUES_TAB_GIVE_UP_MATCHING_ID = '//*[@id="giveUpMatchingID"]'
-    VALUES_TAB_EXTERNAL_GIVE_UP_SERVICE_MANAGE_BUTTON = '//*[@id="extGiveUpService"]//ancestor::div[@class="row"]//button'
-    VALUES_TAB_EXTERNAL_ALLOCATION_MATCHING_SERVICE_XPATH = '//*[@id="actGrpExtConfirmService"]'
-    VALUES_TAB_MANAGE_EXTERNAL_ALLOCATION_MATCHING_SERVICE_BUTTON_XPATH = '//*[@form-control-name="extConfirmationService"]/../..//button'
+    VALUES_TAB_EXTERNAL_GIVE_UP_SERVICE_MANAGE_BUTTON = '//*[@id="extGiveUpService"]//ancestor::div[@class="row"]//button[@nbbutton]'
+    VALUES_TAB_EXTERNAL_ALLOCATION_MATCHING_SERVICE_XPATH = '//div[@id="External Allocation Matching Service"]'
+    VALUES_TAB_MANAGE_EXTERNAL_ALLOCATION_MATCHING_SERVICE_BUTTON_XPATH = '//*[@id="actGrpExtConfirmService"]//following::button[1]'
     VALUES_TAB_DEFAULT_ACCOUNT_XPATH = '//*[@id="defaultAccount"]'
     VALUES_TAB_ORDER_ATTRIBUTE = '//*[@id="orderAttributeType"]'
 
     # Assignments tab
     ASSIGNMENTS_TAB_USER_MANAGER_XPATH = '//*[@id="accountMgrUser"]'
-    ASSIGNMENTS_TAB_USER_MANAGER_LABEL_XPATH = '//label[@for="accountMgrUser"][text()="User Manager"]'
-    ASSIGNMENTS_TAB_DESK_XPATH = '//*[@id="managerDesk"]//button'
-    ASSIGNMENTS_TAB_DESK_LABEL_XPATH = '//label[@for="managerDesk"][text()="Desks"]'
+    ASSIGNMENTS_TAB_USER_MANAGER_LABEL_XPATH = '//label[@for="accountMgrUser"][normalize-space()="User Manager"]'
+    ASSIGNMENTS_TAB_DESK_XPATH = '//div[@id="Desks *"]'
+    ASSIGNMENTS_TAB_DESK_LABEL_XPATH = '//label[@for="managerDesk"][normalize-space()="Desks *"]'
     ASSIGNMENTS_TAB_ACCOUNTS_XPATH = '//div[text()="Accounts"]/../..//*[@class="linked-entities-wrapper"]//a'
     ASSIGNMENTS_TAB_ACCOUNT_NAME_XPATH = '//*[normalize-space()="Assignments"]//..//*[@class="linked-entities-wrapper"]//*[normalize-space()="{}"]'
     ASSIGNMENTS_TAB_CLIENT_LISTS_XPATH = '//div[text()="Client List"]/../..//*[@class="linked-entities-wrapper"]//a'
@@ -155,9 +155,9 @@ class ClientsConstants:
     INSTR_TYPES_TAB_EDIT_BUTTON_XPATH = '//*[text()=" Instr Types "]/parent::nb-accordion-item//*[@data-name="edit"]'
     INSTR_TYPES_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Instr Types "]/parent::nb-accordion-item//*[@data-name="trash-2"]'
 
-    INSTR_TYPES_TAB_INSTR_TYPE_XPATH = '//*[@placeholder="Instr Type *"]'
+    INSTR_TYPES_TAB_INSTR_TYPE_XPATH = '(//*[normalize-space()="Instr Types"]//..//nb-select)[1]'
     INSTR_TYPES_TAB_INSTR_TYPE_FILTER_XPATH = '//*[@class="instrType ng2-smart-th ng-star-inserted"]//input'
-    INSTR_TYPES_TAB_POS_KEEPING_MODE_XPATH = '//*[@placeholder="Pos Keeping Mode"]'
+    INSTR_TYPES_TAB_POS_KEEPING_MODE_XPATH = '(//*[normalize-space()="Instr Types"]//..//nb-select)[2]'
     INSTR_TYPES_TAB_POS_KEEPING_MODE_FILTER_XPATH = '//*[@class="ng2-smart-th posKeepingMode ng-star-inserted"]//input'
 
     # Venues tab
@@ -213,7 +213,7 @@ class ClientsConstants:
     TRADE_CONFIRM_NET_GROSS_IND_TYPE_XPATH = '//*[@id="netGrossIndType"]'
     TRADE_CONFIRM_EMAIL_ADDRESS_XPATH = '//*[@placeholder="Email Address *"]'
     TRADE_CONFIRM_EMAIL_ADDRESS_FILTER_XPATH = '//*[@class="emailAddress ng2-smart-th ng-star-inserted"]//input'
-    TRADE_CONFIRM_RECIPIENT_TYPES_XPATH = '//*[@placeholder="Recipient Types"]'
+    TRADE_CONFIRM_RECIPIENT_TYPES_XPATH = '//*[normalize-space()="Recipient Types"]//ancestor::p-table//nb-select'
     TRADE_CONFIRM_RECIPIENT_TYPES_FILTER_XPATH = '//*[@class="emailAddress ng2-smart-th ng-star-inserted"]//input'
 
     class ExternalAllocationMatchingService:

@@ -9,6 +9,7 @@ class DBConnector:
 
             if db_type.lower() == 'postgresql':
                 mydb = postgresql.connect(host=host, database=name, user=user, password=password)
+                mydb.autocommit = True
                 return mydb.cursor()
 
             if db_type.lower() == 'oracle':

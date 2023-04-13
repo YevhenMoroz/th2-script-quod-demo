@@ -80,7 +80,7 @@ class QAP_T3407(CommonTestCase):
         values_tab.set_ext_id_client(self.ext_id_client)
         values_tab.set_description(self.description)
         values_tab.set_disclose_exec(self.disclose_exec)
-        values_tab.set_confirmation_service(self.confirmation_service)
+        values_tab.set_allocation_matching_service(self.confirmation_service)
 
         assignments_tab = ClientsAssignmentsSubWizard(self.web_driver_container)
         assignments_tab.set_desk(self.desk)

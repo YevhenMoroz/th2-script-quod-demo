@@ -9,7 +9,7 @@ from test_framework.web_admin_core.pages.clients_accounts.client_groups.client_g
     ClientGroupsConstants
 from test_framework.web_admin_core.pages.clients_accounts.client_lists.constants import ClientListsConstants
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_constants import ClientsConstants
-from test_framework.web_admin_core.pages.positions.cash_positions.cash_positions_constants import \
+from test_framework.web_admin_core.pages.positions.cash_positions.constants import Constants as \
     CashPositionsConstants
 from test_framework.web_admin_core.pages.risk_limits.order_velocity_limits.constants import \
     OrderVelocityLimitsConstants
@@ -39,8 +39,8 @@ from test_framework.web_admin_core.pages.middle_office.settlement_models.constan
     SettlementModelsConstants
 from test_framework.web_admin_core.pages.order_management.execution_strategies.execution_strategies_constants import \
     ExecutionStrategiesConstants
-from test_framework.web_admin_core.pages.order_management.order_management_rules.order_management_rules_constants import \
-    OrderManagementRulesConstants
+from test_framework.web_admin_core.pages.order_management.order_management_rules.constants import Constants \
+    as OrderManagementRulesConstants
 from test_framework.web_admin_core.pages.others.counterparts.counterparts_constants import CounterpartsConstants
 from test_framework.web_admin_core.pages.site.institution.institutions_constants import InstitutionsConstants
 from test_framework.web_admin_core.pages.markets.market_data_sources.constants import \
@@ -238,7 +238,7 @@ class SideMenu(CommonPage):
     def open_order_management_rules_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.ORDER_MANAGEMENT_RULES_ITEM_XPATH,
                        RootConstants.ORDER_MANAGEMENT_TOGGLE_CSS_SELECTOR, container_expected_state)
-        self.check_is_page_opened(OrderManagementRulesConstants.ORDER_MANAGEMENT_RULES_TITLE_XPATH)
+        self.check_is_page_opened(OrderManagementRulesConstants.MainPage.TITLE)
 
     def click_on_order_management_rules_when_order_management_tab_is_open(self):
         self.click_menu_item(RootConstants.ORDER_MANAGEMENT_RULES_ITEM_XPATH)
@@ -446,7 +446,7 @@ class SideMenu(CommonPage):
     def open_cash_positions_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.CASH_POSITIONS_XPATH, RootConstants.POSITIONS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(CashPositionsConstants.CASH_POSITIONS_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(CashPositionsConstants.MainPage.PAGE_TITLE)
 
     def wait_for_button_to_become_active(self):
         i = 0

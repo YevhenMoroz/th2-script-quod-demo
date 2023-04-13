@@ -1,6 +1,6 @@
 class VenueListsConstants:
     class MainPage:
-        TITLE_XPATH = '//span[@class="entity-title left"][text()="Venue Lists "]'
+        TITLE_XPATH = '//span[@class="entity-title left"][normalize-space()="Venue Lists"]'
         GLOBAL_FILTER = '//nb-card-header//input[@placeholder="Filter"]'
         DOWNLOAD_CSV_BUTTON_XPATH = '//*[@data-name="download"]'
         REFRESH_PAGE_BUTTON_XPATH = '//*[@data-name="refresh"]'
@@ -24,7 +24,7 @@ class VenueListsConstants:
         CLOSE_BUTTON_XPATH = '//*[@data-name="close"]'
         NAME_XPATH = '//*[@id="venueListName"]'
         DESCRIPTION_XPATH = '//*[@id="venueListDescription"]'
-        VENUE_LIST_XPATH = '//*[@id="venueListVenue"]//button'
+        VENUE_LIST_XPATH = '//*[@id="Venue List *"]'
         CLEAR_CHANGES_BUTTON_XPATH = '//button[text()="Clear Changes"]'
         SAVE_CHANGES_BUTTON_XPATH = '//button[text()="Save Changes"]'
         FOOTER_ERROR_MESSAGE_XPATH = "//*[@outline='danger']"

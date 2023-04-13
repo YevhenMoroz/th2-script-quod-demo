@@ -34,8 +34,7 @@ class QAP_T7193(TestCase):
         # region Declaration
         price = self.fix_message.get_parameter("Price")
         qty = self.fix_message.get_parameter("OrderQtyData")["OrderQty"]
-        client_for_rule = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_1')
-        self.fix_message.change_parameter('Account', self.data_set.get_client_by_name('client_pt_1'))
+        client_for_rule = self.data_set.get_venue_client_names_by_name('client_1_venue_1')
         self.fix_message.change_parameter('Instrument', self.data_set.get_fix_instrument_by_name('instrument_1'))
         self.fix_message.change_parameter('Price', price)
         self.fix_message.change_parameter('OrderQtyData', {'OrderQty': qty})
@@ -55,7 +54,7 @@ class QAP_T7193(TestCase):
         finally:
             time.sleep(3)
             self.rule_manager.remove_rule(rule)
-        exec_rep = self.fix_manager.get_last_message("ExecutionReport").get_parameters()
+        exec_rep = self.fix_manager.get_first_message("ExecutionReport").get_parameters()
         self.fix_manager.compare_values({"OrdStatus": "2", 'ExecType': 'F'}, exec_rep, "Check Order")
         # endregion
         # region Step 3
