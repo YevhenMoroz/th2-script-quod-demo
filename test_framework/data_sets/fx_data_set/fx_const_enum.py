@@ -258,8 +258,8 @@ class FxSymbols(Enum):
     symbol_23 = "USD/THB"
     symbol_24 = "USD/TWD"
     symbol_25 = "GBP/DKK"
-    symbol_25 = "USD/DKK"
     symbol_26 = "AUD/GBP"
+    symbol_27 = "USD/DKK"
 
     symbol_ndf_1 = "USD/PHP"
     symbol_ndf_2 = "EUR/PHP"
@@ -313,8 +313,8 @@ class DaysOfWeek(Enum):
 
 
 class FXAutoHedgers(Enum):
-    auto_hedger_1 = "OsmiumAH"
-    auto_hedger_2 = "AURUM_AH"
+    auto_hedger_1 = "BackToBack AH"
+    auto_hedger_2 = "Position AH (Osmium)"
     auto_hedger_3 = "DEFAULT"
     auto_hedger_4 = "Internal"
     auto_hedger_5 = "AUTOHEDGER1"
