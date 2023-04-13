@@ -1,5 +1,6 @@
 import re
 from copy import deepcopy
+from typing import Union
 
 from custom import basic_custom_actions
 from th2_grpc_common.common_pb2 import Direction
@@ -473,3 +474,6 @@ class FixVerifier:
         else:
             pass
         # TODO add exeption into else
+
+    def check_fix_message_kepler(self, fix_message: FixMessage, key_parameters: list = None, direction: DirectionEnum = DirectionEnum.FromQuod, message_name: str = None, ignored_fields: Union[list, tuple] = ('trailer', 'header', 'NoTradingSessions')):
+        self.check_fix_message(fix_message, key_parameters, direction, message_name, ignored_fields)

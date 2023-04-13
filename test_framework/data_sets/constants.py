@@ -368,6 +368,7 @@ class ReadLogVerifiers(Enum):
     log_319_check_party_info_buy_side = "log319-check-party-info-buy-side"
     log_319_check_exec_type = "log319-check-exec-type"
     log_319_cancel_child = "log319-cancel-child"
+    log_319_check_dfd_mapping_buy_side = "log319-check-dfd-mapping-buy-side"
 
 
 class ExecType(Enum):
@@ -410,6 +411,14 @@ class SshClientEnv(Enum):
     PASSWORD_316 = ""
     SU_USER_316 = "quod316"
     SU_PASSWORD_316 = "quod316"
+
+    HOST_319 = "10.0.22.39"
+    PORT_319 = 22
+    USER_319 = ""
+    PASSWORD_319 = ""
+    SU_USER_319 = "quod319"
+    SU_PASSWORD_319 = "quod319"
+
 
 class DataBaseEnv(Enum):
     # 317 site

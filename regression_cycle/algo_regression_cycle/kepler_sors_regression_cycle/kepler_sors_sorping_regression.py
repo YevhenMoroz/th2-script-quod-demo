@@ -11,6 +11,10 @@ from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T10421 import QAP_T10421
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T10428 import QAP_T10428
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T10912 import QAP_T10912
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T10913 import QAP_T10913
+from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T10981 import QAP_T10981
+from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T10989 import QAP_T10989
+from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T10990 import QAP_T10990
+from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T10991 import QAP_T10991
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4957 import QAP_T4957
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T4959 import QAP_T4959
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T9011 import QAP_T9011
@@ -300,6 +304,14 @@ def test_run(parent_id=None, version=None):
         QAP_T10912(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         time.sleep(3)
         QAP_T10913(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        time.sleep(3)
+        QAP_T10981(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        time.sleep(3)
+        QAP_T10989(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        time.sleep(3)
+        QAP_T10990(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        time.sleep(3)
+        QAP_T10991(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
     except Exception:

@@ -3,6 +3,9 @@ from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T10674 import QAP_T10674
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T11006 import QAP_T11006
+from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T11007 import QAP_T11007
+from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T11008 import QAP_T11008
+from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T11030 import QAP_T11030
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T4201 import QAP_T4201
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T4202 import QAP_T4202
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T4256 import QAP_T4256
@@ -23,6 +26,7 @@ from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T9086 import QAP_T9086
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T9087 import QAP_T9087
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T9088 import QAP_T9088
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T9096 import QAP_T9096
+from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T9100 import QAP_T9100
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T9101 import QAP_T9101
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T9332 import QAP_T9332
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T9339 import QAP_T9339
@@ -58,6 +62,9 @@ def test_run(parent_id=None, version=None):
         QAP_T9332(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T9087(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T11006(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T11007(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T11008(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T9100(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
         # region AuctionInitialSliceMultiplier
@@ -70,6 +77,7 @@ def test_run(parent_id=None, version=None):
         QAP_T4366(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4353(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4308(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T11030(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
         # region MaxParticipation
