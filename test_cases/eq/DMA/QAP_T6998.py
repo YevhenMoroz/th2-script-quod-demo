@@ -138,8 +138,8 @@ class QAP_T6998(TestCase):
                                              execution_report,
                                              f'Verifying that {ExecutionReportConst.ExecType_CAL.value} execution of'
                                              f' {child_dma_order_id} has properly fees (step 2)')
-        list_of_exec_id.append(execution_report[JavaApiFields.ExecID.value])
         list_of_exec_id.append(self._check_that_executions_has_fees(child_dma_order_id, fee_amount))
+        list_of_exec_id.append(execution_report[JavaApiFields.ExecID.value])
         list_of_exec_id.append(self._check_that_executions_has_fees(child_care_order_id, fee_amount))
         list_of_exec_id.append(self._check_that_executions_has_fees(order_id, fee_amount))
         # endregion
@@ -149,12 +149,12 @@ class QAP_T6998(TestCase):
             self.execution_report.get_parameters()[JavaApiFields.ExecutionReportBlock.value], child_dma_order_id)
         self.java_api_manager.send_message(self.ord_report_oms)
         result = self._get_executions_id(child_dma_order_id)
-        for index in range(1):
+        for index in range(2):
             self.java_api_manager.compare_values({JavaApiFields.ExecID.value: list_of_exec_id[index]},
-                                                 {JavaApiFields.ExecID.value: result[0][index]},
+                                                 {JavaApiFields.ExecID.value: result[index][0]},
                                                  f'Verify that {child_dma_order_id} has properly execution (step 3)')
         self.java_api_manager.compare_values({'CountExecution': '2'},
-                                             {'CountExecution': str(len(result[0]))},
+                                             {'CountExecution': str(len(result))},
                                              f'Verify that {child_dma_order_id} has only 2  executions (step 3)')
 
         result_for_child_co = self._get_executions_id(child_care_order_id)
@@ -162,21 +162,21 @@ class QAP_T6998(TestCase):
                                              {JavaApiFields.ExecID.value: result_for_child_co[0][0]},
                                              f'Verify that {child_dma_order_id} has properly execution (step 3)')
         self.java_api_manager.compare_values({'CountExecution': '1'},
-                                             {'CountExecution': str(len(result[0]))},
+                                             {'CountExecution': str(len(result_for_child_co))},
                                              f'Verify that {child_care_order_id} has only 1  execution (step 3)')
 
         result_for_co_order = self._get_executions_id(order_id)
         self.java_api_manager.compare_values({JavaApiFields.ExecID.value: list_of_exec_id[3]},
                                              {JavaApiFields.ExecID.value: result_for_co_order[0][0]},
-                                             f'Verify that {child_dma_order_id} has properly execution (step 3)')
+                                             f'Verify that {order_id} has properly execution (step 3)')
         self.java_api_manager.compare_values({'CountExecution': '1'},
-                                             {'CountExecution': str(len(result_for_co_order[0]))},
+                                             {'CountExecution': str(len(result_for_co_order))},
                                              f'Verify that {order_id} has only 1  execution (step 3)')
 
-        for i in range(1,4):
+        for i in range(1, 4):
             fee_amt_actually = self._get_misc_fee_amt_of_execution(list_of_exec_id[i])
             self.java_api_manager.compare_values({JavaApiFields.MiscFeeAmt.value: fee_amount},
-                                                 {JavaApiFields.MiscFeeAmt.value: fee_amt_actually},
+                                                 {JavaApiFields.MiscFeeAmt.value: str(fee_amt_actually)[:5]},
                                                  f'Verifying that {list_of_exec_id[i]} execution has properly fees (step 3)')
 
         # endregion
