@@ -46,7 +46,7 @@ class QAP_T8157(TestCase):
         self.wash_book = self.data_set.get_washbook_account_by_name('washbook_account_5')
         self.firm_account = self.data_set.get_account_by_name('client_pos_3_acc_3')
         self.mic = self.data_set.get_mic_by_name('mic_1')
-        self.account = self.data_set.get_venue_client_names_by_name('client_1_venue_1')
+        self.account = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_1')
         self.rule_manager = RuleManager(Simulators.equity)
         self.rest_api_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
         self.rest_api_manager = RestApiManager(session_alias=self.rest_api_connectivity, case_id=self.test_id)
