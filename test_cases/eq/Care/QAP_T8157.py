@@ -1,4 +1,5 @@
 import logging
+import time
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
@@ -93,6 +94,7 @@ class QAP_T8157(TestCase):
         except Exception as e:
             logger.error(f'Something gone wrong : {e}', exc_info=True)
         finally:
+            time.sleep(2)
             self.rule_manager.remove_rule(nos_rule)
         # end_of_part
 
