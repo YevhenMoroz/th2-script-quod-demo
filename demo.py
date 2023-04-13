@@ -5,6 +5,7 @@ from pathlib import Path
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_cases.eq.Bag.QAP_T7168 import QAP_T7168
+from test_cases.eq.Basket.QAP_T7199 import QAP_T7199
 from test_cases.eq.Basket.QAP_T7365 import QAP_T7365
 from test_cases.eq.Care.QAP_T7685 import QAP_T7685
 from test_framework.configurations.component_configuration import ComponentConfiguration
@@ -44,7 +45,10 @@ def test_run():
         # QAP_T7168(report_id=report_id, session_id=None, data_set=configuration.data_set,
         #           environment=configuration.environment) \
         #     .execute()
-        QAP_T7365(report_id=report_id, session_id=None, data_set=configuration.data_set,
+        # QAP_T7365(report_id=report_id, session_id=None, data_set=configuration.data_set,
+        #           environment=configuration.environment) \
+        #     .execute()
+        QAP_T7199(report_id=report_id, session_id=None, data_set=configuration.data_set,
                   environment=configuration.environment) \
             .execute()
     except Exception:
