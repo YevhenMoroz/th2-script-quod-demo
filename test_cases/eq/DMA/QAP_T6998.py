@@ -160,7 +160,7 @@ class QAP_T6998(TestCase):
         result_for_child_co = self._get_executions_id(child_care_order_id)
         self.java_api_manager.compare_values({JavaApiFields.ExecID.value: list_of_exec_id[2]},
                                              {JavaApiFields.ExecID.value: result_for_child_co[0][0]},
-                                             f'Verify that {child_dma_order_id} has properly execution (step 3)')
+                                             f'Verify that {child_care_order_id} has properly execution (step 3)')
         self.java_api_manager.compare_values({'CountExecution': '1'},
                                              {'CountExecution': str(len(result_for_child_co))},
                                              f'Verify that {child_care_order_id} has only 1  execution (step 3)')
