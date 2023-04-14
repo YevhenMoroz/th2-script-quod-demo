@@ -157,7 +157,7 @@ class QAP_T8155(TestCase):
         self.fix_verifier_sell.check_fix_message(self.SORPING_STL_order_replace_params, direction=self.ToQuod, message_name='Sell side OrderCancelReplaceRequest')
 
         er_reject_replaced_SORPING_STL_order_params = FixMessageOrderCancelRejectReportAlgo().set_params_from_new_order_single(self.SORPING_STL_order, self.gateway_side_sell, self.status_new)
-        er_reject_replaced_SORPING_STL_order_params.change_parameters(dict(CxlRejResponseTo='2'))
+        er_reject_replaced_SORPING_STL_order_params.change_parameters(dict(CxlRejResponseTo='2')).remove_parameter('SecondaryAlgoPolicyID')
         self.fix_verifier_sell.check_fix_message(er_reject_replaced_SORPING_STL_order_params, key_parameters=self.key_params_ER_cancel_reject_parent, message_name='Sell Side OrderCancelRejectReport')
         # endregion
 

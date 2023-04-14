@@ -80,6 +80,7 @@ class QAP_T4970(TestCase):
         self.account = self.data_set.get_account_by_name("account_9")
         self.listing_id_qdl1 = self.data_set.get_listing_id_by_name("listing_4")
         self.listing_id_qdl2 = self.data_set.get_listing_id_by_name("listing_5")
+        self.listing_id_qdl3 = self.data_set.get_listing_id_by_name("listing_16")
         # endregion
 
         # region Key parameters
@@ -121,6 +122,15 @@ class QAP_T4970(TestCase):
         market_data_snap_shot_qdl2 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_qdl2, self.fix_env1.feed_handler)
         market_data_snap_shot_qdl2.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.px_for_incr, MDEntrySize=self.qty_for_incr)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl2)
+
+        market_data_snap_shot_qdl3 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_qdl3, self.fix_env1.feed_handler)
+        market_data_snap_shot_qdl3.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_for_md)
+        market_data_snap_shot_qdl3.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask_qdl2, MDEntrySize=self.qty_for_md)
+        self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl3)
+
+        market_data_snap_shot_qdl3 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_qdl3, self.fix_env1.feed_handler)
+        market_data_snap_shot_qdl3.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.px_for_incr, MDEntrySize=self.qty_for_incr)
+        self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl3)
 
         time.sleep(3)
         # endregion
