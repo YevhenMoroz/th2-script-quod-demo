@@ -63,7 +63,8 @@ class QAP_T7008(TestCase):
             order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value). \
                 get_parameters()[JavaApiFields.OrdReplyBlock.value]
             self.java_api_manager.compare_values(
-                {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value},
+                {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value,
+                 JavaApiFields.ExpireDate.value: holiday_date},
                 order_reply, 'Verifying that order created')
         except Exception:
             logger.error('Error execution', exc_info=True)
