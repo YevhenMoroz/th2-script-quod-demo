@@ -18,6 +18,7 @@ from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
 
 
+# Warning! This is the manual test case. It needs to do manual and doesn`t include in regression script
 class QAP_T4837(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
