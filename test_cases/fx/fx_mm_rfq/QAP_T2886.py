@@ -27,13 +27,12 @@ class QAP_T2886(TestCase):
         self.execution_report = FixMessageExecutionReportPrevQuotedFX()
         self.account = self.data_set.get_client_by_name("client_mm_3")
         self.symbol = self.data_set.get_symbol_by_name("symbol_ndf_1")
-        self.security_type_ndf = self.data_set.get_security_type_by_name("fx_ndf")
-        self.currency = self.data_set.get_currency_by_name("currency_usd")
+        self.currency = self. data_set.get_currency_by_name("currency_usd")
+        self.security_type_fwd = self.data_set.get_security_type_by_name("fx_ndf")
         self.settle_date = self.data_set.get_settle_date_by_name("wk1_ndf")
-        self.qty = "1000000"
         self.instrument = {
             "Symbol": self.symbol,
-            "SecurityType": self.security_type_ndf
+            "SecurityType": self.security_type_fwd
         }
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -41,17 +40,16 @@ class QAP_T2886(TestCase):
         # region step 1
         self.quote_request.set_rfq_params_fwd()
 
-        self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0,
-                                                           Account=self.account, Instrument=self.instrument,
-                                                           Currency=self.currency, SettlDate=self.settle_date,
-                                                           OrderQty=self.qty,)
+        self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
+                                                           Instrument=self.instrument, Currency=self.currency,
+                                                           SettlDate=self.settle_date)
         response: list = self.fix_manager_sel.send_message_and_receive_response(self.quote_request, self.test_id)
 
         self.quote.set_params_for_quote_ndf(quote_request=self.quote_request)
         self.fix_verifier.check_fix_message(fix_message=self.quote)
         # endregion
         # region Step 2
-        self.new_order_single.set_default_prev_quoted(self.quote_request, response[0], side="2")
+        self.new_order_single.set_default_prev_quoted(self.quote_request, response[0])
         self.fix_manager_sel.send_message(self.new_order_single)
         # endregion
         # region Step 3

@@ -76,6 +76,7 @@ class QAP_T2410(TestCase):
         # region Step 3
         error_id = response[0].get_parameter("Text").split()[0]
         self.verifier.set_event_name(self.validation_text)
+        self.verifier.set_parent_id(self.test_id)
         self.verifier.compare_values(self.validation_text, self.expected_error_id, error_id)
         self.verifier.verify()
         # self.quote_reject.set_quote_reject_params(self.quote_request, text=self.text)

@@ -43,14 +43,13 @@ class QAP_T2437(TestCase):
         # region Step 1
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.silver)
         self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbol)
-        self.fix_manager.send_message_and_receive_response(self.md_request, self.test_id)
+        response = self.fix_manager.send_message_and_receive_response(self.md_request, self.test_id)
         # endregion
         # region Step 2
-        self.md_snapshot.set_params_for_md_response(self.md_request, self.bands)
+        self.md_snapshot.set_params_for_md_response(self.md_request, self.bands, response=response[0])
         self.md_snapshot.add_tag({"OrigQuoteEntryID": "*"})
         time.sleep(3)
-        self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
+        self.fix_verifier.check_fix_message(self.md_snapshot)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
