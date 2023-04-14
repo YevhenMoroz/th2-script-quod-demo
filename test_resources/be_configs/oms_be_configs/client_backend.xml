@@ -45,4 +45,8 @@
     <automaticCalculatedReportEnabled>true</automaticCalculatedReportEnabled>
     <!-- [PEQ-8500] True: the OrderScope=DFD fees should be applied to the calculated execution. False: do not apply OrderScope=DFD fees to the calculated execution. Default value True-->
     <calculatedReportFeesDFD>true</calculatedReportFeesDFD>
+    <gateway>
+        <heartbeat>30</heartbeat>
+        <heartbeatMarket>3</heartbeatMarket> <!--market connection status notification interval in seconds -->
+     </gateway>
 </quod>
