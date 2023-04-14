@@ -4,12 +4,6 @@ from datetime import datetime
 from pathlib import Path
 from custom import basic_custom_actions as bca
 from stubs import Stubs
-from test_cases.eq.Bag.QAP_T7168 import QAP_T7168
-from test_cases.eq.Basket.QAP_T7199 import QAP_T7199
-from test_cases.eq.Basket.QAP_T7340 import QAP_T7340
-from test_cases.eq.Basket.QAP_T7365 import QAP_T7365
-from test_cases.eq.Basket.QAP_basket_check import QAP_basket_check
-from test_cases.eq.Basket.QAP_basket_java import QAP_basket_java
 from test_cases.eq.Care.QAP_T7685 import QAP_T7685
 from test_framework.configurations.component_configuration import ComponentConfiguration
 from test_framework.data_sets.oms_data_set.oms_data_set import OmsDataSet
@@ -30,43 +24,25 @@ def test_run():
     report_id = bca.create_event(f'[{pc_name}] ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
     # initializing FE session
-    # session_id = set_session_id(pc_name)
-    # base_main_window = BaseMainWindow(bca.create_event(Path(__file__).name[:-3], report_id), session_id)
+    session_id = set_session_id(pc_name)
+    base_main_window = BaseMainWindow(bca.create_event(Path(__file__).name[:-3], report_id), session_id)
     # region creation FE environment and initialize fe_ values
-    configuration = ComponentConfiguration("BasketTrading")  # <--- provide your component from XML (DMA, iceberg, etc)
-    # fe_env = configuration.environment.get_list_fe_environment()[0]
-    # fe_folder = fe_env.folder
-    # fe_user = fe_env.user_1
-    # fe_pass = fe_env.password_1
+    configuration = ComponentConfiguration("YOUR_COMPONENT")  # <--- provide your component from XML (DMA, iceberg, etc)
+    fe_env = configuration.environment.get_list_fe_environment()[0]
+    fe_folder = fe_env.folder
+    fe_user = fe_env.user_1
+    fe_pass = fe_env.password_1
     # endregion
 
     try:
-        # base_main_window.open_fe(report_id=report_id, fe_env=fe_env, user_num=1)
-        # QAP_T7685(report_id=report_id, session_id=session_id, data_set=configuration.data_set,
-        #          environment=configuration.environment) \
-        #     .execute()
-        # QAP_T7168(report_id=report_id, session_id=None, data_set=configuration.data_set,
-        #           environment=configuration.environment) \
-        #     .execute()
-        # QAP_T7365(report_id=report_id, session_id=None, data_set=configuration.data_set,
-        #           environment=configuration.environment) \
-        #     .execute()
-        QAP_T7199(report_id=report_id, session_id=None, data_set=configuration.data_set,
-                  environment=configuration.environment) \
+        base_main_window.open_fe(report_id=report_id, fe_env=fe_env, user_num=1)
+        QAP_T7685(report_id=report_id, session_id=session_id, data_set=configuration.data_set,
+                 environment=configuration.environment) \
             .execute()
-        # QAP_basket_check(report_id=report_id, session_id=None, data_set=configuration.data_set,
-        #           environment=configuration.environment) \
-        #     .execute()
-        # QAP_basket_java(report_id=report_id, session_id=None, data_set=configuration.data_set,
-        #                 environment=configuration.environment) \
-        #     .execute()
-        # QAP_T7340(report_id=report_id, session_id=None, data_set=configuration.data_set,
-        #                 environment=configuration.environment) \
-        #     .execute()
     except Exception:
         logging.error("Error execution", exc_info=True)
-    # finally:
-    #     Stubs.win_act.unregister(session_id)
+    finally:
+        Stubs.win_act.unregister(session_id)
 
 
 if __name__ == '__main__':
