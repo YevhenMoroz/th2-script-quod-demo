@@ -39,13 +39,6 @@ class QAP_T10447(TestCase):
         self.nos = NewOrderReplyOMS(self.data_set).set_unsolicited_dma_limit()
         self.exec_rep = ExecutionReportOMS(self.data_set)
         self.db_manager = DBManager(environment.get_list_data_base_environment()[0])
-        self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
-        self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
-                                    self.ssh_client_env.password, self.ssh_client_env.su_user,
-                                    self.ssh_client_env.su_password)
-        self.local_path = resource_filename("test_resources.be_configs.oms_be_configs",
-                                            "client_es.xml")
-        self.remote_path = f"/home/{self.ssh_client_env.su_user}/quod/cfg/client_esbuyTH2test.xml"
 
         # endregion
 
