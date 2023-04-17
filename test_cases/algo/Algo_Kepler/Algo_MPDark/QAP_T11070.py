@@ -242,7 +242,7 @@ class QAP_T11070(TestCase):
         er_new_dma_2_chix_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_chix_order, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message_kepler(er_new_dma_2_chix_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New child DMA order on the CHIXDELTA')
 
-        time.sleep(5)
+        time.sleep(2)
 
         # region Check that the 1st child expires
         self.fix_verifier_buy.set_case_id(bca.create_event("Dark child DMA order on venue CHIX DARKPOOL UK expires", self.test_id))
