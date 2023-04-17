@@ -39,6 +39,7 @@ class QAP_T11068(TestCase):
         self.price = 20
         self.delay_for_trade = 5000
         self.delay_for_amend = 3000
+        self.delay_for_rfq = 3500
         self.algopolicy = constants.ClientAlgoPolicy.qa_mpdark_rr_1.value
         # endregion
 
@@ -97,7 +98,8 @@ class QAP_T11068(TestCase):
         nos_trade_rule = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, self.price, self.price, self.qty, self.qty, self.delay_for_trade)
         ocrr_rule = rule_manager.add_OrderCancelReplaceRequest(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, False, self.delay_for_amend)
         ocr_1_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_chix, self.ex_destination_chix, True)
-        self.rule_list = [nos_1_rule, nos_trade_rule, ocrr_rule, ocr_1_rule]
+        rfq_ocr_rule = rule_manager.add_OrderCancelRequestRFQExecutionReport(self.fix_env1.buy_side, self.client, self.ex_destination_trqx, True, self.delay_for_rfq)
+        self.rule_list = [nos_1_rule, nos_trade_rule, ocrr_rule, ocr_1_rule, rfq_ocr_rule]
         # endregion
 
         # region Send NewOrderSingle (35=D) for MP Dark order
@@ -197,6 +199,16 @@ class QAP_T11068(TestCase):
 
         er_reject_replace_dma_chix_order = FixMessageOrderCancelRejectReportAlgo().set_params_from_new_order_single(self.dma_chix_order, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message_kepler(er_reject_replace_dma_chix_order, self.key_params_ER_cancel_reject_child, self.ToQuod, "Buy Side ExecReport RejectReplace child DMA 1 order on venue CHIX DARKPOOL UK")
+        # endregion
+
+        # region quote canceled on LIS venues
+        self.fix_verifier_buy.set_case_id(bca.create_event("RFQs were canceled", self.test_id))
+
+        er_rfq_trqx_cancel_accepted = FixMessageExecutionReportAlgo().set_RFQ_cancel_accepted(nos_trql_rfq).change_parameter("ExDestination", self.ex_destination_trqx)
+        self.fix_verifier_buy.check_fix_message_kepler(er_rfq_trqx_cancel_accepted, key_parameters=self.key_params_ER_RFQ, message_name='Buy side cancel RFQ accepted on TRQX', direction=self.ToQuod)
+
+        er_rfq_chix_cancel_accepted = FixMessageExecutionReportAlgo().set_RFQ_cancel_accepted(nos_chixlis_rfq).change_parameter("ExDestination", self.ex_destination_trqx)
+        self.fix_verifier_buy.check_fix_message_kepler(er_rfq_chix_cancel_accepted, key_parameters=self.key_params_ER_RFQ, message_name='Buy side cancel RFQ accepted on LISX', direction=self.ToQuod)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
