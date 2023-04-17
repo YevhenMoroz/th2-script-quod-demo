@@ -18,7 +18,7 @@ from test_framework.data_sets import constants
 
 
 # Warning! This is the manual test case. It needs to do manual and doesn`t include in regression script
-class QAP_T4727(TestCase):
+class PALGO_3(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -97,39 +97,41 @@ class QAP_T4727(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        # region Rule creation
+        # IT IS A NEW SCENARIO (see the chat)
         '''
         STR
-        1. Send MarketData: 1st venue: Bid 1000@30, 2nd and 3rd venues: Bid 1000@20.
+        1. Send MarketData: 1st and 3rd venues: Bid 1000@20 (QUODLIT1, QUODLIT3), 2nd venue Bid 1000@30 (QUODLIT2).
         2. Send Sell LitDark algo order 15000@25.
-        3. Algo creates aggressive child (1000@30) and passive child (14000@25).
-        4. Connect to BUY-side and partial fill aggressive child (CumQty=500).
-        5. Aggressive child order has Eliminated Sts. ExecSts=PartialFill.
-        6. Passive child received modification request and change Qty to 145000 (recycling eliminated Qty).
-        7. Send MarketData on primary (or another venue): Bid: 1000@30.
+        3. Algo creates an aggressive child (1000@30) on QUODLIT2 and passive child (14000@25) on QUODLIT1?
+        4. Send MarketData on QUODLIT2: Bid: 1000@30.
+        5. Connect to BUY-side and partially fill aggressive child (CumQty=500).
+        6. Aggressive child order has Eliminated Sts. ExecSts=PartialFill.
+        7. Passive child received modification request and change Qty to 135000 (recycling eliminated Qty).
+        8. Fully fill passive order on QUODLIT1
+        9. Reject modification of passive order on QUODLIT1
         '''
-
-        # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
         nos_dark_1_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_quoddkp1, False, self.traded_qty, self.dark_price)
         nos_dark_2_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_quoddkp2, False, self.traded_qty, self.dark_price)
-        nos_1_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit1, True, 500, self.price_bid_qdl1)
-        # nos_2_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit2, True, self.qty_for_md, self.price_bid_qdl1)
+        nos_1_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit2, True, 500, self.price_bid_qdl1)
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit1, self.price)
-        ocrr_rule = rule_manager.add_OrderCancelReplaceRequest_ExecutionReport(self.fix_env1.buy_side, False)
+        nos_trade_rule = rule_manager.add_NewOrdSingleExecutionReportTradeByOrdQty(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit1, self.price, self.price, 14000, 14000, 1000)
+        ocrr_rule = rule_manager.add_OrderCancelReplaceRequest(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit1, False, 1000)
         ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit1, True)
-        self.rule_list = [nos_dark_1_ioc_rule, nos_dark_2_ioc_rule, nos_1_ioc_rule, nos_rule, ocrr_rule, ocr_rule]
+        self.rule_list = [nos_dark_1_ioc_rule, nos_dark_2_ioc_rule, nos_1_ioc_rule, nos_trade_rule, nos_rule, ocrr_rule, ocr_rule]
         # endregion
 
         # region Send_MarkerData
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
         market_data_snap_shot_qdl1 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_qdl1, self.fix_env1.feed_handler)
-        market_data_snap_shot_qdl1.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid_qdl1, MDEntrySize=self.qty_for_md)
+        market_data_snap_shot_qdl1.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid_qdl2, MDEntrySize=self.qty_for_md)
         market_data_snap_shot_qdl1.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask_qdl1, MDEntrySize=self.qty_for_md)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl1)
 
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
         market_data_snap_shot_qdl2 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_qdl2, self.fix_env1.feed_handler)
-        market_data_snap_shot_qdl2.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid_qdl2, MDEntrySize=self.qty_for_md)
+        market_data_snap_shot_qdl2.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid_qdl1, MDEntrySize=self.qty_for_md)
         market_data_snap_shot_qdl2.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask_qdl2, MDEntrySize=self.qty_for_md)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl2)
 
@@ -155,10 +157,10 @@ class QAP_T4727(TestCase):
         time.sleep(2)
 
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
-        market_data_snap_shot_qdl1 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_qdl2, self.fix_env1.feed_handler)
-        market_data_snap_shot_qdl1.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid_qdl1, MDEntrySize=self.qty_for_md)
-        market_data_snap_shot_qdl1.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask_qdl1, MDEntrySize=self.qty_for_md)
-        self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl1)
+        market_data_snap_shot_qdl2 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_qdl2, self.fix_env1.feed_handler)
+        market_data_snap_shot_qdl2.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid_qdl1, MDEntrySize=self.qty_for_md)
+        market_data_snap_shot_qdl2.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask_qdl1, MDEntrySize=self.qty_for_md)
+        self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl2)
 
         # endregion
 
@@ -178,7 +180,7 @@ class QAP_T4727(TestCase):
         market_data_snap_shot_qdl2 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_qdl1, self.fix_env1.feed_handler)
         market_data_snap_shot_qdl2.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid_qdl1, MDEntrySize=self.qty_for_md)
         market_data_snap_shot_qdl2.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask_qdl2, MDEntrySize=self.qty_for_md)
-        self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl2)
+        # self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl2)
 
         time.sleep(2)
 
