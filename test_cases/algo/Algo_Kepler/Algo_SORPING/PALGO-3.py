@@ -97,17 +97,6 @@ class QAP_T4727(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        '''
-        STR
-        1. Send MarketData: 1st venue: Bid 1000@30, 2nd and 3rd venues: Bid 1000@20.
-        2. Send Sell LitDark algo order 15000@25.
-        3. Algo creates aggressive child (1000@30) and passive child (14000@25).
-        4. Connect to BUY-side and partial fill aggressive child (CumQty=500).
-        5. Aggressive child order has Eliminated Sts. ExecSts=PartialFill.
-        6. Passive child received modification request and change Qty to 145000 (recycling eliminated Qty).
-        7. Send MarketData on primary (or another venue): Bid: 1000@30.
-        '''
-
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
         nos_dark_1_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_quoddkp1, False, self.traded_qty, self.dark_price)
