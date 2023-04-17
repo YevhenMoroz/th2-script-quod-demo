@@ -128,21 +128,21 @@ class QAP_T10943(TestCase):
         self.fix_verifier_sell.set_case_id(case_id_1)
 
         # region Send VWAP algo
-        self.auction_algo = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_VWAP_auction_params()
-        self.auction_algo.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.auction_algo.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.mic))
-        self.auction_algo.add_tag(dict(QuodFlatParameters=dict(Waves=self.waves)))
-        self.fix_manager_sell.send_message_and_receive_response(fix_message=self.auction_algo, case_id=case_id_1)
+        self.vwap_algo = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_VWAP_auction_params()
+        self.vwap_algo.add_ClordId((os.path.basename(__file__)[:-3]))
+        self.vwap_algo.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.mic))
+        self.vwap_algo.add_tag(dict(QuodFlatParameters=dict(Waves=self.waves)))
+        self.fix_manager_sell.send_message_and_receive_response(fix_message=self.vwap_algo, case_id=case_id_1)
         # endregion
 
         # region Check Sell side
-        self.auction_algo_verification = deepcopy(self.auction_algo)
+        self.auction_algo_verification = deepcopy(self.vwap_algo)
         self.fix_verifier_sell.check_fix_message(fix_message=self.auction_algo_verification, key_parameters=self.key_params_NOS_parent, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
-        er_pending_new = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_pending)
+        er_pending_new = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.vwap_algo, self.gateway_side_sell, self.status_pending)
         self.fix_verifier_sell.check_fix_message(fix_message=er_pending_new, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PendingNew')
 
-        er_new = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_new)
+        er_new = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.vwap_algo, self.gateway_side_sell, self.status_new)
         self.fix_verifier_sell.check_fix_message(fix_message=er_new, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport New')
         # endregion
 
@@ -159,9 +159,9 @@ class QAP_T10943(TestCase):
         self.fix_verifier_sell.set_case_id(case_id_2)
         time.sleep(2)
 
-        er_cancel_auction_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.auction_algo, self.gateway_side_sell, self.status_eliminate)
-        er_cancel_auction_order.add_tag(dict(Text=self.free_notes)).remove_parameter("LastMkt")
-        self.fix_verifier_sell.check_fix_message(er_cancel_auction_order, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
+        er_cancel_vwap_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.vwap_algo, self.gateway_side_sell, self.status_eliminate)
+        er_cancel_vwap_order.add_tag(dict(Text=self.free_notes)).remove_parameter("LastMkt")
+        self.fix_verifier_sell.check_fix_message(er_cancel_vwap_order, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
 
         rule_manager = RuleManager(Simulators.algo)
