@@ -124,7 +124,7 @@ class QAP_T10943(TestCase):
         self.fix_manager_feed_handler.send_message(fix_message=self.incremental_refresh)
         # endregion
 
-        case_id_1 = bca.create_event("Create Auction Order", self.test_id)
+        case_id_1 = bca.create_event("Create VWAP Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
         # region Send VWAP algo
