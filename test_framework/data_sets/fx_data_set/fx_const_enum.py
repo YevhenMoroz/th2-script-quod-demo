@@ -1,6 +1,6 @@
 from enum import Enum
 
-from custom.tenor_settlement_date import spo, wk1, wk2, wk3, today, tom, wk1_ndf, wk2_ndf, spo_ndf, broken_1, broken_2, \
+from custom.tenor_settlement_date import spo, wk1, wk2, wk3, today, tom, wk1_ndf, wk2_ndf, broken_1, broken_2, \
     broken_w1w2, broken_w2w3, broken_w3m1, spo_ndf, spo_java_api, wk1_java_api, wk2_java_api, today_java_api, tom_java_api
 
 
@@ -70,7 +70,7 @@ class FxClients(Enum):
     client_mm_6 = "Osmium1"  # For AutoHedger testing
     client_mm_7 = "Argentum1"  # Can be used for MM_Positions testing
     client_mm_8 = "AURUM1"  # For AutoHedger testing
-    client_mm_9 = "SWEDCUST3"
+    client_mm_9 = "Argentum2" # Can be used for MM_Positions testing
     client_mm_10 = "CLIENT1"  # For Deposit And Loan
     client_mm_11 = "Platinum1"  # For Margin Format testing
     client_mm_12 = "Konstantin1"  # For Java API testing
@@ -103,6 +103,7 @@ class FxAccounts(Enum):
     account_mm_6 = "Osmium1_1"
     account_mm_7 = "Argentum1_1"
     account_mm_8 = "AURUM1_1"
+    account_mm_9 = "Argentum2_1"
 
 
 class FxClientTiers(Enum):
