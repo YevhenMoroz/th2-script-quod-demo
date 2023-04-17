@@ -16,7 +16,7 @@ class FixMessagePositionReportFX(FixMessage):
         base_parameters = {
             "PosReqID": request.get_parameter("PosReqID"),
             "Account": request.get_parameter("Account"),
-            "Currency": request.get_parameter("Currency"),
+            "Currency": request.get_parameter("Currency") if request.get_parameter("Currency") is not None else "*",
             "PosReqType": "0",
             "PosMaintRptID": "*",
             "SettlDate": "*",
@@ -31,6 +31,25 @@ class FixMessagePositionReportFX(FixMessage):
                                SecurityIDSource="8",
                                SecurityExchange="*"
                                )
+        }
+        super().change_parameters(base_parameters)
+
+        return self
+
+    def set_params_for_all(self, request: FixMessageRequestForPositions):
+        base_parameters = {
+            "PosReqID": request.get_parameter("PosReqID"),
+            "Account": request.get_parameter("Account"),
+            "Currency": "*",
+            "PosReqType": "0",
+            "PosMaintRptID": "*",
+            "SettlDate": "*",
+            "PositionAmountData": "*",
+            "LastPositEventType": "*",
+            "LastPositUpdateEventID": "*",
+            "TransactTime": "*",
+            "Parties": "*",
+            "Instrument": "*"
         }
         super().change_parameters(base_parameters)
 
