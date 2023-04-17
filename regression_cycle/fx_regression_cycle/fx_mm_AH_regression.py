@@ -1,4 +1,5 @@
 from test_cases.fx.fx_mm_autohedging.QAP_T10439 import QAP_T10439
+from test_cases.fx.fx_mm_autohedging.QAP_T10444 import QAP_T10444
 from test_cases.fx.fx_mm_autohedging.QAP_T10775 import QAP_T10775
 from test_cases.fx.fx_mm_autohedging.QAP_T2681 import QAP_T2681
 from test_cases.fx.fx_mm_autohedging.QAP_T2682 import QAP_T2682
@@ -31,6 +32,7 @@ def test_run(parent_id=None, version=None):
         QAP_T9464(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T9468(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10439(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10444(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10775(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
     except Exception:
