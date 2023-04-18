@@ -77,7 +77,9 @@ class QAP_T7605(TestCase):
         # endregion
 
         # region step  4-7: Create Child DMA order and trade it
-        self._trade_child_dma_order(first_qty, order_id, self.client, cl_ord_id, 'step 4')
+        route_params = {JavaApiFields.RouteBlock.value: [
+            {JavaApiFields.RouteID.value: self.data_set.get_route_id_by_name("route_1")}]}
+        self._trade_child_dma_order(first_qty, order_id, self.client, cl_ord_id, 'step 4', route_params)
         position_report_first = self.ja_manager.get_last_message(PKSMessageType.PositionReport.value, [self.wash_book,
                                                                                                        JavaApiFields.PositQty.value]).get_parameters()[
             JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
@@ -92,7 +94,7 @@ class QAP_T7605(TestCase):
                 position_report_first[JavaApiFields.PositQty.value])},
             f'Verify that {JavaApiFields.CumSellQty.value} increased and {JavaApiFields.PositQty.value} decreased on {first_qty} (step 5)')
 
-        self._trade_child_dma_order(second_qty, order_id_second, self.client_2, cl_ord_id_second, 'step 6')
+        self._trade_child_dma_order(second_qty, order_id_second, self.client_2, cl_ord_id_second, 'step 6', route_params)
         position_report_second = self.ja_manager.get_last_message(PKSMessageType.PositionReport.value, [self.wash_book,
                                                                                                         JavaApiFields.PositQty.value]).get_parameters()[
             JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
@@ -177,7 +179,7 @@ class QAP_T7605(TestCase):
                                        f'Verifying that order has properly status ({step})')
         return order_id, cl_ord_id
 
-    def _trade_child_dma_order(self, qty, order_id, client, cl_ord_id, step):
+    def _trade_child_dma_order(self, qty, order_id, client, cl_ord_id, step, route_params):
         try:
             new_order_single = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(
                 self.fix_env.buy_side, self.client, self.mic, float(self.price))
@@ -192,6 +194,7 @@ class QAP_T7605(TestCase):
                                                              JavaApiFields.OrdQty.value: qty,
                                                              JavaApiFields.Side.value: SubmitRequestConst.Side_Sell.value,
                                                              JavaApiFields.AccountGroupID.value: client,
+                                                             JavaApiFields.RouteList.value: route_params,
                                                              JavaApiFields.ClOrdID.value: bca.client_orderid(9),
                                                              JavaApiFields.WashBookAccountID.value: self.dma_wash_book
                                                          })
