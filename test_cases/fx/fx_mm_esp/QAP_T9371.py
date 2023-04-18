@@ -70,7 +70,7 @@ class QAP_T9371(TestCase):
             }
         ]
         # region SSH
-        self.temp_path = "C:/Users/amedents/PycharmProjects/th2-script-quod-demo/temp"
+        self.temp_path = os.path.join(os.path.expanduser('~'), 'PycharmProjects', 'th2-script-quod-demo', 'temp')
         self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
         self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
                                     self.ssh_client_env.password, self.ssh_client_env.su_user,

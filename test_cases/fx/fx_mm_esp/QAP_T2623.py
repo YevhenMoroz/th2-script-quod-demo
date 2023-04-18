@@ -38,7 +38,7 @@ class QAP_T2623(TestCase):
                                     self.ssh_client_env.su_password)
         self.local_path = resource_filename("test_resources.be_configs.fx_be_configs", self.config_file)
         self.remote_path = f"/home/{self.ssh_client_env.su_user}/quod/cfg/{self.config_file}"
-        self.temp_path = "C:/Users/amedents/PycharmProjects/th2-script-quod-demo/temp"
+        self.temp_path = os.path.join(os.path.expanduser('~'), 'PycharmProjects', 'th2-script-quod-demo', 'temp')
         # endregion
         self.result = None
         self.tree = None
@@ -81,7 +81,7 @@ class QAP_T2623(TestCase):
         self.ssh_client.send_command('~/automation_scripts/change_permission_script')
         self.ssh_client.put_file(self.remote_path, "temp.xml")
         self.ssh_client.send_command("qrestart QS_ESP_FIX_TH2")
-        time.sleep(70)
+        time.sleep(85)
         # endregion
         # region Step 1
         self.md_request.set_md_req_parameters_maker()
@@ -120,4 +120,4 @@ class QAP_T2623(TestCase):
         self.ssh_client.put_file(self.remote_path, "temp.xml")
         self.ssh_client.send_command("qrestart QS_ESP_FIX_TH2")
         self.ssh_client.close()
-        time.sleep(70)
+        time.sleep(85)

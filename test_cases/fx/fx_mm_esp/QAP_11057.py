@@ -59,7 +59,7 @@ class QAP_T11057(TestCase):
         self.config_file = "client_qf_kharkiv_quod7_th2.xml"
         self.local_path = resource_filename("test_resources.be_configs.fx_be_configs", self.config_file)
         self.remote_path = f"/home/{self.ssh_client_env.su_user}/quod/cfg/{self.config_file}"
-        self.temp_path = "C:/Users/amedents/PycharmProjects/th2-script-quod-demo/temp"
+        self.temp_path = os.path.join(os.path.expanduser('~'), 'PycharmProjects', 'th2-script-quod-demo', 'temp')
         self.qty = random_qty(9, len=9)
         self.instrument = {
             "Symbol": self.symbol,
