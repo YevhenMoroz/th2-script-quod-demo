@@ -132,7 +132,7 @@ class QAP_T9035(TestCase):
                                                              JavaApiFields.OrdQty.value: self.qty
                                                          })
         self.java_api_manager.send_message_and_receive_response(self.execution_report)
-        exec_price = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value, ExecutionReportConst.ExecType_TRD.value).get_parameters()[JavaApiFields.ExecutionReportBlock.value]
+        exec_price = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value, ExecutionReportConst.ExecType_TRD.value).get_parameters()[JavaApiFields.ExecutionReportBlock.value][JavaApiFields.ExecPrice.value]
         fee_amt = str(float(exec_price) * (0.5 / 10000) * float(self.qty))
         list_ignored_fields = ['GatingRuleName', 'GatingRuleCondName',
                                'SettlCurrency', 'Currency', 'LastMkt',
