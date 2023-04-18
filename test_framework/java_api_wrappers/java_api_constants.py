@@ -157,6 +157,7 @@ class JavaApiFields(Enum):
     AllocationInstructionBlock = 'AllocationInstructionBlock'
     TransExecStatus = 'TransExecStatus'
     TransStatus = 'TransStatus'
+    InstrumentBlock = 'InstrumentBlock'
     ExecutionReportBlock = 'ExecutionReportBlock'
     CounterpartList = "CounterpartList"
     CounterpartBlock = "CounterpartBlock"
