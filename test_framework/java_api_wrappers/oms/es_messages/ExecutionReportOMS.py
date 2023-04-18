@@ -1,3 +1,4 @@
+from copy import deepcopy
 from datetime import datetime
 
 from pandas import Timestamp as tm
@@ -6,6 +7,7 @@ from pandas.tseries.offsets import BusinessDay as bd
 from custom import basic_custom_actions
 from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.java_api_wrappers.es_messages.ExecutionReport import ExecutionReport
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields
 
 
 class ExecutionReportOMS(ExecutionReport):
@@ -24,7 +26,7 @@ class ExecutionReportOMS(ExecutionReport):
             "ExecutionReportBlock": {"InstrumentBlock": data_set.get_java_api_instrument("instrument_1"),
                                      "ClOrdID": "*",
                                      "VenueExecID": basic_custom_actions.client_orderid(9),
-                                     "LastVenueOrdID": basic_custom_actions.client_orderid(12),
+                                     "LastVenueOrdID": basic_custom_actions.client_orderid(15),
                                      "OrdQty": "100.0",
                                      "Side": "Buy",
                                      "LastTradedQty": "100.0",
@@ -43,6 +45,32 @@ class ExecutionReportOMS(ExecutionReport):
         }
 
     def set_default_trade(self, cl_ord_id):
-        self.change_parameters(self.base_parameters)
+        self.change_parameters(deepcopy(self.base_parameters))
         self.update_fields_in_component('ExecutionReportBlock', {"ClOrdID": cl_ord_id})
+        return self
+
+    def set_default_cancel_unsolicited_execution(self, execution_report, last_venue_exec_id, venue_act_grp_name,
+                                                 venue_ord_id, venue_exec_id):
+        self.change_parameters(deepcopy(self.base_parameters))
+        self.update_fields_in_component('ExecutionReportBlock',
+                                        {
+                                            "ClOrdID": execution_report[JavaApiFields.ClOrdID.value],
+                                            "OrdQty": execution_report[JavaApiFields.OrdQty.value],
+                                            "LastTradedQty": execution_report[JavaApiFields.ExecQty.value],
+                                            "LastPx": execution_report[JavaApiFields.Price.value],
+                                            "TransactTime": (
+                                                    tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime(
+                                                '%Y-%m-%dT%H:%M:%S'),
+                                            "ExecType": "TradeCancel",
+                                            "TimeInForce": "Day",
+                                            "LeavesQty": execution_report[JavaApiFields.CumQty.value],
+                                            "CumQty": execution_report[JavaApiFields.CumQty.value],
+                                            "AvgPrice": execution_report[JavaApiFields.Price.value],
+                                            'ExternalTransStatus': 'Open',
+                                            JavaApiFields.VenueAccount.value:
+                                                {JavaApiFields.VenueActGrpName.value: venue_act_grp_name},
+                                            'VenueExecRefID': last_venue_exec_id,
+                                            'VenueOrdID': venue_ord_id,
+                                            'VenueExecID': venue_exec_id
+                                        })
         return self

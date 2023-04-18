@@ -154,11 +154,13 @@ class QtyPercentageProfile(Enum):
 
 class JavaApiFields(Enum):
     ExecCommission = 'ExecCommission'
+    AllocationInstructionBlock = 'AllocationInstructionBlock'
     TransExecStatus = 'TransExecStatus'
     TransStatus = 'TransStatus'
     ExecutionReportBlock = 'ExecutionReportBlock'
     CounterpartList = "CounterpartList"
     CounterpartBlock = "CounterpartBlock"
+    ClientAccountGroupID = 'ClientAccountGroupID'
     PartyRole = "PartyRole"
     CounterpartID = "CounterpartID"
     OrderNotificationBlock = "OrdNotificationBlock"
@@ -176,6 +178,7 @@ class JavaApiFields(Enum):
     ComputeBookingFeesCommissionsRequestBlock = 'ComputeBookingFeesCommissionsRequestBlock'
     ClOrdID = 'ClOrdID'
     OrdReplyBlock = 'OrdReplyBlock'
+    EffectiveDate = 'EffectiveDate'
     OrdStatus = 'OrdStatus'
     ExecType = 'ExecType'
     NewOrderListReplyBlock = 'NewOrderListReplyBlock'
@@ -283,6 +286,7 @@ class JavaApiFields(Enum):
     VenueActGrpName = 'VenueActGrpName'
     LastVenueOrdID = 'LastVenueOrdID'
     VenueExecID = 'VenueExecID'
+    RouteBlock = 'RouteBlock'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"
@@ -343,6 +347,7 @@ class JavaApiFields(Enum):
     SettlLocationID = 'SettlLocationID'
     SettlementModelID = 'SettlementModelID'
     Qty = 'Qty'
+    TradeDate = 'TradeDate'
     Side = 'Side'
     AllocationInstructionQtyList = 'AllocationInstructionQtyList'
     AllocationInstructionQtyBlock = 'AllocationInstructionQtyBlock'
@@ -402,6 +407,7 @@ class TimeInForces(Enum):
     DAY = 'DAY'
     GTD = 'GTD'
     ATC = 'ATC'
+    GTC = 'GTC'
 
 
 class OrdTypes(Enum):

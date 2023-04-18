@@ -211,6 +211,7 @@ class OmsAccounts(Enum):
     client_pt_9_acc_1 = "MOClient9_SA1"
     client_pt_10_acc_1 = "MOClient10_SA1"
     client_pt_pp_3_acc_1 = "MOClient_PP3_SA1"
+    dummy_sec_account =  "DummyAccount"
     """Care"""
     client_co_1_acc_1 = "CLIENT_FIX_CARE_SA1"
     """Dummy"""
