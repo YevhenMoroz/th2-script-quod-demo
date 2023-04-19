@@ -413,3 +413,7 @@ class FixPositionMaintenanceRequestFX(JavaApiMessage):
     def change_settle_date(self, settle_date):
         self.update_fields_in_component("PositionMaintenanceRequestBlock", {"SettlDate": settle_date})
         return self
+
+    def remove_settle_date(self):
+        self.remove_fields_from_component("PositionMaintenanceRequestBlock", ["SettlDate"])
+        return self
