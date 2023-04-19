@@ -116,7 +116,6 @@ class QAP_T10963(TestCase):
         execution_report = \
             self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
                 JavaApiFields.ExecutionReportBlock.value]
-        print(execution_report)
 
         self.java_api_manager.compare_values(
             {JavaApiFields.ExecType.value: ExecutionReportConst.ExecType_CAN.value},
