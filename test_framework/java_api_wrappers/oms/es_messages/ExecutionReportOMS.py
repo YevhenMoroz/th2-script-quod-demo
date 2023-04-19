@@ -49,6 +49,21 @@ class ExecutionReportOMS(ExecutionReport):
         self.update_fields_in_component('ExecutionReportBlock', {"ClOrdID": cl_ord_id})
         return self
 
+    def set_default_new(self, cl_ord_id):
+        self.change_parameters(deepcopy(self.base_parameters))
+        self.update_fields_in_component('ExecutionReportBlock', {"ClOrdID": cl_ord_id,
+                                                                 "LastTradedQty": "0.0",
+                                                                 "LastPx": "0.0",
+                                                                 "OrdType": "Limit",
+                                                                 "Price": "20.0",
+                                                                 "ExecType": "Open",
+                                                                 "TimeInForce": "Day",
+                                                                 "LeavesQty": "100.0",
+                                                                 "CumQty": "0.0",
+                                                                 "AvgPrice": "0.0",
+                                                                 })
+        return self
+
     def set_default_cancel_unsolicited_execution(self, execution_report, last_venue_exec_id, venue_act_grp_name,
                                                  venue_ord_id, venue_exec_id):
         self.change_parameters(deepcopy(self.base_parameters))
@@ -74,3 +89,20 @@ class ExecutionReportOMS(ExecutionReport):
                                             'VenueExecID': venue_exec_id
                                         })
         return self
+
+    def set_default_cancel(self, venue_exec_id, last_venue_ord_id, execution_report):
+        self.change_parameters(deepcopy(self.base_parameters))
+        self.update_fields_in_component('ExecutionReportBlock',
+                                        {
+                                            "ClOrdID": execution_report[JavaApiFields.OrdID.value],
+                                            "OrdQty": execution_report[JavaApiFields.OrdQty.value],
+                                            "TransactTime": (
+                                                    tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime(
+                                                '%Y-%m-%dT%H:%M:%S'),
+                                            "ExecType": "TradeCancel",
+                                            'VenueExecRefID': venue_exec_id,
+                                            'LastVenueOrdID': last_venue_ord_id,
+                                            'VenueExecID': basic_custom_actions.client_orderid(9)
+                                        })
+        return self
+

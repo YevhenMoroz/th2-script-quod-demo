@@ -558,7 +558,7 @@ class OMSTickSizeProfile(Enum):
 
 
 class OMSCounterPartyIDs_FIX(Enum):
-    counterpart_id_gtwquod4 = {'PartyRole': "36", 'PartyRoleQualifier': '1011', 'PartyID': "gtwquod4",
+    counterpart_id_gtwquod4 = {'PartyRole': "36",  'PartyID': "gtwquod4",
                                'PartyIDSource': "D"}
     counterpart_id_market_maker_th2_route = {'PartyRole': "66", 'PartyRoleQualifier': '12',
                                              'PartyID': "MarketMaker - TH2Route",

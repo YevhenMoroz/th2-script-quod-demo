@@ -20,6 +20,7 @@ class ExecutionReportConst(Enum):
     LastCapacity_Agency = 'A'
     ExecOrigin_M = 'M'
     ExecOrigin_E = 'E'
+    ExecType_Trade = 'Trade'
 
 
 class BasketMessagesConst(Enum):
@@ -166,6 +167,7 @@ class JavaApiFields(Enum):
     CounterpartID = "CounterpartID"
     OrderNotificationBlock = "OrdNotificationBlock"
     OrdID = 'OrdID'
+    VenueOrdID = 'VenueOrdID'
     TimeInForce = 'TimeInForce'
     ExpireDate = 'ExpireDate'
     ExecID = 'ExecID'
