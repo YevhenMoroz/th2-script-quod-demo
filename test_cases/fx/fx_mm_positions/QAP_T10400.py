@@ -39,7 +39,7 @@ class QAP_T10400(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region Step 2
+        # region Step 1
         self.maintenance_request.set_default_params()
         self.maintenance_request.change_account(self.account)
         self.maintenance_request.change_client(self.client)
@@ -47,7 +47,7 @@ class QAP_T10400(TestCase):
         self.java_api_manager.send_message(self.maintenance_request)
         self.sleep(1)
         # endregion
-        # region Step 3
+        # region Step 2
         self.request_for_position.set_default()
         self.request_for_position.change_parameters({"Instrument": self.instrument, "Currency": self.currency,
                                                      "Account": self.client})
@@ -56,19 +56,6 @@ class QAP_T10400(TestCase):
         self.position_report.change_parameter("SettlDate", self.settle_date)
         self.position_report.change_parameter("LastPositEventType", "11")
 
-        # prefilter = {
-        #     "header": {
-        #         "MsgType": ("AP", "EQUAL"),
-        #         "TargetCompID": "PKSTH2",
-        #         "SenderCompID": "QUODFX_UAT"
-        #     }
-        # }
-        # key_params = ["PosReqID"]
-        #
-        # self.fix_verifier.check_fix_message_sequence([self.position_report],
-        #                                              key_parameters_list=[key_params],
-        #                                              pre_filter=prefilter,
-        #                                              message_name="Check that we receive 2 reports")
         self.fix_verifier.check_fix_message(self.position_report)
         # endregion
 
