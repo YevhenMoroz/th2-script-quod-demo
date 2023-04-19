@@ -39,7 +39,7 @@ class QAP_T10613(TestCase):
             "SecurityType": self.sec_type,
             "Symbol": self.gbp_cad
         }
-        self.settle_date_wk1 = self.data_set.get_settle_date_by_name("wk1_java_api")
+        self.settle_date = self.data_set.get_settle_date_by_name("spot")
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -69,8 +69,10 @@ class QAP_T10613(TestCase):
         # region Step 3
         self.position_report.set_params_from_reqeust(self.request_for_position)
         self.position_report.change_parameter("LastPositUpdateEventID", exec_id)
+        self.position_report.change_parameter("SettlDate", self.settle_date)
         self.position_report.change_parameter("LastPositEventType", "5")
         self.position_report_2.set_params_from_reqeust(self.request_for_position)
+        self.position_report_2.change_parameter("SettlDate", self.settle_date)
         self.position_report_2.change_parameter("LastPositEventType", "11")
         prefilter = {
             "header": {
