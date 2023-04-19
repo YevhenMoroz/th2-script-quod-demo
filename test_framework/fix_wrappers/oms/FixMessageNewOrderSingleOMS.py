@@ -75,3 +75,12 @@ class FixMessageNewOrderSingleOMS(FixMessageNewOrderSingle):
                                 "IDSource": instr["SecurityIDSource"], "SecurityExchange": instr["SecurityExchange"]})
         self.remove_parameters(["Instrument","OrderCapacity","OrderQtyData"])
         return self
+
+    def set_fix42_care_limit(self):
+        self.change_parameters(self.base_parameters)
+        instr = self.data_set.get_fix_instrument_by_name("instrument_1")
+        self.change_parameters({"OrdType": "2", "HandlInst": "3", "Price": "20", "OrderQty": "100",
+                                "Symbol": instr["Symbol"], "SecurityID": instr["SecurityID"],
+                                "IDSource": instr["SecurityIDSource"], "SecurityExchange": instr["SecurityExchange"]})
+        self.remove_parameters(["Instrument","OrderCapacity","OrderQtyData"])
+        return self

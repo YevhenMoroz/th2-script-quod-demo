@@ -28,6 +28,7 @@ class FIXMessageType(Enum):
     RequestForPositionsAck = "RequestForPositionsAck"
     PositionReport = "PositionReport"
     DontKnowTrade = "DontKnowTrade"
+    AllocationACK = "AllocationACK"
 
 
 class ORSMessageType(Enum):
