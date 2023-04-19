@@ -670,11 +670,12 @@ class RuleManager:
                                                              venue=venue,
                                                              delay=delay))
 
-    def add_NewOrdSingleExecutionReportAll(self, session: str, account: str, venue: str):
+    def add_NewOrdSingleExecutionReportAll(self, session: str, account: str, venue: str, delay: int = 0):
         return self.sim.createNewOrdSingleExecutionReportAll(
             request=TemplateNewOrdSingleExecutionReportAll(connection_id=ConnectionID(session_alias=session),
                                                        account=account,
-                                                       venue=venue))
+                                                       venue=venue,
+                                                       delay=delay))
 
     def add_NewOrdSingleExecutionReportIOCAll(self, session: str, account: str, venue: str, delay: int = 0):
         return self.sim.createNewOrdSingleExecutionReportIOCAll(
