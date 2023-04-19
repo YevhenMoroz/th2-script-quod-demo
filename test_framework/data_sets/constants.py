@@ -222,6 +222,7 @@ class ClientAlgoPolicy(Enum):
     qa_sorping_11 = "QA_Auto_SORPING_11"
     qa_sorping_12 = "QA_Auto_SORPING_12"
     qa_sorping_13 = "QA_Auto_SORPING_13"
+    qa_sorping_14 = "QA_Auto_SORPING_14"
     qa_multiple_y = 'QA_Auto_SORPING_ME_Y'
     qa_multiple_n = 'QA_Auto_SORPING_ME_N'
     qa_iceberg = 'QA_Auto_ICEBERG'
@@ -444,6 +445,11 @@ class DataBaseEnv(Enum):
     USER_320 = "quod320prd"
     PASS_320 = "quod320prd"
     DB_TYPE_320 = "postgresql"
+    # 310 mongo
+    HOST_310 = "10.0.22.31"
+    PORT_310 = 27310
+    NAME_310 = "filteredQuoteDB"
+    DB_TYPE_310 = "mongo"
 
 
 class FreeNotesReject(Enum):

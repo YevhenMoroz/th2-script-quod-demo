@@ -33,11 +33,22 @@ class DataBaseEnvironment(BaseEnvironment):
         elif env.value == EnvironmentType.quod316_data_base_mongo.value:
             if EnvironmentType.quod316_data_base_mongo.value not in DataBaseEnvironment.environment_instances.keys():
                 site_environment = DataBaseEnvironment(
-                    environment_type=EnvironmentType.quod317_fe.value,
+                    environment_type=EnvironmentType.quod316_fe.value,
                     db_host=DataBaseEnv.HOST_316.value,
                     db_name=DataBaseEnv.NAME_316.value,
                     db_port=DataBaseEnv.PORT_316.value,
                     db_type=DataBaseEnv.DB_TYPE_316.value
+                )
+                DataBaseEnvironment.environment_instances.update({EnvironmentType.quod316_data_base_mongo.value: site_environment})
+            return DataBaseEnvironment.environment_instances[EnvironmentType.quod316_data_base_mongo.value]
+        elif env.value == EnvironmentType.quod310_data_base_mongo.value:
+            if EnvironmentType.quod310_data_base_mongo.value not in DataBaseEnvironment.environment_instances.keys():
+                site_environment = DataBaseEnvironment(
+                    environment_type=EnvironmentType.quod310_fe.value,
+                    db_host=DataBaseEnv.HOST_310.value,
+                    db_name=DataBaseEnv.NAME_310.value,
+                    db_port=DataBaseEnv.PORT_310.value,
+                    db_type=DataBaseEnv.DB_TYPE_310.value
                 )
                 DataBaseEnvironment.environment_instances.update({EnvironmentType.quod316_data_base_mongo.value: site_environment})
             return DataBaseEnvironment.environment_instances[EnvironmentType.quod316_data_base_mongo.value]
