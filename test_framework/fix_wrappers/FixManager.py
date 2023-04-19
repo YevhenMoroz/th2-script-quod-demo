@@ -7,6 +7,7 @@ from th2_grpc_act_fix_quod.act_fix_pb2 import PlaceMessageRequest
 from custom import basic_custom_actions
 from custom.verifier import Verifier, VerificationMethod
 from test_framework.data_sets.message_types import FIXMessageType
+from test_framework.fix_wrappers.FixAllocationACK import FixAllocationACK
 from test_framework.fix_wrappers.FixMessage import FixMessage
 from test_framework.fix_wrappers.FixMessageBusinessMessageRejectReport import FixMessageBusinessMessageRejectReport
 from test_framework.fix_wrappers.FixMessageExecutionReport import FixMessageExecutionReport
@@ -360,6 +361,8 @@ class FixManager:
                 response_fix_message = FixMessageOrderCancelReplaceRequest()
             elif message_type == FIXMessageType.Reject.value:
                 response_fix_message = FixMessageReject()
+            elif message_type == FIXMessageType.AllocationACK.value:
+                response_fix_message = FixAllocationACK()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
         self.response = response_messages

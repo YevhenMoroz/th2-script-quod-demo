@@ -36,7 +36,7 @@ class QAP_T7210(TestCase):
         fix_message = FixMessageNewOrderSingleOMS(self.data_set)
         fix_message.set_default_care_limit()
         fix_message.change_parameter('OrderQtyData', {'OrderQty': qty})
-        fix_message.change_parameter('Account', self.data_set.get_client_by_name('client_pt_8'))
+        fix_message.change_parameter('Account', self.data_set.get_client_by_name('client_pt_7'))
         order_id_column = OrderBookColumns.order_id.value
         client_id_column = OrderBookColumns.client_id.value
         orders_id: typing.List[str] = list()
