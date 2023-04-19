@@ -37,6 +37,7 @@
 	<enabled>true</enabled>
         <default>DefaultWashBook</default> <!-- AccountID of the default wash book -->
     </washbook>
+    <execVATCommissionsEnable>false</execVATCommissionsEnable>
     <clientCommissions>
         <enabled>true</enabled>
         <eventType>ALLEXEC</eventType><!-- supported values: DFD, ALLEXEC -->
