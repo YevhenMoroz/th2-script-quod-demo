@@ -15,8 +15,8 @@ class AlgoMongoManager:
         if type(price) != float:
             raise ValueError("Price should be float type")
 
-        pop_end = AFM.change_datetime_from_epoch_to_normal(AFM.get_timestamp_from_list(phases=phases, phase=TradingPhases.PreOpen, start_time=False)).replace(tzinfo=None)
-        pcl_start = AFM.change_datetime_from_epoch_to_normal(AFM.get_timestamp_from_list(phases=phases, phase=TradingPhases.PreClosed, start_time=True)).replace(tzinfo=None)
+        pop_end = AFM.change_datetime_from_epoch_to_normal(AFM.get_timestamp_from_list(phases=phases, phase=TradingPhases.PreOpen, start_time=False)).replace(tzinfo=None) - timedelta(days=1)
+        pcl_start = AFM.change_datetime_from_epoch_to_normal(AFM.get_timestamp_from_list(phases=phases, phase=TradingPhases.PreClosed, start_time=True)).replace(tzinfo=None) - timedelta(days=1)
 
 
 
