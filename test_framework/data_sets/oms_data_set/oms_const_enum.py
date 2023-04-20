@@ -558,7 +558,7 @@ class OMSTickSizeProfile(Enum):
 
 
 class OMSCounterPartyIDs_FIX(Enum):
-    counterpart_id_gtwquod4 = {'PartyRole': "36",  'PartyID': "gtwquod4",
+    counterpart_id_gtwquod4 = {'PartyRole': "36", 'PartyID': "gtwquod4",
                                'PartyIDSource': "D"}
     counterpart_id_market_maker_th2_route = {'PartyRole': "66", 'PartyRoleQualifier': '12',
                                              'PartyID': "MarketMaker - TH2Route",
@@ -616,6 +616,10 @@ class OMSCounterPartyIDs_JavaAPI(Enum):
     counterpart_custodian_user_2 = {'PartyRole': "CUS", 'CounterpartID': '800006'}
     counterpart_agent = {'CounterpartID': '1400025', 'PartyRole': 'AGE'}
     counterpart_entering_firm = {'CounterpartID': '1200012', 'PartyRole': 'ENF'}
+    counterpart_secondary_account_number = {'CounterpartID': '1200022', 'PartyRole': 'SAN'}
+    counterpart_settlement_account = {'CounterpartID': '1200023', 'PartyRole': 'SAC'}
+    counterpart_executing_trader = {'CounterpartID': '1200013', 'PartyRole': 'EXT'}
+    counterpart_executing_trader_2 = {'CounterpartID': '1200021', 'PartyRole': 'EXT'}
 
 
 class OMSVenueClientAccountName(Enum):
