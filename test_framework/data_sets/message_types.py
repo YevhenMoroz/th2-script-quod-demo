@@ -132,6 +132,8 @@ class ORSMessageType(Enum):
     NewOrderMultiLeg = "Order_NewOrderMultiLeg"
     FixNewOrderReply = "Fix_NewOrderReply"
     FixAllocationInstruction = 'Fix_AllocationInstruction'
+    CptyBlockRejectRequest ='Order_CptyBlockRejectRequest'
+    CptyBlockRejectReply = 'Order_CptyBlockRejectReply'
 
 
 class TradingRestApiMessageType(Enum):
