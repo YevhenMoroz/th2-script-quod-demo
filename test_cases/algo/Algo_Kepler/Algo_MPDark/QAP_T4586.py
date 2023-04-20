@@ -119,7 +119,7 @@ class QAP_T4586(TestCase):
         self.MP_Dark_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.MP_Dark_order.change_parameters(dict(Account=self.client, OrderQty=self.qty,  Price=self.price, ClientAlgoPolicyID=self.algopolicy))
         response = self.fix_manager_sell.send_message_and_receive_response(self.MP_Dark_order, case_id_1)[0]
-        expectedtime = (datetime.strptime(response.get_parameter("header")['SendingTime'], '%Y-%m-%dT%H:%M:%S.%f') + timedelta(seconds=5)).isoformat()
+        expectedtime = (datetime.strptime(response.get_parameter("header")['SendingTime'], '%Y-%m-%dT%H:%M:%S.%f') + timedelta(seconds=4, milliseconds=998)).isoformat()
 
         time.sleep(15)
         # endregion

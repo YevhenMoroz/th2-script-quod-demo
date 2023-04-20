@@ -140,6 +140,8 @@ class QAP_T8855(TestCase):
 
         self.fix_manager_sell.send_message_and_receive_response(self.SORPING_order, case_id_1)
 
+        time.sleep(2)
+
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Update Market Data", self.test_id))
         market_data_snap_shot_qdl6 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_qdl6, self.fix_env1.feed_handler)
         market_data_snap_shot_qdl6.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_for_md)
