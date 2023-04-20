@@ -162,7 +162,7 @@ class QAP_T10545(TestCase):
             f"UPDATE accountgroup SET counterpartid = '{counterpart_id_client}' WHERE accountgroupid = '{self.client}'")
         if counterpart_id_sec_account is 'null':
             self.db_manager.execute_query(
-                f"UPDATE securityaccount SET counterpartid = 'null' WHERE accountid = '{self.alloc_account}'")
+                f"UPDATE securityaccount SET counterpartid = null WHERE accountid = '{self.alloc_account}'")
         else:
             self.db_manager.execute_query(
                 f"UPDATE securityaccount SET counterpartid = '{counterpart_id_sec_account}' WHERE accountid = '{self.alloc_account}'")
