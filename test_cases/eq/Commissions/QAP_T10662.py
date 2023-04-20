@@ -15,7 +15,7 @@ from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
-from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, OrderReplyConst
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, OrderReplyConst, ExecutionReportConst
 from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS import AllocationInstructionOMS
 from test_framework.java_api_wrappers.oms.ors_messges.ComputeBookingFeesCommissionsRequestOMS import \
     ComputeBookingFeesCommissionsRequestOMS
@@ -106,12 +106,23 @@ class QAP_T10662(TestCase):
         # endregion
 
         # region manual execute order
+        expected_result_comm = {
+            JavaApiFields.RootMiscFeeBasis.value: 'B',
+            JavaApiFields.RootMiscFeeAmt.value: '1.0',
+            JavaApiFields.RootMiscFeeRate.value: '5.0',
+            JavaApiFields.RootMiscFeeType.value: 'EXC',
+            JavaApiFields.RootMiscFeeCurr.value: self.comm_cur
+        }
         self.trade_entry_request.set_default_trade(order_id, exec_price=self.price, exec_qty=self.qty)
         self.trade_entry_request.update_fields_in_component('TradeEntryRequestBlock', {'LastMkt': self.mic})
         self.java_api_manager.send_message_and_receive_response(self.trade_entry_request)
-        exec_report = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameter(
+        exec_report = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value,
+                                                             ExecutionReportConst.ExecType_TRD.value).get_parameter(
             JavaApiFields.ExecutionReportBlock.value)
         exec_id = exec_report[JavaApiFields.ExecID.value]
+        # self.java_api_manager.compare_values({JavaApiFields.RootMiscFeesList.value:
+        #                                           {JavaApiFields.RootMiscFeesBlock.value: [expected_result_comm]}},
+        #                                      exec_report, 'Check Fee in the execution')
         self.dfd_batch.set_default_complete(order_id)
         self.java_api_manager.send_message_and_receive_response(self.dfd_batch)
         # endregion
@@ -128,13 +139,6 @@ class QAP_T10662(TestCase):
             JavaApiFields.ComputeBookingFeesCommissionsReplyBlock.value)[JavaApiFields.RootMiscFeesList.value][
             JavaApiFields.RootMiscFeesBlock.value][0]
 
-        expected_result_comm = {
-            JavaApiFields.RootMiscFeeBasis.value: 'B',
-            JavaApiFields.RootMiscFeeAmt.value: '1.0',
-            JavaApiFields.RootMiscFeeRate.value: '5.0',
-            JavaApiFields.RootMiscFeeType.value: 'EXC',
-            JavaApiFields.RootMiscFeeCurr.value: self.comm_cur
-        }
         self.java_api_manager.compare_values(expected_result_comm,
                                              root_misc,
                                              "Check Fee in the Booking Ticket")
@@ -187,7 +191,7 @@ class QAP_T10662(TestCase):
                 JavaApiFields.ConfirmationReportBlock.value]
         self.java_api_manager.compare_values(expected_result_fee,
                                              confirm_report[JavaApiFields.MiscFeesList.value][
-            JavaApiFields.MiscFeesBlock.value][0],
+                                                 JavaApiFields.MiscFeesBlock.value][0],
                                              "Check Fee after allocation")
         # endregion
 
