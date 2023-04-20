@@ -136,6 +136,9 @@ class ORSMessageType(Enum):
     CptyBlockRejectReply = 'Order_CptyBlockRejectReply'
     BlockValidateRequest = 'Order_BlockValidateRequest'
     BlockValidateReply = 'Order_BlockValidateReply'
+    MatchCptyMOBlocksReply = 'Order_MatchCptyMOBlocksReply'
+    MatchCptyMOBlocksRequest = 'Order_MatchCptyMOBlocksRequest'
+    FixAllocationInstructionAck = 'Fix_AllocationInstructionAck'
 
 
 class TradingRestApiMessageType(Enum):
