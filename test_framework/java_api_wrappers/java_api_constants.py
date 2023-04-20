@@ -81,6 +81,7 @@ class AllocationReportConst(Enum):
     MatchStatus_UNM = 'UNM'
     AllocSummaryStatus_MAG = 'MAG'
     AllocStatus_APP = 'APP'
+    AllocStatus_REC = 'REC'
     AllocStatus_CXL = 'CXL'
     AllocReportType_ACC = 'ACC'
     ConfirmationService_EXT = 'EXT'
