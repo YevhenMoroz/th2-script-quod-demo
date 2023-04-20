@@ -69,7 +69,7 @@ class QAP_T10545(TestCase):
         qty = self.order_submit.get_parameters()[JavaApiFields.NewOrderSingleBlock.value][JavaApiFields.OrdQty.value]
         try:
             new_order_single_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(
-                self.fix_env.sell_side, self.client_for_rule, self.mic, float(price))
+                self.fix_env.buy_side, self.client_for_rule, self.mic, float(price))
             route = self.data_set.get_route_id_by_name("route_1")
             route_params = {JavaApiFields.RouteBlock.value: [{JavaApiFields.RouteID.value: route}]}
             self.order_submit.update_fields_in_component(JavaApiFields.NewOrderSingleBlock.value,
@@ -82,14 +82,13 @@ class QAP_T10545(TestCase):
                                                                           JavaApiFields.AllocQty.value: qty}]}},
                                                           JavaApiFields.RouteList.value: route_params})
             self.java_api_manager.send_message_and_receive_response(self.order_submit, response_time=12000)
-            order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value,
-                                                                 OrderReplyConst.TransStatus_OPN.value).get_parameters()[
+            order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
                 JavaApiFields.OrdReplyBlock.value]
             order_id = order_reply[JavaApiFields.OrdID.value]
             cl_ord_id = order_reply[JavaApiFields.ClOrdID.value]
             self.java_api_manager.compare_values(
-                {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value},
-                order_reply, 'Verifying that order has Sts = Open')
+                {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_SEN.value},
+                order_reply, 'Verifying that order created')
         finally:
             time.sleep(2)
             self.rule_manager.remove_rule(new_order_single_rule)
@@ -105,27 +104,32 @@ class QAP_T10545(TestCase):
                               'LeavesQty', 'CumQty', 'LastPx', 'OrdType',
                               'SecondaryOrderID', 'tag5120', 'LastMkt',
                               'Text', 'OrderCapacity', 'QtyType', 'ExecBroker',
-                              'Price', 'Instrument','PositionEffect',
-                              'ExDestination','MaxPriceLevels']
-        parties = {
-            'NoParty': [
-                self.data_set.get_counterpart_id_fix('counterpart_id_custodian_user'),
-                self.data_set.get_counterpart_id_fix('counterpart_id_regulatory_body_venue_paris'),
-                self.data_set.get_counterpart_id_fix('counterpart_secondary_account_number'),
-                self.data_set.get_counterpart_id_fix('counterpart_id_market_maker_th2_route'),
-                self.data_set.get_counterpart_id_fix('counterpart_settlement_account'),
-                self.data_set.get_counterpart_id_fix('counterpart_java_api_user')
-            ]
-        }
+                              'Price', 'Instrument', 'PositionEffect',
+                              'ExDestination', 'MaxPriceLevels', 'M_PreAllocGrp', 'LastExecutionPolicy',
+                              'TradeDate', 'SecondaryExecID', 'GrossTradeAmt', 'PartyRoleQualifier']
+        list_of_counterparts = [
+            self.data_set.get_counterpart_id_fix('counterpart_id_custodian_user'),
+            self.data_set.get_counterpart_id_fix('counterpart_id_regulatory_body_venue_paris'),
+            self.data_set.get_counterpart_id_fix('counterpart_secondary_account_number'),
+            self.data_set.get_counterpart_id_fix('counterpart_id_market_maker_th2_route'),
+            self.data_set.get_counterpart_id_fix('counterpart_settlement_account'),
+            self.data_set.get_counterpart_id_fix('counterpart_java_api_user')
+        ]
+        parties = [{
+            'NoParty': list_of_counterparts,
+        },
+            {
+                'NoPartyIDs': list_of_counterparts[:5]
+            }]
         new_order_single = FixMessageNewOrderSingleOMS(self.data_set)
         execution_report_fix = FixMessageExecutionReportOMS(self.data_set)
         new_order_single.change_parameters({'ClOrdID': order_id,
                                             "TransactTime": datetime.utcnow().isoformat(),
-                                            'Parties': parties})
+                                            'Parties': parties[1]})
         self.fix_verifier_bs.check_fix_message_fix_standard(new_order_single, ['ClOrdID'],
                                                             ignored_fields=list_ignored_field)
         execution_report_fix.change_parameters({"ExecType": "0", "OrdStatus": "0", "ClOrdID": cl_ord_id,
-                                                'NoParty': parties})
+                                                'NoParty': parties[0]})
         self.fix_verifier_dc.check_fix_message_fix_standard(execution_report_fix, ignored_fields=list_ignored_field)
         # endregion
 
@@ -139,6 +143,7 @@ class QAP_T10545(TestCase):
                                                              JavaApiFields.Price.value: price,
                                                              JavaApiFields.CumQty.value: qty,
                                                              JavaApiFields.AvgPrice.value: price,
+
                                                          })
         self.java_api_manager.send_message_and_receive_response(self.execution_report)
         execution_report = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value,
@@ -148,15 +153,19 @@ class QAP_T10545(TestCase):
             {JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_FIL.value},
             execution_report, 'Verify that order filled')
         execution_report_fix.change_parameters({"ExecType": "F", "OrdStatus": "2", "ClOrdID": cl_ord_id})
-        execution_report_fix.change_parameters({"NoParty": parties})
+        execution_report_fix.change_parameters({"NoParty": parties[0]})
         self.fix_verifier_dc.check_fix_message_fix_standard(execution_report_fix, ignored_fields=list_ignored_field)
         # endregion
 
     def _set_new_counterparts_for_account_and_client(self, counterpart_id_client, counterpart_id_sec_account):
         self.db_manager.execute_query(
             f"UPDATE accountgroup SET counterpartid = '{counterpart_id_client}' WHERE accountgroupid = '{self.client}'")
-        self.db_manager.execute_query(
-                f"UPDATE securityaccount SET counterpartid = '{counterpart_id_client}' WHERE accountid = '{self.alloc_account}'")
+        if counterpart_id_sec_account is 'null':
+            self.db_manager.execute_query(
+                f"UPDATE securityaccount SET counterpartid = 'null' WHERE accountid = '{self.alloc_account}'")
+        else:
+            self.db_manager.execute_query(
+                f"UPDATE securityaccount SET counterpartid = '{counterpart_id_sec_account}' WHERE accountid = '{self.alloc_account}'")
         self.ssh_client.send_command("qrestart all")
         time.sleep(200)
 
