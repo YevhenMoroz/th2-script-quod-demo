@@ -15,7 +15,7 @@ class FixMessageAllocationOMS(FixMessageAllocation):
             'TransactTime': datetime.utcnow().isoformat(),
             'TradeDate': datetime.now(timezone.utc).strftime('%Y%m%d'),
             'AllocTransType': '0',
-            'AllocType': '2',
+            # 'AllocType': '2',
             'Shares': '100',
             'Side': '1',
             'AvgPx': '20'
