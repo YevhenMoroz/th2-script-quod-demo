@@ -20,7 +20,8 @@ from test_framework.read_log_wrappers.algo.ReadLogVerifierAlgo import ReadLogVer
 from test_framework.read_log_wrappers.algo_messages.ReadLogMessageAlgo import ReadLogMessageAlgo
 
 
-class QAP_T10981(TestCase):
+# Warning! This is the manual test case. It needs to do manual and doesn`t include in regression script
+class QAP_T11104(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -50,7 +51,7 @@ class QAP_T10981(TestCase):
         self.text = "X: Expired"
         self.tif_gtd = constants.TimeInForce.GoodTillDate.value
         self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
-        self.algopolicy = constants.ClientAlgoPolicy.qa_sorping_9.value
+        self.algopolicy = constants.ClientAlgoPolicy.qa_sorping_14.value
         self.sell = constants.OrderSide.Sell.value
 
         now = datetime.today() - timedelta(hours=3)
