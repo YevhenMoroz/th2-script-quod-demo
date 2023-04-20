@@ -192,7 +192,7 @@ class QAP_T10663(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        self.rest_commission_sender.clear_fees()
+        self.rest_commission_sender.clear_commissions()
         self.ssh_client.put_file(self.remote_path, self.local_path)
         self.ssh_client.send_command("qrestart ORS CS")
         time.sleep(60)
