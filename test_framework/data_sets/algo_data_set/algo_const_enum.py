@@ -322,6 +322,34 @@ class AlgoFixInstruments(Enum):
         SecurityType='CS'
     )
 
+    instrument_41 = dict(
+        Symbol='TestPairTH2_EUR',
+        SecurityID='TestPairTH2',
+        SecurityIDSource='4',
+        SecurityType='MLEG',
+        SecuritySubType='PAIR',
+    )
+
+
+class AlgoFixLegInstruments(Enum):
+    instrument_1 = dict(
+        LegSymbol='AGTA',
+        LegSecurityID='CH0008853209',
+        LegSecurityIDSource='4',
+        LegSecurityType='CS',
+        LegRatioQty='1',
+        LegSide='1'
+    )
+
+    instrument_2 = dict(
+        LegSymbol='AST_MI',
+        LegSecurityID='IT0003261069',
+        LegSecurityIDSource='4',
+        LegSecurityType='CS',
+        LegRatioQty='1',
+        LegSide='2'
+    )
+
 
 class AlgoVenues(Enum):
     venue_1 = "QUODDKP1"
@@ -498,6 +526,7 @@ class AlgoListingId(Enum):
     listing_59 = "496"       # AGTA for XPAR @ Columbia
     listing_60 = "2025020536"       # CHIX UK for QUODTESTQA09
     listing_61 = "2025020537"       # BATS UK for QUODTESTQA09
+    listing_62 = "2248"       # AST_MI for TRQX @ Columbia
 
 
 class AlgoCurrency(Enum):
