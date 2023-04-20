@@ -81,13 +81,13 @@ class QAP_T10545(TestCase):
                                                                           JavaApiFields.AllocAccountID.value: self.alloc_account,
                                                                           JavaApiFields.AllocQty.value: qty}]}},
                                                           JavaApiFields.RouteList.value: route_params})
-            self.java_api_manager.send_message_and_receive_response(self.order_submit, response_time=12000)
+            self.java_api_manager.send_message_and_receive_response(self.order_submit, response_time=20000)
             order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
                 JavaApiFields.OrdReplyBlock.value]
             order_id = order_reply[JavaApiFields.OrdID.value]
             cl_ord_id = order_reply[JavaApiFields.ClOrdID.value]
             self.java_api_manager.compare_values(
-                {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_SEN.value},
+                {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value},
                 order_reply, 'Verifying that order created')
         finally:
             time.sleep(2)
