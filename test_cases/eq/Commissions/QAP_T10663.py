@@ -131,7 +131,7 @@ class QAP_T10663(TestCase):
             JavaApiFields.CommissionBasis.value: 'BPS',
             JavaApiFields.CommissionAmount.value: '1.0',
             JavaApiFields.CommissionRate.value: '5.0',
-            JavaApiFields.CommissionAmountType.value: 'EXC',
+            JavaApiFields.CommissionAmountType.value: 'BRK',
             JavaApiFields.CommissionCurrency.value: self.comm_cur
         }
         self.java_api_manager.compare_values(expected_result_comm,
@@ -170,7 +170,7 @@ class QAP_T10663(TestCase):
             JavaApiFields.CommissionBasis.value: 'BPS',
             JavaApiFields.CommissionAmount.value: '0.01',
             JavaApiFields.CommissionRate.value: '5.0',
-            JavaApiFields.CommissionAmountType.value: 'EXC',
+            JavaApiFields.CommissionAmountType.value: 'BRK',
             JavaApiFields.CommissionCurrency.value: self.comm_cur
         }
         self.force_alloc.set_default_approve(alloc_id)
