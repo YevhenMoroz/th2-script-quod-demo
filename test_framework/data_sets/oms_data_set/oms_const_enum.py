@@ -595,6 +595,10 @@ class OMSCounterPartyIDs_FIX(Enum):
     counterpart_java_api_user = {'PartyRole': '36',
                                  'PartyID': "JavaApiUser",
                                  'PartyIDSource': "D"}
+    counterpart_secondary_account_number = {'PartyRole': '45', 'PartyID': 'SecondaryAccountNumber',
+                                            'PartyIDSource': 'C'}
+    counterpart_settlement_account = {'PartyRole': '91', 'PartyID': 'SettlementAccount',
+                                            'PartyIDSource': 'C'}
     entering_firm = {
         'PartyRole': '7',
         'PartyRoleQualifier': '12',
