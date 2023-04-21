@@ -322,7 +322,7 @@ class AlgoFixInstruments(Enum):
         SecurityType='CS'
     )
 
-    instrument_41 = dict(
+    instrument_pt = dict(
         Symbol='TestPairTH2_EUR',
         SecurityID='TestPairTH2',
         SecurityIDSource='4',
@@ -330,24 +330,50 @@ class AlgoFixInstruments(Enum):
         SecuritySubType='PAIR',
     )
 
+    instrument_pt_float = dict(
+        Symbol='TestPairFloat',
+        SecurityID='TestPairFloat',
+        SecurityIDSource='4',
+        SecurityType='MLEG',
+        SecuritySubType='PAIR',
+    )
+
 
 class AlgoFixLegInstruments(Enum):
-    instrument_1 = dict(
+    instrument_agta = dict(
         LegSymbol='AGTA',
         LegSecurityID='CH0008853209',
         LegSecurityIDSource='4',
         LegSecurityType='CS',
-        LegRatioQty='1',
-        LegSide='1'
+        # LegRatioQty='1', commented until fix-sell dictionary will be written correctly
+        # LegSide='1'
     )
 
-    instrument_2 = dict(
+    instrument_ast = dict(
         LegSymbol='AST_MI',
         LegSecurityID='IT0003261069',
         LegSecurityIDSource='4',
         LegSecurityType='CS',
-        LegRatioQty='1',
-        LegSide='2'
+        # LegRatioQty='1',
+        # LegSide='2'
+    )
+
+    instrument_dp = dict(
+        LegSymbol='DP',
+        LegSecurityID='FR0000124232',
+        LegSecurityIDSource='4',
+        LegSecurityType='CS',
+        # LegRatioQty='1.5', commented until fix-sell dictionary will be written correctly
+        # LegSide='1'
+    )
+
+    instrument_sqi = dict(
+        LegSymbol='SQI',
+        LegSecurityID='FR0004045540',
+        LegSecurityIDSource='4',
+        LegSecurityType='CS',
+        # LegRatioQty='2.5', commented until fix-sell dictionary will be written correctly
+        # LegSide='1'
     )
 
 
@@ -527,6 +553,8 @@ class AlgoListingId(Enum):
     listing_60 = "2025020536"       # CHIX UK for QUODTESTQA09
     listing_61 = "2025020537"       # BATS UK for QUODTESTQA09
     listing_62 = "2248"       # AST_MI for TRQX @ Columbia
+    listing_dp = "890"       # DP for PARIS @ Columbia
+    listing_sqi = "1130"       # SQI for PARIS @ Columbia
 
 
 class AlgoCurrency(Enum):
