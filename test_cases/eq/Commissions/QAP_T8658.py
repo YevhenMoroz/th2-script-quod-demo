@@ -6,7 +6,6 @@ from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, OrderReplyConst, ExecutionReportConst
@@ -32,8 +31,6 @@ class QAP_T8658(TestCase):
         self.wa_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
         self.java_api_connectivity = self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.ss_connectivity = self.fix_env.sell_side
-        self.bs_connectivity = self.fix_env.buy_side
-        self.dc_connectivity = self.fix_env.drop_copy
         self.client = self.data_set.get_client_by_name("client_com_1")
         self.client_acc = self.data_set.get_account_by_name('client_com_1_acc_1')
         self.mic = self.data_set.get_mic_by_name("mic_2")
@@ -51,9 +48,7 @@ class QAP_T8658(TestCase):
         self.venue = self.data_set.get_venue_by_name("venue_2")
         self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
-        self.exec_report = FixMessageExecutionReportOMS(self.data_set)
         self.perc_amt = self.data_set.get_comm_profile_by_name("perc_amt")
-        self.instr_type = self.data_set.get_instr_type('equity')
         self.compute_request = ComputeBookingFeesCommissionsRequestOMS(self.data_set)
         self.allocation_instruction = AllocationInstructionOMS(self.data_set)
         self.trade_entry_request = TradeEntryOMS(self.data_set)
