@@ -162,6 +162,7 @@ class JavaApiFields(Enum):
     ExecutionReportBlock = 'ExecutionReportBlock'
     CounterpartList = "CounterpartList"
     CounterpartBlock = "CounterpartBlock"
+    OrderModificationRequestBlock = 'OrderModificationRequestBlock'
     ClientAccountGroupID = 'ClientAccountGroupID'
     PartyRole = "PartyRole"
     CounterpartID = "CounterpartID"
