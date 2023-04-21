@@ -1,6 +1,8 @@
 import time
 from datetime import datetime
 from pathlib import Path
+from random import randint
+
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
@@ -44,7 +46,7 @@ class QAP_T5124(TestCase):
         self.venue_target = self.data_set.get_venue_by_name('venue_2')
         self.venue_reference = self.data_set.get_venue_by_name('venue_1')
         self.rest_message = RestApiPriceCleansingDeviationMessages(data_set=self.data_set)
-        self.rest_manager = RestApiManager(session_alias=self.rest_env)
+        self.rest_manager = RestApiManager(self.rest_env, self.test_id)
         self.rest_message_params = None
         self.instrument = {
             "Symbol": self.symbol,
@@ -61,7 +63,7 @@ class QAP_T5124(TestCase):
         }]
         self.md_id_reference = f"{self.symbol}:{self.instr_type_wa}:REG:{self.venue_reference}"
         self.md_id_target = f"{self.symbol}:{self.instr_type_wa}:REG:{self.venue_target}"
-        self.md_req_id = ''
+        self.md_req_id = f"{self.symbol}:{self.instr_type_wa}:REG:{self.venue_target}" + "_" + str(randint(100, 9999))
         self.md_entries_reference = []
         self.md_entries_target = [
             {
@@ -159,3 +161,4 @@ class QAP_T5124(TestCase):
         self.md_request.set_md_uns_parameters_maker(). \
             change_parameters({'MDReqID': self.md_req_id})
         self.fix_manager_marketdata_th2.send_message(self.md_request)
+        self.sleep(4)
