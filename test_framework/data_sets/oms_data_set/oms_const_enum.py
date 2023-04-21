@@ -337,6 +337,7 @@ class OMSFeeType(Enum):
     stamp = "STA"
     tax = "TAX"
     value_added_tax = "VAT"
+    charges = "CHA"
 
 
 class OMSExecScope(Enum):
@@ -630,3 +631,13 @@ class OMSCounterParty_JavaAPI_FOR_ES(Enum):
 
 class OMSGatingRuleIDs(Enum):
     main_rule_id = '2200035'
+
+
+class OMSCommissionAmountType(Enum):
+    broker = 'BRK'
+    retail = 'RET'
+    sales = 'SAL'
+    local = 'LOC'
+    research = 'REP'
+    unspecified = 'UNS'
+    acceptance = 'ACC'
