@@ -17,7 +17,7 @@ class FixMessageNewOrderMultiLegAlgo(FixMessage):
             'Account': self.get_data_set().get_client_by_name('client_2'),
             'ClOrdID': basic_custom_actions.client_orderid(9),
             'HandlInst': '2',
-            'Instrument': self.get_data_set().get_fix_instrument_by_name("instrument_41"),
+            'Instrument': self.get_data_set().get_fix_instrument_by_name("instrument_pt"),
             'Side': '1',
             'TransactTime': datetime.utcnow().isoformat(),
             'OrdType': '1',
@@ -27,9 +27,11 @@ class FixMessageNewOrderMultiLegAlgo(FixMessage):
             "OrderCapacity": "A",
             "Currency": self.get_data_set().get_currency_by_name('currency_1'),
             'NoLegs': [
-                {'InstrumentLeg': self.get_data_set().get_fix_leg_instrument_by_name("instrument_1")},
-                {'InstrumentLeg': self.get_data_set().get_fix_leg_instrument_by_name("instrument_2")},
-                ],
+                {'InstrumentLeg': self.get_data_set().get_fix_leg_instrument_by_name("instrument_agta")},
+                {'LegRatioQty': '1', 'LegSide': '1'}, # temporary solution until fix-sell dict will be fixed
+                {'InstrumentLeg': self.get_data_set().get_fix_leg_instrument_by_name("instrument_ast")},
+                {'LegRatioQty': '1', 'LegSide': '2'},
+            ],
             'TargetStrategy': '1013',
             'NoStrategyParameters': [
                 {
