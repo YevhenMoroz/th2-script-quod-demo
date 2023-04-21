@@ -52,7 +52,6 @@ class QAP_T8661(TestCase):
         self.comm_type_local = self.data_set.get_commission_amount_type('local')
         self.comm_type_research = self.data_set.get_commission_amount_type('research')
         self.commission2 = self.data_set.get_commission_by_name("commission2")
-        self.commission3 = self.data_set.get_commission_by_name("commission3")
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
