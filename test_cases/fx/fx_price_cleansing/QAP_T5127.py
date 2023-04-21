@@ -190,4 +190,4 @@ class QAP_T5127(TestCase):
 
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_mm.send_message(self.md_request)
-        self.sleep(2)
+        self.sleep(4)

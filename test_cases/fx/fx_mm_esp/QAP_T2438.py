@@ -62,7 +62,7 @@ class QAP_T2438(TestCase):
         self.ssh_client.send_command('~/automation_scripts/change_permission_script')
         self.ssh_client.put_file(self.remote_path, "temp.xml")
         self.ssh_client.send_command("qrestart QS_ESP_FIX_TH2")
-        time.sleep(70)
+        time.sleep(85)
         # endregion
         # region Step 1
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.silver)
@@ -86,4 +86,4 @@ class QAP_T2438(TestCase):
         self.ssh_client.send_command('~/automation_scripts/change_permission_script')
         self.ssh_client.put_file(self.remote_path, "temp.xml")
         self.ssh_client.send_command("qrestart QS_ESP_FIX_TH2")
-        time.sleep(70)
+        time.sleep(85)

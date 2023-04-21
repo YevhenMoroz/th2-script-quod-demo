@@ -294,3 +294,4 @@ class QAP_T9243(TestCase):
         self.md_request.set_md_uns_parameters_maker(). \
             change_parameters({'MDReqID': self.md_req_id})
         self.fix_manager_marketdata_th2.send_message(self.md_request)
+        self.sleep(4)
