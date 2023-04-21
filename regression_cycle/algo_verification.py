@@ -1,3 +1,5 @@
+import time
+from datetime import timedelta, datetime
 from xml.etree import ElementTree
 from regression_cycle.algo_regression_cycle.verification_cycle import iceberg_verification, twap_verification, multilisted_verification, participation_verification, tif_verification, litdark_verification, block_verification, stop_verification, peg_verification, triggering_verification
 # from regression_cycle.algo_regression_cycle.kepler_sors_regression_cycle import kepler_sors_mpdark_other_regression, kepler_sors_iceberg_regression, kepler_sors_multiple_emulation_regression, kepler_sors_sorping_regression, kepler_sors_synthminqty_regression, kepler_sors_mpdark_dark_phase_regression, kepler_sors_mpdark_LIS_dark_phase_regression
@@ -9,6 +11,8 @@ from rule_management import RuleManager, Simulators
 
 def test_run(parent_id=None):
     try:
+        start_time = time.monotonic()
+        print(f'StartTime is {datetime.utcnow()}')
         rule_manager = RuleManager(Simulators.algo)
         rule_manager.print_active_rules()
         # if "fix-fh-310-columbia" in rule_manager.print_active_rules():
@@ -81,6 +85,8 @@ def test_run(parent_id=None):
         #twap_regression_rb.test_run(report_id)
         #parcitipation_regression_rb.test_run(report_id)
         #vwap_regression_rb.test_run(report_id)
+        end_time = time.monotonic()
+        print(f'EndTime is {datetime.utcnow()}, duration is {timedelta(seconds=end_time-start_time)}')
 
     except Exception:
         logging.error("Error execution", exc_info=True)
