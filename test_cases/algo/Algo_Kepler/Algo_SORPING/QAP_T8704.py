@@ -141,6 +141,8 @@ class QAP_T8704(TestCase):
         self.fix_manager_sell.send_message_and_receive_response(self.SORPING_order, case_id_1)
         # endregion
 
+        time.sleep(2)
+
         # region Update MD
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
         market_data_snap_shot_qdl6 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_qdl6, self.fix_env1.feed_handler)

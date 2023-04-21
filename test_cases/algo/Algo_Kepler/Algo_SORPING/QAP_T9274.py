@@ -178,12 +178,12 @@ class QAP_T9274(TestCase):
         er_eliminate_dma_3_qdl2_order_params = FixMessageExecutionReportAlgo().set_params_for_nos_eliminate_rule(self.dma_3_qdl2_order)
         # endregion
 
+        time.sleep(3)
+
         # region Check that all child orders are eliminated
         self.fix_verifier_buy.set_case_id(bca.create_event("Check that all child orders are eliminated", self.test_id))
         self.fix_verifier_buy.check_fix_message_sequence([er_eliminate_dma_1_qdl1_order_params, er_eliminate_dma_2_qdl1_order_params, er_eliminate_dma_3_qdl1_order_params, er_eliminate_dma_1_qdl2_order_params, er_eliminate_dma_2_qdl2_order_params, er_eliminate_dma_3_qdl2_order_params], [None, None, None, None, None, None], self.ToQuod, pre_filter=None)
         # endregion
-
-        time.sleep(3)
 
         # region check eliminate parent algo order
         er_eliminate_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_eliminate)

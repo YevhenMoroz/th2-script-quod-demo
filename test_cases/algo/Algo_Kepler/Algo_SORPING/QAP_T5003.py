@@ -171,7 +171,7 @@ class QAP_T5003(TestCase):
 
         # Delays on sim affect this. Set up time.sleep from 0 to 2
 
-        time.sleep(1)
+        time.sleep(2)
 
         # region Update_MarketData
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Update Market Data", self.test_id))

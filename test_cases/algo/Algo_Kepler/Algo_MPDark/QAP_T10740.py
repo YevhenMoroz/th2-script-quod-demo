@@ -74,7 +74,7 @@ class QAP_T10740(TestCase):
         self.ex_destination_bats = self.data_set.get_mic_by_name("mic_4")
         self.ex_destination_cboe = self.data_set.get_mic_by_name("mic_6")
         self.client = self.data_set.get_client_by_name("client_4")
-        self.account_chixdelta = self.data_set.get_client_by_name("client_6")
+        self.account_chixdelta = self.data_set.get_account_by_name("account_8")
         self.account_bats = self.data_set.get_account_by_name("account_7")
         self.account_cboe = self.data_set.get_account_by_name("account_9")
         # endregion
@@ -267,6 +267,8 @@ class QAP_T10740(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Check that there are no unexpected messages", self.test_id))
         self.fix_verifier_buy.check_fix_message_sequence([nos_chixlis_rfq, nos_trql_rfq, self.dma_chixdelta_order, self.dma_batsdark_order, self.dma_cboeeudark_order], [self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child], self.FromQuod, pre_filter=self.pre_filter)
         # endregion
+
+        time.sleep(5)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
