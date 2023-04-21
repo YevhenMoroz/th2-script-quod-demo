@@ -135,6 +135,7 @@ class OmsClients(Enum):
     client_com_2 = "CLIENT_COMM_2"
     client_fees_1 = "CLIENT_FEES_1"
     client_com_exempted = "CLIENT_COMM_1_EXEMPTED"
+    client_rest_api = "CLIENT_REST_API"
     """Counterparts"""
     client_counterpart_1 = "CLIENT_COUNTERPART"
     client_counterpart_2 = "CLIENT_COUNTERPART2"
@@ -213,7 +214,7 @@ class OmsAccounts(Enum):
     client_pt_9_acc_1 = "MOClient9_SA1"
     client_pt_10_acc_1 = "MOClient10_SA1"
     client_pt_pp_3_acc_1 = "MOClient_PP3_SA1"
-    dummy_sec_account =  "DummyAccount"
+    dummy_sec_account = "DummyAccount"
     """Care"""
     client_co_1_acc_1 = "CLIENT_FIX_CARE_SA1"
     """Dummy"""
@@ -226,6 +227,7 @@ class OmsAccounts(Enum):
     client_com_2_acc_1 = "CLIENT_COMM_2_SA1"
     client_com_2_acc_2 = "CLIENT_COMM_2_SA2"
     client_com_2_acc_3 = "CLIENT_COMM_2_SA3"
+    client_rest_api_acc_1 = 'CLIENT_REST_API_ACC_1'
     client_fees_1_acc_1 = "CLIENT_FEES_1_SA1"
     """Counterparts"""
     client_counterpart_1_acc_1 = "CLIENT_COUNTERPART_SA1"
@@ -558,7 +560,7 @@ class OMSTickSizeProfile(Enum):
 
 
 class OMSCounterPartyIDs_FIX(Enum):
-    counterpart_id_gtwquod4 = {'PartyRole': "36", 'PartyRoleQualifier': '1011', 'PartyID': "gtwquod4",
+    counterpart_id_gtwquod4 = {'PartyRole': "36", 'PartyID': "gtwquod4",
                                'PartyIDSource': "D"}
     counterpart_id_market_maker_th2_route = {'PartyRole': "66", 'PartyRoleQualifier': '12',
                                              'PartyID': "MarketMaker - TH2Route",
@@ -595,6 +597,10 @@ class OMSCounterPartyIDs_FIX(Enum):
     counterpart_java_api_user = {'PartyRole': '36',
                                  'PartyID': "JavaApiUser",
                                  'PartyIDSource': "D"}
+    counterpart_secondary_account_number = {'PartyRole': '45', 'PartyID': 'SecondaryAccountNumber',
+                                            'PartyIDSource': 'C'}
+    counterpart_settlement_account = {'PartyRole': '91', 'PartyID': 'SettlementAccount',
+                                            'PartyIDSource': 'C'}
     entering_firm = {
         'PartyRole': '7',
         'PartyRoleQualifier': '12',
@@ -616,6 +622,10 @@ class OMSCounterPartyIDs_JavaAPI(Enum):
     counterpart_custodian_user_2 = {'PartyRole': "CUS", 'CounterpartID': '800006'}
     counterpart_agent = {'CounterpartID': '1400025', 'PartyRole': 'AGE'}
     counterpart_entering_firm = {'CounterpartID': '1200012', 'PartyRole': 'ENF'}
+    counterpart_secondary_account_number = {'CounterpartID': '1200022', 'PartyRole': 'SAN'}
+    counterpart_settlement_account = {'CounterpartID': '1200023', 'PartyRole': 'SAC'}
+    counterpart_executing_trader = {'CounterpartID': '1200013', 'PartyRole': 'EXT'}
+    counterpart_executing_trader_2 = {'CounterpartID': '1200021', 'PartyRole': 'EXT'}
 
 
 class OMSVenueClientAccountName(Enum):
@@ -633,3 +643,7 @@ class OMSCounterParty_JavaAPI_FOR_ES(Enum):
 
 class OMSGatingRuleIDs(Enum):
     main_rule_id = '2200035'
+
+
+class OMSChargesType(Enum):
+    charges = 'CHA'
