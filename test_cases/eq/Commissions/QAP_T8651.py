@@ -10,16 +10,14 @@ from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
-from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, OrderReplyConst, ExecutionReportConst
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, OrderReplyConst
 from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS import AllocationInstructionOMS
 from test_framework.java_api_wrappers.oms.ors_messges.ComputeBookingFeesCommissionsRequestOMS import \
     ComputeBookingFeesCommissionsRequestOMS
 from test_framework.java_api_wrappers.oms.ors_messges.ConfirmationOMS import ConfirmationOMS
-from test_framework.java_api_wrappers.oms.ors_messges.DFDManagementBatchOMS import DFDManagementBatchOMS
 from test_framework.java_api_wrappers.oms.ors_messges.ForceAllocInstructionStatusRequestOMS import \
     ForceAllocInstructionStatusRequestOMS
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
-from test_framework.java_api_wrappers.oms.ors_messges.TradeEntryOMS import TradeEntryOMS
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
 
 logger = logging.getLogger(__name__)
