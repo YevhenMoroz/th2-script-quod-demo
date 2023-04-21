@@ -121,12 +121,12 @@ class OmsClients(Enum):
     client_pt_4 = "MOClient4"  # CS = Manual, AP = Auto, Other Manual
     client_pt_5 = "MOClient5"  # CS = Manual, BA = Auto, Other Manual
     client_pt_6 = "MOClient6"  # CS = CTM, Other Manual
-    client_pt_7 = "CLIENT_FIX_POSTTRADE"  # To automatically accept care orders sent via FIX
-    client_pt_8 = "MOClient7"
+    client_pt_7 = "MOClient7"  # To automatically accept care orders sent via FIX
+    client_pt_8 = "MOClient8"
     client_pt_9 = "MOClient_9"
     client_pt_10 = "MOClient10"  # CS Manual Fully auto
     client_pt_pp_3 = "MOClient_PP_3"  # client with price precision 3 and Round = Down
-    client_pt_11 = "MOClient8"  # CS=FIX, Other Manual
+    client_fix_pt = "CLIENT_FIX_POSTTRADE"  # CS=FIX, Other Manual
     """Care"""
     client_co_1 = "CLIENT_FIX_CARE"  # also used for Basket
     client_co_2 = "CLIENT_FIX_CARE_WB"
@@ -165,6 +165,7 @@ class OmsVenueClientNames(Enum):
     client_pt_5_venue_1 = "MOClient5_PARIS"
     client_pt_6_venue_1 = "MOClient6_PARIS"
     client_pt_7_venue_1 = "MOClient7_PARIS"
+    client_pt_8_venue_1 = "MOClient8_PARIS"
     client_pt_9_venue_1 = "MOClient9_PARIS"
     client_pt_10_venue_1 = "MOClient10_PARIS"
     client_pos_3_venue_1 = "SBK_PARIS"
@@ -209,6 +210,7 @@ class OmsAccounts(Enum):
     client_pt_6_acc_1 = "MOClient6_SA1"
     client_pt_6_acc_2 = "MOClient6_SA2"
     client_pt_7_acc_1 = "MOClient7_SA1"
+    client_pt_8_acc_1 = "MOClient8_SA1"
     client_pt_9_acc_1 = "MOClient9_SA1"
     client_pt_10_acc_1 = "MOClient10_SA1"
     client_pt_pp_3_acc_1 = "MOClient_PP3_SA1"

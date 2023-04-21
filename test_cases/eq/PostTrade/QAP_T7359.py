@@ -46,7 +46,7 @@ class QAP_T7359(TestCase):
         qty = '5000'
         price = '10'
         alloc_account = self.data_set.get_account_by_name('client_pt_7_acc_1')
-        client = self.data_set.get_client_by_name('client_pt_8')
+        client = self.data_set.get_client_by_name('client_pt_7')
         # endregion
 
         # region create 2 DMA order and execute them (step 1 step 2 and step 3)

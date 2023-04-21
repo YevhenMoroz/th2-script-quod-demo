@@ -31,7 +31,7 @@
         <scope>root</scope> <!-- root, leaf, or firstNonCare -->
         <virtual>true</virtual>
         <external>true</external>
-		<maintainOnConfirmation>true</maintainOnConfirmation>
+		<maintainOnConfirmation>false</maintainOnConfirmation>
     </positions>
     <washbook>
 	<enabled>true</enabled>
