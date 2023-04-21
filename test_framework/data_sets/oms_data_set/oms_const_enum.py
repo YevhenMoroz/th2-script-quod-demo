@@ -600,7 +600,7 @@ class OMSCounterPartyIDs_FIX(Enum):
     counterpart_secondary_account_number = {'PartyRole': '45', 'PartyID': 'SecondaryAccountNumber',
                                             'PartyIDSource': 'C'}
     counterpart_settlement_account = {'PartyRole': '91', 'PartyID': 'SettlementAccount',
-                                            'PartyIDSource': 'C'}
+                                      'PartyIDSource': 'C'}
     entering_firm = {
         'PartyRole': '7',
         'PartyRoleQualifier': '12',
@@ -647,3 +647,12 @@ class OMSGatingRuleIDs(Enum):
 
 class OMSChargesType(Enum):
     charges = 'CHA'
+
+
+class OMSPartyRoles(Enum):
+    party_role_regulatory_body = 'RegulatoryBody'
+    party_role_regulatory_custodian_user = 'Custodian'
+    party_role_market_maker = 'MarketMaker'
+    party_role_executing_trader = 'ExecutingTrader'
+    party_role_contra_firm = 'ContraFirm'
+    party_role_executing_firm = 'ExecutingFirm'
