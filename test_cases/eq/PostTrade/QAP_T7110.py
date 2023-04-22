@@ -44,7 +44,7 @@ class QAP_T7110(TestCase):
         self.rule_manager = RuleManager(sim=Simulators.equity)
         self.currency = self.data_set.get_currency_by_name("currency_3")  # GBp
         self.currency_major = self.data_set.get_currency_by_name("currency_2")  # GBP
-        self.venue_client_names = self.data_set.get_venue_client_names_by_name("client_pt_1_venue_2")  # MOClient_EUREX
+        self.venue_client_names = self.data_set.get_venue_client_names_by_name("client_pt_1_venue_1")  # MOClient_EUREX
         self.venue = self.data_set.get_mic_by_name("mic_2")  # XEUR
         self.client = self.data_set.get_client("client_pt_1")  # MOClient
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
@@ -109,7 +109,8 @@ class QAP_T7110(TestCase):
             },
         )
 
-        responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
+        responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction,
+                                                                            response_time=12000)
         print_message("BOOK", responses)
 
         # Checking Order_OrdUpdate

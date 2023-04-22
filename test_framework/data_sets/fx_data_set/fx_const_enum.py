@@ -258,8 +258,8 @@ class FxSymbols(Enum):
     symbol_23 = "USD/THB"
     symbol_24 = "USD/TWD"
     symbol_25 = "GBP/DKK"
-    symbol_25 = "USD/DKK"
-    symbol_26 = "AUD/GBP"
+    symbol_26 = "USD/DKK"
+    symbol_27 = "AUD/GBP"
 
     symbol_ndf_1 = "USD/PHP"
     symbol_ndf_2 = "EUR/PHP"

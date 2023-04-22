@@ -7,6 +7,7 @@ from th2_grpc_act_fix_quod.act_fix_pb2 import PlaceMessageRequest
 from custom import basic_custom_actions
 from custom.verifier import Verifier, VerificationMethod
 from test_framework.data_sets.message_types import FIXMessageType
+from test_framework.fix_wrappers.FixAllocationACK import FixAllocationACK
 from test_framework.fix_wrappers.FixMessage import FixMessage
 from test_framework.fix_wrappers.FixMessageBusinessMessageRejectReport import FixMessageBusinessMessageRejectReport
 from test_framework.fix_wrappers.FixMessageExecutionReport import FixMessageExecutionReport
@@ -295,6 +296,36 @@ class FixManager:
                                                          fix_message.get_parameters(),
                                                          self.__session_alias)
                 ))
+        elif fix_message.get_message_type() == FIXMessageType.MarketDataSnapshotFullRefresh.value:
+            response = self.act.sendMessage(
+                request=basic_custom_actions.convert_to_request(
+                    "Send MarketDataSnapshotFullRefresh",
+                    self.__session_alias,
+                    self.__case_id,
+                    basic_custom_actions.message_to_grpc(FIXMessageType.MarketDataSnapshotFullRefresh.value,
+                                                         fix_message.get_parameters(),
+                                                         self.__session_alias)
+                ))
+        elif fix_message.get_message_type() == FIXMessageType.MarketDataIncrementalRefresh.value:
+            response = self.act.sendMessage(
+                request=basic_custom_actions.convert_to_request(
+                    "Send MarketDataIncrementalRefresh",
+                    self.__session_alias,
+                    self.__case_id,
+                    basic_custom_actions.message_to_grpc(FIXMessageType.MarketDataIncrementalRefresh.value,
+                                                         fix_message.get_parameters(),
+                                                         self.__session_alias)
+                ))
+        elif fix_message.get_message_type() == FIXMessageType.MarketDataRequest.value:
+            response = self.act.placeMarketDataRequestFIX(
+                request=basic_custom_actions.convert_to_request(
+                    "Send MarketDataRequest",
+                    self.__session_alias,
+                    self.__case_id,
+                    basic_custom_actions.message_to_grpc(FIXMessageType.MarketDataRequest.value,
+                                                         fix_message.get_parameters(),
+                                                         self.__session_alias)
+                ))
         else:
             response = None
 
@@ -330,6 +361,8 @@ class FixManager:
                 response_fix_message = FixMessageOrderCancelReplaceRequest()
             elif message_type == FIXMessageType.Reject.value:
                 response_fix_message = FixMessageReject()
+            elif message_type == FIXMessageType.AllocationACK.value:
+                response_fix_message = FixAllocationACK()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
         self.response = response_messages
