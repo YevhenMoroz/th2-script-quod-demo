@@ -9,7 +9,7 @@ class SystemCommandsPage(CommonPage):
         super().__init__(web_driver_container)
 
     def set_system_commands(self, value):
-        self.set_combobox_value(SystemCommandsConstants.SYSTEM_COMMANDS_XPATH, value)
+        self.select_value_from_dropdown_list(SystemCommandsConstants.SYSTEM_COMMANDS_XPATH, value)
 
     def get_system_commands(self):
         return self.get_text_by_xpath(SystemCommandsConstants.SYSTEM_COMMANDS_XPATH)

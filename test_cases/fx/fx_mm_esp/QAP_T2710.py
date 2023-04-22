@@ -138,8 +138,8 @@ class QAP_T2710(TestCase):
                 "SenderSubID": self.client_silver,
                 'NoRelatedSymbols': self.no_related_symbols
             })
-        self.fix_manager_mm.send_message_and_receive_response(self.md_request, self.test_id)
-        self.md_snapshot_full.set_params_for_md_response(self.md_request, self.qty_list_new)
+        response = self.fix_manager_mm.send_message_and_receive_response(self.md_request, self.test_id)
+        self.md_snapshot_full.set_params_for_md_response(self.md_request, self.qty_list_new, response=response[0])
         self.md_snapshot_full.update_repeating_group_by_index("NoMDEntries", 6, MDEntryPx=self.expected_bid_px)
         self.md_snapshot_full.update_repeating_group_by_index("NoMDEntries", 7, MDEntryPx=self.expected_ask_px)
         self.fix_verifier.check_fix_message(self.md_snapshot_full)
@@ -161,8 +161,8 @@ class QAP_T2710(TestCase):
                 "SubscriptionRequestType": "1"
             }
         )
-        self.fix_manager_mm.send_message_and_receive_response(self.md_request, self.test_id)
-        self.md_snapshot_full.set_params_for_md_response(self.md_request, self.qty_list_default)
+        response = self.fix_manager_mm.send_message_and_receive_response(self.md_request, self.test_id)
+        self.md_snapshot_full.set_params_for_md_response(self.md_request, self.qty_list_default, response=response[0])
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot_full,
                                             direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])

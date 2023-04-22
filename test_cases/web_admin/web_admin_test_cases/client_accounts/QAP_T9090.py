@@ -9,6 +9,8 @@ from test_framework.web_admin_core.pages.clients_accounts.clients.clients_values
     ClientsValuesSubWizard
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_wizard import ClientsWizard
+from test_framework.web_admin_core.pages.clients_accounts.clients.clients_assignments_sub_wizard \
+    import ClientsAssignmentsSubWizard
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_external_give_up_service_sub_wizard \
     import ClientsExternalGiveUpService
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
@@ -32,6 +34,7 @@ class QAP_T9090(CommonTestCase):
         self.give_up_matching_id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.external_give_up_service_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.gateway_instance = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        self.desk = self.data_set.get_desk("desk_1")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -46,6 +49,8 @@ class QAP_T9090(CommonTestCase):
         values_tab.set_name(self.name)
         values_tab.set_ext_id_client(self.ext_id_client)
         values_tab.set_disclose_exec(self.disclose_exec)
+        assignments_tab = ClientsAssignmentsSubWizard(self.web_driver_container)
+        assignments_tab.set_desk(self.desk)
         wizard = ClientsWizard(self.web_driver_container)
         wizard.click_on_save_changes()
 
@@ -78,6 +83,7 @@ class QAP_T9090(CommonTestCase):
             wizard.click_on_go_back()
             values_tab.set_external_give_up_service(self.external_give_up_service_name)
             wizard.click_on_save_changes()
+            time.sleep(1)
             page.set_name(self.name)
             time.sleep(1)
             page.click_on_more_actions()

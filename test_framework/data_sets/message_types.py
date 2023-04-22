@@ -132,6 +132,7 @@ class ORSMessageType(Enum):
     NewOrderMultiLeg = "Order_NewOrderMultiLeg"
     FixNewOrderReply = "Fix_NewOrderReply"
     FixAllocationInstruction = 'Fix_AllocationInstruction'
+    FixNewOrderList = 'Fix_NewOrderList'
     CptyBlockRejectRequest = 'Order_CptyBlockRejectRequest'
     CptyBlockRejectReply = 'Order_CptyBlockRejectReply'
     BlockValidateRequest = 'Order_BlockValidateRequest'

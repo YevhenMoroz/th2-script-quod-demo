@@ -28,6 +28,7 @@ class QAP_T3254(CommonTestCase):
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_system_components_page()
+        time.sleep(15)
 
     def test_context(self):
         try:

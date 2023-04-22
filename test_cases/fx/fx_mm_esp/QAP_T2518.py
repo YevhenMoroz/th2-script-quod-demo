@@ -136,8 +136,8 @@ class QAP_T2518(TestCase):
                 "SenderSubID": self.client_silver,
                 'NoRelatedSymbols': self.no_related_symbols
             })
-        self.fix_manager_mm.send_message_and_receive_response(self.md_request, self.test_id)
-        self.md_snapshot_full.set_params_for_md_response(self.md_request, self.qty_list_new)
+        response = self.fix_manager_mm.send_message_and_receive_response(self.md_request, self.test_id)
+        self.md_snapshot_full.set_params_for_md_response(self.md_request, self.qty_list_new, response=response[0])
         self.fix_verifier.check_fix_message(self.md_snapshot_full)
         # endregion
         # region unsubscribe
@@ -157,11 +157,9 @@ class QAP_T2518(TestCase):
                 "SubscriptionRequestType": "1"
             }
         )
-        self.fix_manager_mm.send_message_and_receive_response(self.md_request, self.test_id)
-        self.md_snapshot_full.set_params_for_md_response(self.md_request, self.qty_list_default)
-        self.fix_verifier.check_fix_message(fix_message=self.md_snapshot_full,
-                                            direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
+        response = self.fix_manager_mm.send_message_and_receive_response(self.md_request, self.test_id)
+        self.md_snapshot_full.set_params_for_md_response(self.md_request, self.qty_list_default, response=response[0])
+        self.fix_verifier.check_fix_message(self.md_snapshot_full)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

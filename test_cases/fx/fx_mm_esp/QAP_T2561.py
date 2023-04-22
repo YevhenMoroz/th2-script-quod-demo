@@ -97,8 +97,8 @@ class QAP_T2561(TestCase):
         self.sleep(2)
 
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.palladium1)
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
-        self.md_snapshot.set_params_for_md_response(self.md_request, self.sweepable_bands)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        self.md_snapshot.set_params_for_md_response(self.md_request, self.sweepable_bands, response=response[0])
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])
         self.md_request.set_md_uns_parameters_maker()
@@ -109,8 +109,8 @@ class QAP_T2561(TestCase):
         self.md_request.set_md_req_parameters_maker().change_parameters({"SenderSubID": self.palladium1,
                                                                          "BookType": self.book_type_tiered})
         self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols)
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
-        self.md_snapshot.set_params_for_md_response(self.md_request, self.tiered_bands)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        self.md_snapshot.set_params_for_md_response(self.md_request, self.tiered_bands, response=response[0])
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])
         # endregion

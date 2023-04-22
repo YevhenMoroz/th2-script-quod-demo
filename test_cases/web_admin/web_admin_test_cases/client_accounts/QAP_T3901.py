@@ -8,6 +8,8 @@ from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_values_sub_wizard \
     import ClientsValuesSubWizard
+from test_framework.web_admin_core.pages.clients_accounts.clients.clients_assignments_sub_wizard \
+    import ClientsAssignmentsSubWizard
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_wizard import ClientsWizard
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_external_sources_sub_wizard \
     import ClientsExternalSourcesSubWizard
@@ -31,6 +33,7 @@ class QAP_T3901(CommonTestCase):
         self.disclose_exec = 'Manual'
         self.bic = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.new_bic = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        self.desk = self.data_set.get_desk("desk_1")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -39,6 +42,7 @@ class QAP_T3901(CommonTestCase):
         wizard = ClientsWizard(self.web_driver_container)
         values_tab = ClientsValuesSubWizard(self.web_driver_container)
         external_source_tab = ClientsExternalSourcesSubWizard(self.web_driver_container)
+        assignments_tab = ClientsAssignmentsSubWizard(self.web_driver_container)
 
         login_page.login_to_web_admin(self.login, self.password)
         side_menu.open_clients_page()
@@ -51,6 +55,7 @@ class QAP_T3901(CommonTestCase):
             values_tab.set_name(self.name)
             values_tab.set_ext_id_client(self.ext_id_client)
             values_tab.set_disclose_exec(self.disclose_exec)
+            assignments_tab.set_desk(self.desk)
             wizard.click_on_save_changes()
             main_page.set_name(self.name)
             time.sleep(1)
@@ -75,6 +80,7 @@ class QAP_T3901(CommonTestCase):
 
             external_source_tab.set_bic_venue_act_grp_name(self.bic)
             wizard.click_on_save_changes()
+            time.sleep(1)
             main_page.set_name(self.name)
             time.sleep(1)
             main_page.click_on_more_actions()
@@ -98,7 +104,6 @@ class QAP_T3901(CommonTestCase):
             main_page.click_on_more_actions()
             main_page.click_on_edit()
             actual_result = True if len(external_source_tab.get_bic_venue_act_grp_name()) > 1 else False
-            print(external_source_tab.get_bic_venue_act_grp_name())
             self.verify("BIC has not values", True, actual_result)
 
         except Exception:
