@@ -59,8 +59,8 @@ class QAP_T2464(TestCase):
         # endregion
         # region Step 2
         self.fix_subscribe.set_md_req_parameters_maker().change_parameters({"SenderSubID": self.client})
-        self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
-        self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
+        self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, response=response[0])
         self.fix_verifier.check_fix_message(fix_message=self.fix_md_snapshot)
         self.new_order_single.set_default().change_parameter("OrderQty", "500000")
         response = self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single)

@@ -14,9 +14,8 @@ class FixMessageAllocationOMS(FixMessageAllocation):
         self.base_parameters = {
             'TransactTime': datetime.utcnow().isoformat(),
             'TradeDate': datetime.now(timezone.utc).strftime('%Y%m%d'),
-            'AllocID': basic_custom_actions.client_orderid(9),
             'AllocTransType': '0',
-            'AllocType': '2',
+            # 'AllocType': '2',
             'Shares': '100',
             'Side': '1',
             'AvgPx': '20'
@@ -24,6 +23,7 @@ class FixMessageAllocationOMS(FixMessageAllocation):
 
     def set_fix42_preliminary(self, new_order_single: FixMessageNewOrderSingle, alloc_acc):
         change_parameters = {
+            'AllocID': basic_custom_actions.client_orderid(9),
             'NoAllocs': [
                 {
                     'AllocShares': new_order_single.get_parameter("OrderQty"),

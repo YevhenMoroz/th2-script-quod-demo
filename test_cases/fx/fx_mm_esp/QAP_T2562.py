@@ -50,9 +50,8 @@ class QAP_T2562(TestCase):
         number_of_bands = len(response[0].get_parameter("NoMDEntries")) / 2
         for i in range(int(number_of_bands)):
             self.bands.append("*")
-        self.md_snapshot.set_params_for_md_response(self.md_request, self.bands)
-        self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
+        self.md_snapshot.set_params_for_md_response(self.md_request, self.bands, response=response[0])
+        self.fix_verifier.check_fix_message(self.md_snapshot)
         # endregion
 
         # region step 2

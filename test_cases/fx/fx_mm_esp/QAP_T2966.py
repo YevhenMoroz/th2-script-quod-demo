@@ -92,9 +92,9 @@ class QAP_T2966(TestCase):
         # region Step 2
         self.md_request.set_md_req_parameters_maker()
         self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols)
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
 
-        self.md_snapshot.set_params_for_md_response(self.md_request, self.bands_eur_usd, published=False)
+        self.md_snapshot.set_params_for_md_response(self.md_request, self.bands_eur_usd, published=False, response=response[0])
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot)
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request)
@@ -131,9 +131,9 @@ class QAP_T2966(TestCase):
         # region Step 2
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.silver)
         self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols)
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
         # endregion
-        self.md_snapshot.set_params_for_md_response(self.md_request, self.bands_eur_usd)
+        self.md_snapshot.set_params_for_md_response(self.md_request, self.bands_eur_usd, response=response[0])
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 2, MDQuoteType="0")
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 3, MDQuoteType="0")
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 4, MDQuoteType="0")

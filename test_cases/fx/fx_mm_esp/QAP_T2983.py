@@ -89,9 +89,9 @@ class QAP_T2983(TestCase):
         self.sleep(2)
         # region step 1
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.palladium1)
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
 
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"])
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"], response=response[0])
         time.sleep(4)
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])

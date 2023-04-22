@@ -7,8 +7,8 @@ class FixMessageExecutionReport(FixMessage):
 
     def __init__(self, new_order_single: FixMessageNewOrderSingle = None, parameters: dict = None,
                  data_set: BaseDataSet = None):
-        super().__init__(message_type=FIXMessageType.ExecutionReport.value)
-        self.__data_set = data_set
+        super().__init__(message_type=FIXMessageType.ExecutionReport.value, data_set=data_set)
+        # self.__data_set = data_set
         if new_order_single is not None:
             self.update_fix_message(new_order_single.get_parameters())
         super().change_parameters(parameters)

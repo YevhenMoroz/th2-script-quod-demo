@@ -132,6 +132,14 @@ class ORSMessageType(Enum):
     NewOrderMultiLeg = "Order_NewOrderMultiLeg"
     FixNewOrderReply = "Fix_NewOrderReply"
     FixAllocationInstruction = 'Fix_AllocationInstruction'
+    FixNewOrderList = 'Fix_NewOrderList'
+    CptyBlockRejectRequest = 'Order_CptyBlockRejectRequest'
+    CptyBlockRejectReply = 'Order_CptyBlockRejectReply'
+    BlockValidateRequest = 'Order_BlockValidateRequest'
+    BlockValidateReply = 'Order_BlockValidateReply'
+    MatchCptyMOBlocksReply = 'Order_MatchCptyMOBlocksReply'
+    MatchCptyMOBlocksRequest = 'Order_MatchCptyMOBlocksRequest'
+    FixAllocationInstructionAck = 'Fix_AllocationInstructionAck'
 
 
 class TradingRestApiMessageType(Enum):
@@ -200,6 +208,7 @@ class QSMessageType(Enum):
     ListingQuotingModificationRequest = "Order_ListingQuotingModificationRequest"
     ListingQuotingNotification = "Order_ListingQuotingNotification"
     StopQuotingRequest = "Order_StopQuotingRequest"
+    QuoteManagementReply = "Order_QuoteManagementReply"
 
 
 class ReadLogMessageType(Enum):

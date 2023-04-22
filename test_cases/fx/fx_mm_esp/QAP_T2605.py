@@ -139,8 +139,8 @@ class QAP_T2605(TestCase):
         # region Step 3
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.silver)
         self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols_spot)
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"])
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"], response=response[0])
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 0, MDEntryPx=self.md_entry_px_0)
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 1, MDEntryPx=self.md_entry_px_1)
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 2, MDEntryPx=self.md_entry_px_2)
@@ -154,9 +154,9 @@ class QAP_T2605(TestCase):
             {"SenderSubID": self.silver, "BookType": self.book_type_tiered})
         self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols_spot)
 
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
 
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*", "*"])
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*", "*"], response=response[0])
         self.md_snapshot.get_parameter("NoMDEntries").pop(7)
         self.md_snapshot.get_parameter("NoMDEntries").pop(6)
         # self.md_snapshot.remove_values_in_repeating_group_by_index("NoMDEntries", 6, (

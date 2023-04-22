@@ -101,7 +101,7 @@ class QAP_T2948(TestCase):
         response: list = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
         self.default_bid_px = response[0].get_parameter("NoMDEntries")[2]["MDEntryPx"]
         self.default_ask_px = response[0].get_parameter("NoMDEntries")[3]["MDEntryPx"]
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"])
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"], response=response[0])
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot,
                                             direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])
@@ -116,10 +116,10 @@ class QAP_T2948(TestCase):
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request)
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.konstantin)
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
         modified_bid_px = round(float(self.default_bid_px) + 0.00015, 5)
         modified_ask_px = round(float(self.default_ask_px) + 0.00015, 5)
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"])
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"], response=response[0])
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 2, MDEntryPx=modified_bid_px)
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 3, MDEntryPx=modified_ask_px)
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot,
@@ -134,10 +134,10 @@ class QAP_T2948(TestCase):
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request)
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.konstantin)
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
         modified_bid_px = round(float(self.default_bid_px) + 0.00015, 5)
         modified_ask_px = round(float(self.default_ask_px) + 0.00015, 5)
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"])
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"], response=response[0])
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 2, MDEntryPx=modified_bid_px,
                                                          QuoteCondition="B")
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 3, MDEntryPx=modified_ask_px,
@@ -154,10 +154,10 @@ class QAP_T2948(TestCase):
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request)
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.konstantin)
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
         modified_bid_px = round(float(self.default_bid_px) + 0.00025, 5)
         modified_ask_px = round(float(self.default_ask_px) + 0.00005, 5)
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"])
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"], response=response[0])
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 2, MDEntryPx=modified_bid_px,
                                                          QuoteCondition="B")
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 3, MDEntryPx=modified_ask_px,
@@ -176,10 +176,10 @@ class QAP_T2948(TestCase):
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request)
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.konstantin)
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
         modified_bid_px = round(float(self.default_bid_px) + 0.00025, 5)
         modified_ask_px = round(float(self.default_ask_px) + 0.00005, 5)
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"])
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"], response=response[0])
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 2, MDEntryPx=modified_bid_px)
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 3, MDEntryPx=modified_ask_px)
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot,
@@ -193,8 +193,8 @@ class QAP_T2948(TestCase):
         self.java_manager.send_message(self.adjustment_request)
         time.sleep(2)
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.konstantin)
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"])
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"], response=response[0])
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 2, MDEntryPx=self.default_bid_px)
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 3, MDEntryPx=self.default_ask_px)
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot,
