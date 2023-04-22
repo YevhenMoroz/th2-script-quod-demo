@@ -72,7 +72,7 @@ class QAP_T10220(TestCase):
         # region Step 2
         bid_px = str(float(close_px) - float(spread))
         offer_px = str(float(close_px) + float(spread))
-        self.quote_request.set_default(self.listing_id, offer_px, bid_px, notional_amt=nat_amt,
+        self.quote_request.set_default(self.listing_id, offer_px, bid_px, notional_amt=nat_amt, side="B",
                                        th_px=str(float(close_px)))
         self.java_api_manager.send_message_and_receive_response(self.quote_request)
         # endregion
@@ -81,22 +81,18 @@ class QAP_T10220(TestCase):
         )["QuoteStatusReportBlock"]
         exp_res = self.quote_request.get_parameters()["QuoteManagementRequestBlock"]["QuoteManagementList"
         ]["QuoteManagementBlock"][0]
-        exp_res.update({"BidSize": bid_size, "OfferSize": offer_size})
+        exp_res.update({"QuoteStatus": "OFT"})
+        exp_res.update({"BidSize": bid_size})
         exp_res.pop("NotionalAmt")
         self.java_api_manager.compare_values(exp_res, quote_rep, "Check created quote")
         ord_id = quote_rep["SimulatingOrderList"]["SimulatingOrderBlock"][0]["OrdID"]
-        ord_id2 = quote_rep["SimulatingOrderList"]["SimulatingOrderBlock"][1]["OrdID"]
         ord_rep = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value, ord_id).get_parameters()[
             JavaApiFields.OrderNotificationBlock.value]
         exp_res = {"OrdQty": bid_size, "Price": bid_px, "Side": "B"}
         self.java_api_manager.compare_values(exp_res, ord_rep, "Check created order")
-        ord_rep = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value, ord_id2).get_parameters()[
-            JavaApiFields.OrderNotificationBlock.value]
-        exp_res = {"OrdQty":offer_size, "Price": offer_px, "Side": "S"}
-        self.java_api_manager.compare_values(exp_res, ord_rep, "Check created order 2")
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        self.stop_quoting_req.set_default(self.listing_id)
+        self.stop_quoting_req.set_default(self.listing_id, "B")
         self.java_api_manager.send_message(self.stop_quoting_req)

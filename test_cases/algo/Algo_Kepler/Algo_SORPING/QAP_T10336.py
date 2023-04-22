@@ -15,10 +15,12 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
+from test_framework.fix_wrappers.algo.FixMessageOrderCancelRejectReportAlgo import FixMessageOrderCancelRejectReportAlgo
+from test_framework.read_log_wrappers.algo.ReadLogVerifierAlgo import ReadLogVerifierAlgo
+from test_framework.read_log_wrappers.algo_messages.ReadLogMessageAlgo import ReadLogMessageAlgo
 
 
-# Warning! This is the manual test case. It needs to do manual (because it needs to make changes in the configuration) and doesn't include in regression script
-class QAP_T9166(TestCase):
+class QAP_T10336(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -82,6 +84,20 @@ class QAP_T9166(TestCase):
         self.key_params_NOS_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_child")
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
         self.key_params_ER_eliminate_or_cancel_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_2_child")
+        self.key_params_ER_cancel_reject_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_cancel_reject_parent")
+        # endregion
+
+        # region Read log verifier params
+        self.rep = report_id
+        self.log_verifier_by_name = constants.ReadLogVerifiers.log_319_check_order_event_with_time.value
+        self.read_log_verifier = ReadLogVerifierAlgo(self.log_verifier_by_name, report_id)
+        self.key_params_readlog = self.data_set.get_verifier_key_parameters_by_name("key_params_log_319_check_order_event")
+        self.pre_filter = self.data_set.get_pre_filter("pre_filter_check_events")
+        # endregion
+
+        # region Compare message params
+        self.text = "cancelling ASOR child order"
+        self.pre_filter['Text'] = (self.text, "EQUAL")
         # endregion
 
         self.rule_list = []
@@ -91,8 +107,7 @@ class QAP_T9166(TestCase):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit1, self.price)
-        ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit1, True, 7000)
-        self.rule_list = [nos_rule, ocr_rule]
+        self.rule_list = [nos_rule]
         # endregion
 
         # region Send_MarkerData
@@ -137,7 +152,10 @@ class QAP_T9166(TestCase):
         self.SORPING_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.SORPING_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, ClientAlgoPolicyID=self.algopolicy, Side=self.sell, Instrument=self.instrument))
 
-        self.fix_manager_sell.send_message_and_receive_response(self.SORPING_order, case_id_1)
+        responce = self.fix_manager_sell.send_message_and_receive_response(self.SORPING_order, case_id_1)
+
+        parent_SORPING_order_id = responce[0].get_parameter('ExecID')
+        self.pre_filter['OrderId'] = (parent_SORPING_order_id, "EQUAL")
         # endregion
 
         # region Check Sell side
@@ -155,14 +173,25 @@ class QAP_T9166(TestCase):
         self.fix_verifier_sell.set_case_id(case_id_2)
         cancel_request_SORPING_order = FixMessageOrderCancelRequest(self.SORPING_order)
 
-        self.fix_manager_sell.send_message_and_receive_response(cancel_request_SORPING_order, case_id_2)
+        self.fix_manager_sell.send_message(cancel_request_SORPING_order)
         self.fix_verifier_sell.check_fix_message(cancel_request_SORPING_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
 
-        er_cancel_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_cancel)
-        self.fix_verifier_sell.check_fix_message(er_cancel_SORPING_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
+        time.sleep(12)
+
+        er_cancel_reject_SORPING_order_params = FixMessageOrderCancelRejectReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_new)
+        er_cancel_reject_SORPING_order_params.remove_parameter('Text')
+        self.fix_verifier_sell.check_fix_message(er_cancel_reject_SORPING_order_params, key_parameters=self.key_params_ER_cancel_reject_parent, message_name='Sell side ExecReport CancelReject')
         # endregion
 
-        time.sleep(20)
+        # region Check Read log
+        time.sleep(70)
+
+        compare_message = ReadLogMessageAlgo().set_compare_message_for_check_order_event_with_time()
+        compare_message.change_parameters(dict(Time='*', OrderId=parent_SORPING_order_id, Text=self.text))
+
+        self.read_log_verifier.set_case_id(bca.create_event("Check that the two Cancel request to SOR child are sent", self.test_id))
+        self.read_log_verifier.check_read_log_message_sequence([compare_message, compare_message], [self.key_params_readlog, self.key_params_readlog], pre_filter=self.pre_filter)
+        # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
