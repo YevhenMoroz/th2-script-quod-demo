@@ -188,6 +188,7 @@ class PKSMessageType(Enum):
     FixPositionReport = "Fix_PositionReport"
     FixPositionMaintenanceRequest = "Fix_PositionMaintenanceRequest"
     PositionReport = "Order_PositionReport"
+    RetailPositionConversionRequest = "Order_RetailPositionConversionRequest"
     RequestForPositionsAck = "Order_RequestForPositionsAck"
 
 

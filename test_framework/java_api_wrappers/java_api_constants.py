@@ -466,3 +466,4 @@ class PositionTransferReportConst(Enum):
 class PositionValidities(Enum):
     PosValidity_ITD = 'ITD'
     PosValidity_DEL = 'DEL'
+    PosValidity_TP1 = 'TP1'
