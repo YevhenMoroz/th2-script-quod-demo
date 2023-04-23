@@ -88,7 +88,6 @@ class QAP_T3706(TestCase):
         # region step 2: Perform "After Validity" option
         date = (datetime.datetime.utcnow() + datetime.timedelta(days=1)).strftime('%Y%m%d')
         result_before = self.db_manager.execute_query(f"SELECT COUNT(*) FROM retailposit WHERE alive = 'Y' AND instrid = '{self.instr_id}' AND accountid = '{self.account}'")
-        print(result_before)
         self.ja_manager.compare_values({'CountOfRetailPosit': 2},
                                        {'CountOfRetailPosit': result_before[0][0]},
                                        f'Verify that 2 retaiposit exist for {self.account} (step 2)')
