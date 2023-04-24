@@ -68,7 +68,7 @@ class QAP_T5124(TestCase):
         self.md_entries_target = [
             {
                 "MDEntryType": "0",
-                "MDEntryPx": round(1.18148, 5),
+                "MDEntryPx": round(1.17148, 5),
                 "MDEntrySize": 1000000,
                 "MDQuoteType": 1,
                 "MDEntryPositionNo": 1,
@@ -78,7 +78,7 @@ class QAP_T5124(TestCase):
             },
             {
                 "MDEntryType": "1",
-                "MDEntryPx": round(1.18168, 5),
+                "MDEntryPx": round(1.17168, 5),
                 "MDEntrySize": 1000000,
                 "MDQuoteType": 1,
                 "MDEntryPositionNo": 1,
@@ -117,13 +117,7 @@ class QAP_T5124(TestCase):
                                    self.fx_fh_connectivity,
                                    'FX')
         self.fix_manager_gtw.send_message(self.fix_md, f"Send MD {self.md_id_target}")
-        time.sleep(3)
-
-        self.fix_md.change_parameter("MDReqID", self.md_id_target)
-        self.fix_md.update_MDReqID(self.fix_md.get_parameter("MDReqID"),
-                                   self.fx_fh_connectivity,
-                                   'FX')
-        self.md_req_id = self.fix_md.get_parameter("MDReqID")
+        time.sleep(6)
 
         self.md_request.set_md_req_parameters_taker(). \
             change_parameters({'MDReqID': self.md_req_id}). \
