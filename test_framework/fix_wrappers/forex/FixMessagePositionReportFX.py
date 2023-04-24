@@ -54,3 +54,13 @@ class FixMessagePositionReportFX(FixMessage):
         super().change_parameters(base_parameters)
 
         return self
+
+    def change_parties(self, account):
+        parties = {
+            "NoPartyIDs": [{
+                "PartyRole": "38",
+                "PartyID": account,
+                "PartyIDSource": "D"}
+            ]
+        }
+        self.change_parameter("Parties", parties)
