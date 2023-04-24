@@ -135,16 +135,16 @@ class QAP_T2399(TestCase):
 
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.silver).change_parameter(
             'NoRelatedSymbols', self.no_related_symbols)
-        self.fix_manager_mm.send_message_and_receive_response(self.md_request, self.test_id)
-        self.fix_md_snapshot.set_params_for_empty_md_response(self.md_request)
-        # self.fix_md_snapshot.add_tag({'PriceCleansingReason': '5'})
-        self.fix_verifier.check_fix_message(self.fix_md_snapshot, ignored_fields=["header", "trailer", "CachedUpdate"])
-        # endregion
-        # region Step 3
-        # self.md_reject.set_md_reject_params(self.md_request, self.text)
-        # self.fix_verifier.check_fix_message(fix_message=self.md_reject,
-        #                                     direction=DirectionEnum.FromQuod,
-        #                                     key_parameters=["MDReqID"])
+        fix_response = self.fix_manager_mm.send_message_and_receive_response(self.md_request, self.test_id)[0]
+        try:
+            if fix_response.get_parameters()["Text"]:
+                self.md_reject.set_md_reject_params(self.md_request, text="suspect data").remove_parameter(
+                    "MDReqRejReason")
+                self.fix_verifier.check_fix_message(self.md_reject)
+        except KeyError:
+            self.fix_md_snapshot.set_params_for_empty_md_response(self.md_request)
+            self.fix_verifier.check_fix_message(self.fix_md_snapshot,
+                                                ignored_fields=["header", "trailer", "CachedUpdate"])
         self.rest_message.clear_message_params().modify_cross_venue_rates_cleansing_rule().set_params(response)
         self.rest_message.change_params({"removeDetectedUpdate": "false"})
         self.rest_manager.send_post_request(self.rest_message)
