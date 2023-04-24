@@ -35,7 +35,7 @@ class FixMessageConfirmationReportOMS(FixMessageConfirmationReport):
             'NoOrders': [{
                 'ClOrdID': new_order_single.get_parameter('ClOrdID'),
                 'OrderID': '*',
-                'OrderAvgPx': new_order_single.get_parameter("Price"),  # New?
+                'OrderAvgPx': new_order_single.get_parameter("Price"),
             }],
             'SettlDate': '*',
             'AllocID': '*',
@@ -55,6 +55,38 @@ class FixMessageConfirmationReportOMS(FixMessageConfirmationReport):
         self.change_parameters(change_parameters)
         return self
 
+    def set_fix42_confirmation_new(self, new_order_single: FixMessageNewOrderSingle):
+        change_parameters = {
+            'ConfirmTransType': "0",
+            'AllocQty': new_order_single.get_parameter("OrderQty"),
+            'AllocAccount': '*',
+            'TransactTime': '*',
+            'Side': new_order_single.get_parameter("Side"),
+            'AvgPx': new_order_single.get_parameter("Price"),
+            'QuodTradeQualifier': '*',
+            'BookID': '*',
+            'NoOrders': [{
+                'ClOrdID': new_order_single.get_parameter('ClOrdID'),
+                'OrderID': '*',
+                'OrderAvgPx': new_order_single.get_parameter("Price"),
+            }],
+            'SettlDate': '*',
+            'AllocID': '*',
+            'Currency': new_order_single.get_parameter('Currency'),
+            'NetMoney': '*',
+            'TradeDate': '*',
+            'NoParty': '*',
+            'AllocInstructionMiscBlock1': '*',
+            'CpctyConfGrp': '*',
+            'ReportedPx': '*',
+            'Instrument': '*',
+            'GrossTradeAmt': '*',
+            'ConfirmID': '*',
+
+        }
+        self.change_parameters(self.base_parameters)
+        self.change_parameters(change_parameters)
+        return self
     def set_default_confirmation_replace(self, new_order_single: FixMessageNewOrderSingle):
         change_parameters = {
             'ConfirmTransType': "1",

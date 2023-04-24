@@ -22,7 +22,7 @@ def check_ssh(file):
 
 
 def test_run(parent_id=None, version=None, skip_ssh=False, only_ssh=False):
-    report_id = bca.create_event(f"DMA Analysis" if version is None else f"DMA Analysis | {version}", parent_id)
+    report_id = bca.create_event(f"DMA Analysis" if version is None else f"DMA | {version}", parent_id)
     seconds, nanos = timestamps()  # Store case start time
     configuration = ComponentConfiguration("DMA")
     data_set = configuration.data_set
