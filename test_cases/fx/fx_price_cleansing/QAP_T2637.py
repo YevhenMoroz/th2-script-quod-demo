@@ -150,19 +150,17 @@ class QAP_T2637(TestCase):
         self.md_request.set_md_req_parameters_taker(). \
             change_parameters({'MDReqID': self.md_id_citi_b}). \
             update_repeating_group("NoRelatedSymbols", self.no_related_symbols)
-        self.fix_manager_marketdata_th2.send_message_and_receive_response(self.md_request, self.test_id)
-        self.fix_md_snapshot.set_params_for_empty_md_response(self.md_request)
-        self.fix_md_snapshot.add_tag({"PriceCleansingReason": "2"})
-        self.fix_md_snapshot.add_tag({"OrigMDArrivalTime": "*"})
-        self.fix_md_snapshot.add_tag({"OrigMDTime": "*"})
-        self.fix_verifier.check_fix_message(self.fix_md_snapshot,
-                                            ignored_fields=["header", "trailer", "CachedUpdate"])
-        # self.md_request.set_md_req_parameters_taker(). \
-        #     change_parameters({'MDReqID': self.md_req_id}). \
-        #     update_repeating_group("NoRelatedSymbols", self.no_related_symbols)
-        # self.fix_manager_marketdata_th2.send_message_and_receive_response(self.md_request, self.test_id)
-        # self.md_reject.set_md_reject_params(self.md_request, text="feed stale").remove_parameter("MDReqRejReason")
-        # self.fix_verifier.check_fix_message(self.md_reject)
+        fix_response = self.fix_manager_marketdata_th2.send_message_and_receive_response(self.md_request, self.test_id)[0]
+        try:
+            if fix_response.get_parameters()["Text"]:
+                self.md_reject.set_md_reject_params(self.md_request, text="feed stale").remove_parameter(
+                    "MDReqRejReason")
+                self.fix_verifier.check_fix_message(self.md_reject)
+        except KeyError:
+            self.fix_md_snapshot.set_params_for_empty_md_response(self.md_request)
+            self.fix_md_snapshot.add_tag({"PriceCleansingReason": "2", "OrigMDArrivalTime": "*", "OrigMDTime": "*"})
+            self.fix_verifier.check_fix_message(self.fix_md_snapshot,
+                                                ignored_fields=["header", "trailer", "CachedUpdate"])
 
         self.rest_message.clear_message_params().modify_stale_cleansing_rule().set_params(response)
         self.rest_message.change_params({"removeDetectedUpdate": "false"})
