@@ -163,6 +163,7 @@ class JavaApiFields(Enum):
     ExecutionReportBlock = 'ExecutionReportBlock'
     CounterpartList = "CounterpartList"
     CounterpartBlock = "CounterpartBlock"
+    OrderModificationRequestBlock = 'OrderModificationRequestBlock'
     ClientAccountGroupID = 'ClientAccountGroupID'
     PartyRole = "PartyRole"
     CounterpartID = "CounterpartID"
@@ -191,6 +192,7 @@ class JavaApiFields(Enum):
     ListExecutionPolicy = 'ListExecutionPolicy'
     ListOrderStatus = 'ListOrderStatus'
     NewOrderSingleBlock = 'NewOrderSingleBlock'
+    PosValidity = 'PosValidity'
     ClientCommissionDataBlock = 'ClientCommissionDataBlock'
     ClientCommission = 'ClientCommission'
     OrderBagNotificationBlock = 'OrderBagNotificationBlock'
@@ -460,3 +462,9 @@ class PosReqTypes(Enum):
 
 class PositionTransferReportConst(Enum):
     TransferTransType_NEW = 'NEW'
+
+
+class PositionValidities(Enum):
+    PosValidity_ITD = 'ITD'
+    PosValidity_DEL = 'DEL'
+    PosValidity_TP1 = 'TP1'
