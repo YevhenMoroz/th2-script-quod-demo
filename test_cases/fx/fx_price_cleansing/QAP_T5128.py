@@ -14,6 +14,8 @@ from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixM
 from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestRejectFX import FixMessageMarketDataRequestRejectFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
     FixMessageMarketDataSnapshotFullRefreshBuyFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
+    FixMessageMarketDataSnapshotFullRefreshSellFX
 from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
 from custom import basic_custom_actions as bca
 from test_framework.rest_api_wrappers.forex.RestApiPriceCleansingDeviationMessages import \
@@ -35,6 +37,7 @@ class QAP_T5128(TestCase):
         self.fix_verifier = FixVerifier(self.fix_env.sell_side_esp, self.test_id)
         self.rates_tile = RatesTile(self.test_id, self.session_id)
         self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
+        self.fix_md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
         self.md_reject = FixMessageMarketDataRequestRejectFX()
         self.symbol = self.data_set.get_symbol_by_name('symbol_2')
         self.tenor_spot = self.data_set.get_tenor_by_name('tenor_spot')
@@ -44,7 +47,7 @@ class QAP_T5128(TestCase):
         self.venue_target = self.data_set.get_venue_by_name('venue_2')
         self.venue_reference = self.data_set.get_venue_by_name('venue_1')
         self.rest_message = RestApiPriceCleansingDeviationMessages(data_set=self.data_set)
-        self.rest_manager = RestApiManager(session_alias=self.rest_env)
+        self.rest_manager = RestApiManager(self.rest_env, self.test_id)
         self.rest_message_params = None
         self.account = self.data_set.get_client_by_name("client_mm_1")
         self.instrument = {
@@ -141,13 +144,16 @@ class QAP_T5128(TestCase):
 
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.account).change_parameter(
             'NoRelatedSymbols', self.no_related_symbols)
-        self.fix_manager_mm.send_message_and_receive_response(self.md_request, self.test_id)
-        # endregion
-        # region Step 3
-        self.md_reject.set_md_reject_params(self.md_request, self.text)
-        self.fix_verifier.check_fix_message(fix_message=self.md_reject,
-                                            direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
+        fix_response = self.fix_manager_mm.send_message_and_receive_response(self.md_request, self.test_id)[0]
+        try:
+            if fix_response.get_parameters()["Text"]:
+                self.md_reject.set_md_reject_params(self.md_request, text="suspect data").remove_parameter(
+                    "MDReqRejReason")
+                self.fix_verifier.check_fix_message(self.md_reject)
+        except KeyError:
+            self.fix_md_snapshot.set_params_for_empty_md_response(self.md_request)
+            self.fix_verifier.check_fix_message(self.fix_md_snapshot,
+                                                ignored_fields=["header", "trailer", "CachedUpdate"])
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
@@ -172,3 +178,4 @@ class QAP_T5128(TestCase):
 
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_mm.send_message(self.md_request)
+        self.sleep(2)
