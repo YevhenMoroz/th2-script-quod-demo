@@ -41,7 +41,8 @@ class QAP_T10528(TestCase):
         self.price = 20
         self.qty_after_trade = self.qty - self.trade_qty
         self.delay_for_trade = 0
-        self.delay_for_rfq = 10000
+        # The delay for rfq can be 10000 (links to the delays on the sim)
+        self.delay_for_rfq = 7000
         self.algopolicy = constants.ClientAlgoPolicy.qa_mpdark_rr_1.value
         # endregion
 
@@ -204,8 +205,6 @@ class QAP_T10528(TestCase):
         self.fix_verifier_sell.check_fix_message(er_partial_fill_mp_dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Partial fill')
         # endregion
 
-        time.sleep(3)
-        
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         # region Cancel Algo Order
@@ -215,6 +214,8 @@ class QAP_T10528(TestCase):
 
         self.fix_manager_sell.send_message_and_receive_response(cancel_request_MP_Dark_order, case_id_3)
         self.fix_verifier_sell.check_fix_message(cancel_request_MP_Dark_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
+
+        time.sleep(3)
         
         # region Check that the child order on the CHIXLIS was canceled
         er_cancel_dma_chixlis_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.nos_chixlis_order, self.gateway_side_buy, self.status_new)
@@ -224,5 +225,6 @@ class QAP_T10528(TestCase):
         er_cancel_mp_dark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_cancel)
         self.fix_verifier_sell.check_fix_message(er_cancel_mp_dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
+
         rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)

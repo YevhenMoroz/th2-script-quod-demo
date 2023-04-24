@@ -196,9 +196,12 @@ class AlgoFormulasManager:
 
 
     @staticmethod
-    def get_pov_child_qty_on_ltq(percentage_vol: float, last_traded_volume: int, ord_qty: int) -> int:
+    def get_pov_child_qty_on_ltq(percentage_vol: float, last_traded_volume: int, ord_qty: int, ratio: float = 1, round: str = 'ceil') -> int:
         if (percentage_vol > 0 and percentage_vol < 1):
-            return min(math.ceil((last_traded_volume * percentage_vol) / (1 - percentage_vol)), ord_qty)
+            if round=='ceil':
+                return min(math.ceil((last_traded_volume * percentage_vol * ratio) / (1 - percentage_vol)), ord_qty)
+            else:
+                return min(math.floor((last_traded_volume * percentage_vol * ratio) / (1 - percentage_vol)), ord_qty)
         # elif (percentage_vol == 100 or percentage_vol == 1):
         #     return min(math.ceil(last_traded_volume * percentage_vol), ord_qty)
         else:

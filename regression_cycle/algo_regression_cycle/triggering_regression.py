@@ -1,4 +1,6 @@
 from xml.etree import ElementTree
+import time
+from datetime import timedelta, datetime
 
 from stubs import Stubs, ROOT_DIR
 import logging
@@ -28,12 +30,17 @@ username = Stubs.custom_config['qf_trading_fe_user']
 password = Stubs.custom_config['qf_trading_fe_password']
 
 
-def test_run(parent_id=None, version=None):
+def test_run(parent_id=None, version=None, mode=None):
+    if mode == 'Regression':
+        report_id = bca.create_event(f"Algo_Triggering" if version is None else f"Algo_Triggering | {version}", parent_id)
+    else:
+        report_id = bca.create_event(f"Algo_Triggering (verification)" if version is None else f"Algo_Triggering (verification) | {version}", parent_id)
     logging.getLogger().setLevel(logging.WARN)
 
-
     try:
-        report_id = bca.create_event(f"Algo_Triggering" if version is None else f"Algo_Triggering | {version}", parent_id)
+        start_time = time.monotonic()
+        print(f'Algo_Triggering StartTime is {datetime.utcnow()}')
+
         configuration = ComponentConfiguration("Triggering")
         QAP_T8817(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T5135(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
@@ -46,9 +53,11 @@ def test_run(parent_id=None, version=None):
         QAP_T9143(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T9161(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T7842(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+
+        end_time = time.monotonic()
+        print(f'Algo_Triggering EndTime is {datetime.utcnow()}, duration is {timedelta(seconds=end_time-start_time)}')
     except Exception:
         logging.error("Error execution", exc_info=True)
-
 
 
 if __name__ == '__main__':

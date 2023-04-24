@@ -192,8 +192,6 @@ class QAP_T11066(TestCase):
         self.fix_verifier_buy.check_fix_message_kepler(ocr_rfq_canceled_chix, key_parameters=self.key_params_NOS_child, message_name='Buy side cancel RFQ on LISX', direction=self.FromQuod)
         # endregion
 
-        time.sleep(2)
-
         # region Check that the modification was rejected
         er_reject_replace_MPDark_order_params = FixMessageOrderCancelRejectReportAlgo().set_params_from_new_order_single(self.MPDark_order, self.gateway_side_sell, self.status_new)
         er_reject_replace_MPDark_order_params.change_parameters(dict(CxlRejResponseTo='2', OrdStatus=1)).add_tag(dict(Account=self.client))

@@ -33,7 +33,6 @@ from test_cases.algo.Algo_PercentageVolume.QAP_T9453 import QAP_T9453
 from test_cases.algo.Algo_PercentageVolume.QAP_T9232 import QAP_T9232
 from test_cases.algo.Algo_PercentageVolume.QAP_T9157 import QAP_T9157
 from test_cases.algo.Algo_PercentageVolume.QAP_T9156 import QAP_T9156
-from test_cases.algo.Algo_PercentageVolume.QAP_T9098 import QAP_T9098
 from test_cases.algo.Algo_PercentageVolume.QAP_T9094 import QAP_T9094
 from test_cases.algo.Algo_PercentageVolume.QAP_T9093 import QAP_T9093
 from test_cases.algo.Algo_PercentageVolume.QAP_T9084 import QAP_T9084
@@ -87,6 +86,9 @@ def test_run(parent_id=None, version=None):
         QAP_T8880(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T9275(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4261(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T9094(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T9093(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T9084(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         if __name__ == '__main__':
             # tests with config change
             QAP_T5088(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
@@ -97,10 +99,6 @@ def test_run(parent_id=None, version=None):
             QAP_T9232(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
             QAP_T9157(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
             QAP_T9156(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-            # QAP_T9098(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-            # QAP_T9094(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-            # QAP_T9093(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-            # QAP_T9084(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
             QAP_T4260(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
             QAP_T5039(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # FIX/FE
