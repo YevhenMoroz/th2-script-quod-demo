@@ -113,14 +113,14 @@ class QAP_T8656(TestCase):
         # endregion
 
     def __check_comm_amount_type(self, report, action):
-        com_type_list_exp = {self.comm_type_broker, self.comm_type_retail, self.comm_type_sales}
+        com_type_list_exp = sorted([self.comm_type_broker, self.comm_type_retail, self.comm_type_sales])
         # extract actual data
         com_type_list_act = []
         for i in range(3):
             commission = report[JavaApiFields.ClientCommissionList.value][
                 JavaApiFields.ClientCommissionBlock.value][i][JavaApiFields.CommissionAmountType.value]
             com_type_list_act.append(commission)
-        com_type_list_act = set(com_type_list_act)
+        com_type_list_act = sorted(com_type_list_act)
         # create dictionary with data from list
         exp_dict = {}
         y = 1
