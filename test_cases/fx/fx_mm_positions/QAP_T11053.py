@@ -58,7 +58,6 @@ class QAP_T11053(TestCase):
         self.trade_request.update_fields_in_component("TradeEntryRequestBlock", {"AccountGroupID": self.client,
                                                                                  "ListingID": self.listing_gbp_cad_wk1})
         response: list = self.java_api_manager.send_message_and_receive_response(self.trade_request)
-        exec_id_fwd = self.trade_request.get_exec_id(response)
         self.sleep(5)
         # endregion
         # region Step 2
@@ -81,10 +80,7 @@ class QAP_T11053(TestCase):
         # endregion
         # region Step 5
         self.position_report_before_spot.set_params_for_all(self.request_for_position)
-        self.position_report_before_spot.change_parameter("LastPositUpdateEventID", exec_id_spo)
-
         self.position_report_before_fwd.set_params_for_all(self.request_for_position)
-        self.position_report_before_fwd.change_parameter("LastPositUpdateEventID", exec_id_fwd)
 
         self.position_report_after_mo.set_params_for_all(self.request_for_position)
         self.position_report_after_mo.change_parameter("LastPositUpdateEventID", mo_id_after)
