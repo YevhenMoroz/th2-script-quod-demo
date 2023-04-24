@@ -125,7 +125,7 @@ class QAP_T10301(TestCase):
         # TODO need to set correct value for LastPositEventType
         self.position_report_int.change_parameter("LastPositEventType", "*")
         self.fix_pos_verifier.check_fix_message(self.position_report_int,
-                                                message_name=f"Check position for {self.client_int} after")
+                                                message_name=f"Check position for default - {self.client_int} after")
         self.position_verifier.check_base_position(internal_report, self.expected_qty_int,
                                                    text=f"Check base for {self.client_int}")
         self.request_for_position_int.set_unsubscribe()
@@ -141,7 +141,7 @@ class QAP_T10301(TestCase):
         # TODO need to set correct value for LastPositEventType
         self.position_report_backup.change_parameter("LastPositEventType", "*")
         self.fix_pos_verifier.check_fix_message(self.position_report_backup,
-                                                message_name=f"Check position for {self.client_back_up} after")
+                                                message_name=f"Check position for backup client - {self.client_back_up} after")
         self.position_verifier.check_base_position(backup_report, self.expected_qty_backup,
                                                    text=f"Check base for {self.client_back_up}")
         self.request_for_position_backup.set_unsubscribe()
