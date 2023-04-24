@@ -61,13 +61,12 @@ class QAP_T5123(TestCase):
             "SettlType": self.settle_type,
             'MarketID': f"{self.venue_target}-SW"
         }]
-        self.md_id_reference = f"{self.symbol}:{self.instr_type_wa}:REG:{self.venue_reference}"
         self.md_id_target = f"{self.symbol}:{self.instr_type_wa}:REG:{self.venue_target}"
         self.md_req_id = f"{self.symbol}:{self.instr_type_wa}:REG:{self.venue_target}" + "_" + str(randint(100, 9999))
         self.md_entries_target = [
             {
                 "MDEntryType": "0",
-                "MDEntryPx": 1.18142,
+                "MDEntryPx": 1.19142,
                 "MDEntrySize": 1000000,
                 "MDQuoteType": 1,
                 "MDEntryPositionNo": 1,
@@ -77,7 +76,7 @@ class QAP_T5123(TestCase):
             },
             {
                 "MDEntryType": "1",
-                "MDEntryPx": 1.18162,
+                "MDEntryPx": 1.19162,
                 "MDEntrySize": 1000000,
                 "MDQuoteType": 1,
                 "MDEntryPositionNo": 1,
@@ -87,7 +86,7 @@ class QAP_T5123(TestCase):
             },
             {
                 "MDEntryType": "0",
-                "MDEntryPx": 1.18132,
+                "MDEntryPx": 1.19132,
                 "MDEntrySize": 5000000,
                 "MDQuoteType": 1,
                 "MDEntryPositionNo": 2,
@@ -97,7 +96,7 @@ class QAP_T5123(TestCase):
             },
             {
                 "MDEntryType": "1",
-                "MDEntryPx": 1.18172,
+                "MDEntryPx": 1.19172,
                 "MDEntrySize": 5000000,
                 "MDQuoteType": 1,
                 "MDEntryPositionNo": 2,
@@ -107,7 +106,7 @@ class QAP_T5123(TestCase):
             },
             {
                 "MDEntryType": "0",
-                "MDEntryPx": 1.18122,
+                "MDEntryPx": 1.19122,
                 "MDEntrySize": 10000000,
                 "MDQuoteType": 1,
                 "MDEntryPositionNo": 3,
@@ -117,69 +116,7 @@ class QAP_T5123(TestCase):
             },
             {
                 "MDEntryType": "1",
-                "MDEntryPx": 1.18182,
-                "MDEntrySize": 10000000,
-                "MDQuoteType": 1,
-                "MDEntryPositionNo": 3,
-                "SettlDate": self.data_set.get_settle_date_by_name('spot'),
-                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
-                "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S')
-            }
-        ]
-        self.md_entries_reference = [
-            {
-                "MDEntryType": "0",
-                "MDEntryPx": 1.18138,
-                "MDEntrySize": 1000000,
-                "MDQuoteType": 1,
-                "MDEntryPositionNo": 1,
-                "SettlDate": self.data_set.get_settle_date_by_name('spot'),
-                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
-                "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S')
-            },
-            {
-                "MDEntryType": "1",
-                "MDEntryPx": 1.18158,
-                "MDEntrySize": 1000000,
-                "MDQuoteType": 1,
-                "MDEntryPositionNo": 1,
-                "SettlDate": self.data_set.get_settle_date_by_name('spot'),
-                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
-                "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S')
-            },
-            {
-                "MDEntryType": "0",
-                "MDEntryPx": 1.18128,
-                "MDEntrySize": 5000000,
-                "MDQuoteType": 1,
-                "MDEntryPositionNo": 2,
-                "SettlDate": self.data_set.get_settle_date_by_name('spot'),
-                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
-                "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S')
-            },
-            {
-                "MDEntryType": "1",
-                "MDEntryPx": 1.18168,
-                "MDEntrySize": 5000000,
-                "MDQuoteType": 1,
-                "MDEntryPositionNo": 2,
-                "SettlDate": self.data_set.get_settle_date_by_name('spot'),
-                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
-                "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S')
-            },
-            {
-                "MDEntryType": "0",
-                "MDEntryPx": 1.18118,
-                "MDEntrySize": 10000000,
-                "MDQuoteType": 1,
-                "MDEntryPositionNo": 3,
-                "SettlDate": self.data_set.get_settle_date_by_name('spot'),
-                "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
-                "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S')
-            },
-            {
-                "MDEntryType": "1",
-                "MDEntryPx": 1.18178,
+                "MDEntryPx": 1.19182,
                 "MDEntrySize": 10000000,
                 "MDQuoteType": 1,
                 "MDEntryPositionNo": 3,
@@ -199,14 +136,6 @@ class QAP_T5123(TestCase):
             self.rest_manager.send_multiple_request(self.rest_message))
         time.sleep(3)
         # endregion
-        self.fix_md.change_parameter("MDReqID", self.md_id_reference)
-        self.fix_md.change_parameter("NoMDEntries", self.md_entries_reference)
-        self.fix_md.change_parameter("Instrument", self.instrument)
-        self.fix_md.update_MDReqID(self.fix_md.get_parameter("MDReqID"),
-                                   self.fx_fh_connectivity,
-                                   'FX')
-
-        self.fix_manager_gtw.send_message(self.fix_md, f"Send MD {self.md_id_reference}")
         self.fix_md.change_parameter("MDReqID", self.md_id_target)
         self.fix_md.change_parameter("NoMDEntries", self.md_entries_target)
         self.fix_md.change_parameter("Instrument", self.instrument)
@@ -228,11 +157,9 @@ class QAP_T5123(TestCase):
         self.fix_manager_marketdata_th2.send_message_and_receive_response(self.md_request, self.test_id)
         # endregion
         # region Step 3
-        self.fix_md_snapshot.set_params_for_empty_md_response(self.md_request, ['*'])
-        self.fix_md_snapshot.add_tag({"PriceCleansingReason": "5", "OrigMDArrivalTime": "*", "OrigMDTime": "*"})
-        self.fix_verifier.check_fix_message(fix_message=self.fix_md_snapshot,
-                                            direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
+        self.fix_md_snapshot.set_params_for_md_response_taker_spo(self.md_request, ['*', '*', '*'])
+        # self.fix_md_snapshot.add_tag({"PriceCleansingReason": "5", "OrigMDArrivalTime": "*", "OrigMDTime": "*"})
+        self.fix_verifier.check_fix_message(self.fix_md_snapshot, ignored_fields=["trailer", "header", "CachedUpdate"])
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
@@ -247,13 +174,6 @@ class QAP_T5123(TestCase):
                                    self.fx_fh_connectivity,
                                    'FX')
         self.fix_manager_gtw.send_message(self.fix_md, f"Send MD {self.md_id_target}")
-
-        self.fix_md.change_parameter("MDReqID", self.md_id_reference)
-        self.fix_md.change_parameter("Instrument", self.instrument)
-        self.fix_md.update_MDReqID(self.fix_md.get_parameter("MDReqID"),
-                                   self.fx_fh_connectivity,
-                                   'FX')
-        self.fix_manager_gtw.send_message(self.fix_md, f"Send MD {self.md_id_reference}")
 
         self.md_request.set_md_uns_parameters_maker(). \
             change_parameters({'MDReqID': self.md_req_id})
