@@ -163,8 +163,7 @@ class QAP_T8657(TestCase):
         # endregion
 
     def __check_comm_amount_type(self, report, action):
-        com_type_list_exp = [self.comm_type_broker, self.comm_type_retail, self.comm_type_sales]
-        sorted(com_type_list_exp)
+        com_type_list_exp = sorted([self.comm_type_broker, self.comm_type_retail, self.comm_type_sales])
         # extract actual data
         com_type_list_act = []
         for i in range(3):
