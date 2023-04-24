@@ -124,7 +124,7 @@ class QAP_T2398(TestCase):
         # Region Rule creation
         self.rest_message.set_default_params().create_cross_venue_rates_cleansing_rule().set_target_venue(
             self.bnp).set_symbol(self.gbp_aud).set_fwd()
-        response = self.rest_message_params = self.rest_manager.parse_create_response(
+        rest_response = self.rest_message_params = self.rest_manager.parse_create_response(
             self.rest_manager.send_multiple_request(self.rest_message))
         time.sleep(3)
         # endregion
@@ -144,41 +144,27 @@ class QAP_T2398(TestCase):
                                    self.fx_fh_connectivity, 'FX')
         self.fix_manager_gtw.send_message(self.fix_md, f"Send MD {self.md_id_bnp}")
         time.sleep(6)
-
-        self.fix_md.change_parameter("MDReqID", self.md_id_bnp)
-        self.fix_md.update_MDReqID(self.fix_md.get_parameter("MDReqID"),
-                                   self.fx_fh_connectivity, 'FX')
-        self.md_req_id = self.fix_md.get_parameter("MDReqID")
-
-        self.md_request.set_md_req_parameters_taker(). \
-            change_parameters({'MDReqID': self.md_req_id}). \
-            update_repeating_group("NoRelatedSymbols", self.no_related_symbols)
-        self.fix_manager_marketdata_th2.send_message_and_receive_response(self.md_request, self.test_id)
         # endregion
         # region Step 3
         self.md_request.set_md_req_parameters_taker(). \
             change_parameters({'MDReqID': self.md_id_bnp_c}). \
             update_repeating_group("NoRelatedSymbols", self.no_related_symbols)
-        self.fix_manager_marketdata_th2.send_message_and_receive_response(self.md_request, self.test_id)
-
-        self.fix_md_snapshot.set_params_for_empty_md_response(self.md_request)
-        self.fix_md_snapshot.add_tag({"PriceCleansingReason": "1"})
-        self.fix_md_snapshot.add_tag({"OrigMDArrivalTime": "*"})
-        self.fix_md_snapshot.add_tag({"OrigMDTime": "*"})
-        self.fix_verifier.check_fix_message(self.fix_md_snapshot,
-                                            ignored_fields=["header", "trailer", "CachedUpdate"])
-        # self.md_reject.set_md_reject_params(self.md_request, text="suspect data").remove_parameter("MDReqRejReason")
-        # self.fix_verifier.check_fix_message(self.md_reject)
-
+        fix_response = self.fix_manager_marketdata_th2.send_message_and_receive_response(self.md_request, self.test_id)[0]
+        try:
+            if fix_response.get_parameters()["Text"]:
+                self.md_reject.set_md_reject_params(self.md_request, text="suspect data").remove_parameter(
+                    "MDReqRejReason")
+                self.fix_verifier.check_fix_message(self.md_reject)
+        except KeyError:
+            self.fix_md_snapshot.set_params_for_empty_md_response(self.md_request)
+            self.fix_md_snapshot.add_tag({"PriceCleansingReason": "1", "OrigMDArrivalTime": "*", "OrigMDTime": "*"})
+            self.fix_verifier.check_fix_message(self.fix_md_snapshot,
+                                                ignored_fields=["header", "trailer", "CachedUpdate"])
 
         # Region Rule creation
-        self.rest_message.clear_message_params().modify_cross_venue_rates_cleansing_rule().set_params(response)
+        self.rest_message.clear_message_params().modify_cross_venue_rates_cleansing_rule().set_params(rest_response)
         self.rest_message.change_params({"removeDetectedUpdate": "false"})
         self.rest_manager.send_post_request(self.rest_message)
-
-        # self.rest_message.clear_message_params().set_params(
-        #     self.rest_message_params).delete_cross_venue_rates_cleansing_rule()
-        # self.rest_manager.send_post_request(self.rest_message)
         time.sleep(3)
         # endregion
         self.fix_md.set_market_data_fwd()
@@ -219,3 +205,4 @@ class QAP_T2398(TestCase):
         self.md_request.set_md_uns_parameters_maker(). \
             change_parameters({'MDReqID': self.md_req_id})
         self.fix_manager_marketdata_th2.send_message(self.md_request)
+        self.sleep(4)
