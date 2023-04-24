@@ -447,6 +447,12 @@ class DataBaseEnv(Enum):
     USER_320 = "quod320prd"
     PASS_320 = "quod320prd"
     DB_TYPE_320 = "postgresql"
+    # 306 Oracle
+    HOST_306 = "10.0.22.57"
+    NAME_306 = "DBSHIVA2"
+    USER_306 = "quod306prd"
+    PASS_306 = "quod306prd"
+    DB_TYPE_306 = "oracle"
 
 
 class FreeNotesReject(Enum):
