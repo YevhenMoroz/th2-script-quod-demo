@@ -51,7 +51,7 @@ class Constants:
             CURRENCY = '//*[@id="currency"]'
             CLIENT = '//*[@id="accountGroup"]'
             MARGIN_ACCOUNT_CHECKBOX = '//*[@formcontrolname="isMarginAccount"]//input'
-            DEFAULT_CASH_POSITION_CHECKBOX = '//*[@formcontrolname="defaultCashAccount"]//input'
+            DEFAULT_CASH_POSITION_CHECKBOX = '//*[@formcontrolname="defaultCashAccount"]//span'
             SECURITY_ACCOUNTS = '//*[@id="Security Accounts"]'
 
 

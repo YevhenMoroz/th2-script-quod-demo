@@ -81,7 +81,7 @@ class UsersConstants:
     PASSWORD_EXPIRATION_AT_LOGIN_SUB_WIZARD = '//*[text()="Password Expiration"]/preceding-sibling::input'
     COUNTERPART_AT_LOGIN_SUB_WIZARD = '//*[text()="Counterpart"]/preceding-sibling::input'
     MANAGE_AT_LOGIN_SUB_WIZARD = '//*[text()="Manage"]'
-    NON_VISIBLE_POSITION_FLATTENING_PERIODS = '//*[@id="excludedUserRolesPosValidity"]//button'
+    NON_VISIBLE_POSITION_FLATTENING_PERIODS = '//*[@id="Non-Visible Position Flattening Periods"]//p-multiselect//div'
     CHANGE_PASSWORD_BUTTON_AT_LOGIN_SUB_WIZARD = '//button[text()="Change Password"]'
     NEW_PASSWORD_AT_LOGIN_SUB_WIZARD = '//*[@formcontrolname="newPassword"]'
     CONFIRM_NEW_PASSWORD_AT_LOGIN_SUB_WIZARD = '//*[@formcontrolname="confirmNewPassword"]'
@@ -129,7 +129,7 @@ class UsersConstants:
     EDIT_AT_CLIENT_SUB_WIZARD = '//*[text()=" Client "]/ancestor::*[@class="expanded"]//*[@data-name="edit"]'
     DELETE_AT_CLIENT_SUB_WIZARD = '//*[text()=" Client "]/ancestor::*[@class="expanded"]//*[@data-name="trash-2"]'
     CLIENT_AT_CLIENT_SUB_WIZARD = '//*[@placeholder = "Client *"]'
-    TYPE_AT_CLIENT_SUB_WIZARD = '//*[@id="userRoleAccountGroupType"]'
+    TYPE_AT_CLIENT_SUB_WIZARD = '//nb-accordion-item-header[normalize-space()="Clients"]//..//nb-select'
     CLIENT_FILTER_AT_CLIENT_SUB_WIZARD = '(//*[text()=" Client "]//following-sibling::nb-accordion-item-body//thead//input)[1]'
     TYPE_FILTER_AT_CLIENT_SUB_WIZARD = '//*[text()=" Client "]//following-sibling::nb-accordion-item-body//thead//input)[2]'
 

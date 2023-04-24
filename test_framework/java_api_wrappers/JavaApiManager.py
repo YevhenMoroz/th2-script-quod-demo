@@ -438,6 +438,12 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id(), filterFields=filter_dict, response_time=response_time))
+        elif message.get_message_type() == ORSMessageType.FixNewOrderList.value:
+            response = self.act.submitFixNewOrderList(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict, response_time=response_time))
         elif message.get_message_type() == QSMessageType.QuoteManagementRequest.value:
             response = self.act.submitQuoteManagementRequest(
                 request=ActJavaSubmitMessageRequest(
@@ -452,6 +458,24 @@ class JavaApiManager:
                     parent_event_id=self.get_case_id(), filterFields=filter_dict, response_time=response_time))
         elif message.get_message_type() == QSMessageType.StopQuotingRequest.value:
             response = self.act.submitStopQuotingRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict, response_time=response_time))
+        elif message.get_message_type() == ORSMessageType.CptyBlockRejectRequest.value:
+            response = self.act.submitCptyBlockRejectRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict, response_time=response_time))
+        elif message.get_message_type() == ORSMessageType.BlockValidateRequest.value:
+            response = self.act.submitBlockValidateRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict, response_time=response_time))
+        elif message.get_message_type() == ORSMessageType.MatchCptyMOBlocksRequest.value:
+            response = self.act.submitMatchCptyMOBlocksRequest(
                 request=ActJavaSubmitMessageRequest(
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),

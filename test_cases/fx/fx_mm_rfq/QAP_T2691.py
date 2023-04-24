@@ -1,17 +1,24 @@
+import time
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from test_cases.fx.fx_wrapper.common_tools import random_qty
+from test_cases.fx.fx_wrapper.common_tools import check_quote_request_id, extract_automatic_quoting
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.environments.full_environment import FullEnvironment
 from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.forex.FixMessageExecutionReportFX import FixMessageExecutionReportFX
+from test_framework.fix_wrappers.forex.FixMessageExecutionReportPrevQuotedFX import \
+    FixMessageExecutionReportPrevQuotedFX
+from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleFX import FixMessageNewOrderSingleFX
+from test_framework.fix_wrappers.forex.FixMessageNewOrderSinglePrevQuotedFX import FixMessageNewOrderSinglePrevQuotedFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
-from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
-from test_framework.rest_api_wrappers.forex.RestApiClientTierInstrSymbolMessages import \
-    RestApiClientTierInstrSymbolMessages
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, QuoteRequestBookColumns
-from test_framework.win_gui_wrappers.forex.fx_dealer_intervention import FXDealerIntervention
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.fx.OrderQuoteFX import OrderQuoteFX
+from test_framework.java_api_wrappers.fx.QuoteManualSettingsRequestFX import QuoteManualSettingsRequestFX
+from test_framework.java_api_wrappers.fx.QuoteRequestActionRequestFX import QuoteRequestActionRequestFX
 
 
 class QAP_T2691(TestCase):
@@ -19,57 +26,66 @@ class QAP_T2691(TestCase):
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
-
         self.fix_env = self.environment.get_list_fix_environment()[0]
-        self.fix_manager = FixManager(self.fix_env.sell_side_rfq, self.test_id)
-
-        self.web_adm_env = self.environment.get_list_web_admin_rest_api_environment()[0]
-        self.rest_manager = RestApiManager(self.web_adm_env.session_alias_wa, self.test_id)
-        self.rest_massage = RestApiClientTierInstrSymbolMessages(self.test_id)
-
-        self.dealer_intervention = FXDealerIntervention(self.test_id, self.session_id)
-        self.free_notes_column = OrderBookColumns.free_notes.value
-        self.qty_column = OrderBookColumns.qty.value
-        self.client_column = QuoteRequestBookColumns.client.value
-        self.presence_event = "Order presence check"
-        self.expected_qty = ""
-        self.expected_free_notes = "WK1 is not being priced or not executable over this client tier"
-
-        self.qty = random_qty(1, 2, 7)
+        self.fix_manager_gtw = FixManager(self.fix_env.sell_side_esp, self.test_id)
+        self.fix_verifier = FixVerifier(self.fix_env.sell_side_esp, self.test_id)
+        self.java_api_env = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_manager = JavaApiManager(self.java_api_env, self.test_id)
+        self.manual_settings_request = QuoteManualSettingsRequestFX(data_set=self.data_set)
+        self.new_order_single = FixMessageNewOrderSingleFX(data_set=self.data_set)
+        self.execution_report = FixMessageExecutionReportFX()
         self.eur_usd = self.data_set.get_symbol_by_name('symbol_1')
-        self.client_tier_argentina = self.data_set.get_client_tier_id_by_name("client_tier_id_2")
-        self.client_argentina = self.data_set.get_client_by_name("client_mm_2")
+        self.security_type_fwd = self.data_set.get_security_type_by_name('fx_fwd')
+        self.instrument = {
+            'Symbol': self.eur_usd,
+            'SecurityType': self.security_type_fwd,
+            'Product': '4', }
+        self.ss_rfq_connectivity = self.environment.get_list_fix_environment()[0].sell_side_rfq
+        self.java_api_env = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.fix_manager_sel = FixManager(self.ss_rfq_connectivity, self.test_id)
+        self.java_api_manager = JavaApiManager(self.java_api_env, self.test_id)
+        self.fix_verifier = FixVerifier(self.ss_rfq_connectivity, self.test_id)
+        self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
+        self.new_order_single = FixMessageNewOrderSinglePrevQuotedFX()
+        self.execution_report = FixMessageExecutionReportPrevQuotedFX()
+        self.quote = FixMessageQuoteFX()
+        self.client = self.data_set.get_client_by_name("client_mm_3")
+        self.symbol = self.data_set.get_symbol_by_name("symbol_1")
+        self.currency = self.data_set.get_currency_by_name("currency_eur")
+        self.security_type_spot = self.data_set.get_security_type_by_name("fx_spot")
+        self.settle_type_1w_java = self.data_set.get_settle_type_ja_by_name("wk1")
+        self.action_request = QuoteRequestActionRequestFX()
+        self.java_quote = OrderQuoteFX()
+        self.qty = "2000000"
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region Step 1-2
-        self.rest_massage.find_client_tier_instrument(self.client_tier_argentina, self.eur_usd)
-        params_eur_usd = self.rest_manager.send_get_request_filtered(self.rest_massage)
-        params_eur_usd = self.rest_manager. \
-            parse_response_details(params_eur_usd,
-                                   {'clientTierID': self.client_tier_argentina, 'instrSymbol': self.eur_usd})
-        self.rest_massage.clear_message_params().modify_client_tier_instrument() \
-            .set_params(params_eur_usd). \
-            update_value_in_component('clientTierInstrSymbolTenor', 'activeQuote', 'false', {'tenor': 'WK1'})
-        self.rest_manager.send_post_request(self.rest_massage)
-        self.sleep(3)
+        # region Step 1
+        self.manual_settings_request.set_default_params(). \
+            update_fields_in_component("QuoteManualSettingsRequestBlock",
+                                       {"Tenor": self.settle_type_1w_java})
+        self.manual_settings_request.set_pricing_off()
+        self.java_manager.send_message(self.manual_settings_request)
+        time.sleep(1)
         # endregion
 
-        # region Step 3
-        self.quote_request.set_swap_rfq_params().update_repeating_group_by_index(component="NoRelatedSymbols", index=0,
-                                                                                 Account=self.client_argentina)
-        self.quote_request.update_near_leg(leg_qty=self.qty)
-        self.quote_request.update_far_leg(leg_qty=self.qty)
-        self.fix_manager.send_message(self.quote_request)
-
-        self.dealer_intervention.set_list_filter(
-            [self.qty_column, self.expected_qty, self.client_column, self.client_argentina])
-        actual_free_notes = self.dealer_intervention.extract_field_from_unassigned(self.free_notes_column)
-        self.dealer_intervention.compare_values(self.expected_free_notes, actual_free_notes, self.presence_event)
+        self.quote_request.set_rfq_params_fwd()
+        # self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.client)
+        self.fix_manager_sel.send_message(self.quote_request)
+        # endregion
+        # region Step 2
+        automatic_quoting = extract_automatic_quoting(self.quote_request)
+        self.verifier.set_parent_id(self.test_id)
+        self.verifier.set_event_name("Check quote presence in DI")
+        self.verifier.compare_values("Check quote presence in DI", "N", automatic_quoting)
+        self.verifier.verify()
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        self.rest_massage.modify_client_tier_instrument(). \
-            update_value_in_component('clientTierInstrSymbolTenor', 'activeQuote', 'true', {'tenor': 'WK1'})
-        self.rest_manager.send_post_request(self.rest_massage)
+        # region Step 5
+        self.manual_settings_request.set_default_params(). \
+            update_fields_in_component("QuoteManualSettingsRequestBlock",
+                                       {"Tenor": self.settle_type_1w_java})
+        self.java_manager.send_message(self.manual_settings_request)
+        # endregion
+        self.sleep(2)

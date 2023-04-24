@@ -29,7 +29,7 @@ class QAP_T3348(CommonTestCase):
         self.venue_account = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.venue = 'AMEX'
         self.account_id_source = 'SID'
-        self.dimensions_default_route = 'Credit Suisse'
+        self.dimensions_default_route = self.data_set.get_default_route("default_route_1")
         self.venue_client_account_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
 
     def precondition(self):
@@ -78,7 +78,7 @@ class QAP_T3348(CommonTestCase):
 
             wizard = AccountsWizard(self.web_driver_container)
             wizard.click_save_button()
-
+            time.sleep(1)
             main_page.set_id(self.account_id)
             time.sleep(1)
             main_page.click_more_actions_button()

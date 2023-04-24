@@ -99,7 +99,7 @@ class QAP_T2920(TestCase):
         ask_pts = response[-1].get_parameter("NoMDEntries")[1]["MDEntryForwardPoints"]
         expected_bid_px = str(round(float(self.bid_spot_without_int + float(bid_pts)), 5))
         expected_ask_px = str(round(float(self.ask_spot_without_int + float(ask_pts)), 5))
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*"])
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*"], response=response[0])
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 0, MDEntryPx=expected_bid_px)
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 1, MDEntryPx=expected_ask_px)
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,

@@ -9,6 +9,8 @@ from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_values_sub_wizard import \
     ClientsValuesSubWizard
+from test_framework.web_admin_core.pages.clients_accounts.clients.clients_assignments_sub_wizard import \
+    ClientsAssignmentsSubWizard
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_wizard import ClientsWizard
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
@@ -28,6 +30,7 @@ class QAP_T3884(CommonTestCase):
         self.ext_id_client = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.disclose_exec = self.data_set.get_disclose_exec("disclose_exec_1")
         self.booking_inst = ['Manual', 'Automatic']
+        self.desk = self.data_set.get_desk("desk_1")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -46,6 +49,8 @@ class QAP_T3884(CommonTestCase):
             values_tab.set_name(self.name)
             values_tab.set_ext_id_client(self.ext_id_client)
             values_tab.set_disclose_exec(self.disclose_exec)
+            assignments_tab = ClientsAssignmentsSubWizard(self.web_driver_container)
+            assignments_tab.set_desk(self.desk)
             wizard = ClientsWizard(self.web_driver_container)
             wizard.click_on_save_changes()
             main_page.set_name(self.name)
