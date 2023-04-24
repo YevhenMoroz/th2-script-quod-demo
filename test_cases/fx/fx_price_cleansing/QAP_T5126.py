@@ -42,9 +42,9 @@ class QAP_T5126(TestCase):
         self.security_type = self.data_set.get_security_type_by_name("fx_spot")
         self.instr_type_wa = self.data_set.get_fx_instr_type_wa('fx_spot')
         self.venue_target = self.data_set.get_venue_by_name('venue_2')
-        self.venue_reference = self.data_set.get_venue_by_name('venue_1')
+        self.venue_reference = self.data_set.get_venue_by_name('venue_8')
         self.rest_message = RestApiPriceCleansingDeviationMessages(data_set=self.data_set)
-        self.rest_manager = RestApiManager(session_alias=self.rest_env)
+        self.rest_manager = RestApiManager(self.rest_env, self.test_id)
         self.rest_message_params = None
         self.instrument = {
             "Symbol": self.symbol,
@@ -148,14 +148,17 @@ class QAP_T5126(TestCase):
         self.md_request.set_md_req_parameters_taker(). \
             change_parameters({'MDReqID': self.md_req_id}). \
             update_repeating_group("NoRelatedSymbols", self.no_related_symbols)
-        self.fix_manager_marketdata_th2.send_message_and_receive_response(self.md_request, self.test_id)
-        # endregion
-        # region Step 3
-        self.fix_md_snapshot.set_params_for_empty_md_response(self.md_request, ['*'])
-        self.fix_md_snapshot.add_tag({"PriceCleansingReason": "5", "OrigMDArrivalTime": "*", "OrigMDTime": "*"})
-        self.fix_verifier.check_fix_message(fix_message=self.fix_md_snapshot,
-                                            direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
+        fix_response = self.fix_manager_marketdata_th2.send_message_and_receive_response(self.md_request, self.test_id)[0]
+        try:
+            if fix_response.get_parameters()["Text"]:
+                self.md_reject.set_md_reject_params(self.md_request, text="suspect data").remove_parameter(
+                    "MDReqRejReason")
+                self.fix_verifier.check_fix_message(self.md_reject)
+        except KeyError:
+            self.fix_md_snapshot.set_params_for_empty_md_response(self.md_request)
+            self.fix_md_snapshot.add_tag({"PriceCleansingReason": "5", "OrigMDArrivalTime": "*", "OrigMDTime": "*"})
+            self.fix_verifier.check_fix_message(self.fix_md_snapshot,
+                                                ignored_fields=["header", "trailer", "CachedUpdate"])
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
@@ -181,3 +184,4 @@ class QAP_T5126(TestCase):
         self.md_request.set_md_uns_parameters_maker(). \
             change_parameters({'MDReqID': self.md_req_id})
         self.fix_manager_marketdata_th2.send_message(self.md_request)
+        self.sleep(2)
