@@ -60,6 +60,7 @@ class FxClients(Enum):
     client_int_5 = "QUOD5"
     client_int_6 = "DEFAULT1"
     client_int_7 = "QUOD_INT"
+    client_pos_1 = "Client_pos_1"
 
     """"Clients for maker"""
     client_mm_1 = "Silver1"  # For ESP_MM testing
@@ -93,6 +94,8 @@ class FxAccounts(Enum):
     account_int_5 = "QUOD5_1"
     account_int_6 = "DEFAULT1_1"
     account_int_7 = "QUOD_INT_1"
+    account_pos_1 = "Account_pos_1"
+    account_pos_2 = "Account_pos_2"
 
     """Accounts for mm clients"""
     account_mm_1 = "Silver1_1"
