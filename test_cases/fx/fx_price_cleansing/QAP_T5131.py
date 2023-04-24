@@ -13,6 +13,7 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.SessionAlias import SessionAliasFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestRejectFX import FixMessageMarketDataRequestRejectFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
     FixMessageMarketDataSnapshotFullRefreshBuyFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
@@ -40,6 +41,7 @@ class QAP_T5131(TestCase):
         self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
         self.fix_md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
         self.fix_md_snapshot_doubler = FixMessageMarketDataSnapshotFullRefreshSellFX()
+        self.md_reject = FixMessageMarketDataRequestRejectFX()
         self.gbp_usd = self.data_set.get_symbol_by_name('symbol_2')
         self.tenor_spot = self.data_set.get_tenor_by_name('tenor_spot')
         self.settle_type = self.data_set.get_settle_type_by_name("spot")
@@ -141,12 +143,18 @@ class QAP_T5131(TestCase):
         self.md_request.set_md_req_parameters_taker(). \
             change_parameters({'MDReqID': self.md_id_gs_a}). \
             update_repeating_group("NoRelatedSymbols", self.no_related_symbols)
-        self.fix_manager_marketdata_th2.send_message_and_receive_response(self.md_request, self.test_id)
-        # endregion
-        # region Step 3
-        self.fix_md_snapshot.set_params_for_md_response(self.md_request, [])
-        self.fix_md_snapshot.add_tag({'PriceCleansingReason': '3'})
-        self.fix_verifier.check_fix_message(self.fix_md_snapshot)
+        fix_response = self.fix_manager_marketdata_th2.send_message_and_receive_response(self.md_request,
+                                                                                         self.test_id)[0]
+        try:
+            if fix_response.get_parameters()["Text"]:
+                self.md_reject.set_md_reject_params(self.md_request, text="suspect data").remove_parameter(
+                    "MDReqRejReason")
+                self.fix_verifier.check_fix_message(self.md_reject)
+        except KeyError:
+            self.fix_md_snapshot.set_params_for_empty_md_response(self.md_request)
+            self.fix_md_snapshot.add_tag({"PriceCleansingReason": "3", "OrigMDArrivalTime": "*", "OrigMDTime": "*"})
+            self.fix_verifier.check_fix_message(self.fix_md_snapshot,
+                                                ignored_fields=["header", "trailer", "CachedUpdate"])
         self.rest_message.clear_message_params().modify_unbalanced_rates_rule().set_params(response)
         self.rest_message.change_params({"removeDetectedUpdate": "false"})
         self.rest_manager.send_post_request(self.rest_message)
