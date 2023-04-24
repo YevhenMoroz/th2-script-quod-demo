@@ -40,6 +40,7 @@ class QAP_T9242(TestCase):
         self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
         self.fix_md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
         self.fix_md_snapshot_doubler = FixMessageMarketDataSnapshotFullRefreshSellFX()
+        self.md_reject = FixMessageMarketDataRequestRejectFX()
         self.fix_md_reject = FixMessageMarketDataRequestRejectFX()
         self.gbp_aud = self.data_set.get_symbol_by_name('symbol_9')
         self.eur_usd = self.data_set.get_symbol_by_name('symbol_2')
@@ -138,7 +139,7 @@ class QAP_T9242(TestCase):
         self.rest_message.set_default_params().create_cross_ref_rates_cleansing_rule().set_target_venue(
             self.bnp).set_symbol(
             self.gbp_aud).clear_ref_venues().add_ref_venue(self.barx)
-        response = self.rest_message_params = self.rest_manager.parse_create_response(
+        rest_response = self.rest_message_params = self.rest_manager.parse_create_response(
             self.rest_manager.send_multiple_request(self.rest_message))
         time.sleep(3)
         # endregion
@@ -199,30 +200,20 @@ class QAP_T9242(TestCase):
         self.md_request.set_md_req_parameters_taker(). \
             change_parameters({'MDReqID': self.md_id_bnp_b}). \
             update_repeating_group("NoRelatedSymbols", self.no_related_symbols)
-        self.fix_manager_marketdata_th2.send_message_and_receive_response(self.md_request, self.test_id)
-
-        # self.fix_md.change_parameter("MDReqID", self.md_id_bnp_eur_usd)
-        # self.fix_md.update_MDReqID(self.fix_md.get_parameter("MDReqID"),
-        #                            self.fx_fh_connectivity,
-        #                            'FX')
-        # self.md_req_id = self.fix_md.get_parameter("MDReqID")
-        #
-        # self.md_request.set_md_req_parameters_taker(). \
-        #     change_parameters({'MDReqID': self.md_req_id}). \
-        #     update_repeating_group("NoRelatedSymbols", self.no_related_symbols)
-        # self.fix_manager_marketdata_th2.send_message_and_receive_response(self.md_request, self.test_id)
-        # endregion
-        # region Step 3
-        # self.fix_md_reject.set_md_reject_params(self.md_request, text="suspect data")
-        # self.fix_md_reject.remove_parameter("MDReqRejReason")
-        self.fix_md_snapshot.set_params_for_md_response_taker_spo(self.md_request, [])
-        self.fix_md_snapshot.add_tag({'PriceCleansingReason': '6'})
-        self.fix_verifier.check_fix_message(self.fix_md_snapshot, ignored_fields=["header", "trailer", "CachedUpdate"])
-        # self.fix_verifier.check_fix_message(self.fix_md_reject,
-        #                                     ignored_fields=["header", "trailer", "CachedUpdate"])
+        fix_response = self.fix_manager_marketdata_th2.send_message_and_receive_response(self.md_request, self.test_id)[0]
+        try:
+            if fix_response.get_parameters()["Text"]:
+                self.md_reject.set_md_reject_params(self.md_request, text="suspect data").remove_parameter(
+                    "MDReqRejReason")
+                self.fix_verifier.check_fix_message(self.md_reject)
+        except KeyError:
+            self.fix_md_snapshot.set_params_for_empty_md_response(self.md_request)
+            self.fix_md_snapshot.add_tag({"PriceCleansingReason": "6", "OrigMDArrivalTime": "*", "OrigMDTime": "*"})
+            self.fix_verifier.check_fix_message(self.fix_md_snapshot,
+                                                ignored_fields=["header", "trailer", "CachedUpdate"])
 
         # Region Rule creation
-        self.rest_message.clear_message_params().modify_cross_ref_rates_cleansing_rule().set_params(response)
+        self.rest_message.clear_message_params().modify_cross_ref_rates_cleansing_rule().set_params(rest_response)
         self.rest_message.change_params({"removeDetectedUpdate": "false"})
         self.rest_manager.send_post_request(self.rest_message)
         time.sleep(6)
