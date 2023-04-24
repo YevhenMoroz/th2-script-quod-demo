@@ -99,8 +99,8 @@ class QAP_T11053(TestCase):
         }
         key_params = ["PosReqID"]
         self.sleep(3)
-        self.fix_verifier.check_fix_message_sequence([self.position_report_before_fwd,
-                                                      self.position_report_before_spot,
+        self.fix_verifier.check_fix_message_sequence([self.position_report_before_spot,
+                                                      self.position_report_before_fwd,
                                                       self.position_report_after_mo,
                                                       self.position_report_after_exe],
                                                      key_parameters_list=[key_params, key_params, key_params,
