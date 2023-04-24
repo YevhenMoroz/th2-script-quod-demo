@@ -4,22 +4,26 @@ from pathlib import Path
 
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
-from test_framework.algo_formulas_manager import AlgoFormulasManager as AFM
-from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets import constants
-from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, TradingPhases, Reference
+from test_framework.fix_wrappers.algo.FixMessageMarketDataIncrementalRefreshAlgo import FixMessageMarketDataIncrementalRefreshAlgo
+from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
+from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
-from test_framework.fix_wrappers.algo.FixMessageMarketDataIncrementalRefreshAlgo import FixMessageMarketDataIncrementalRefreshAlgo
+from test_framework.data_sets.constants import TradingPhases, Reference
+from test_framework.algo_formulas_manager import AlgoFormulasManager as AFM
 from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import \
     FixMessageMarketDataSnapshotFullRefreshAlgo
-from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
+from test_framework.core.test_case import TestCase
+from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
+from datetime import datetime, timedelta
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
+
 from test_framework.ssh_wrappers.ssh_client import SshClient
 
-class QAP_T4603(TestCase):
+
+class QAP_T4340(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -37,39 +41,26 @@ class QAP_T4603(TestCase):
         # endregion
 
         # region Market data params
-
-        self.order_type = constants.OrderType.Limit.value
-        self.tif_day = constants.TimeInForce.Day.value
-        self.tif_reactive = constants.TimeInForce.ImmediateOrCancel.value
-
         self.price_ask = 30
-        self.qty_ask = 200
+        self.qty_ask = 300
 
-        self.price_bid = 0
-        self.qty_bid = 0
+        self.price_bid = 20
+        self.qty_bid = 100
 
-        self.percentage_volume = 10
-
-        self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
+        self.trigger_price = 31
+        # endregion
 
         self.last_trade_price = 20
         self.last_trade_qty = 100
 
-        # endregion
-
-        # order params
-        self.qty = 300
-        self.price = 20
-        self.qty_child_aggressive = 300
-        self.price_child_aggressive = 20
+        self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
         self.aggressivity = constants.Aggressivity.Passive.value
 
-        self.free_notes = 'could not determine Would price from Primary'
-        # endregion
-
-        # region Algo params
-        self.would_reference_price = Reference.Primary.value
-        self.would_price_offset = 2
+        self.free_notes = 'Would price is more aggressive than Limit price'
+        # order params
+        self.qty = 300
+        self.price = 30
+        self.waves = 3
         # endregion
 
         # region Venue params
@@ -82,7 +73,8 @@ class QAP_T4603(TestCase):
 
         # Key parameters
         self.key_params_cl = self.data_set.get_verifier_key_parameters_by_name('verifier_key_parameters_1')
-        self.key_params = self.data_set.get_verifier_key_parameters_by_name('verifier_key_parameters_2')
+        self.key_params = self.data_set.get_verifier_key_parameters_by_name('verifier_key_parameters_3')
+        self.key_params_mkt = self.data_set.get_verifier_key_parameters_by_name('verifier_key_parameters_4')
         # endregion
 
         # region Gateway Side
@@ -120,6 +112,10 @@ class QAP_T4603(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        self.now = datetime.utcnow()
+        self.end_date = (self.now + timedelta(minutes=5)).strftime("%Y%m%d-%H:%M:%S")
+        self.start_date = self.now.strftime("%Y%m%d-%H:%M:%S")
+
         # # region precondition: Prepare SATS configuration
         # self.ssh_client.send_command("qrestart SATS")
         # time.sleep(35)
@@ -127,9 +123,9 @@ class QAP_T4603(TestCase):
 
         # region rules
         rule_manager = RuleManager(Simulators.algo)
-        nos_ioc_rule = rule_manager.add_NewOrderSingle_ExecutionReport_Eliminate(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price_child_aggressive)
+        nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, True, self.qty, self.trigger_price)
         ocr_rule = rule_manager.add_OCR(self.fix_env1.buy_side)
-        self.rule_list = [ocr_rule, nos_ioc_rule]
+        self.rule_list = [nos_ioc_rule, ocr_rule]
         # endregion
 
         # region Update Trading Phase
@@ -152,37 +148,33 @@ class QAP_T4603(TestCase):
         self.fix_manager_feed_handler.send_message(fix_message=self.incremental_refresh)
         # endregion
 
+
         # region Send NewOrderSingle (35=D)
         self.case_id_1 = bca.create_event("Create Algo Order", self.test_id)
         self.fix_verifier_sell.set_case_id(self.case_id_1)
 
-        self.pov_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_POV_Redburn_params()
-        self.pov_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.pov_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.ex_destination_1))
-        self.pov_order.update_fields_in_component('QuodFlatParameters', dict(WouldPriceReference=self.would_reference_price, WouldPriceOffset=self.would_price_offset, MaxPercentageVolume=self.percentage_volume, Aggressivity=self.aggressivity))
-
-        self.fix_manager_sell.send_message_and_receive_response(self.pov_order, self.case_id_1)
+        self.twap_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_TWAP_Redburn_params()
+        self.twap_order.add_ClordId((os.path.basename(__file__)[:-3]))
+        self.twap_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.ex_destination_1))
+        self.twap_order.update_fields_in_component('QuodFlatParameters', dict(Waves=self.waves, StartDate2=self.start_date, EndDate2=self.end_date, TriggerPriceRed=self.trigger_price))
+        self.fix_manager_sell.send_message_and_receive_response(self.twap_order, self.case_id_1)
         # endregion
         time.sleep(5)
 
         # region Check Sell side
-        self.fix_verifier_sell.check_fix_message(self.pov_order, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
+        self.fix_verifier_sell.check_fix_message(self.twap_order, direction=self.ToQuod, message_name='Sell side NewOrderSingle', )
 
-        pending_pov_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.pov_order, self.gateway_side_sell, self.status_pending)
-        self.fix_verifier_sell.check_fix_message(pending_pov_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew')
-
-        new_pov_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.pov_order, self.gateway_side_sell, self.status_new)
-        self.fix_verifier_sell.check_fix_message(new_pov_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
-
+        pending_twap_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_order, self.gateway_side_sell, self.status_pending)
+        self.fix_verifier_sell.check_fix_message(pending_twap_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew')
         # endregion
+
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         # region cancel Order
-        self.case_id_cancel = bca.create_event("Eliminated Algo Order", self.test_id)
+        self.case_id_cancel = bca.create_event("Check Fill Algo Order", self.test_id)
         self.fix_verifier_sell.set_case_id(self.case_id_cancel)
 
         time.sleep(3)
-
         rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)
 
@@ -199,8 +191,8 @@ class QAP_T4603(TestCase):
         # self.ssh_client.close()
         # # endregion
 
-        # # region config reset
-        self.eliminate_dma_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.pov_order, self.gateway_side_sell, self.status_eliminate)
-        self.eliminate_dma_order_params.add_tag(dict(Text=self.free_notes)).remove_parameter("LastMkt")
-        self.fix_verifier_sell.check_fix_message(self.eliminate_dma_order_params, key_parameters=self.key_params, direction=self.FromQuod, message_name='Buy side ExecReport Eliminate ')
+        cancel_twap_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_order, self.gateway_side_sell, self.status_reject)
+        cancel_twap_order_params.add_tag(dict(Text=self.free_notes))
+
+        self.fix_verifier_sell.check_fix_message(cancel_twap_order_params, key_parameters=self.key_params, message_name='Sell side ExecReport Rejected')
         # endregion

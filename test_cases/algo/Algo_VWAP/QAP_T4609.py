@@ -12,7 +12,7 @@ from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMes
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, TradingPhases, Reference
+from test_framework.data_sets.constants import TradingPhases, Reference
 from test_framework.algo_formulas_manager import AlgoFormulasManager as AFM
 from test_framework.algo_mongo_manager import AlgoMongoManager as AMM
 from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import \
@@ -214,10 +214,6 @@ class QAP_T4609(TestCase):
         # region cancel Order
         self.case_id_cancel = bca.create_event("Check Fill Algo Order", self.test_id)
         self.fix_verifier_sell.set_case_id(self.case_id_cancel)
-        # cancel_request_twap_order = FixMessageOrderCancelRequest(self.twap_order)
-        #
-        # self.fix_manager_sell.send_message_and_receive_response(cancel_request_twap_order, self.case_id_cancel)
-        # self.fix_verifier_sell.check_fix_message(cancel_request_twap_order, direction=ToQuod, message_name='Sell side Cancel Request')
 
         time.sleep(3)
         rule_manager = RuleManager(Simulators.algo)

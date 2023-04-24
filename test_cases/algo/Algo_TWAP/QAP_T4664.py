@@ -25,7 +25,7 @@ from test_framework.ssh_wrappers.ssh_client import SshClient
 
 class QAP_T4664(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
-    def __init__(self, report_id, data_set=None, environment=None):
+    def  __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
 
