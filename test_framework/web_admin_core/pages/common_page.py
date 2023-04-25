@@ -221,6 +221,13 @@ class CommonPage:
     def use_keyboard_esc_button(self):
         self.find_by_xpath("//body").send_keys(Keys.ESCAPE)
 
+    def use_backspace_button_to_element(self):
+        action = ActionChains(self.web_driver)
+        action.key_down(Keys.BACK_SPACE)
+        action.key_up(Keys.BACK_SPACE)
+        action.perform()
+
+
     def horizontal_scroll(self, search_element):
         '''
         Method was created for scroll

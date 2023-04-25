@@ -51,9 +51,9 @@ class QAP_T2957(TestCase):
         self.sleep(2)
 
         self.md_request.set_md_req_parameters_maker()
-        self.fix_manager_mm.send_message_and_receive_response(self.md_request, self.test_id)
+        response = self.fix_manager_mm.send_message_and_receive_response(self.md_request, self.test_id)
 
-        self.md_snapshot_full.set_params_for_md_response(self.md_request)
+        self.md_snapshot_full.set_params_for_md_response(self.md_request, response=response[0])
         self.fix_verifier.check_fix_message(self.md_snapshot_full)
 
     @try_except(test_id=Path(__file__).name[:-3])

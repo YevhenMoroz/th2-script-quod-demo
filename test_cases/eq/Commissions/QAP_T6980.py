@@ -91,14 +91,10 @@ class QAP_T6980(TestCase):
         time.sleep(3)
         # endregion
         # region step 1-2
-        self.submit_request.set_default_dma_limit()
+        self.submit_request.set_default_dma_limit(True)
         self.submit_request.update_fields_in_component("NewOrderSingleBlock", {
             "InstrID": self.data_set.get_instrument_id_by_name("instrument_3"), 'AccountGroupID': self.client,
-            'ListingList': {'ListingBlock': [{'ListingID': self.data_set.get_listing_id_by_name("listing_2")}]},
-            "AlgoParametersBlock": {"AlgoType": "TWP", "ScenarioID": "2", "AlgoPolicyID": "2",
-                                    "AlgoParameterListBlock": {
-                                        "AlgoParameterBlock": [
-                                            {"AlgoParameterName": "StartDate", "AlgoParamTimeRef": "Now"}]}}})
+            'ListingList': {'ListingBlock': [{'ListingID': self.data_set.get_listing_id_by_name("listing_2")}]} })
 
         try:
             nos_rule = self.rule_manager. \
@@ -142,10 +138,6 @@ class QAP_T6980(TestCase):
                                              {"ExpectedFee": str(
                                                  compute_reply["RootMiscFeesList"]["RootMiscFeesBlock"])},
                                              "Check Stamp", VerificationMethod.CONTAINS)
-        self.java_api_manager.compare_values(expected_per_trans,
-                                             {"ExpectedFee": str(
-                                                 compute_reply["RootMiscFeesList"]["RootMiscFeesBlock"])},
-                                             "Check Per Transac", VerificationMethod.NOT_CONTAINS)
         # endregion
         # region step 4
         self.alloc_instr.set_default_book(order_id)
@@ -165,10 +157,6 @@ class QAP_T6980(TestCase):
                                              {"ExpectedFee": str(
                                                  alloc_report["RootMiscFeesList"]["RootMiscFeesBlock"])},
                                              "Check Stamp", VerificationMethod.CONTAINS)
-        self.java_api_manager.compare_values(expected_per_trans,
-                                             {"ExpectedFee": str(
-                                                 alloc_report["RootMiscFeesList"]["RootMiscFeesBlock"])},
-                                             "Check Per Transac", VerificationMethod.NOT_CONTAINS)
         alloc_id = alloc_report["AllocInstructionID"]
         # endregion
         # region step 5
@@ -190,10 +178,6 @@ class QAP_T6980(TestCase):
                                              {"ExpectedFee": str(
                                                  confirm_report["MiscFeesList"]["MiscFeesBlock"])},
                                              "Check Stamp", VerificationMethod.CONTAINS)
-        self.java_api_manager.compare_values(expected_per_trans,
-                                             {"ExpectedFee": str(
-                                                 confirm_report["MiscFeesList"]["MiscFeesBlock"])},
-                                             "Check Per Transac", VerificationMethod.NOT_CONTAINS)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):

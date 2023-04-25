@@ -122,7 +122,7 @@ class CommonPage(CP):
             self.find_by_xpath(CommonConstants.INFO_MESSAGE_POP_UP).click()
             time.sleep(2)
 
-    def refresh_page(self, confirm: bool):
+    def refresh_page(self, confirm: bool = None):
         """
         Like click at F5 button
         """

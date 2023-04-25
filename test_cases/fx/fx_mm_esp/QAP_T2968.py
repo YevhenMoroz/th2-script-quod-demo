@@ -56,8 +56,8 @@ class QAP_T2968(TestCase):
         self.fix_subscribe.set_md_req_parameters_maker(). \
             change_parameters({"SenderSubID": self.palladium1}). \
             update_repeating_group('NoRelatedSymbols', self.no_related_symbols_eur_usd)
-        self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
-        self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands_eur_usd_palladium1)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
+        self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands_eur_usd_palladium1, response=response[0])
         self.fix_verifier.check_fix_message(self.fix_md_snapshot)
         self.fix_subscribe.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.fix_subscribe, 'Unsubscribe')
@@ -67,8 +67,8 @@ class QAP_T2968(TestCase):
         self.fix_subscribe.set_md_req_parameters_maker(). \
             change_parameters({"SenderSubID": self.palladium2}). \
             update_repeating_group('NoRelatedSymbols', self.no_related_symbols_eur_usd)
-        self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
-        self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands_eur_usd_palladium2)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
+        self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands_eur_usd_palladium2, response=response[0])
         self.fix_verifier.check_fix_message(self.fix_md_snapshot)
         self.fix_subscribe.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.fix_subscribe, 'Unsubscribe')

@@ -1,176 +1,131 @@
-import logging
-from datetime import date
+from datetime import datetime
 from pathlib import Path
-from random import randint
-
 from custom import basic_custom_actions as bca
-from custom.tenor_settlement_date import wk1, wk2
-from custom.verifier import Verifier
-from test_cases.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
-from test_cases.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
 from stubs import Stubs
-from win_gui_modules.dealer_intervention_wrappers import BaseTableDataRequest, ExtractionDetailsRequest
-from win_gui_modules.order_book_wrappers import ExtractionDetail
-from win_gui_modules.quote_wrappers import QuoteDetailsRequest
-from win_gui_modules.utils import call, get_base_request
-
-from win_gui_modules.wrappers import set_base
-
-
-def check_quote_request_b(base_request, service, case_id, status, auto_q, qty, creation_time):
-    qrb = QuoteDetailsRequest(base=base_request)
-    extraction_id = bca.client_orderid(4)
-    qrb.set_extraction_id(extraction_id)
-    qrb.set_filter(["Qty", qty, "CreationTime", creation_time])
-    qrb_status = ExtractionDetail("quoteRequestBook.status", "Status")
-    qrb_auto_quoting = ExtractionDetail("quoteRequestBook.autoQuoting", "AutomaticQuoting")
-    qr_id = ExtractionDetail("quoteRequestBook.id", "Id")
-    qrb.add_extraction_details([qrb_status, qrb_auto_quoting, qr_id])
-    response = call(service.getQuoteRequestBookDetails, qrb.request())
-
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check QuoteRequest book")
-    verifier.compare_values("Status", status, response[qrb_status.name])
-    verifier.compare_values("AutomaticQuoting", auto_q, response[qrb_auto_quoting.name])
-    verifier.verify()
-    quote_id = response[qr_id.name]
-    return quote_id
+from test_cases.fx.fx_wrapper.common_tools import extract_freenotes, check_quote_status, extract_automatic_quoting, \
+    check_quote_request_id
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.data_sets.constants import Status
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
+    FixMessageMarketDataSnapshotFullRefreshBuyFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteCancel import FixMessageQuoteCancelFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.fx.FixQuoteRequestFX import FixQuoteRequestFX
+from test_framework.win_gui_wrappers.fe_trading_constant import QuoteRequestBookColumns
+from test_framework.win_gui_wrappers.forex.fx_quote_request_book import FXQuoteRequestBook
 
 
-def check_dealer_intervention(base_request, service, case_id, quote_id):
-    base_data = BaseTableDataRequest(base=base_request)
-    base_data.set_filter_dict({"Id": quote_id})
+class QAP_T2846(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.fix_act = Stubs.fix_act
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.java_api_env = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_env, self.test_id)
+        self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
+        self.ss_rfq_connectivity = self.environment.get_list_fix_environment()[0].sell_side_rfq
+        self.fh_connectivity = self.environment.get_list_fix_environment()[0].feed_handler
+        self.fix_manager_sel = FixManager(self.ss_rfq_connectivity, self.test_id)
+        self.fix_manager_fh = FixManager(self.fh_connectivity, self.test_id)
+        self.fix_verifier = FixVerifier(self.ss_rfq_connectivity, self.test_id)
+        self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
+        self.account = self.data_set.get_client_by_name("client_mm_3")
+        self.settle_date_spot = self.data_set.get_settle_date_by_name("spot")
+        self.settle_type_spot = self.data_set.get_settle_type_by_name("spot")
+        self.sec_type_spot = self.data_set.get_security_type_by_name("fx_spot")
+        self.settle_date_tod = self.data_set.get_settle_date_by_name("today")
+        self.settle_type_tod = self.data_set.get_settle_type_by_name("today")
+        self.sec_type_fwd = self.data_set.get_security_type_by_name("fx_fwd")
+        self.expected_notes = "request exceeds quantity threshold for instrument over this client tier"
+        self.expected_quoting = "Y"
+        self.md_req_id_sp = "EUR/USD:SPO:REG:HSBC"
+        self.exceed_threshold_qty = "40000000"
+        self.exceed_threshold_uneven_qty = "50000000"
+        self.uneven_qty = "2000000"
+        self.no_side = ""
+        self.key_parameter = "quoterequestid"
+        self.quote_state = "unavailablepricestate"
+        self.quote_state_cause = "unavailablepricecause"
+        self.response = None
+        self.quote_cancel = FixMessageQuoteCancelFX()
 
-    extraction_request = ExtractionDetailsRequest(base_data)
-    extraction_id = bca.client_orderid(8)
-    extraction_request.set_extraction_id(extraction_id)
-    extraction_request.add_extraction_detail(ExtractionDetail("dealerIntervention.status", "Status"))
-
-    response = call(service.getUnassignedRFQDetails, extraction_request.build())
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check quote request in DI")
-    verifier.compare_values("Status", "New", response["dealerIntervention.status"])
-    verifier.verify()
-
-
-def close_dmi_window(base_request, dealer_interventions_service):
-    call(dealer_interventions_service.closeWindow, base_request)
-
-
-def execute(report_id, session_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-
-    set_base(session_id, case_id)
-
-    dealer_service = Stubs.win_act_dealer_intervention_service
-    ar_service = Stubs.win_act_aggregated_rates_service
-    case_base_request = get_base_request(session_id, case_id)
-
-    client_tier = "Iridium1"
-    account = "Iridium1_1"
-    qty_above_sum = str(randint(17000000, 20000000))
-    qty_bellow_sum = str(randint(1000000, 2000000))
-    symbol = "GBP/USD"
-    security_type_swap = "FXSWAP"
-    security_type = "FXFWD"
-    settle_date = wk1()
-    leg2_settle_date = wk2()
-    settle_type_leg1 = "W1"
-    settle_type_leg2 = "W2"
-    currency = "GBP"
-    settle_currency = "USD"
-    today = date.today()
-    today = today.today().strftime('%m/%d/%Y')
-
-    side = ""
-    leg1_side = "1"
-    leg2_side = "2"
-
-    try:
-        # Step 1
-        params = CaseParamsSellRfq(client_tier, case_id, side=side, leg1_side=leg1_side, leg2_side=leg2_side,
-                                   orderqty=qty_above_sum, leg1_ordqty=qty_above_sum, leg2_ordqty=qty_above_sum,
-                                   currency=currency, settlcurrency=settle_currency,
-                                   leg1_settltype=settle_type_leg1, leg2_settltype=settle_type_leg2,
-                                   settldate=settle_date, leg1_settldate=settle_date, leg2_settldate=leg2_settle_date,
-                                   symbol=symbol, leg1_symbol=symbol, leg2_symbol=symbol,
-                                   securitytype=security_type_swap, leg1_securitytype=security_type,
-                                   leg2_securitytype=security_type,
-                                   securityid=symbol, account=account)
-
-        rfq = FixClientSellRfq(params)
-        rfq.send_request_for_quote_swap_no_reply()
-        quote_id = check_quote_request_b(case_base_request, ar_service, case_id, "New", "No", qty_above_sum, today)
-        check_dealer_intervention(case_base_request, dealer_service, case_id, quote_id)
-        close_dmi_window(case_base_request, dealer_service)
-        # Step 2
-        params = CaseParamsSellRfq(client_tier, case_id, side=side, leg1_side=leg1_side, leg2_side=leg2_side,
-                                   orderqty=qty_bellow_sum, leg1_ordqty=qty_bellow_sum, leg2_ordqty=qty_bellow_sum,
-                                   currency=currency, settlcurrency=settle_currency,
-                                   leg1_settltype=settle_type_leg1, leg2_settltype=settle_type_leg2,
-                                   settldate=settle_date, leg1_settldate=settle_date, leg2_settldate=leg2_settle_date,
-                                   symbol=symbol, leg1_symbol=symbol, leg2_symbol=symbol,
-                                   securitytype=security_type_swap, leg1_securitytype=security_type,
-                                   leg2_securitytype=security_type,
-                                   securityid=symbol, account=account)
-
-        rfq = FixClientSellRfq(params)
-        rfq.send_request_for_quote_swap()
-        off_fwd_pts=rfq.extract_filed("LegOfferForwardPoints")
-        bid_fwd_pts=rfq.extract_filed("LegBidForwardPoints")
-        rfq.verify_quote_pending_swap(leg_of_fwd_p=off_fwd_pts, leg_bid_fwd_p=bid_fwd_pts)
-        check_quote_request_b(case_base_request, ar_service, case_id, "New", "Yes", qty_bellow_sum, today)
-        # Step 3
-        params = CaseParamsSellRfq(client_tier, case_id, side=side, leg1_side=leg1_side, leg2_side=leg2_side,
-                                   orderqty="1000000", leg1_ordqty="1000000", leg2_ordqty="2000000",
-                                   currency=currency, settlcurrency=settle_currency,
-                                   leg1_settltype=settle_type_leg1, leg2_settltype=settle_type_leg2,
-                                   settldate=settle_date, leg1_settldate=settle_date, leg2_settldate=leg2_settle_date,
-                                   symbol=symbol, leg1_symbol=symbol, leg2_symbol=symbol,
-                                   securitytype=security_type_swap, leg1_securitytype=security_type,
-                                   leg2_securitytype=security_type,
-                                   securityid=symbol, account=account)
-
-        rfq = FixClientSellRfq(params)
-        rfq.send_request_for_quote_swap()
-        off_fwd_pts = rfq.extract_filed("LegOfferForwardPoints")
-        bid_fwd_pts = rfq.extract_filed("LegBidForwardPoints")
-        rfq.verify_quote_pending_swap(leg_of_fwd_p=off_fwd_pts, leg_bid_fwd_p=bid_fwd_pts)
-        check_quote_request_b(case_base_request, ar_service, case_id, "New", "Yes", qty_bellow_sum, today)
-        # Step 4
-        params = CaseParamsSellRfq(client_tier, case_id, side=side, leg1_side=leg1_side, leg2_side=leg2_side,
-                                   orderqty=qty_bellow_sum, leg1_ordqty=qty_bellow_sum, leg2_ordqty=qty_above_sum,
-                                   currency=currency, settlcurrency=settle_currency,
-                                   leg1_settltype=settle_type_leg1, leg2_settltype=settle_type_leg2,
-                                   settldate=settle_date, leg1_settldate=settle_date, leg2_settldate=leg2_settle_date,
-                                   symbol=symbol, leg1_symbol=symbol, leg2_symbol=symbol,
-                                   securitytype=security_type_swap, leg1_securitytype=security_type,
-                                   leg2_securitytype=security_type,
-                                   securityid=symbol, account=account)
-
-        rfq = FixClientSellRfq(params)
-        rfq.send_request_for_quote_swap_no_reply()
-        quote_id = check_quote_request_b(case_base_request, ar_service, case_id, "New", "No", qty_bellow_sum, today)
-        check_dealer_intervention(case_base_request, dealer_service, case_id, quote_id)
-        close_dmi_window(case_base_request, dealer_service)
-        # Step 5
-        params = CaseParamsSellRfq(client_tier, case_id, side=side, leg1_side=leg1_side, leg2_side=leg2_side,
-                                   orderqty=qty_bellow_sum, leg1_ordqty=qty_above_sum, leg2_ordqty=qty_bellow_sum,
-                                   currency=currency, settlcurrency=settle_currency,
-                                   leg1_settltype=settle_type_leg1, leg2_settltype=settle_type_leg2,
-                                   settldate=settle_date, leg1_settldate=settle_date, leg2_settldate=leg2_settle_date,
-                                   symbol=symbol, leg1_symbol=symbol, leg2_symbol=symbol,
-                                   securitytype=security_type_swap, leg1_securitytype=security_type,
-                                   leg2_securitytype=security_type,
-                                   securityid=symbol, account=account)
-
-        rfq = FixClientSellRfq(params)
-        rfq.send_request_for_quote_swap_no_reply()
-        quote_id = check_quote_request_b(case_base_request, ar_service, case_id, "New", "No", qty_bellow_sum, today)
-        check_dealer_intervention(case_base_request, dealer_service, case_id, quote_id)
-        close_dmi_window(case_base_request, dealer_service)
-
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Step 2
+        self.quote_request.set_swap_rfq_params()
+        self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account)
+        self.quote_request.update_near_leg(leg_qty=self.exceed_threshold_qty)
+        self.quote_request.update_far_leg(leg_qty=self.exceed_threshold_qty)
+        self.fix_manager_sel.send_message(self.quote_request)
+        # region Step 3
+        quote_status = extract_automatic_quoting(self.quote_request)
+        self.verifier.set_parent_id(self.test_id)
+        self.verifier.set_event_name("Even Swap 40m RFQ")
+        self.verifier.compare_values("AutomaticQuoting", "N", quote_status)
+        self.verifier.verify()
+        # endregion
+        # endregion
+        # region Step 2
+        self.quote_request.set_swap_rfq_params()
+        self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account)
+        self.response = self.fix_manager_sel.send_message_and_receive_response(self.quote_request, self.test_id)
+        # region Step 3
+        quote_status = extract_automatic_quoting(self.quote_request)
+        self.verifier.set_parent_id(self.test_id)
+        self.verifier.set_event_name("Even Swap 1m RFQ")
+        self.verifier.compare_values("AutomaticQuoting", "Y", quote_status)
+        self.verifier.verify()
+        self.quote_cancel.set_params_for_cancel(self.quote_request, self.response[0])
+        self.fix_manager_sel.send_message(self.quote_cancel)
+        # endregion
+        # region Step 3
+        # endregion
+        # region Step 2
+        self.quote_request.set_swap_rfq_params()
+        self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account)
+        self.quote_request.update_far_leg(leg_qty=self.uneven_qty)
+        self.response = self.fix_manager_sel.send_message_and_receive_response(self.quote_request, self.test_id)
+        # region Step 3
+        quote_status = extract_automatic_quoting(self.quote_request)
+        self.verifier.set_parent_id(self.test_id)
+        self.verifier.set_event_name("Uneven Swap 1m/2m RFQ")
+        self.verifier.compare_values("AutomaticQuoting", "Y", quote_status)
+        self.verifier.verify()
+        self.quote_cancel.set_params_for_cancel(self.quote_request, self.response[0])
+        self.fix_manager_sel.send_message(self.quote_cancel)
+        # endregion
+        # region Step 2
+        self.quote_request.set_swap_rfq_params()
+        self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account)
+        self.quote_request.update_near_leg(leg_qty=self.exceed_threshold_qty)
+        self.quote_request.update_far_leg(leg_qty=self.exceed_threshold_uneven_qty)
+        self.fix_manager_sel.send_message(self.quote_request)
+        # region Step 3
+        quote_status = extract_automatic_quoting(self.quote_request)
+        self.verifier.set_parent_id(self.test_id)
+        self.verifier.set_event_name("Uneven Swap 40m/50m RFQ")
+        self.verifier.compare_values("AutomaticQuoting", "N", quote_status)
+        self.verifier.verify()
+        # endregion
+        # region Step 2
+        self.quote_request.set_swap_rfq_params()
+        self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account)
+        self.quote_request.update_near_leg(leg_qty=self.exceed_threshold_qty, settle_date=self.settle_date_tod,
+                                           settle_type=self.settle_type_tod, leg_sec_type=self.sec_type_fwd)
+        self.quote_request.update_far_leg(leg_qty=self.exceed_threshold_uneven_qty, settle_date=self.settle_date_spot,
+                                          settle_type=self.settle_type_spot, leg_sec_type=self.sec_type_spot)
+        self.fix_manager_sel.send_message(self.quote_request)
+        # region Step 3
+        quote_status = extract_automatic_quoting(self.quote_request)
+        self.verifier.set_parent_id(self.test_id)
+        self.verifier.set_event_name("Uneven Swap Tod/Spot 40m/50m RFQ")
+        self.verifier.compare_values("AutomaticQuoting", "N", quote_status)
+        self.verifier.verify()
+        # endregion

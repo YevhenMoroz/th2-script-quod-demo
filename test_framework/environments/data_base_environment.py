@@ -52,6 +52,18 @@ class DataBaseEnvironment(BaseEnvironment):
                 )
                 DataBaseEnvironment.environment_instances.update({EnvironmentType.quod316_data_base_mongo.value: site_environment})
             return DataBaseEnvironment.environment_instances[EnvironmentType.quod316_data_base_mongo.value]
+        elif env.value == EnvironmentType.quod306_data_base.value:
+            if EnvironmentType.quod306_data_base.value not in DataBaseEnvironment.environment_instances.keys():
+                site_environment = DataBaseEnvironment(
+                    environment_type=EnvironmentType.quod320_fe.value,
+                    db_host=DataBaseEnv.HOST_306.value,
+                    db_name=DataBaseEnv.NAME_306.value,
+                    db_user=DataBaseEnv.USER_306.value,
+                    db_pass=DataBaseEnv.PASS_306.value,
+                    db_type=DataBaseEnv.DB_TYPE_306.value
+                )
+                DataBaseEnvironment.environment_instances.update({EnvironmentType.quod306_data_base.value: site_environment})
+            return DataBaseEnvironment.environment_instances[EnvironmentType.quod306_data_base.value]
         elif env.value == EnvironmentType.quod320_data_base.value:
             if EnvironmentType.quod320_data_base.value not in DataBaseEnvironment.environment_instances.keys():
                 site_environment = DataBaseEnvironment(

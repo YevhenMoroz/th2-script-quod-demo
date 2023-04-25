@@ -82,7 +82,7 @@ class QAP_T10685(TestCase):
         tree = ET.parse(self.local_path)
         delay_GTC = tree.getroot().find("ors/delayGTCOrders")
         delay_GTD = tree.getroot().find("ors/delayGTDOrders")
-        delay_GTD.text = 'true'
+        delay_GTD.text = 'false'
         delay_GTC.text = 'true'
         tree.write("temp.xml")
         self.ssh_client.send_command('~/quod/script/site_scripts/change_permission_script')
@@ -142,4 +142,5 @@ class QAP_T10685(TestCase):
         self.ssh_client.send_command("qrestart all")
         time.sleep(250)
         os.remove("temp.xml")
+        self.db_manager.close_connection()
         self.ssh_client.close()

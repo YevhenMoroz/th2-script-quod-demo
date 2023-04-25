@@ -1,4 +1,3 @@
-import time
 from datetime import datetime
 from pathlib import Path
 from custom import basic_custom_actions as bca
@@ -15,7 +14,6 @@ from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSe
     FixMessageMarketDataSnapshotFullRefreshSellFX
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.fx.QuoteAdjustmentRequestFX import QuoteAdjustmentRequestFX
-from test_framework.java_api_wrappers.fx.QuoteManualSettingsRequestFX import QuoteManualSettingsRequestFX
 from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
 from test_framework.rest_api_wrappers.forex.RestApiClientTierMessages import RestApiClientTierMessages
 
@@ -72,7 +70,7 @@ class QAP_T2547(TestCase):
 
         self.security_type_fwd = self.data_set.get_security_type_by_name('fx_fwd')
         self.settle_date_spot = self.data_set.get_settle_date_by_name("spot")
-        self.hsbc = self.data_set.get_venue_by_name("venue_2")
+        self.hsbc = "HSBC"
         self.md_req_id_1 = f"{self.eur_usd}:SPO:REG:{self.hsbc}"
         self.md_req_id_2 = f"{self.eur_gbp}:SPO:REG:{self.hsbc}"
         self.md_req_id_3 = f"{self.aud_usd}:SPO:REG:{self.hsbc}"
@@ -81,7 +79,7 @@ class QAP_T2547(TestCase):
         self.bid_2 = 1.17900
         self.bid_3 = 1.17400
         self.ask_1 = 1.19909
-        self.ask_2 = 1.19919
+        self.ask_2 = 1.19920
         self.ask_3 = 1.19998
         self.correct_no_md_entries = [
             {"MDEntryType": "0",
@@ -125,6 +123,29 @@ class QAP_T2547(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        # # region Precondition
+        self.md_request.set_md_req_parameters_maker().change_parameter("NoRelatedSymbols",
+                                                                       self.no_related_symbols_1).change_parameter(
+            "SenderSubID", self.palladium2)
+        self.md_request.set_md_uns_parameters_maker()
+        self.fix_manager_gtw.send_message(self.md_request)
+        self.md_request.set_md_req_parameters_maker().change_parameter("NoRelatedSymbols",
+                                                                       self.no_related_symbols_2).change_parameter(
+            "SenderSubID", self.palladium2)
+        self.md_request.set_md_uns_parameters_maker()
+        self.fix_manager_gtw.send_message(self.md_request)
+        self.md_request.set_md_req_parameters_maker().change_parameter("NoRelatedSymbols",
+                                                                       self.no_related_symbols_3).change_parameter(
+            "SenderSubID", self.palladium2)
+        self.md_request.set_md_uns_parameters_maker()
+        self.fix_manager_gtw.send_message(self.md_request)
+        self.md_request.set_md_req_parameters_maker().change_parameter("NoRelatedSymbols",
+                                                                       self.no_related_symbols_4).change_parameter(
+            "SenderSubID", self.palladium2)
+        self.md_request.set_md_uns_parameters_maker()
+        self.fix_manager_gtw.send_message(self.md_request)
+        self.fix_manager_gtw.send_message(self.md_request)
+        # endregion
         # region Step 1
         self.modify_client_tier.find_client_tier(self.palladium2_id)
         self.msg_prams = self.rest_manager.send_get_request_filtered(self.modify_client_tier)
@@ -153,11 +174,13 @@ class QAP_T2547(TestCase):
                                                                        self.no_related_symbols_1).change_parameter(
             "SenderSubID", self.palladium2)
         response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["1000000", "*", "*"], priced=False,
-                                                    band_not_priced=["1000000", "prc", "prc"])
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["1000000", "6000000", "12000000"])
+        no_md_entries = self.md_snapshot.get_parameter("NoMDEntries")
+        # for i in no_md_entries:
+
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 2, MDEntryPx=round(self.bid_2 - 0.00002, 5))
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 3, MDEntryPx=round(self.ask_2 + 0.00002, 5))
-        self.fix_verifier.check_fix_message(self.md_snapshot)
+        self.fix_verifier.check_fix_message(self.md_snapshot, ignored_fields=["header", "trailer", "CachedUpdate"])
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request)
         # endregion
@@ -166,11 +189,11 @@ class QAP_T2547(TestCase):
         self.md_request.set_md_req_parameters_maker().change_parameter("NoRelatedSymbols",
                                                                        self.no_related_symbols_2).change_parameter(
             "SenderSubID", self.palladium2)
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"])
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"], response=response[0])
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 2, MDEntryPx=1.18410)
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 3, MDEntryPx=1.19909)
-        self.fix_verifier.check_fix_message(self.md_snapshot)
+        self.fix_verifier.check_fix_message(self.md_snapshot, ignored_fields=["header", "trailer", "CachedUpdate"])
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request)
         # endregion
@@ -180,30 +203,30 @@ class QAP_T2547(TestCase):
                                                                        self.no_related_symbols_2).change_parameter(
             "BookType", "1").change_parameter(
             "SenderSubID", self.palladium2)
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*", "*"])
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*", "*"], response=response[0])
         self.md_snapshot.remove_values_in_repeating_group_by_index("NoMDEntries", 6, (
             "SettlType", "MDEntryTime", "MDEntryPx", "MDQuoteType", "MDOriginType", "MDEntryID",
-            "QuoteEntryID", "MDEntrySize", "MDEntryDate"))
+            "QuoteEntryID", "MDEntrySize", "MDEntryDate", "SettlDate", "MDEntryPositionNo", "MDEntryType"))
         self.md_snapshot.remove_values_in_repeating_group_by_index("NoMDEntries", 7, (
             "SettlType", "MDEntryTime", "MDEntryPx", "MDQuoteType", "MDOriginType", "MDEntryID",
-            "QuoteEntryID", "MDEntrySize", "MDEntryDate"))
-        self.fix_verifier.check_fix_message(self.md_snapshot)
+            "QuoteEntryID", "MDEntrySize", "MDEntryDate", "SettlDate", "MDEntryPositionNo", "MDEntryType"))
+        self.fix_verifier.check_fix_message(self.md_snapshot, ignored_fields=["header", "trailer", "CachedUpdate"])
         # endregion
 
         # region Step 6
         self.md_request.set_md_req_parameters_maker().change_parameter("NoRelatedSymbols",
                                                                        self.no_related_symbols_3).change_parameter(
             "SenderSubID", self.palladium2)
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*", "*"])
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*", "*"], response=response[0])
         self.md_snapshot.remove_values_in_repeating_group_by_index("NoMDEntries", 6, (
             "SettlType", "MDEntryTime", "MDEntryPx", "MDQuoteType", "MDOriginType", "MDEntryID",
-            "QuoteEntryID", "MDEntrySize", "MDEntryDate"))
+            "QuoteEntryID", "MDEntrySize", "MDEntryDate", "SettlDate", "MDEntryPositionNo", "MDEntryType"))
         self.md_snapshot.remove_values_in_repeating_group_by_index("NoMDEntries", 7, (
             "SettlType", "MDEntryTime", "MDEntryPx", "MDQuoteType", "MDOriginType", "MDEntryID",
-            "QuoteEntryID", "MDEntrySize", "MDEntryDate"))
-        self.fix_verifier.check_fix_message(self.md_snapshot)
+            "QuoteEntryID", "MDEntrySize", "MDEntryDate", "SettlDate", "MDEntryPositionNo", "MDEntryType"))
+        self.fix_verifier.check_fix_message(self.md_snapshot, ignored_fields=["header", "trailer", "CachedUpdate"])
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request)
         # endregion
@@ -212,16 +235,19 @@ class QAP_T2547(TestCase):
         self.md_request.set_md_req_parameters_maker().change_parameter("NoRelatedSymbols",
                                                                        self.no_related_symbols_4).change_parameter(
             "SenderSubID", self.palladium2)
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
         self.md_snapshot.set_params_for_md_response(self.md_request, ["1000000", "*", "*"], published=False,
-                                                    band_not_pub=["1000000", "pub", "pub"])
-        self.fix_verifier.check_fix_message(self.md_snapshot)
+                                                    band_not_pub=["1000000", "pub", "pub"], response=response[0])
+        self.fix_verifier.check_fix_message(self.md_snapshot, ignored_fields=["header", "trailer", "CachedUpdate"])
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
+        self.modify_client_tier.modify_client_tier().set_params(self.msg_prams) \
+            .change_params({'pricingMethod': "VWP"})
+        self.rest_manager.send_post_request(self.modify_client_tier)
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request)
         self.fix_md.set_market_data()
@@ -233,7 +259,4 @@ class QAP_T2547(TestCase):
         self.fix_manager_fh_314.send_message(self.fix_md)
         self.fix_md.update_MDReqID(self.md_req_id_4, self.fx_fh_connectivity, "FX")
         self.fix_manager_fh_314.send_message(self.fix_md)
-        self.modify_client_tier.modify_client_tier().set_params(self.msg_prams) \
-            .change_params({'pricingMethod': "VWP"})
-        self.rest_manager.send_post_request(self.modify_client_tier)
         self.sleep(2)

@@ -7,6 +7,7 @@ from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.environments.full_environment import FullEnvironment
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.forex.FixMessageQuoteCancel import FixMessageQuoteCancelFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
 
@@ -22,10 +23,11 @@ class QAP_T2842(TestCase):
         self.verifier = Verifier(self.test_id)
         self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
         self.quote = FixMessageQuoteFX()
+        self.quote_cancel = FixMessageQuoteCancelFX()
         self.iridium1 = self.data_set.get_client_by_name("client_mm_3")
         self.settle_date_wk2 = self.data_set.get_settle_date_by_name("wk2")
-        self.settle_date_broken = self.data_set.get_settle_date_by_name("wk3")
-        self.settle_type_broken = self.data_set.get_settle_type_by_name("wk3")
+        self.settle_date_broken = self.data_set.get_settle_date_by_name("broken_w1w2")
+        self.settle_type_broken = self.data_set.get_settle_type_by_name("broken")
         self.settle_type_wk2 = self.data_set.get_settle_type_by_name("wk2")
         self.gbp_usd = self.data_set.get_symbol_by_name("symbol_2")
         self.security_type_fwd = self.data_set.get_security_type_by_name("fx_fwd")
@@ -34,8 +36,9 @@ class QAP_T2842(TestCase):
             "Symbol": self.gbp_usd,
             "SecurityType": self.security_type_fwd
         }
-        self.validator = "ok"
+        self.validator = "yes"
         self.validation = "is broken bigger then wk2?"
+        self.response = None
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -46,21 +49,23 @@ class QAP_T2842(TestCase):
                                                            Currency=self.gbp, Instrument=self.instrument,
                                                            SettlDate=self.settle_date_wk2,
                                                            SettlType=self.settle_type_wk2)
-        response: list = self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
+        self.response: list = self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
 
-        wk2_offer_px = response[0].get_parameter('OfferPx')
+        wk2_offer_px = self.response[0].get_parameter('OfferPx')
+        self.quote_cancel.set_params_for_cancel(self.quote_request, self.response[0])
+        self.fix_manager.send_message(self.quote_cancel)
 
         self.quote_request.set_rfq_params_fwd()
         self.quote_request.update_repeating_group_by_index("NoRelatedSymbols", 0, Account=self.iridium1,
                                                            Currency=self.gbp, Instrument=self.instrument,
                                                            SettlDate=self.settle_date_broken,
                                                            SettlType=self.settle_type_broken)
-        response: list = self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
-        broken_offer_px = response[0].get_parameter('OfferPx')
+        self.response: list = self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
+        broken_offer_px = self.response[0].get_parameter('OfferPx')
         if float(broken_offer_px) > float(wk2_offer_px):
-            result = "ok"
+            result = "yes"
         else:
-            result = "test_failed"
+            result = "no"
         self.verifier.set_event_name(self.validation)
         self.verifier.compare_values(self.validation, self.validator, result)
         self.verifier.verify()
@@ -68,3 +73,9 @@ class QAP_T2842(TestCase):
         self.quote.set_params_for_quote_fwd(quote_request=self.quote_request)
         self.fix_verifier.check_fix_message(fix_message=self.quote)
         # endregion
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.quote_cancel.set_params_for_cancel(self.quote_request, self.response[0])
+        self.fix_manager.send_message(self.quote_cancel)
+        self.sleep(2)

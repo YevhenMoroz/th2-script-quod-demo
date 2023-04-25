@@ -92,7 +92,7 @@ class QAP_T5124(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # Region Rule creation
-        self.rest_message.set_default_params().create_deviation_cleansing_rule().set_target_venue(self.venue_target).\
+        self.rest_message.set_default_params().create_deviation_cleansing_rule().set_target_venue(self.venue_target). \
             set_ref_venues(self.reference_venues).set_symbol(self.symbol)
         self.rest_message_params = self.rest_manager.parse_create_response(
             self.rest_manager.send_multiple_request(self.rest_message))
@@ -129,7 +129,8 @@ class QAP_T5124(TestCase):
         self.fix_manager_marketdata_th2.send_message_and_receive_response(self.md_request, self.test_id)
         # endregion
         # region Step 3
-        self.fix_md_snapshot.set_params_for_md_response(self.md_request, ['*'])
+        self.fix_md_snapshot.set_params_for_empty_md_response(self.md_request, ['*'])
+        self.fix_md_snapshot.add_tag({"PriceCleansingReason": "5", "OrigMDArrivalTime": "*", "OrigMDTime": "*"})
         self.fix_verifier.check_fix_message(fix_message=self.fix_md_snapshot,
                                             direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])

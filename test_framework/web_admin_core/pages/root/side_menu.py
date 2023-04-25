@@ -49,7 +49,7 @@ from test_framework.web_admin_core.pages.markets.routes.constants import RoutesC
 from test_framework.web_admin_core.pages.others.user_instr_symb_black_out.user_instr_symb_black_out_constants import \
     UserInstrSymbBlackOutConstants
 from test_framework.web_admin_core.pages.positions.fx_positions.fx_positions_constants import FxPositionsConstants
-from test_framework.web_admin_core.pages.positions.security_positions.security_positions_constants import \
+from test_framework.web_admin_core.pages.positions.security_positions.constants import Constants as \
     SecurityPositionsConstants
 from test_framework.web_admin_core.pages.price_cleansing.crossed_venue_rates.crossed_venue_rates_constants import \
     CrossedVenueRatesConstants
@@ -271,7 +271,7 @@ class SideMenu(CommonPage):
     def open_security_positions_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.SECURITY_POSITIONS_ITEM_XPATH, RootConstants.POSITIONS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(SecurityPositionsConstants.SECURITY_POSITIONS_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(SecurityPositionsConstants.MainPage.PAGE_TITLE_XPATH)
 
     def open_crossed_venue_rates_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.CROSSED_VENUE_RATES_ITEM_XPATH, RootConstants.PRICE_CLEANSING_TOGGLE_CSS_SELECTOR,

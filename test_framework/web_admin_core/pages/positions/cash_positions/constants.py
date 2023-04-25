@@ -51,8 +51,13 @@ class Constants:
             CURRENCY = '//*[@id="currency"]'
             CLIENT = '//*[@id="accountGroup"]'
             MARGIN_ACCOUNT_CHECKBOX = '//*[@formcontrolname="isMarginAccount"]//input'
-            DEFAULT_CASH_POSITION_CHECKBOX = '//*[@formcontrolname="defaultCashAccount"]//input'
+            DEFAULT_CASH_POSITION_CHECKBOX = '//*[@formcontrolname="defaultCashAccount"]//span'
             SECURITY_ACCOUNTS = '//*[@id="Security Accounts"]'
+
+        class PositionsTab:
+            TEMPORARY_CASH = '//*[normalize-space()="Temporary Cash"]/following::div[1]'
+            RESERVED_LIMIT = '//*[normalize-space()="Reserved Amount"]/following::div[1]'
+            COLLATERAL_LIMIT = '//*[normalize-space()="Collateral"]/following::div[1]'
 
 
 
