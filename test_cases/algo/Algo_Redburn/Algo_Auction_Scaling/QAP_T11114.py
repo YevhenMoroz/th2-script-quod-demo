@@ -36,7 +36,6 @@ class QAP_T11114(TestCase):
         self.fix_manager_feed_handler = FixManager(self.fix_env1.feed_handler, self.test_id)
         self.fix_verifier_sell = FixVerifier(self.fix_env1.sell_side, self.test_id)
         self.fix_verifier_buy = FixVerifier(self.fix_env1.buy_side, self.test_id)
-        self.fix_verifier_buy1 = FixVerifier(self.fix_env1.buy_side, self.test_id)
         self.restapi_env1 = self.environment.get_list_web_admin_rest_api_environment()[0]
         self.db_manager = DBManager(self.environment.get_list_data_base_environment()[0])
         # endregion
