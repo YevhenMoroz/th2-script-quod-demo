@@ -157,9 +157,12 @@ class QtyPercentageProfile(Enum):
 class JavaApiFields(Enum):
     ExecCommission = 'ExecCommission'
     AllocationInstructionBlock = 'AllocationInstructionBlock'
+    RequestForOverdueRetailPositionsAckBlock = 'RequestForOverdueRetailPositionsAckBlock'
     TransExecStatus = 'TransExecStatus'
     RetailPositList = 'RetailPositList'
     RetailPositBlock = 'RetailPositBlock'
+    OverdueRetailPositList = 'OverdueRetailPositList'
+    AccountID = 'AccountID'
     PosGoodTillDate = 'PosGoodTillDate'
     TransStatus = 'TransStatus'
     LeavesSellQty = 'LeavesSellQty'
@@ -458,6 +461,7 @@ class CDResponsesConst(Enum):
 
 class SubscriptionRequestTypes(Enum):
     SubscriptionRequestType_SUB = 'SUB'
+    SubscriptionRequestType_UNS = 'UNS'
 
 
 class PosReqTypes(Enum):
