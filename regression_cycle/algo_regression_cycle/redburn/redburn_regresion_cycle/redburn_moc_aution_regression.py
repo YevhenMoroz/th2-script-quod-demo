@@ -21,6 +21,7 @@ from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T4480 import QAP_T4480
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T4481 import QAP_T4481
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T4482 import QAP_T4482
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T4483 import QAP_T4483
+from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T8605 import QAP_T8605
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T8725 import QAP_T8725
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T9085 import QAP_T9085
 from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T9086 import QAP_T9086
@@ -105,6 +106,9 @@ def test_run(parent_id=None, version=None):
         QAP_T8725(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
+        # region AtLast
+        QAP_T8605(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # endregion
     except Exception:
         # bca.create_event('Fail test event', status='FAILED', parent_id=parent_id)
         logging.error("Error execution", exc_info=True)

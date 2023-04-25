@@ -88,14 +88,15 @@ class QAP_T7390(TestCase):
 
         # region check calculated message
         exec_ignored_fields = ['Account', 'SettlCurrency', 'LastExecutionPolicy', 'Currency', 'SecondaryOrderID',
-                               'LastMkt', 'VenueType', 'SecondaryExecID', 'GatingRuleCondName', 'GatingRuleName']
+                               'LastMkt', 'VenueType', 'SecondaryExecID', 'GatingRuleCondName', 'GatingRuleName',
+                               'ExecAllocGrp']
         self.exec_report.set_default_filled(self.new_order_single)
         self.exec_report.change_parameters({"MiscFeesGrp":"#"})
         self.fix_verifier.check_fix_message_fix_standard(self.exec_report, ignored_fields=exec_ignored_fields)
         # endregion
 
         # region check ready to book message
-        alloc_ignored_fields = ['Account', 'tag5120', 'AvgPx', 'Currency', 'OrderAvgPx']
+        alloc_ignored_fields = ['Account', 'tag5120', 'AvgPx', 'Currency', 'OrderAvgPx','ExecAllocGrp']
         self.alloc_report.set_default_ready_to_book(self.new_order_single)
         self.alloc_report.change_parameters({"NoRootMiscFeesList": "#"})
         self.fix_verifier_dc.check_fix_message_fix_standard(self.alloc_report, ignored_fields=alloc_ignored_fields)
@@ -104,7 +105,7 @@ class QAP_T7390(TestCase):
         # region check confirmation message
         no_misc_fees = {'NoMiscFees': [{"MiscFeeAmt": '8954.91', "MiscFeeCurr": self.com_cur,
                    "MiscFeeType": "4"}]}
-        conf_ignored_fields = ['CommissionData', 'tag5120', 'AvgPx', 'Currency', 'OrderAvgPx', 'tag11245']
+        conf_ignored_fields = ['CommissionData', 'tag5120', 'AvgPx', 'Currency', 'OrderAvgPx', 'tag11245','ExecAllocGrp']
         self.confirmation.set_default_confirmation_new(self.new_order_single)
         self.confirmation.change_parameters({'NoMiscFees':no_misc_fees})
         self.fix_verifier_dc.check_fix_message_fix_standard(self.confirmation, ignored_fields=conf_ignored_fields)

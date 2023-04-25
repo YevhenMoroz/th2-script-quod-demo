@@ -2,6 +2,7 @@ import random
 from pathlib import Path
 from custom import basic_custom_actions as bca
 from stubs import Stubs
+from test_cases.fx.fx_wrapper.common_tools import extract_automatic_quoting
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
@@ -47,12 +48,9 @@ class QAP_T2910(TestCase):
         self.fix_manager_sel.send_message(self.quote_request)
         # endregion
         # region Step 2
-        self.quote_request_book.set_filter(
-            [qrb.instrument_symbol.value, self.symbol, qrb.qty.value, self.qty]).check_quote_book_fields_list(
-            {qrb.automatic_quoting.value: self.automatic_quoting}, 'Checking AutomaticQuoting in QRB')
-        # endregion
-        # region Step 3
-        self.dealer_intervention.check_unassigned_fields({"Qty": f'{self.qty[:2]},{self.qty[2:5]},{self.qty[5:]}'},
-                                                         'Checking unassigned RFQs in DI')
-        self.dealer_intervention.close_window()
+        quote_status = extract_automatic_quoting(self.quote_request)
+        self.verifier.set_parent_id(self.test_id)
+        self.verifier.set_event_name("Check AutomaticQuoting")
+        self.verifier.compare_values("AutomaticQuoting", "N", quote_status)
+        self.verifier.verify()
         # endregion

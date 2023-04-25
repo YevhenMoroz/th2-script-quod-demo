@@ -20,6 +20,12 @@
                         <java_api_environments>
                             <java_api_environment>quod314_java_api</java_api_environment>
                         </java_api_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod314_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
+                        <read_log_environments>
+                            <read_log_environment>quod314_read_log</read_log_environment>
+                        </read_log_environments>
                     </environments>
                 </component>
                 <component name="ESP_Taker" run="True">
@@ -37,6 +43,12 @@
                         <java_api_environments>
                             <java_api_environment>quod314_java_api</java_api_environment>
                         </java_api_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod314_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
+                        <read_log_environments>
+                            <read_log_environment>quod314_read_log</read_log_environment>
+                        </read_log_environments>
                     </environments>
                 </component>
                 <component name="RFQ_MM" run="True">
@@ -54,6 +66,12 @@
                         <java_api_environments>
                             <java_api_environment>quod314_java_api</java_api_environment>
                         </java_api_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod314_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
+                        <read_log_environments>
+                            <read_log_environment>quod314_read_log</read_log_environment>
+                        </read_log_environments>
                     </environments>
                 </component>
                 <component name="RFQ_Taker" run="True">
@@ -71,6 +89,12 @@
                         <java_api_environments>
                             <java_api_environment>quod314_java_api</java_api_environment>
                         </java_api_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod314_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
+                        <read_log_environments>
+                            <read_log_environment>quod314_read_log</read_log_environment>
+                        </read_log_environments>
                     </environments>
                 </component>
                 <component name="Position" run="True">
@@ -88,6 +112,12 @@
                         <java_api_environments>
                             <java_api_environment>quod314_java_api</java_api_environment>
                         </java_api_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod314_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
+                        <read_log_environments>
+                            <read_log_environment>quod314_read_log</read_log_environment>
+                        </read_log_environments>
                     </environments>
                 </component>
                 <component name="AutoHedger" run="True">
@@ -105,6 +135,12 @@
                         <java_api_environments>
                             <java_api_environment>quod314_java_api</java_api_environment>
                         </java_api_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod314_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
+                        <read_log_environments>
+                            <read_log_environment>quod314_read_log</read_log_environment>
+                        </read_log_environments>
                     </environments>
                 </component>
                 <component name="Synthetic" run="True">
@@ -122,6 +158,12 @@
                        <java_api_environments>
                             <java_api_environment>quod314_java_api</java_api_environment>
                         </java_api_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod314_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
+                        <read_log_environments>
+                            <read_log_environment>quod314_read_log</read_log_environment>
+                        </read_log_environments>
                     </environments>
                 </component>
                 <component name="FX_Acceptance_list" run="True">
@@ -139,6 +181,12 @@
                         <java_api_environments>
                             <java_api_environment>quod314_java_api</java_api_environment>
                         </java_api_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod314_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
+                        <read_log_environments>
+                            <read_log_environment>quod314_read_log</read_log_environment>
+                        </read_log_environments>
                     </environments>
                 </component>
                 <component name="Price_Cleansing" run="True">
@@ -156,6 +204,12 @@
                         <java_api_environments>
                             <java_api_environment>quod314_java_api</java_api_environment>
                         </java_api_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod314_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
+                        <read_log_environments>
+                            <read_log_environment>quod314_read_log</read_log_environment>
+                        </read_log_environments>
                     </environments>
                 </component>
                 <component name="FX_Smoke_list" run="True">
@@ -173,6 +227,12 @@
                         <java_api_environments>
                             <java_api_environment>quod314_java_api</java_api_environment>
                         </java_api_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod314_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
+                        <read_log_environments>
+                            <read_log_environment>quod314_read_log</read_log_environment>
+                        </read_log_environments>
                     </environments>
                 </component>
                 <component name="ESP_MM_309" run="True">
@@ -258,6 +318,9 @@
                         <java_api_environments>
                             <java_api_environment>quod309_java_api</java_api_environment>
                         </java_api_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod314_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
                     </environments>
                 </component>
                 <component name="Autohedger_309" run="True">
@@ -275,6 +338,9 @@
                         <java_api_environments>
                             <java_api_environment>quod309_java_api</java_api_environment>
                         </java_api_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod314_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
                     </environments>
                 </component>
                 <component name="Synthetic_309" run="True">
@@ -292,6 +358,9 @@
                         <java_api_environments>
                             <java_api_environment>quod309_java_api</java_api_environment>
                         </java_api_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod314_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
                     </environments>
                 </component>
                 <component name="Price_Cleansing_309" run="True">
@@ -309,6 +378,9 @@
                         <java_api_environments>
                             <java_api_environment>quod309_java_api</java_api_environment>
                         </java_api_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod314_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
                     </environments>
                 </component>
             </components>

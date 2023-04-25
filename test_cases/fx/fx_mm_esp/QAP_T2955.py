@@ -90,7 +90,7 @@ class QAP_T2955(TestCase):
 
         response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
 
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*"])
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*"], response=response[0])
         ask_pts = float(response[-1].get_parameters()["NoMDEntries"][1]["MDEntryForwardPoints"])
         bid_pts = float(response[-1].get_parameters()["NoMDEntries"][0]["MDEntryForwardPoints"])
         expected_ask_px = str(round(float(self.ask_spot + ask_pts), 5))

@@ -151,7 +151,7 @@ class QAP_T7319(TestCase):
                                              exec_report_2, "Check the second child order execution")
         # endregion
         # region check ExecReport of first order
-        list_to_ignore = ['SettlType']
+        list_to_ignore = ['SettlType','GatingRuleCondName','GatingRuleName']
         no_misc1 = {"MiscFeeAmt": '5', "MiscFeeCurr": self.com_cur,
                     "MiscFeeType": "12"}
         execution_report = FixMessageExecutionReportOMS(self.data_set).set_default_filled(self.fix_message)

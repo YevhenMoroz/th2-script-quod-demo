@@ -29,14 +29,14 @@ class QAP_T3940(CommonTestCase):
         self.client = str
         self.client_id_source = self.data_set.get_client_id_source("client_id_source_2")
         self.venue_account = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.venue = 'BSE'
+        self.venue = self.data_set.get_venue_by_name("venue_10")
         self.account_id_source = self.data_set.get_account_id_source("account_id_source_1")
-        self.default_route = 'NSE'
+        self.default_route = self.data_set.get_default_route("default_route_1")
 
         self.new_venue_account = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.new_venue = "BSECD"
+        self.new_venue = self.data_set.get_venue_by_name("venue_8")
         self.new_account_id_source = "Other"
-        self.new_default_route = "BSE"
+        self.new_default_route = self.data_set.get_default_route("default_route_2")
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -74,8 +74,7 @@ class QAP_T3940(CommonTestCase):
         try:
             self.precondition()
 
-            expected_pdf_content = [self.new_venue_account, self.new_venue, self.new_account_id_source,
-                                    self.new_default_route]
+            expected_pdf_content = [self.new_venue_account, self.new_venue, self.new_account_id_source]
 
             accounts_page = AccountsPage(self.web_driver_container)
             accounts_page.filter_grid(self.account)

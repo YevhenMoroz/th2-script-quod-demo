@@ -360,7 +360,7 @@ class VenuesConstants:
     PHASE_SESSION_TAB_EDIT_BUTTON_XPATH = '//*[normalize-space()="Phase Session"]//..//*[@data-name="edit"]'
     PHASE_SESSION_TAB_DELETE_BUTTON_XPATH = '//*[normalize-space()="Phase Session"]//..//*[@data-name="trash-2"]'
 
-    PHASE_SESSION_TAB_TRADING_PHASE_XPATH = '//*[normalize-space()="Phase Session"]//..//*[@id="tradingPhase"]'
+    PHASE_SESSION_TAB_TRADING_PHASE_XPATH = '(//*[normalize-space()="Phase Session"]//..//nb-select)[1]'
     PHASE_SESSION_TAB_TRADING_PHASE_FILTER_XPATH = '(//*[normalize-space()="Phase Session"]//..//*[@placeholder="Filter"])[1]'
     PHASE_SESSION_TAB_TRADING_SESSION_XPATH = '//*[@placeholder="Trading Session *"]'
     PHASE_SESSION_TAB_TRADING_SESSION_FILTER_XPATH = '(//*[normalize-space()="Phase Session"]//..//*[@placeholder="Filter"])[2]'
@@ -376,9 +376,9 @@ class VenuesConstants:
     TYPE_TIF_TAB_EDIT_BUTTON_XPATH = '//*[contains(normalize-space(text()), "Type TIF")]//following-sibling::*//*[@data-name="edit"]'
     TYPE_TIF_TAB_DELETE_BUTTON_XPATH = '//*[contains(normalize-space(text()), "Type TIF")]//following-sibling::*//*[@data-name="trash-2"]'
 
-    TYPE_TIF_TAB_TIME_IN_FORCE_XPATH = '//*[normalize-space()="Phase Session"]//..//*[@id="timeInForce"]'
+    TYPE_TIF_TAB_TIME_IN_FORCE_XPATH = '(//*[normalize-space()="Phase Session"]//..//nb-select)[3]'
     TYPE_TIF_TAB_TIME_IN_FORCE_FILTER_XPATH = '(//*[normalize-space()="Phase Session"]//..//*[@placeholder="Filter"])[5]'
-    TYPE_TIF_TAB_ORD_TYPE_XPATH = '//*[normalize-space()="Phase Session"]//..//*[@id="ordType"]'
+    TYPE_TIF_TAB_ORD_TYPE_XPATH = '(//*[normalize-space()="Phase Session"]//..//nb-select)[4]'
     TYPE_TIF_TAB_ORD_TYPE_FILTER_XPATH = '(//*[normalize-space()="Phase Session"]//..//*[@placeholder="Filter"])[6]'
     TYPE_TIF_TAB_SUPPORT_DISPLAY_QUANTITY_CHECKBOX_XPATH = '//*[contains(normalize-space(text()), "Type TIF")]//following-sibling::*//*[contains(@class, "custom-checkbox")]'
     TYPE_TIF_TAB_SUPPORT_DISPLAY_QUANTITY_CHECKBOX_FILTER_XPATH = '(//*[normalize-space()="Phase Session"]//..//*[@placeholder="Filter"])[7]'

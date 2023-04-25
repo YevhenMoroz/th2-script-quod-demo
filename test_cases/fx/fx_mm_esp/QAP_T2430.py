@@ -67,8 +67,8 @@ class QAP_T2430(TestCase):
                 "SenderSubID": self.client_silver,
                 'NoRelatedSymbols': self.no_related_symbols
             })
-        self.fix_manager_mm.send_message_and_receive_response(self.md_request, self.test_id)
-        self.md_snapshot_full.set_params_for_md_response(self.md_request, self.qty_list[:3])
+        response = self.fix_manager_mm.send_message_and_receive_response(self.md_request, self.test_id)
+        self.md_snapshot_full.set_params_for_md_response(self.md_request, self.qty_list[:3], response=response[0])
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot_full,
                                             direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])

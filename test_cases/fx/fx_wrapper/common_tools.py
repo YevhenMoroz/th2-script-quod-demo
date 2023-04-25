@@ -147,7 +147,7 @@ def check_quote_request_id(quote_request):
             print("PostgreSQL connection is closed")
 
 
-def check_quote_status(quote_request):
+def check_quote_status(id_reference, key_parameter="clientquoteid"):
     """
     Get QuoteStatus from DB using quote_id from fix request
     """
@@ -162,8 +162,11 @@ def check_quote_status(quote_request):
         # Create a cursor to perform database operations
         cursor = connection.cursor()
         # Print PostgreSQL details
-        quote_id = quote_request.get_parameter("QuoteID")
-        query = f"SELECT quotestatus  FROM quote WHERE clientquoteid ='{quote_id}'"
+        try:
+            quote_id = id_reference.get_parameter("QuoteID")
+        except AttributeError:
+            quote_id = id_reference
+        query = f"SELECT quotestatus  FROM quote WHERE {key_parameter} ='{quote_id}'"
         cursor.execute(query)
         response = cursor.fetchone()[0]
         print(f"Extraction is successful! Quote status is {response}.")
@@ -237,6 +240,33 @@ def extract_automatic_quoting(quote_request):
             print("PostgreSQL connection is closed")
 
 
+def execute_db_command(*args):
+    connection = None
+    cursor = None
+    try:
+        connection = psycopg2.connect(user="quod314prd",
+                                      password="quod314prd",
+                                      host="10.0.22.69",
+                                      port="5432",
+                                      database="quoddb")
+        # Create a cursor to perform database operations
+        cursor = connection.cursor()
+        # Print PostgreSQL details
+        for command in args:
+            cursor.execute(command)
+            print(command, "is executed.")
+            connection.commit()
+    except (Exception, Error) as error:
+        print("Error while connecting to PostgreSQL", error)
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+            print("PostgreSQL connection is closed.")
+
+
+
+
 def generate_schedule(hours_from_time=None, hours_to_time=None, minutes_from_time=None,
                       minutes_to_time=None, day: str = None):
     schedule_dict = {
@@ -300,7 +330,7 @@ def clear_position():
     try:
         connection = psycopg2.connect(user="quod314prd",
                                       password="quod314prd",
-                                      host="10.0.22.42",
+                                      host="10.0.22.69",
                                       port="5432",
                                       database="quoddb")
         # Create a cursor to perform database operations
@@ -355,14 +385,20 @@ def restart_qs_rfq_fix_th2():
 
 def restart_pks():
     """
-    Restart QS_RFQ_STANDARD_SELL component on quod314 backend
+    Restart PKS component on quod314 backend
     """
     login_and_execute("qrestart QUOD.PKS")
 
 
+def restart_mpas():
+    """
+    Restart MPAS component on quod314 backend
+    """
+    login_and_execute("qrestart QUOD.PKS")
+
 def stop_fxfh():
     """
-    Restart QS_RFQ_STANDARD_SELL component on quod314 backend
+    Stop FXFH component on quod314 backend
     """
     login_and_execute("qstop -id QUOD.FXFH")
     time.sleep(10)
@@ -370,7 +406,7 @@ def stop_fxfh():
 
 def start_fxfh():
     """
-    Restart QS_RFQ_STANDARD_SELL component on quod314 backend
+    Start FXFH component on quod314 backend
     """
     login_and_execute("qstart FXFH")
     time.sleep(10)

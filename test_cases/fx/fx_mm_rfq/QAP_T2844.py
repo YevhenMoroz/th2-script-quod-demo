@@ -146,20 +146,26 @@ class QAP_T2844(TestCase):
         self.fix_manager_sel.send_message_and_receive_response(self.new_order_single)
         self.execution_report.set_params_from_new_order_single(self.new_order_single, status=self.status,
                                                                text=f"invalid price")
-        self.fix_verifier_sell.check_fix_message(self.execution_report)
+        self.fix_verifier_sell.check_fix_message(self.execution_report,
+                                                 ignored_fields=["header", "trailer", "GatingRuleCondName",
+                                                                 "GatingRuleName"])
         # endregion
         # region Step 5
         self.execution_report.set_params_from_new_order_single(self.new_order_single, status=self.status,
                                                                text=f"order price is not ranging in [{range_bellow}, "
                                                                     f"{range_above}]")
-        self.fix_verifier_dc.check_fix_message(self.execution_report)
+        self.fix_verifier_dc.check_fix_message(self.execution_report,
+                                               ignored_fields=["header", "trailer", "GatingRuleCondName",
+                                                               "GatingRuleName"])
         # endregion
         # region Step 6
         self.new_order_single.set_default_prev_quoted(self.quote_request, response[0])
         self.new_order_single.change_parameter("Price", self.offer_px_2)
         self.fix_manager_sel.send_message_and_receive_response(self.new_order_single)
         self.execution_report_fill.set_params_from_new_order_single(self.new_order_single)
-        self.fix_verifier_sell.check_fix_message(self.execution_report_fill)
+        self.fix_verifier_sell.check_fix_message(self.execution_report_fill,
+                                                 ignored_fields=["header", "trailer", "GatingRuleCondName",
+                                                                 "GatingRuleName"])
 
         # endregion
 

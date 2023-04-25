@@ -413,6 +413,18 @@ class SshClientEnv(Enum):
     SU_USER_316 = "quod316"
     SU_PASSWORD_316 = "quod316"
 
+    HOST_314 = "10.0.22.34"
+    PORT_314 = 22
+    USER_314 = ""
+    PASSWORD_314 = ""
+    SU_USER_314 = "quod314"
+    SU_PASSWORD_314 = "quod314"
+    DB_HOST_314 = "10.0.22.69"
+    DB_NAME_314 = "quoddb"
+    DB_USER_314 = "quod314prd"
+    DB_PASSWORD_314 = "quod314prd"
+
+
     HOST_319 = "10.0.22.39"
     PORT_319 = 22
     USER_319 = ""
@@ -445,6 +457,12 @@ class DataBaseEnv(Enum):
     USER_320 = "quod320prd"
     PASS_320 = "quod320prd"
     DB_TYPE_320 = "postgresql"
+    # 306 Oracle
+    HOST_306 = "10.0.22.57"
+    NAME_306 = "DBSHIVA2"
+    USER_306 = "quod306prd"
+    PASS_306 = "quod306prd"
+    DB_TYPE_306 = "oracle"
     # 310 mongo
     HOST_310 = "10.0.22.31"
     PORT_310 = 27310

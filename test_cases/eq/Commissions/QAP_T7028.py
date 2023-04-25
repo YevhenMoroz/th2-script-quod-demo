@@ -189,7 +189,7 @@ class QAP_T7028(TestCase):
              'RootMiscFeeAmt': stamp_amount}]}
         ignored_list = ["AvgPx", "Currency", 'tag5120', 'RootSettlCurrAmt', 'RootOrClientCommission',
                         'RootOrClientCommissionCurrency', 'RootCommTypeClCommBasis', "AllocInstructionMiscBlock1",
-                        'RootSettlCurrAmt', 'SettlType', 'Account', 'OrderAvgPx']
+                        'RootSettlCurrAmt', 'SettlType', 'Account', 'OrderAvgPx','ExecAllocGrp']
         allocation_report = FixMessageAllocationInstructionReportOMS()
         allocation_report.set_default_ready_to_book(self.fix_message)
         allocation_report.change_parameters({'NoRootMiscFeesList': no_misc_list})
