@@ -31,13 +31,6 @@ logger.setLevel(logging.INFO)
 seconds, nanos = timestamps()
 
 
-def print_message(message, responses):
-    logger.info(message)
-    for i in responses:
-        logger.info(i)
-        logger.info(i.get_parameters())
-
-
 class QAP_T8172(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
@@ -102,7 +95,7 @@ class QAP_T8172(TestCase):
         self.order_submit.update_fields_in_component('NewOrderSingleBlock', {
             'ListingList': {'ListingBlock': [{'ListingID': self.data_set.get_listing_id_by_name("listing_2")}]},
             'InstrID': instrument_id,
-            'accountGroupID': self.client,
+            'AccountGroupID': self.client,
             'OrdQty': self.qty,
             'Price': self.price,
             "ClOrdID": bca.client_orderid(9) + Path(__file__).name[:-3],
@@ -111,7 +104,6 @@ class QAP_T8172(TestCase):
 
         })
         responses = self.java_api_manager.send_message_and_receive_response(self.order_submit)
-        print_message('Create DMA  order', responses)
         order_id = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
             JavaApiFields.OrdReplyBlock.value][JavaApiFields.OrdID.value]
         cl_ord_id = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
@@ -144,7 +136,6 @@ class QAP_T8172(TestCase):
                                                              "OrdQty": self.qty
                                                          })
         responses = self.java_api_manager.send_message_and_receive_response(self.execution_report)
-        print_message(f'Trade DMA  order {order_id}', responses)
         actually_result = \
             self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value,
                                                    ExecutionReportConst.ExecType_TRD.value).get_parameters()[
@@ -174,7 +165,6 @@ class QAP_T8172(TestCase):
         self.compute_booking_fee_commission_request.update_fields_in_component(
             'ComputeBookingFeesCommissionsRequestBlock', {'AvgPx': new_avg_px, 'AccountGroupID': self.client})
         responses = self.java_api_manager.send_message_and_receive_response(self.compute_booking_fee_commission_request)
-        print_message('Send ComputeBookingFeesCommissionsRequest', responses)
         client_commission = \
             self.java_api_manager.get_last_message(ORSMessageType.ComputeBookingFeesCommissionsReply.value). \
                 get_parameters()[JavaApiFields.ComputeBookingFeesCommissionsReplyBlock.value][
@@ -203,7 +193,6 @@ class QAP_T8172(TestCase):
 
                                                                        })
         responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction_message)
-        print_message('Create Block', responses)
         # endregion
         allocation_report = \
         self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
@@ -217,7 +206,6 @@ class QAP_T8172(TestCase):
         # region approve and allocate block
         self.approve_block.set_default_approve(alloc_id)
         responses = self.java_api_manager.send_message_and_receive_response(self.approve_block)
-        print_message('Approve Block', responses)
         self.confirmation_request.set_default_allocation(alloc_id)
         self.confirmation_request.update_fields_in_component('ConfirmationBlock', {
             "AllocAccountID": self.alloc_account,
@@ -226,7 +214,6 @@ class QAP_T8172(TestCase):
             "InstrID": instrument_id
         })
         responses = self.java_api_manager.send_message_and_receive_response(self.confirmation_request)
-        print_message('Allocate Block ', responses)
         confirmation_report = \
         self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[
             JavaApiFields.ConfirmationReportBlock.value]
