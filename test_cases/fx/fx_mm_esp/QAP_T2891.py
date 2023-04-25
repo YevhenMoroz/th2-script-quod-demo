@@ -55,7 +55,7 @@ class QAP_T2891(TestCase):
         number_of_bands = len(response[0].get_parameter("NoMDEntries")) / 2
         for i in range(int(number_of_bands)):
             self.bands_eur_usd.append("*")
-        self.md_snapshot.set_params_for_md_response(self.md_request, self.bands_eur_usd)
+        self.md_snapshot.set_params_for_md_response(self.md_request, self.bands_eur_usd, response=response[0])
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot)
         # endregion
 

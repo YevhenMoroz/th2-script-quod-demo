@@ -45,8 +45,8 @@ class QAP_T2801(TestCase):
 
         # region Step 2
         self.md_request.set_md_req_parameters_maker().change_parameter("BookType", "1")
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*", "*"], published=False)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*", "*"], published=False, response=response[0])
         self.md_snapshot.get_parameter("NoMDEntries").pop(7)
         self.md_snapshot.get_parameter("NoMDEntries").pop(6)
         # self.md_snapshot.remove_values_in_repeating_group_by_index("NoMDEntries", 6, (
@@ -69,8 +69,8 @@ class QAP_T2801(TestCase):
 
         # region Step 2
         self.md_request.set_md_req_parameters_maker().change_parameter("BookType", "1")
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*", "*"], priced=False)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*", "*"], priced=False, response=response[0])
         self.md_snapshot.get_parameter("NoMDEntries").pop(7)
         self.md_snapshot.get_parameter("NoMDEntries").pop(6)
         # self.md_snapshot.remove_values_in_repeating_group_by_index("NoMDEntries", 6, (

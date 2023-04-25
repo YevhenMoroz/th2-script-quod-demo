@@ -51,3 +51,14 @@ class OrderModificationRequest(JavaApiMessage):
         }
         super().change_parameters(base_parameters)
         return self
+
+    def set_change_params(self, order_id):
+        base_parameters = {
+            'SEND_SUBJECT': 'QUOD.ORS.FE',
+            'REPLY_SUBJECT': 'QUOD.FE.ORS',
+            'OrderModificationRequestBlock': {
+                'OrdID': order_id
+            }
+        }
+        super().change_parameters(base_parameters)
+        return self

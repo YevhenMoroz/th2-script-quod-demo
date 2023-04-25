@@ -14,6 +14,7 @@ class FixMessageMarketDataSnapshotFullRefreshBuyFX(FixMessageMarketDataSnapshotF
     def set_market_data(self) -> FixMessageMarketDataSnapshotFullRefresh:
         base_parameters = {
             "MDReqID": "EUR/USD:SPO:REG:HSBC",
+            "LastUpdateTime": datetime.utcnow().strftime('%Y%m%d-%H:%M:%S'),
             "Instrument": {
                 "Symbol": "EUR/USD",
                 "SecurityType": "FXSPOT"
@@ -79,7 +80,8 @@ class FixMessageMarketDataSnapshotFullRefreshBuyFX(FixMessageMarketDataSnapshotF
                     "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
                     "MDEntryTime": datetime.utcnow().strftime('%H:%M:%S')
                 }
-            ]
+            ],
+
         }
         super().change_parameters(base_parameters)
         return self

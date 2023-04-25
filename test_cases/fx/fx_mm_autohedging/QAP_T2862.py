@@ -1,169 +1,237 @@
-import logging
 from pathlib import Path
-import time
-from test_cases.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
-from test_cases.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
-from custom.tenor_settlement_date import spo
-from custom.verifier import Verifier
-from stubs import Stubs
 from custom import basic_custom_actions as bca
-from win_gui_modules.dealing_positions_wrappers import GetOrdersDetailsRequest, ExtractionPositionsFieldsDetails, \
-    ExtractionPositionsAction, PositionsInfo
-from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, OrderInfo, ExtractionAction
-from win_gui_modules.utils import get_base_request, call
-
-client = "AURUM1"
-account_client = "AURUM1_1"
-account_quod = "QUOD4_1"
-symbol = "USD/DKK"
-security_type_spo = "FXSPOT"
-settle_date_spo = spo()
-qty_1 = "5000000"
-qty_2 = "6000000"
-currency = "USD"
-settle_currency = "DKK"
-side = "1"
-settltype = 0
-expected_pos_client_1 = "5000000"
-expected_pos_client_2 = "11000000"
-expected_pos_quod_1 = "-1000000"
-client_quod = "QUOD4"
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.forex.FixMessageExecutionReportDropCopyFX import FixMessageExecutionReportDropCopyFX
+from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleTakerDC import FixMessageNewOrderSingleTakerDC
+from test_framework.fix_wrappers.forex.FixMessagePositionReportFX import FixMessagePositionReportFX
+from test_framework.fix_wrappers.forex.FixMessageRequestForPositionsFX import FixMessageRequestForPositionsFX
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.fx.FixPositionMaintenanceRequestFX import FixPositionMaintenanceRequestFX
+from test_framework.java_api_wrappers.fx.TradeEntryRequestFX import TradeEntryRequestFX
+from test_framework.positon_verifier_fx import PositionVerifier
 
 
-def send_rfq_order_spot(params_spot):
-    rfq = FixClientSellRfq(params_spot)
-    rfq.send_request_for_quote()
-    rfq.verify_quote_pending()
-    price = rfq.extract_filed("OfferPx")
-    rfq.send_new_order_single(price=price). \
-        verify_order_pending(). \
-        verify_order_filled()
+class QAP_T2862(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.java_api_env = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.pks_connectivity = self.environment.get_list_fix_environment()[0].sell_side_pks
+        self.dc_connectivity = self.environment.get_list_fix_environment()[0].drop_copy
+        self.java_api_manager = JavaApiManager(self.java_api_env, self.test_id)
+        self.maintenance_request_ext = FixPositionMaintenanceRequestFX()
+        self.maintenance_request_int = FixPositionMaintenanceRequestFX()
+        self.fix_manager = FixManager(self.pks_connectivity, self.test_id)
+        self.fix_pos_verifier = FixVerifier(self.pks_connectivity, self.test_id)
+        self.fix_drop_copy_verifier = FixVerifier(self.dc_connectivity, self.test_id)
+        self.position_verifier = PositionVerifier(self.test_id)
+        self.request_for_position_ext = FixMessageRequestForPositionsFX()
+        self.request_for_position_int = FixMessageRequestForPositionsFX()
+        self.position_report_ext = FixMessagePositionReportFX()
+        self.position_report_int = FixMessagePositionReportFX()
+        self.trade_request = TradeEntryRequestFX()
+        self.ah_exec_report = FixMessageExecutionReportDropCopyFX()
+        self.ah_order = FixMessageNewOrderSingleTakerDC()
+        self.client_ext = self.data_set.get_client_by_name("client_mm_6")
+        self.account_ext = self.data_set.get_account_by_name("account_mm_6")
+        self.client_int = self.data_set.get_client_by_name("client_int_3")
+        self.account_int = self.data_set.get_account_by_name("account_int_3")
+        self.currency = self.data_set.get_currency_by_name("currency_usd")
+        self.usd_zar = self.data_set.get_symbol_by_name("symbol_20")
+        self.listing_usd_zar = self.data_set.get_listing_id_by_name("usd_zar_spo")
+        self.sec_type_spo = self.data_set.get_security_type_by_name("fx_spot")
+        self.instrument = {
+            "SecurityType": self.sec_type_spo,
+            "Symbol": self.usd_zar
+        }
+        self.first_trade_qty = "5000000"
+        self.first_ah_qty = "4000000"
+        self.second_trade_qty = "6000000"
+        self.second_ah_qty = "6000000"
+        self.external_pos_qty = "11000000"
+        self.internal_pos_qty = "-1000000"
 
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Clear position before start and check that they equal to 0
+        self.maintenance_request_ext.set_default_params()
+        self.maintenance_request_ext.change_account(self.account_ext)
+        self.maintenance_request_ext.change_client(self.client_ext)
+        self.maintenance_request_ext.change_instrument(self.usd_zar)
+        self.java_api_manager.send_message(self.maintenance_request_ext)
+        self.sleep(5)
+        self.maintenance_request_int.set_default_params()
+        self.maintenance_request_int.change_account(self.account_int)
+        self.maintenance_request_int.change_client(self.client_int)
+        self.maintenance_request_int.change_instrument(self.usd_zar)
+        self.java_api_manager.send_message(self.maintenance_request_int)
+        self.sleep(5)
 
-def get_dealing_positions_details(del_act, base_request, symbol, account):
-    dealing_positions_details = GetOrdersDetailsRequest()
-    dealing_positions_details.set_default_params(base_request)
-    extraction_id = bca.client_orderid(4)
-    dealing_positions_details.set_extraction_id(extraction_id)
-    dealing_positions_details.set_filter(["Symbol", symbol, "Account", account])
-    position = ExtractionPositionsFieldsDetails("dealingpositions.position", 'Position')
-    dealing_positions_details.add_single_positions_info(
-        PositionsInfo.create(
-            action=ExtractionPositionsAction.create_extraction_action(extraction_details=[position])))
+        self.request_for_position_ext.set_default()
+        self.request_for_position_ext.change_parameters({"Instrument": self.instrument, "Currency": self.currency,
+                                                         "Account": self.client_ext})
+        external_report: list = self.fix_manager.send_message_and_receive_response(self.request_for_position_ext,
+                                                                                   self.test_id)
+        self.position_report_ext.set_params_from_reqeust(self.request_for_position_ext)
+        self.position_report_ext.change_parameter("LastPositEventType", "11")
+        self.fix_pos_verifier.check_fix_message(self.position_report_ext,
+                                                message_name=f"Check position for {self.client_ext} before start")
+        self.position_verifier.check_base_position(external_report, "0", text=f"Check base for {self.client_ext}")
+        self.sleep(1)
+        self.request_for_position_ext.set_unsubscribe()
+        self.fix_manager.send_message(self.request_for_position_ext)
+        self.sleep(1)
 
-    response = call(del_act.getFxDealingPositionsDetails, dealing_positions_details.request())
-    time.sleep(0.5)
-    return float(response["dealingpositions.position"].replace(",", ""))
+        self.request_for_position_int.set_default()
+        self.request_for_position_int.change_parameters({"Instrument": self.instrument, "Currency": self.currency,
+                                                         "Account": self.client_int})
+        internal_report: list = self.fix_manager.send_message_and_receive_response(self.request_for_position_int,
+                                                                                   self.test_id)
+        self.position_report_int.set_params_from_reqeust(self.request_for_position_int)
+        self.position_report_int.change_parameter("LastPositEventType", "11")
+        self.fix_pos_verifier.check_fix_message(self.position_report_int,
+                                                message_name=f"Check position for {self.client_int} before start")
+        self.position_verifier.check_base_position(internal_report, "0", text=f"Check base for {self.client_int}")
+        self.request_for_position_int.set_unsubscribe()
+        self.fix_manager.send_message(self.request_for_position_int)
+        self.sleep(1)
 
+        # endregion
 
-def compare_position(even_name, case_id, expected_pos, actual_pos):
-    verifier = Verifier(case_id)
-    verifier.set_event_name(even_name)
-    verifier.compare_values("Quote position", str(float(expected_pos)), str(actual_pos))
+        # region Step 1
+        self.trade_request.set_default_params()
+        self.trade_request.update_fields_in_component("TradeEntryRequestBlock",
+                                                      {"AccountGroupID": self.client_ext,
+                                                       "ExecQty": self.first_trade_qty,
+                                                       "ListingID": self.listing_usd_zar})
+        response: list = self.java_api_manager.send_message_and_receive_response(self.trade_request)
+        ord_id = self.trade_request.get_ah_ord_id(response)
+        exec_id_ext = self.trade_request.get_exec_id(response)
+        self.sleep(5)
+        # endregion
 
-    verifier.verify()
+        # region Step 2
+        self.request_for_position_ext.set_default()
+        self.request_for_position_ext.change_parameters({"Instrument": self.instrument, "Currency": self.currency,
+                                                         "Account": self.client_ext})
+        external_report: list = self.fix_manager.send_message_and_receive_response(self.request_for_position_ext,
+                                                                                   self.test_id)
+        self.position_report_ext.set_params_from_reqeust(self.request_for_position_ext)
+        self.position_report_ext.change_parameter("LastPositEventType", "5")
+        self.position_report_ext.change_parameter("LastPositUpdateEventID", exec_id_ext)
+        self.fix_pos_verifier.check_fix_message(self.position_report_ext,
+                                                message_name=f"Check position for {self.client_ext} after order")
+        self.position_verifier.check_base_position(external_report, self.first_trade_qty,
+                                                   text=f"Check base for {self.client_ext}")
+        self.sleep(1)
+        self.request_for_position_ext.set_unsubscribe()
+        self.fix_manager.send_message(self.request_for_position_ext)
+        self.sleep(1)
+        #
+        self.request_for_position_int.set_default()
+        self.request_for_position_int.change_parameters({"Instrument": self.instrument, "Currency": self.currency,
+                                                         "Account": self.client_int})
+        internal_report: list = self.fix_manager.send_message_and_receive_response(self.request_for_position_int,
+                                                                                   self.test_id)
+        self.position_report_int.set_params_from_reqeust(self.request_for_position_int)
+        self.position_report_int.change_parameter("LastPositEventType", "5")
+        self.fix_pos_verifier.check_fix_message(self.position_report_int,
+                                                message_name=f"Check position for {self.client_int} after order")
+        self.position_verifier.check_base_position(internal_report, self.internal_pos_qty,
+                                                   text=f"Check base for {self.client_int}")
+        self.request_for_position_int.set_unsubscribe()
+        self.fix_manager.send_message(self.request_for_position_int)
+        self.sleep(1)
+        # endregion
 
+        # region Step 3
+        self.ah_order.set_default_sor_from_trade(self.trade_request)
+        self.ah_order.change_parameters(
+            {"Account": self.client_int, "OrderQty": self.first_ah_qty,
+             "Currency": self.currency, "ClOrdID": ord_id})
+        self.ah_order.remove_parameter("Misc0")
+        ah_order_params = ["ClOrdID"]
+        self.fix_drop_copy_verifier.check_fix_message(self.ah_order, key_parameters=ah_order_params,
+                                                      message_name="Check that we create AH order and send to market")
 
-def check_order_book_1(even_name, case_id, base_request, act_ob, qty_exp, status_exp, client):
-    ob = OrdersDetails()
-    extraction_id = bca.client_orderid(4)
-    ob.set_extraction_id(extraction_id)
-    ob.set_default_params(base_request)
-    ob.set_filter(
-        ["Order ID", 'AO', "Orig", 'AutoHedger', "Strategy", "Hedging_Test", "Symbol", symbol, "Client ID", client])
-    qty = ExtractionDetail("orderBook.qty", "Qty")
-    status = ExtractionDetail("orderBook.sts", "Sts")
-    order_id = ExtractionDetail("orderBook.order_id", "Order ID")
+        self.ah_exec_report.set_params_from_trade_sor(self.trade_request)
+        self.ah_exec_report.change_parameters(
+            {"Currency": self.currency, "OrderID": ord_id, "Account": self.account_int, "CumQty": self.first_ah_qty,
+             "OrderQty": self.first_ah_qty})
+        ah_exec_params = ["OrderID", "OrdStatus", "ExecType"]
+        self.fix_drop_copy_verifier.check_fix_message(self.ah_exec_report,
+                                                      key_parameters=ah_exec_params,
+                                                      message_name="Check AutoHedger ExecutionReport on DropCopy gtw")
+        # endregion
+        # region Step 4
+        self.trade_request.set_default_params()
+        self.trade_request.update_fields_in_component("TradeEntryRequestBlock",
+                                                      {"AccountGroupID": self.client_ext,
+                                                       "ExecQty": self.second_trade_qty,
+                                                       "ListingID": self.listing_usd_zar})
+        response: list = self.java_api_manager.send_message_and_receive_response(self.trade_request)
+        ord_id = self.trade_request.get_ah_ord_id(response)
+        exec_id_ext = self.trade_request.get_exec_id(response)
+        self.sleep(5)
+        # endregion
 
-    ob.add_single_order_info(
-        OrderInfo.create(
-            action=ExtractionAction.create_extraction_action(extraction_details=[qty, status, order_id])))
-    response = call(act_ob.getOrdersDetails, ob.request())
+        # region Step 5
+        self.request_for_position_ext.set_default()
+        self.request_for_position_ext.change_parameters({"Instrument": self.instrument, "Currency": self.currency,
+                                                         "Account": self.client_ext})
+        external_report: list = self.fix_manager.send_message_and_receive_response(self.request_for_position_ext,
+                                                                                   self.test_id)
+        self.position_report_ext.set_params_from_reqeust(self.request_for_position_ext)
+        self.position_report_ext.change_parameter("LastPositEventType", "5")
+        self.position_report_ext.change_parameter("LastPositUpdateEventID", exec_id_ext)
+        self.fix_pos_verifier.check_fix_message(self.position_report_ext,
+                                                message_name=f"Check position for {self.client_ext} after order")
+        self.position_verifier.check_base_position(external_report, self.external_pos_qty,
+                                                   text=f"Check base for {self.client_ext}")
+        self.sleep(1)
+        self.request_for_position_ext.set_unsubscribe()
+        self.fix_manager.send_message(self.request_for_position_ext)
+        self.sleep(1)
+        #
+        self.request_for_position_int.set_default()
+        self.request_for_position_int.change_parameters({"Instrument": self.instrument, "Currency": self.currency,
+                                                         "Account": self.client_int})
+        internal_report: list = self.fix_manager.send_message_and_receive_response(self.request_for_position_int,
+                                                                                   self.test_id)
+        self.position_report_int.set_params_from_reqeust(self.request_for_position_int)
+        self.position_report_int.change_parameter("LastPositEventType", "5")
+        self.fix_pos_verifier.check_fix_message(self.position_report_int,
+                                                message_name=f"Check position for {self.client_int} after order")
+        self.position_verifier.check_base_position(internal_report, self.internal_pos_qty,
+                                                   text=f"Check base for {self.client_int}")
+        self.request_for_position_int.set_unsubscribe()
+        self.fix_manager.send_message(self.request_for_position_int)
+        self.sleep(1)
+        # endregion
 
-    verifier = Verifier(case_id)
-    verifier.set_event_name(even_name)
-    verifier.compare_values('Qty', str(qty_exp), response[qty.name].replace(",", ""))
-    verifier.compare_values('Sts', status_exp, response[status.name])
+        # region Step 6
+        self.ah_order.set_default_sor_from_trade(self.trade_request)
+        self.ah_order.change_parameters(
+            {"Account": self.client_int, "OrderQty": self.second_trade_qty,
+             "Currency": self.currency, "ClOrdID": ord_id})
+        self.ah_order.remove_parameter("Misc0")
+        ah_order_params = ["ClOrdID"]
+        self.fix_drop_copy_verifier.check_fix_message(self.ah_order,
+                                                      key_parameters=ah_order_params,
+                                                      message_name="Check a new AH order sent to market")
 
-    verifier.verify()
-    time.sleep(0.5)
-    return response[order_id.name]
-
-
-def check_order_book_2(even_name, case_id, base_request, act_ob, qty_exp, status_exp, client):
-    ob = OrdersDetails()
-    extraction_id = bca.client_orderid(4)
-    ob.set_extraction_id(extraction_id)
-    ob.set_default_params(base_request)
-    ob.set_filter(["Order ID", 'MO', "Orig", 'FIX', "Symbol", symbol, "Client ID", client])
-    qty = ExtractionDetail("orderBook.qty", "Qty")
-    status = ExtractionDetail("orderBook.sts", "Sts")
-    order_id = ExtractionDetail("orderBook.order_id", "Order ID")
-
-    ob.add_single_order_info(
-        OrderInfo.create(
-            action=ExtractionAction.create_extraction_action(extraction_details=[qty, status, order_id])))
-    response = call(act_ob.getOrdersDetails, ob.request())
-
-    verifier = Verifier(case_id)
-    verifier.set_event_name(even_name)
-    verifier.compare_values('Qty', str(qty_exp), response[qty.name].replace(",", ""))
-    verifier.compare_values('Sts', status_exp, response[status.name])
-
-    verifier.verify()
-    time.sleep(0.5)
-    return response[order_id.name]
-
-
-def execute(report_id, session_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-    pos_service = Stubs.act_fx_dealing_positions
-    case_base_request = get_base_request(session_id, case_id)
-    ob_act = Stubs.win_act_order_book
-    try:
-        #Precondition
-        initial_position_client = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client)
-        initial_position_quod = abs(get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod))
-
-        # Step 1
-        params_spot = CaseParamsSellRfq(client, case_id, orderqty=qty_1, symbol=symbol,
-                                        securitytype=security_type_spo, settldate=settle_date_spo,
-                                        settltype=settltype, securityid=symbol, settlcurrency=settle_currency,
-                                        currency=currency, side=side,
-                                        account=account_client)
-        send_rfq_order_spot(params_spot)
-        # Step 2
-        expected_pos_client = str(int(initial_position_client)+int(expected_pos_client_1))
-        actual_pos_client = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client)
-        compare_position('Checking positions', case_id, expected_pos_client, actual_pos_client)
-        actual_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
-        compare_position('Checking positions', case_id, expected_pos_quod_1, actual_pos_quod)
-        # Step 3
-        qty = str(4000000+int(initial_position_quod))
-        check_order_book_1('Checking placed order', case_id, case_base_request, ob_act, qty, "Terminated",
-                           client_quod)
-        # Step 4
-        params_spot = CaseParamsSellRfq(client, case_id, orderqty=qty_2, symbol=symbol,
-                                        securitytype=security_type_spo, settldate=settle_date_spo,
-                                        settltype=settltype, securityid=symbol, settlcurrency=settle_currency,
-                                        currency=currency, side=side,
-                                        account=account_client)
-        send_rfq_order_spot(params_spot)
-        # Step 5
-        expected_pos_client = str(int(initial_position_client) + int(expected_pos_client_2))
-        actual_pos_client = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client)
-        compare_position('Checking positions', case_id, expected_pos_client, actual_pos_client)
-        actual_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
-        compare_position('Checking positions', case_id, expected_pos_quod_1, actual_pos_quod)
-        compare_position('Checking positions', case_id, expected_pos_quod_1, actual_pos_quod)
-        # Step 6
-        check_order_book_1('Checking placed order', case_id, case_base_request, ob_act, "6000000", "Terminated",
-                           client_quod)
-        check_order_book_2('Checking placed order', case_id, case_base_request, ob_act, "6000000", "Terminated", client)
-        # Step 7
-        # TODO blocked by QAP-5449
-
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
+        self.ah_exec_report.set_params_from_trade_sor(self.trade_request)
+        self.ah_exec_report.change_parameters(
+            {"Currency": self.currency, "OrderID": ord_id, "Account": self.account_int, "CumQty": self.second_trade_qty,
+             "OrderQty": self.second_trade_qty})
+        ah_exec_params = ["OrderID", "OrdStatus", "ExecType"]
+        self.fix_drop_copy_verifier.check_fix_message(self.ah_exec_report,
+                                                      key_parameters=ah_exec_params,
+                                                      message_name="Check AutoHedger ExecutionReport on DropCopy gtw")
+        # endregion

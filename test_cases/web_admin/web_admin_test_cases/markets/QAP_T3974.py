@@ -105,63 +105,6 @@ class QAP_T3974(CommonTestCase):
         main_page.click_on_more_actions()
         main_page.click_on_edit()
 
-    def post_conditions(self):
-        values_tab = ListingsValuesSubWizard(self.web_driver_container)
-        values_tab.set_symbol(self.symbol)
-        values_tab.set_settl_type(self.settle_type)
-        values_tab.set_strike_price(self.strike_price)
-
-        translation_tab_listing = TranslationTab.ListingTable(self.web_driver_container)
-        translation_tab_listing.set_language(self.language[0])
-        translation_tab_listing.set_description(self.language_description[0])
-        translation_tab_listing.click_on_checkmark()
-
-        attachment_tab = ListingsAttachmentSubWizard(self.web_driver_container)
-        attachment_tab.set_sub_venue(self.sub_venue[0])
-
-        currency_tab = ListingsCurrencySubWizard(self.web_driver_container)
-        currency_tab.set_instr_currency(self.instr_currency[0])
-
-        dark_algo_commission_tab = ListingsDarkAlgoCommissionSubWizard(self.web_driver_container)
-        dark_algo_commission_tab.set_per_unit_comm_amt(self.per_unit_comm_amt[0])
-
-        market_data_tab = ListingsMarketDataSubWizard(self.web_driver_container)
-        market_data_tab.set_quote_book_symbol(self.quote_book_symbol[0])
-
-        market_identifiers_tab = ListingsMarketIdentifiersSubWizard(self.web_driver_container)
-        market_identifiers_tab.set_security_id(self.security_id[0])
-        market_identifiers_tab.set_security_id_source(self.security_id_source[0])
-
-        format_tab = ListingsFormatSubWizard(self.web_driver_container)
-        format_tab.set_tick_denominator(self.tick_denominator[0])
-
-        feature_tab = ListingsFeatureSubWizard(self.web_driver_container)
-        feature_tab.set_contract_multiplier(self.contract_multiplier[0])
-        feature_tab.click_on_async_indicator()
-        feature_tab.click_on_cross_through_eur()
-
-        validations_tab = ListingsValidationsSubWizard(self.web_driver_container)
-        validations_tab.set_min_trade_vol(self.min_trade_vol[0])
-
-        status_tab = ListingsStatusSubWizard(self.web_driver_container)
-        status_tab.set_trading_phase(self.trading_phase[0])
-
-        short_sell_tab = ListingsShortShellSubWizard(self.web_driver_container)
-        short_sell_tab.click_on_allow_short_sell()
-
-        misc_tab = ListingsMiscSubWizard(self.web_driver_container)
-        misc_tab.set_misc_0(self.misk_0[0])
-
-        counterpart_tab = ListingsCounterpartSubWizard(self.web_driver_container)
-        counterpart_tab.set_counterpart(self.counterpart[0])
-
-        fee_type_exemption = ListingsFeeTypeExemptionSubWizard(self.web_driver_container)
-        fee_type_exemption.click_on_levy_fee_exemption()
-
-        wizard = ListingsWizard(self.web_driver_container)
-        wizard.click_on_save_changes()
-        time.sleep(2)
-
     def test_context(self):
 
         try:
@@ -254,8 +197,6 @@ class QAP_T3974(CommonTestCase):
                                self.counterpart, True]
 
             self.verify("Edit data is correct", actual_result, excepted_result)
-
-            self.post_conditions()
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

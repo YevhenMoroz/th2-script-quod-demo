@@ -11,6 +11,7 @@ from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.forex.FixMessageExecutionReportPrevQuotedFX import \
     FixMessageExecutionReportPrevQuotedFX
 from test_framework.fix_wrappers.forex.FixMessageNewOrderMultiLegFX import FixMessageNewOrderMultiLegFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteCancel import FixMessageQuoteCancelFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
 
@@ -28,6 +29,7 @@ class QAP_T2454(TestCase):
         self.status = Status.Fill
         self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
         self.quote = FixMessageQuoteFX()
+        self.quote_cancel = FixMessageQuoteCancelFX()
         self.new_order_single = FixMessageNewOrderMultiLegFX()
         self.execution_report = FixMessageExecutionReportPrevQuotedFX()
         self.account = self.data_set.get_client_by_name("client_mm_3")
@@ -43,6 +45,7 @@ class QAP_T2454(TestCase):
             "Symbol": self.symbol,
             "SecurityType": self.security_type_swap
         }
+        self.response = None
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -58,7 +61,7 @@ class QAP_T2454(TestCase):
         self.quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][1].pop('LegSettlDate')
         self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
                                                            Currency=self.currency, Instrument=self.instrument)
-        response: list = self.fix_manager_gtw.send_message_and_receive_response(self.quote_request, self.test_id)
+        self.response: list = self.fix_manager_gtw.send_message_and_receive_response(self.quote_request, self.test_id)
         # endregion
         # region Step 2
         self.quote_request.get_parameter("NoRelatedSymbols")[0]["NoLegs"][0].update(
@@ -68,3 +71,8 @@ class QAP_T2454(TestCase):
         self.quote.set_params_for_quote_swap(self.quote_request)
         self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
         # endregion
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.quote_cancel.set_params_for_cancel(self.quote_request, self.response[0])
+        self.fix_manager_gtw.send_message(self.quote_cancel)

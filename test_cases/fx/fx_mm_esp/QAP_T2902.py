@@ -103,7 +103,7 @@ class QAP_T2902(TestCase):
         default_ask_px_2 = response[0].get_parameter("NoMDEntries")[3]["MDEntryPx"]
         default_bid_px_3 = response[0].get_parameter("NoMDEntries")[4]["MDEntryPx"]
         default_ask_px_3 = response[0].get_parameter("NoMDEntries")[5]["MDEntryPx"]
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"])
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"], response=response[0])
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot,
                                             direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])

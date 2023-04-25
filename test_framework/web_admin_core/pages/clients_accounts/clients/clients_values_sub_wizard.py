@@ -43,7 +43,10 @@ class ClientsValuesSubWizard(CommonPage):
         self.select_value_from_dropdown_list(ClientsConstants.VALUES_TAB_DISCLOSE_EXEC_XPATH, value)
 
     def clear_disclose_exec(self):
-        self.set_text_by_xpath(ClientsConstants.VALUES_TAB_DISCLOSE_EXEC_XPATH, "")
+        self.find_by_xpath(ClientsConstants.VALUES_TAB_DISCLOSE_EXEC_XPATH).click()
+        time.sleep(0.5)
+        self.use_backspace_button_to_element()
+        self.find_by_xpath(ClientsConstants.VALUES_TAB_DISCLOSE_EXEC_XPATH).click()
 
     def get_disclose_exec(self):
         return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_DISCLOSE_EXEC_XPATH)
@@ -85,7 +88,7 @@ class ClientsValuesSubWizard(CommonPage):
         return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_ALLOCATION_PREFERENCE_XPATH)
 
     def set_confirmation_service(self, value):
-        self.set_combobox_value(ClientsConstants.VALUES_TAB_CONFIRMATION_SERVICE_XPATH, value)
+        self.select_value_from_dropdown_list(ClientsConstants.VALUES_TAB_CONFIRMATION_SERVICE_XPATH, value)
 
     def get_confirmation_service(self):
         return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_CONFIRMATION_SERVICE_XPATH)
@@ -139,7 +142,10 @@ class ClientsValuesSubWizard(CommonPage):
         return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_ALLOCATION_MATCHING_SERVICE_XPATH)
 
     def clear_allocation_matching_service_field(self):
-        self.set_text_by_xpath(ClientsConstants.VALUES_TAB_ALLOCATION_MATCHING_SERVICE_XPATH, "")
+        self.find_by_xpath(ClientsConstants.VALUES_TAB_ALLOCATION_MATCHING_SERVICE_XPATH).click()
+        time.sleep(0.5)
+        self.use_backspace_button_to_element()
+        self.find_by_xpath(ClientsConstants.VALUES_TAB_ALLOCATION_MATCHING_SERVICE_XPATH).click()
 
     def set_external_allocation_matching_service(self, value):
         self.set_multiselect_field_value(ClientsConstants.VALUES_TAB_EXTERNAL_ALLOCATION_MATCHING_SERVICE_XPATH, value)
@@ -161,7 +167,7 @@ class ClientsValuesSubWizard(CommonPage):
         return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_GIVE_UP_SERVICE)
 
     def get_all_give_up_service_from_drop_menu(self):
-        self.set_text_by_xpath(ClientsConstants.VALUES_TAB_GIVE_UP_SERVICE, "")
+        self.find_by_xpath(ClientsConstants.VALUES_TAB_GIVE_UP_SERVICE).click()
         time.sleep(1)
         return self.get_all_items_from_drop_down(ClientsConstants.DROP_DOWN_MENU_XPATH)
 

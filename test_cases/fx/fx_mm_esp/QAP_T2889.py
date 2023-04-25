@@ -34,9 +34,9 @@ class QAP_T2889(TestCase):
         # region step 1-2
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.wrong_account)
 
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
 
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"])
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"], response=response[0])
         # endregion
 
         # region step 3

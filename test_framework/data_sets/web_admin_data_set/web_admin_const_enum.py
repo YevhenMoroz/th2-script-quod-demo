@@ -24,6 +24,7 @@ class WebAdminPasswords(Enum):
     password_3 = "adm_desk"
     password_4 = "adm_zone"
     password_5 = "adm_inst"
+    password_11 = "adm01"
     password_14 = "Qwerty123!"
 
 
@@ -268,6 +269,7 @@ class WebAdminAccountIdSource(Enum):
 
 class WebAdminDefaultRoute(Enum):
     default_route_1 = "ESDEMO"
+    default_route_2 = "ESFSSO"
 
 
 class WebAdminDefaultExecutionStrategy(Enum):

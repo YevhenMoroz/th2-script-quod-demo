@@ -104,12 +104,12 @@ class QAP_T8647(TestCase):
             [JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
             JavaApiFields.PositionBlock.value][0]
         client_commission_and_fees = str(float(self.qty) * float(self.price) / 100 * 5)
-        new_gross_weighted_avg_px = PositionCalculationManager.calculate_gross_weighted_avg_px_buy_side(
+        new_gross_weighted_avg_px = PositionCalculationManager.calculate_gross_weighted_avg_px_buy_side_execution(
             gross_weighted_avg_px,
             position_report[JavaApiFields.PositQty.value],
             self.qty, self.price)
 
-        daily_realized_gross_pl_after = PositionCalculationManager.calculate_today_gross_pl_buy_side(
+        daily_realized_gross_pl_after = PositionCalculationManager.calculate_today_gross_pl_buy_side_execution(
             daily_realized_gross_pl_before, posit_qty,
             self.qty, self.price,
             new_gross_weighted_avg_px)
@@ -143,7 +143,7 @@ class QAP_T8647(TestCase):
         self.rest_commission_sender.clear_commissions()
 
     def _precondition(self, quater_client_commission):
-        self.db_manager.update_insert_query(
+        self.db_manager.execute_query(
             f"UPDATE posit  SET quartertodateclientcomm = {quater_client_commission}  WHERE  instrid = '{self.instrument_id}' AND accountid = '{self.wash_book}';")
         self.ssh_client.send_command("qrestart QUOD.PKS")
         self.db_manager.close_connection()

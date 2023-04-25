@@ -55,18 +55,22 @@ class EnvironmentType(Enum):
 
     # region redlog
     quod317_read_log = 'quod317_read_log'
+    quod314_read_log = 'quod314_read_log'
     # endregion
 
     # region ssh client
     quod317_ssh_client = "quod317_ssh_client"
     quod310_ssh_client = "quod310_ssh_client"
     quod316_ssh_client = "quod316_ssh_client"
+    quod314_ssh_client = "quod314_ssh_client"
     quod319_ssh_client = "quod319_ssh_client"
     # endregion
 
     # region data base
     quod317_data_base = "quod317_data_base"
     quod316_data_base_mongo = "quod316_data_base_mongo"
+    quod314_data_base = "quod314_data_base"
     quod310_data_base_mongo = "quod310_data_base_mongo"
     quod320_data_base = "quod320_data_base"
+    quod306_data_base = "quod306_data_base"
     # endregion
