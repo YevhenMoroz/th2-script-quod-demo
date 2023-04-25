@@ -102,7 +102,7 @@ class QAP_T8172(TestCase):
         self.order_submit.update_fields_in_component('NewOrderSingleBlock', {
             'ListingList': {'ListingBlock': [{'ListingID': self.data_set.get_listing_id_by_name("listing_2")}]},
             'InstrID': instrument_id,
-            'AccountGroupID': self.client,
+            'accountGroupID': self.client,
             'OrdQty': self.qty,
             'Price': self.price,
             "ClOrdID": bca.client_orderid(9) + Path(__file__).name[:-3],
