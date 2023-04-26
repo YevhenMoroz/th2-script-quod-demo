@@ -1,5 +1,6 @@
 from pathlib import Path
 from custom import basic_custom_actions as bca
+from custom.verifier import Verifier
 from stubs import Stubs
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
@@ -9,6 +10,8 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.forex.FixMessageExecutionReportPrevQuotedFX import \
     FixMessageExecutionReportPrevQuotedFX
+from test_framework.fix_wrappers.forex.FixMessageNewOrderMultiLegFX import FixMessageNewOrderMultiLegFX
+from test_framework.fix_wrappers.forex.FixMessageNewOrderMultiLegSynergyFX import FixMessageNewOrderMultiLegSynergyFX
 from test_framework.fix_wrappers.forex.FixMessageNewOrderSinglePrevQuotedFX import FixMessageNewOrderSinglePrevQuotedFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteRequestSynergyFX import FixMessageQuoteRequestSynergyFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteSynergyFX import FixMessageQuoteSynergyFX
@@ -26,9 +29,10 @@ class QAP_T8635(TestCase):
         self.quote_request = FixMessageQuoteRequestSynergyFX(data_set=self.data_set)
         self.quote = FixMessageQuoteSynergyFX()
         self.client = self.data_set.get_client_by_name("client_mm_3")
-        self.order = FixMessageNewOrderSinglePrevQuotedFX()
+        self.order = FixMessageNewOrderMultiLegSynergyFX()
         self.execution_report = FixMessageExecutionReportPrevQuotedFX()
-
+        self.verifier = Verifier(self.test_id)
+        self.venue_type = str()
         self.party = [{
             "PartyID": self.client,
             "PartyIDSource": "D",
@@ -40,18 +44,23 @@ class QAP_T8635(TestCase):
         # region Step 1
         self.quote_request.set_rfq_synergy_params_multileg()
         self.quote_request.update_value_in_repeating_group("NoRelatedSym", "NoPartyIDs", self.party)
+        self.quote_request.add_tag({"VenueType": "M"})
         response: list = self.fix_manager_sel.send_message_and_receive_response(self.quote_request, self.test_id)
         # endregion
         # region step 2
         self.quote.set_params_for_multileg(self.quote_request)
+        self.quote.add_tag({"VenueType": "M"})
         self.fix_verifier.check_fix_message(self.quote)
-        # TODO check order msg
         # endregion
         # region Step 3
-        # self.order.set_default_synergy(self.quote_request, response[0], price="1.18999", side="1")
-        # self.fix_manager_sel.send_message_and_receive_response(self.order)
-        # # endregion
-        # # region Step 4
-        # self.execution_report.set_params_from_new_order_single_synergy(self.order)
-        # self.fix_verifier.check_fix_message(self.execution_report)
+        self.order.set_default_prev_quoted_multileg(self.quote_request, response[0], price="1.18999", side="1")
+        self.order.add_tag({"VenueType": "M"})
+        exec_report = self.fix_manager_sel.send_message_and_receive_response(self.order)[-1]
+        self.venue_type = exec_report.get_parameters()['VenueType']
+        # endregion
+        # region Step 4
+        self.verifier.set_parent_id(self.test_id)
+        self.verifier.set_event_name("Check VenueType mapping (OrderMultilegFIX message)")
+        self.verifier.compare_values("VenueType", "M", self.venue_type)
+        self.verifier.verify()
         # endregion
