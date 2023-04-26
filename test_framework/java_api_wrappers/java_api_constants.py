@@ -177,10 +177,12 @@ class JavaApiFields(Enum):
     OrderNotificationBlock = "OrdNotificationBlock"
     OrdID = 'OrdID'
     VenueOrdID = 'VenueOrdID'
+    PositionTransferInstructionBlock = 'PositionTransferInstructionBlock'
     TimeInForce = 'TimeInForce'
     ExpireDate = 'ExpireDate'
     ExecID = 'ExecID'
     AllocationReportBlock = 'AllocationReportBlock'
+    UnrealizedPL = 'UnrealizedPL'
     ConfirmationReportBlock = 'ConfirmationReportBlock'
     AffirmStatus = 'AffirmStatus'
     ConfirmationService = 'ConfirmationService'
