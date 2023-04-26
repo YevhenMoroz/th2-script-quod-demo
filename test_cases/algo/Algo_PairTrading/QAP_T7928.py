@@ -36,7 +36,6 @@ class QAP_T7928(TestCase):
         # region order parameters
         self.order_type = constants.OrderType.Market.value
         self.qty = 1000
-        self.qty_ltq = 1000
         self.price_ask_init = 27
         self.price_ask_mod = 22
         self.price_bid = 20
@@ -48,7 +47,7 @@ class QAP_T7928(TestCase):
         self.spread_devi_val = "5"
         self.pct = 1
         self.float_type = StrategyParameterType.Float.value
-        self.child_qty = AlgoFormulasManager.get_pov_child_qty_on_ltq(self.pct, self.qty_ltq, self.qty)
+        self.child_qty = self.qty
         self.side_sell = constants.OrderSide.Sell.value
         # endregion
 
@@ -122,7 +121,8 @@ class QAP_T7928(TestCase):
         self.PairTrad_order = FixMessageNewOrderMultiLegAlgo(data_set=self.data_set).set_PairTrading_params()
         self.PairTrad_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.PairTrad_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, OrdType=self.order_type, Instrument=self.instrument))
-        self.PairTrad_order.update_repeating_group('NoStrategyParameters', [dict(StrategyParameterName='SpreadDeviationNumber', StrategyParameterType=self.float_type, StrategyParameterValue=self.spread_devi_val), 
+        self.PairTrad_order.update_repeating_group('NoStrategyParameters', [dict(StrategyParameterName='PercentageVolume', StrategyParameterType=self.float_type, StrategyParameterValue=self.pct),
+                                                                            dict(StrategyParameterName='SpreadDeviationNumber', StrategyParameterType=self.float_type, StrategyParameterValue=self.spread_devi_val),
                                                                             dict(StrategyParameterName='SpreadDeviationType', StrategyParameterType=self.string_type, StrategyParameterValue=self.spread_devi_type)])
         self.fix_manager_sell.send_message_and_receive_response(self.PairTrad_order, case_id_1)
         # endregion
@@ -135,6 +135,7 @@ class QAP_T7928(TestCase):
         self.fix_verifier_sell.check_fix_message(pending_PairTrad_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew')
 
         new_PairTrad_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.PairTrad_order, self.gateway_side_sell, self.status_new)
+        new_PairTrad_order_params.remove_parameter('NoParty')
         self.fix_verifier_sell.check_fix_message(new_PairTrad_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
 
@@ -144,16 +145,6 @@ class QAP_T7928(TestCase):
         market_data_snap_shot_leg_1.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid)
         market_data_snap_shot_leg_1.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask_mod, MDEntrySize=self.qty_ask)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_leg_1)
-        
-        self.fix_manager_feed_handler.set_case_id(bca.create_event("Set LTQ for Leg 1 AGTA", self.test_id))
-        market_data_incr_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.leg_1, self.fix_env1.feed_handler)
-        market_data_incr_par.update_repeating_group_by_index('NoMDEntriesIR', MDEntryPx=self.price_ask_mod, MDEntrySize=self.qty_ltq)
-        self.fix_manager_feed_handler.send_message(market_data_incr_par)
-        
-        self.fix_manager_feed_handler.set_case_id(bca.create_event("Set LTQ for Leg 2 AST_MI", self.test_id))
-        market_data_incr_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.leg_2, self.fix_env1.feed_handler)
-        market_data_incr_par.update_repeating_group_by_index('NoMDEntriesIR', MDEntryPx=self.price_bid, MDEntrySize=self.qty_ltq)
-        self.fix_manager_feed_handler.send_message(market_data_incr_par)
         # endregion
 
         time.sleep(5)
@@ -201,11 +192,3 @@ class QAP_T7928(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):        
         RuleManager(Simulators.algo).remove_rules(self.rule_list)
-        
-        # region config reset
-        self.ssh_client.get_and_update_file(self.config_file, {".//PairTrading/usePoV": self.def_conf_value})
-        self.ssh_client.send_command("qrestart SATS")
-        time.sleep(35)
-        self.ssh_client.close()
-        # endregion
-        
