@@ -25,7 +25,7 @@ timeouts = True
 
 class QAP_T7168(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
-    def __init__(self, report_id, session_id, data_set, environment):
+    def __init__(self, report_id, session_id, data_set=None, environment=None):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(os.path.basename(__file__)[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
@@ -82,26 +82,7 @@ class QAP_T7168(TestCase):
 
         # endregion
 
-        # self.order_submit2.set_default_child_care(self.environment.get_list_fe_environment()[0].user_1,
-        #                                                       self.environment.get_list_fe_environment()[0].desk_ids[0],
-        #                                                       SubmitRequestConst.USER_ROLE_1.value, orders_id[0])
-        # self.order_submit2.update_fields_in_component(
-        #             "NewOrderSingleBlock", {"OrdQty": "50", "Price": "2"}
-        #         )
-        # self.order_submit3.set_default_child_care(self.environment.get_list_fe_environment()[0].user_1,
-        #                                                        self.environment.get_list_fe_environment()[0].desk_ids[
-        #                                                            0],
-        #                                                        SubmitRequestConst.USER_ROLE_1.value, orders_id[1])
-        # self.order_submit3.update_fields_in_component(
-        #     "NewOrderSingleBlock", {"OrdQty": "50", "Price": "2"}
-        # )
-        # self.java_api_manager.send_message_and_receive_response(self.order_submit2)
-        # child_orders_id.append(self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
-        #                            JavaApiFields.OrdReplyBlock.value][JavaApiFields.OrdID.value])
-        # self.java_api_manager.send_message_and_receive_response(self.order_submit3)
-        # child_orders_id.append(self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
-        #                            JavaApiFields.OrdReplyBlock.value][JavaApiFields.OrdID.value])
-
+        # region 1 - Split both CO
         try:
             nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.bs_connectivity,
                                                                                                   self.venue_client_name,
@@ -128,22 +109,6 @@ class QAP_T7168(TestCase):
             logger.error('Error execution', exc_info=True)
         finally:
             self.rule_manager.remove_rule(nos_rule)
-
-
-        # region Step 1 - split CO
-        # for counter in range(2):
-        #     self.order_submit2.set_default_child_dma(orders_id[counter])
-        #     self.order_submit2.update_fields_in_component(
-        #         "NewOrderSingleBlock", {"OrdQty": "50", "Price": "2"}
-        #     )
-        #     try:
-        #         self.order_submit2.remove_parameters(["CDOrdAssignInstructionsBlock"])
-        #         self.order_submit2.remove_fields_from_component("NewOrderSingleBlock", ["BookingType", "MaxPriceLevels"])
-        #     except:
-        #         print("oops")
-        #     self.java_api_manager.send_message_and_receive_response(self.order_submit2)
-        #     child_orders_id.append(self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
-        #                                JavaApiFields.OrdReplyBlock.value][JavaApiFields.OrdID.value])
         # endregion
 
         # region 2 - Cancel Child Orders
