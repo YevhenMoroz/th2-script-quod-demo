@@ -140,7 +140,7 @@ class QAP_T7590(TestCase):
         self.java_api_manager.compare_values({'DecreasedQty': str(float(amended_qty_to_transfer))},
                                              {'DecreasedQty': expected_decreased_qty},
                                              f'Verify that for {self.destination_acc} {JavaApiFields.PositQty.value} decreased on {amended_qty_to_transfer} (step 6)')
-        net_weighted_avg_px_destination_acc_before = source_position_before[JavaApiFields.NetWeightedAvgPx.value]
+        net_weighted_avg_px_destination_acc_before = destination_position_before[JavaApiFields.NetWeightedAvgPx.value]
 
         posit_qty_destination_before_transfer = destination_position_before[JavaApiFields.PositQty.value]
         expected_net_weighted_avg_px_destination = PositionCalculationManager.calculate_net_weighted_avg_px_for_position_transfer_destination_acc(posit_qty_destination_before_transfer, amended_qty_to_transfer, net_weighted_avg_px_destination_acc_before, self.price)
