@@ -50,10 +50,7 @@ class QAP_T7168(TestCase):
         # region Declaration
         qty = '150'
         price = '2'
-        client = self.data_set.get_client_by_name('client_pt_1')
-        venue_client_account = self.data_set.get_venue_client_names_by_name('client_pt_1_venue_1')
-        exec_destination = self.data_set.get_mic_by_name('mic_1')
-        currency = self.data_set.get_currency_by_name('currency_1')
+        client = self.data_set.get_client_by_name('client_1')
         orders_id = []
         child_orders_id = []
         name_of_bag = 'QAP_T7168'
