@@ -104,11 +104,13 @@ class QAP_T7582(TestCase):
         self.ja_manager.compare_values({JavaApiFields.CumQty.value: str(float(new_qty))}, execution_report,
                                        f'Verify that {order_id_second} has properly {JavaApiFields.CumQty.value} (step 4)')
         wash_book_posit_request = \
-            self.ja_manager.get_last_message(PKSMessageType.PositionReport.value, self.wash_book).get_parameters()[
+            self.ja_manager.get_last_message_by_multiple_filter(PKSMessageType.PositionReport.value,
+                                                                [self.wash_book, "PositQty"]).get_parameters()[
                 JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
                 JavaApiFields.PositionBlock.value][0]
         security_account_posit_request = \
-            self.ja_manager.get_last_message(PKSMessageType.PositionReport.value, self.source_acc).get_parameters()[
+            self.ja_manager.get_last_message_by_multiple_filter(PKSMessageType.PositionReport.value,
+                                                                [self.source_acc, "CumSellQty"]).get_parameters()[
                 JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
                 JavaApiFields.PositionBlock.value][0]
         # endregion

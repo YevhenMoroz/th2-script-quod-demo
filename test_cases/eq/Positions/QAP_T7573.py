@@ -86,7 +86,7 @@ class QAP_T7573(TestCase):
                                        result_for_wb1_new, "Step 5")
         self.ja_manager.compare_values({"PositQty": exp_pos_qty2, "TransferredOutAmt": exp_transferred_out_amt2},
                                        result_for_wb2_new, "Step 6")
-        exp_net_weighted_avg_px_acc = self.pos_manager.calculate_gross_weighted_avg_px_buy_side(
+        exp_net_weighted_avg_px_acc = self.pos_manager.calculate_gross_weighted_avg_px_buy_side_execution(
             result_for_wb2["NetWeightedAvgPx"], result_for_wb2["PositQty"], self.qty, self.price)
         self.ja_manager.compare_values({"NetWeightedAvgPx": exp_net_weighted_avg_px_acc},
                                        result_for_wb2_new, "Step 7")

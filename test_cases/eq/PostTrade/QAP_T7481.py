@@ -73,8 +73,8 @@ class QAP_T7481(TestCase):
              "AccountGroupID": self.client,
              "Price": self.price})
         self.java_api_manager.send_message_and_receive_response(self.order_submit)
-        order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
-            JavaApiFields.OrdReplyBlock.value
+        order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameters()[
+            JavaApiFields.OrderNotificationBlock.value
         ]
         ord_id = order_reply["OrdID"]
         # end of part
@@ -135,7 +135,7 @@ class QAP_T7481(TestCase):
                                                                         client_comm
                                                                     ]}
                                                                 })
-        self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
+        self.java_api_manager.send_message_and_receive_response(self.allocation_instruction, response_time=10000)
         allocation_report = \
             self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
                 JavaApiFields.AllocationReportBlock.value]
@@ -155,7 +155,7 @@ class QAP_T7481(TestCase):
 
         # region step 3
         self.approve_message.set_default_approve(alloc_id)
-        self.java_api_manager.send_message_and_receive_response(self.approve_message)
+        self.java_api_manager.send_message_and_receive_response(self.approve_message, response_time=12000)
         allocation_report = \
             self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
                 JavaApiFields.AllocationReportBlock.value]
@@ -201,9 +201,9 @@ class QAP_T7481(TestCase):
             'Check expected and actually results (part of step 7)')
         alloc_summary_status_is_absent = not JavaApiFields.AllocSummaryStatus.value in allocation_report
         self.java_api_manager.compare_values({'AllocSummaryStatusIsAbsent': True},
-                                            {'AllocSummaryStatusIsAbsent': alloc_summary_status_is_absent},
-                                            f'Check that {JavaApiFields.AllocSummaryStatus.value}'
-                                            f' is empty (part of step 7)')
+                                             {'AllocSummaryStatusIsAbsent': alloc_summary_status_is_absent},
+                                             f'Check that {JavaApiFields.AllocSummaryStatus.value}'
+                                             f' is empty (part of step 7)')
         # endregion
 
         # region step 8 Check ALS logs Status Canceled

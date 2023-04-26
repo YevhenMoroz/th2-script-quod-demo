@@ -152,14 +152,14 @@ class QAP_T8815(TestCase):
 
         self.dma_qdl11_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_Kepler_params()
         self.dma_qdl11_order.change_parameters(dict(Account=self.account_qdl11, ExDestination=self.ex_destination_qdl11, OrderQty=self.qty, Price=self.price, Instrument=self.instrument)).add_fields_into_repeating_group('NoParty', self.no_party)
-        self.fix_verifier_buy.check_fix_message(self.dma_qdl11_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_qdl11_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
         # endregion
 
         time.sleep(2)
 
         # region Check eliminate child DMA order
         er_eliminate_dma_qdl11_order_params = FixMessageExecutionReportAlgo().set_params_for_nos_eliminate_rule(self.dma_qdl11_order)
-        self.fix_verifier_buy.check_fix_message(er_eliminate_dma_qdl11_order_params, key_parameters=self.key_params_ER_eliminate_child, direction=self.ToQuod, message_name='Buy side ExecReport Eliminate Child DMA 1 order')
+        self.fix_verifier_buy.check_fix_message_kepler(er_eliminate_dma_qdl11_order_params, key_parameters=self.key_params_ER_eliminate_child, direction=self.ToQuod, message_name='Buy side ExecReport Eliminate Child DMA 1 order')
         # endregion
 
         # region Check that SORPING order was canceled
@@ -171,7 +171,7 @@ class QAP_T8815(TestCase):
         
         # region check reject cancel dma child order
         er_reject_cancel_dma_qdl11_order = FixMessageOrderCancelRejectReportAlgo().set_params_from_new_order_single(self.dma_qdl11_order, self.gateway_side_buy, self.status_reject)
-        self.fix_verifier_buy.check_fix_message(er_reject_cancel_dma_qdl11_order, self.key_params_ER_cancel_reject_child, self.ToQuod, "Buy Side OrderCancelRejectReport child DMA order")
+        self.fix_verifier_buy.check_fix_message_kepler(er_reject_cancel_dma_qdl11_order, self.key_params_ER_cancel_reject_child, self.ToQuod, "Buy Side OrderCancelRejectReport child DMA order")
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

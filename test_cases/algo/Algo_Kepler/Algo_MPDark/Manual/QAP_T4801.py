@@ -99,12 +99,12 @@ class QAP_T4801(TestCase):
 
         # region check that RFQ send to CHIX LIS UK
         nos_chixlis_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_RFQ_params().change_parameters(dict(Account=self.client, OrderQty=self.qty, ExDestination=self.ex_destination_chixlis, Instrument='*'))
-        self.fix_verifier_buy.check_fix_message(nos_chixlis_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side RFQ on CHIXLIS')
+        self.fix_verifier_buy.check_fix_message_kepler(nos_chixlis_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side RFQ on CHIXLIS')
         # endregion
 
         # region check that RFQ send to TURQUOISE LIS
         nos_trql_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_RFQ_params().change_parameters(dict(Account=self.client, OrderQty=self.qty, ExDestination=self.ex_destination_trql, Instrument='*'))
-        self.fix_verifier_buy.check_fix_message(nos_trql_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side RFQ on TQLIS')
+        self.fix_verifier_buy.check_fix_message_kepler(nos_trql_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side RFQ on TQLIS')
         # endregion
 
         time.sleep(5)

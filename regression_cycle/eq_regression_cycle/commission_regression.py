@@ -22,7 +22,7 @@ def check_ssh(file):
 
 
 def test_run(parent_id=None, version=None, skip_ssh=False, only_ssh=False):
-    report_id = bca.create_event(f"Commissions Analysis" if version is None else f"Commissions Analysis | {version}",
+    report_id = bca.create_event(f"Commissions Analysis" if version is None else f"Commissions | {version}",
                                  parent_id)
     seconds, nanos = timestamps()  # Store case start time
     configuration = ComponentConfiguration("Commissions")

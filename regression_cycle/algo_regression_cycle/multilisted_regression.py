@@ -2,11 +2,12 @@ from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
 from getpass import getuser as get_pc_name
-from datetime import datetime
+import time
+from datetime import timedelta, datetime
 
 from test_cases.algo.Algo_Multilisted.QAP_T8142 import QAP_T8142
 from test_cases.algo.Algo_Multilisted.QAP_T4053 import QAP_T4053
-# from test_cases.algo.Algo_Multilisted.QAP_T4043 import QAP_T4043
+from test_cases.algo.Algo_Multilisted.QAP_T4043 import QAP_T4043
 from test_cases.algo.Algo_Multilisted.QAP_T4058 import QAP_T4058
 from test_cases.algo.Algo_Multilisted.QAP_T4059 import QAP_T4059
 from test_cases.algo.Algo_Multilisted.QAP_T4137 import  QAP_T4137
@@ -84,12 +85,18 @@ logger.setLevel(logging.INFO)
 timeouts = False
 channels = dict()
 
-def test_run(parent_id=None, version=None):
+def test_run(parent_id= None, version = None, mode = None):
+    if mode == 'Regression':
+        report_id = bca.create_event(f"Algo_Multilisted" if version is None else f"Algo_Multilisted | {version}", parent_id)
+    else:
+        report_id = bca.create_event(f"Algo_Multilisted" if version is None else f"Algo_Multilisted (verification) | {version}", parent_id)
 
-    report_id = bca.create_event(f"Algo_Multilisted" if version is None else f"Algo_Multilisted | {version}", parent_id)
     try:
+        start_time = time.monotonic()
+        print(f'Algo_Multilisted StartTime is {datetime.utcnow()}')
+
         configuration = ComponentConfiguration("Multilisted")
-        # QAP_T4053(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute() venues should'nt support IOC
+        QAP_T4053(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4137(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4121(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4106(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
@@ -146,10 +153,14 @@ def test_run(parent_id=None, version=None):
         QAP_T4140(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4100(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4101(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        if __name__ == '__main__':
+            QAP_T4043(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+
+        end_time = time.monotonic()
+        print(f'Algo_Multilisted EndTime is {datetime.utcnow()}, duration is {timedelta(seconds=end_time-start_time)}')
 
     except Exception:
         logging.error("Error execution", exc_info=True)
-
 
 
 if __name__ == '__main__':

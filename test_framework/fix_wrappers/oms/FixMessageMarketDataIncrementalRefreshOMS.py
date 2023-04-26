@@ -7,21 +7,22 @@ from test_framework.fix_wrappers.FixMessageMarketDataIncrementalRefresh import F
 from datetime import datetime
 
 
-class FixMessageMarketDataIncrementalRefreshAlgo(FixMessageMarketDataIncrementalRefresh):
+class FixMessageMarketDataIncrementalRefreshOMS(FixMessageMarketDataIncrementalRefresh):
 
     def __init__(self, parameters: dict = None):
         super().__init__()
         super().change_parameters(parameters)
 
-    def set_market_data_incr_refresh(self) -> FixMessageMarketDataIncrementalRefresh:
+    def set_market_data_incr_refresh(self, md_req_id, md_update_action="0", md_entry_type="2", mf_entry_px="40",
+                                     md_entry_size="200") -> FixMessageMarketDataIncrementalRefresh:
         base_parameters = {
-            'MDReqID': '704',
+            'MDReqID': md_req_id,
             'NoMDEntriesIR': [
                 {
-                    'MDUpdateAction': '0',
-                    'MDEntryType': '2',
-                    'MDEntryPx': '40',
-                    'MDEntrySize': '3_000',
+                    'MDUpdateAction': md_update_action,
+                    'MDEntryType': md_entry_type,
+                    'MDEntryPx': mf_entry_px,
+                    'MDEntrySize': md_entry_size,
                     'MDEntryDate': datetime.utcnow().date().strftime("%Y%m%d"),
                     'MDEntryTime': datetime.utcnow().time().strftime("%H:%M:%S")
                 }
@@ -48,7 +49,6 @@ class FixMessageMarketDataIncrementalRefreshAlgo(FixMessageMarketDataIncremental
         }
         super().change_parameters(base_parameters)
         return self
-
 
     def set_market_data_incr_refresh_indicative(self) -> FixMessageMarketDataIncrementalRefresh:
         base_parameters = {
@@ -120,12 +120,12 @@ class FixMessageMarketDataIncrementalRefreshAlgo(FixMessageMarketDataIncremental
             str_phase = '9'
         elif phase == TradingPhases.Auction:
             str_phase = '6'
-        super().update_value_in_repeating_group("NoMDEntriesIR",  "TradingSessionSubID", str_phase)
+        super().update_value_in_repeating_group("NoMDEntriesIR", "TradingSessionSubID", str_phase)
         return self
 
-    def set_market_data_incr_refresh_open_px(self) -> FixMessageMarketDataIncrementalRefresh:
+    def set_market_data_incr_refresh_open_px(self, md_req_id) -> FixMessageMarketDataIncrementalRefresh:
         base_parameters = {
-            'MDReqID': '704',
+            'MDReqID': md_req_id,
             'NoMDEntriesIR': [
                 {
                     'MDUpdateAction': '0',

@@ -196,9 +196,12 @@ class AlgoFormulasManager:
 
 
     @staticmethod
-    def get_pov_child_qty_on_ltq(percentage_vol: float, last_traded_volume: int, ord_qty: int) -> int:
+    def get_pov_child_qty_on_ltq(percentage_vol: float, last_traded_volume: int, ord_qty: int, ratio: float = 1, round: str = 'ceil') -> int:
         if (percentage_vol > 0 and percentage_vol < 1):
-            return min(math.ceil((last_traded_volume * percentage_vol) / (1 - percentage_vol)), ord_qty)
+            if round=='ceil':
+                return min(math.ceil((last_traded_volume * percentage_vol * ratio) / (1 - percentage_vol)), ord_qty)
+            else:
+                return min(math.floor((last_traded_volume * percentage_vol * ratio) / (1 - percentage_vol)), ord_qty)
         # elif (percentage_vol == 100 or percentage_vol == 1):
         #     return min(math.ceil(last_traded_volume * percentage_vol), ord_qty)
         else:
@@ -324,7 +327,10 @@ class AlgoFormulasManager:
 
     @staticmethod
     def get_timestamps_for_current_phase(phase: TradingPhases, dateformat="full"):
-        tm = dt.now()
+        if dateformat == "full":
+            tm = dt.now()
+        else:
+            tm = dt.utcnow()
         if phase == TradingPhases.PreOpen:
             pop_start = tm - datetime.timedelta(seconds=tm.second, microseconds=tm.microsecond)
             opn_start = pop_start + timedelta(minutes=4)
@@ -513,38 +519,38 @@ class AlgoFormulasManager:
             tm = datetime.time
             return [
                 {
-                    "phaseBeginTime": tm(hour=6, minute=50, second=0).replace(tzinfo=timezone.utc),
-                    "phaseEndTime": tm(hour=7, minute=0, second=0).replace(tzinfo=timezone.utc),
+                    "phaseBeginTime": str(tm(hour=6, minute=50, second=0)),
+                    "phaseEndTime": str(tm(hour=7, minute=0, second=0)),
                     "tradingPhase": "POP",
                     "standardTradingPhase": "PRE",
                 },
                 {
-                    "phaseBeginTime": tm(hour=7, minute=0, second=0).replace(tzinfo=timezone.utc),
-                    "phaseEndTime": tm(hour=19, minute=0, second=0).replace(tzinfo=timezone.utc),
+                    "phaseBeginTime": str(tm(hour=7, minute=0, second=0)),
+                    "phaseEndTime": str(tm(hour=19, minute=0, second=0)),
                     "tradingPhase": "OPN",
                     "standardTradingPhase": "OPN",
                 },
                 {
-                    "phaseBeginTime": tm(hour=19, minute=0, second=0).replace(tzinfo=timezone.utc),
-                    "phaseEndTime": tm(hour=19, minute=10, second=0).replace(tzinfo=timezone.utc),
+                    "phaseBeginTime": str(tm(hour=19, minute=0, second=0)),
+                    "phaseEndTime": str(tm(hour=19, minute=10, second=0)),
                     "tradingPhase": "PCL",
                     "standardTradingPhase": "PCL",
                 },
                 {
-                    "phaseBeginTime": tm(hour=19, minute=10, second=0).replace(tzinfo=timezone.utc),
-                    "phaseEndTime": tm(hour=19, minute=20, second=0).replace(tzinfo=timezone.utc),
+                    "phaseBeginTime": str(tm(hour=19, minute=10, second=0)),
+                    "phaseEndTime": str(tm(hour=19, minute=20, second=0)),
                     "tradingPhase": "AUC",
                     "standardTradingPhase": "TAL",
                 },
                 {
-                    "phaseBeginTime": tm(hour=19, minute=20, second=0).replace(tzinfo=timezone.utc),
-                    "phaseEndTime": tm(hour=23, minute=59, second=0).replace(tzinfo=timezone.utc),
+                    "phaseBeginTime": str(tm(hour=19, minute=20, second=0)),
+                    "phaseEndTime": str(tm(hour=23, minute=59, second=0)),
                     "tradingPhase": "CLO",
                     "standardTradingPhase": "CLO",
                 },
                 {
-                    "phaseBeginTime": tm(hour=10, minute=10, second=0).replace(tzinfo=timezone.utc),
-                    "phaseEndTime": tm(hour=10, minute=15, second=0).replace(tzinfo=timezone.utc),
+                    "phaseBeginTime": str(tm(hour=10, minute=10, second=0)),
+                    "phaseEndTime": str(tm(hour=10, minute=15, second=0)),
                     "tradingPhase": "HAL",
                     "standardTradingPhase": "EXA",
                     "expiryCycle": "EVM",
@@ -744,3 +750,13 @@ class AlgoFormulasManager:
     @staticmethod
     def get_bi_lateral_auction_qty(indicative_volume, percentage, tradeable_qty, parent_qty):
         return AlgoFormulasManager.get_child_qty_for_auction((indicative_volume - tradeable_qty), percentage, parent_qty)
+
+    @staticmethod
+    def calculate_how_many_sec_to_this_time(phases, phase, start_time):
+        now = datetime.datetime.now()
+        for phase_from_list in phases:
+            if phase_from_list['tradingPhase'] == phase.value:
+                if start_time:
+                    return (phase_from_list['beginTime'] - now).seconds
+                else:
+                    return (phase_from_list['endTime'] - now).seconds

@@ -99,10 +99,10 @@ class QAP_T5036(TestCase):
         self.fix_verifier_sell.check_fix_message(self.DMA_order, self.key_params_NOS_parent, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
         er_pending_new_DMA_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.DMA_order, self.gateway_side_buy, self.status_pending)
-        self.fix_verifier_buy.check_fix_message(er_pending_new_DMA_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew')
+        self.fix_verifier_buy.check_fix_message_kepler(er_pending_new_DMA_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew')
 
         er_new_DMA_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.DMA_order, self.gateway_side_buy, self.status_new)
-        self.fix_verifier_buy.check_fix_message(er_new_DMA_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New')
+        self.fix_verifier_buy.check_fix_message_kepler(er_new_DMA_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New')
         # endregion
 
         time.sleep(10)
@@ -119,7 +119,7 @@ class QAP_T5036(TestCase):
 
         # region check cancel DMA order
         er_cancel_dma_4_qdl1_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.DMA_order, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message(er_cancel_dma_4_qdl1_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel DMA order")
+        self.fix_verifier_buy.check_fix_message_kepler(er_cancel_dma_4_qdl1_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel DMA order")
         # endregion
 
         rule_manager = RuleManager(Simulators.algo)

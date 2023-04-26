@@ -57,6 +57,7 @@ class QAP_T7552(TestCase):
         self.bs_connectivity = self.fix_env.buy_side
         self.qty = "100"
         self.price = "10"
+        self.price_for_allocation = '55'
         self.rule_manager = RuleManager(sim=Simulators.equity)
         self.client = self.data_set.get_client("client_pt_1")  # MOClient
         self.alloc_account = self.data_set.get_account_by_name("client_pt_1_acc_1")  # MOClient_SA1
@@ -182,7 +183,7 @@ class QAP_T7552(TestCase):
             {
                 "AllocAccountID": self.alloc_account,
                 "AllocQty": self.qty,
-                "AvgPx": self.price,
+                "AvgPx": self.price_for_allocation,
             },
         )
         responses = self.java_api_manager.send_message_and_receive_response(self.confirmation_request)
@@ -194,7 +195,7 @@ class QAP_T7552(TestCase):
             {
                 "ConfirmStatus": ConfirmationReportConst.ConfirmStatus_AFF.value,
                 "MatchStatus": ConfirmationReportConst.MatchStatus_MAT.value,
-                "AvgPx": str(float(self.price)),
+                "AvgPx": str(float(self.price_for_allocation)),
                 "AllocQty": str(float(self.qty)),
                 "SettlType": AllocationInstructionConst.SettlType_REG.value,
             },
