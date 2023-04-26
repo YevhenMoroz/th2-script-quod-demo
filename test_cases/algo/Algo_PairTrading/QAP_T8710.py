@@ -48,7 +48,7 @@ class QAP_T8710(TestCase):
         self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
         self.spread_devi_type = "Currency"
         self.string_type = StrategyParameterType.String.value
-        self.spread_devi_val = "0.1"
+        self.spread_devi_val = "5"
         self.float_type = StrategyParameterType.Float.value
         self.child_qty = AlgoFormulasManager.get_pov_child_qty_on_ltq(self.pct, self.qty_ltq, self.qty, round=self.round)
         self.side_sell = constants.OrderSide.Sell.value
