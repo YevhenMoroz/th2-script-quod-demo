@@ -61,7 +61,6 @@ class QAP_T3244(TestCase):
     def run_pre_conditions_and_steps(self):
         # region precondition part 1: DELETE posit records
         tree = ET.parse(self.local_path)
-        quod = tree.getroot()
         tree.getroot().find("limits/buyingPower/enabled").text = 'true'
         tree.write("temp.xml")
         self.ssh_client.send_command("~/quod/script/site_scripts/change_permission_script")
