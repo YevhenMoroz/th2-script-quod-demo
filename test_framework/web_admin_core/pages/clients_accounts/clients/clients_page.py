@@ -91,3 +91,6 @@ class ClientsPage(CommonPage):
 
     def is_searched_client_found(self, value):
         return self.is_element_present(ClientsConstants.DISPLAYED_CLIENT_XPATH.format(value))
+
+    def set_global_filter(self, value):
+        self.set_text_by_xpath(ClientsConstants.MAIN_PAGE_GLOBAL_FILTER_XPATH, value)

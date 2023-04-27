@@ -31,6 +31,7 @@ class ClientsConstants:
 
 
     # main page
+    MAIN_PAGE_GLOBAL_FILTER_XPATH = '//*[@class="left ng-star-inserted"]//input'
     MAIN_PAGE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
     MAIN_PAGE_DESCRIPTION_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[2]//input'
     MAIN_PAGE_CLEARING_ACCOUNT_TYPE_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[3]//input'
