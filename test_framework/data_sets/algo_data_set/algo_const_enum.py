@@ -708,6 +708,14 @@ class AlgoPreFilter(Enum):
         'OrdStatus': ('4', 'EQUAL')
     }
 
+    pre_filer_equal_ER_cancel_replace = {
+        'header': {
+            'MsgType': ('8', 'EQUAL')
+        },
+        'ExecType': ('5', 'EQUAL'),
+        'OrdStatus': ('0', 'EQUAL')
+    }
+
     pre_filer_equal_ER_reject = {
         'header': {
             'MsgType': ('8', 'EQUAL')
