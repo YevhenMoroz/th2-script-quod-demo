@@ -14,7 +14,8 @@ from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.fix_wrappers.oms.FixMessageAllocationInstructionReportOMS import \
     FixMessageAllocationInstructionReportOMS
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
-from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, ExecutionReportConst, SubmitRequestConst
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, ExecutionReportConst, SubmitRequestConst, \
+    OrderReplyConst
 from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS import AllocationInstructionOMS
 from test_framework.java_api_wrappers.oms.ors_messges.ComputeBookingFeesCommissionsRequestOMS import \
     ComputeBookingFeesCommissionsRequestOMS
@@ -55,7 +56,7 @@ class QAP_T10382(TestCase):
         self.compute_request = ComputeBookingFeesCommissionsRequestOMS(self.data_set)
         self.alloc_instr = AllocationInstructionOMS(self.data_set)
         self.alloc_report = FixMessageAllocationInstructionReportOMS()
-        self.instr_id = self.data_set.get_instrument_id_by_name("instrument_2")
+        self.instr_id_for_book = self.data_set.get_instrument_id_by_name("instrument_1")
         self.listing1 = self.data_set.get_listing_id_by_name("listing_6")
         self.listing2 = self.data_set.get_listing_id_by_name("listing_7")
         self.listing3 = self.data_set.get_listing_id_by_name("listing_8")
@@ -72,6 +73,7 @@ class QAP_T10382(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        # region change config
         tree = ET.parse(self.local_path)
         quod = tree.getroot()
         quod.find("clientCommissions/eventType").text = 'DFD'
@@ -114,10 +116,11 @@ class QAP_T10382(TestCase):
         # endregion
 
         # region first manual order execution (precondition)
-        qty_to_exec = str(int(self.qty)/2)
+        qty_to_exec = str(int(self.qty) / 2)
         self.trade_request.set_default_trade(ord_id, self.price, qty_to_exec)
         self.java_api_manager.send_message_and_receive_response(self.trade_request)
         exec_report = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()
+        exec_id1 = exec_report[JavaApiFields.ExecutionReportBlock.value][JavaApiFields.ExecID.value]
         self.java_api_manager.compare_values(
             {JavaApiFields.ExecutionReportBlock.value: JavaApiFields.ClientCommissionList.value}, exec_report,
             "Check commission is not present in the Execution (LastMkt = XPAR)", VerificationMethod.NOT_CONTAINS)
@@ -127,6 +130,7 @@ class QAP_T10382(TestCase):
         self.trade_request.update_fields_in_component('TradeEntryRequestBlock', {'LastMkt': self.chix_mic})
         self.java_api_manager.send_message_and_receive_response(self.trade_request)
         exec_report = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()
+        exec_id2 = exec_report[JavaApiFields.ExecutionReportBlock.value][JavaApiFields.ExecID.value]
         self.java_api_manager.compare_values(
             {JavaApiFields.ExecutionReportBlock.value: JavaApiFields.ClientCommissionList.value}, exec_report,
             "Check commission is not present in the Execution (LastMkt = CHIX)", VerificationMethod.NOT_CONTAINS)
@@ -146,7 +150,8 @@ class QAP_T10382(TestCase):
         # region get commission and fee from Booking Ticket(precondition)
         cross_price = (int(self.price) / 100) * 2
         self.compute_request.set_list_of_order_alloc_block(cl_ord_id, ord_id, post_trd_sts)
-        self.compute_request.set_list_of_exec_alloc_block(self.qty, exec_id, self.price, post_trd_sts)
+        self.compute_request.set_list_of_exec_alloc_block(qty_to_exec, exec_id1, self.price, post_trd_sts)
+        self.compute_request.set_list_of_exec_alloc_block(qty_to_exec, exec_id2, self.price, post_trd_sts)
         self.compute_request.set_default_compute_booking_request(self.qty, cross_price, self.client)
         self.compute_request.update_fields_in_component("ComputeBookingFeesCommissionsRequestBlock",
                                                         {"RecomputeInSettlCurrency": "Yes",
@@ -165,10 +170,16 @@ class QAP_T10382(TestCase):
         self.alloc_instr.set_default_book(ord_id)
         self.alloc_instr.update_fields_in_component("AllocationInstructionBlock",
                                                     {"AccountGroupID": self.client,
-                                                     "InstrID": self.instr_id, "AvgPx": self.price,
+                                                     "InstrID": self.instr_id_for_book, "AvgPx": self.price,
                                                      "GrossTradeAmt": '2000'})
         self.java_api_manager.send_message_and_receive_response(self.alloc_instr)
+        ord_update = self.java_api_manager.get_last_message(ORSMessageType.OrdUpdate.value).get_parameter(
+            JavaApiFields.OrdUpdateBlock.value)
         alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()
+        self.java_api_manager.compare_values(
+            {JavaApiFields.PostTradeStatus.value: OrderReplyConst.PostTradeStatus_BKD.value},
+            ord_update,
+            "Check order is booked")
         self.java_api_manager.compare_values(
             {JavaApiFields.AllocationReportBlock.value: JavaApiFields.ClientCommissionList.value},
             alloc_report,
