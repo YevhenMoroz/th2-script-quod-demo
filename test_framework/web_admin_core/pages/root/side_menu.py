@@ -490,3 +490,7 @@ class SideMenu(CommonPage):
         time.sleep(1)
         return self.is_element_present(RootConstants.WASHBOOK_RULES_ITEM_XPATH)
 
+    def get_position_tab_icon_attributes(self):
+        icon_attributes = self.find_elements_by_xpath(RootConstants.POSITIONS_ICON_XPATH)
+        return [_.get_attribute('d') for _ in icon_attributes]
+
