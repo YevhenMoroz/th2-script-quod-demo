@@ -122,30 +122,32 @@ def test_run(parent_id=None, version=None, mode=None):
         QAP_T7928(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8574(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
-        # usePoV=false
-        
-        # region precondition: Prepare SATS configuration
-        ssh_client.get_and_update_file(config_file, {".//PairTrading/usePoV": mod_conf_value})
-        ssh_client.send_command("qrestart SATS")
-        time.sleep(35)
-        # endregion
-        
-        # QAP_T8064(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute() test will fail because FIX ER Fill is not sent to the SS
-        # QAP_T4247(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute() test will fail because FIX ER Fill is not sent to the SS
-        QAP_T8037(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4254(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4239(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        # QAP_T8584(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute() test will fail because FIX ER Fill is not sent to the SS
-        # QAP_T8582(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute() test will fail because FIX ER Fill is not sent to the SS
-        QAP_T8819(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T8711(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        # QAP_T8619(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute() waiting for Vivien's answer
+        if __name__ == '__main__':
+            # tests with config change
+            # usePoV=false
 
-        # region postcondition: Return SATS configuration
-        ssh_client.get_and_update_file(config_file, {".//PairTrading/usePoV": def_conf_value})
-        ssh_client.send_command("qrestart SATS")
-        time.sleep(35)
-        # endregion
+            # region precondition: Prepare SATS configuration
+            ssh_client.get_and_update_file(config_file, {".//PairTrading/usePoV": mod_conf_value})
+            ssh_client.send_command("qrestart SATS")
+            time.sleep(35)
+            # endregion
+
+            # QAP_T8064(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute() test will fail because FIX ER Fill is not sent to the SS
+            # QAP_T4247(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute() test will fail because FIX ER Fill is not sent to the SS
+            QAP_T8037(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+            QAP_T4254(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+            QAP_T4239(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+            # QAP_T8584(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute() test will fail because FIX ER Fill is not sent to the SS
+            # QAP_T8582(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute() test will fail because FIX ER Fill is not sent to the SS
+            QAP_T8819(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+            QAP_T8711(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+            # QAP_T8619(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute() waiting for Vivien's answer
+
+            # region postcondition: Return SATS configuration
+            ssh_client.get_and_update_file(config_file, {".//PairTrading/usePoV": def_conf_value})
+            ssh_client.send_command("qrestart SATS")
+            time.sleep(35)
+            # endregion
         
         end_time = time.monotonic()
         print(f'Algo_PairTrading EndTime is {datetime.utcnow()}, duration is {timedelta(seconds=end_time-start_time)}')
