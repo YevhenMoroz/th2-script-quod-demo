@@ -36,7 +36,7 @@ class QAP_T7576(TestCase):
         self.java_api_connectivity = self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
         self.posit_transfer = PositionTransferInstructionOMS(self.data_set)
-        self.instrument_id = self.data_set.get_instrument_id_by_name('instrument_1')
+        self.instrument_id = self.data_set.get_instrument_id_by_name('instrument_2')
         self.request_for_position = RequestForPositions()
         self.qty = '100'
         self.price = '2'
@@ -57,6 +57,7 @@ class QAP_T7576(TestCase):
         self.posit_transfer.set_default_transfer(self.source_acc, self.destination_acc,
                                                  self.qty,
                                                  self.price)
+        self.posit_transfer.update_fields_in_component(JavaApiFields.PositionTransferInstructionBlock.value, {JavaApiFields.InstrID.value: self.instrument_id})
         self.java_api_manager.send_message_and_receive_response(self.posit_transfer)
         source_posit_before_create = \
             self.java_api_manager.get_last_message_by_multiple_filter(PKSMessageType.PositionReport.value,
@@ -105,10 +106,10 @@ class QAP_T7576(TestCase):
         # region step 5: Check that PositQty of source account decreased
         source_posit_qty_after_create = source_posit_after_create[JavaApiFields.PositQty.value]
         source_posit_qty_before_create = source_posit_before_create[JavaApiFields.PositQty.value]
-        expected_increased_qty = str(float(source_posit_qty_before_create) -
+        expected_decreased_qty = str(float(source_posit_qty_before_create) -
                                      float(source_posit_qty_after_create))
         self.java_api_manager.compare_values({'DecreasedQty': str(float(self.qty))},
-                                             {'DecreasedQty': expected_increased_qty},
+                                             {'DecreasedQty': expected_decreased_qty},
                                              f'Verify that for {self.source_acc} {JavaApiFields.PositQty.value} decreased on {self.qty} (step 5)')
         # endregion
 
@@ -136,10 +137,10 @@ class QAP_T7576(TestCase):
         # region step 7: Verify that PositQty of destination account decreased
         destination_posit_qty_after = destination_position_after_create[JavaApiFields.PositQty.value]
         destination_posit_qty_before = destination_position_before_create[JavaApiFields.PositQty.value]
-        expected_decreased_qty = str(float(destination_posit_qty_before) -
+        expected_increased_qty = str(float(destination_posit_qty_before) -
                                      float(destination_posit_qty_after))
         self.java_api_manager.compare_values({'IncreasedQty': str(float(self.qty))},
-                                             {'IncreasedQty': expected_decreased_qty},
+                                             {'IncreasedQty': expected_increased_qty},
                                              f'Verify that for {self.destination_acc} {JavaApiFields.PositQty.value} increased on {self.qty} (step 7)')
         # endregion
 
