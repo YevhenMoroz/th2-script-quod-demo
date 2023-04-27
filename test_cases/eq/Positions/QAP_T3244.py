@@ -10,11 +10,11 @@ from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 import xml.etree.ElementTree as ET
 from test_framework.core.try_exept_decorator import try_except
-from test_framework.data_sets.message_types import PKSMessageType
+from test_framework.data_sets.message_types import PKSMessageType, ORSMessageType
 from test_framework.db_wrapper.db_manager import DBManager
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, \
-    SubscriptionRequestTypes, PosReqTypes, SubmitRequestConst
+    SubscriptionRequestTypes, PosReqTypes, SubmitRequestConst, OrderReplyConst
 from test_framework.java_api_wrappers.oms.es_messages.ExecutionReportOMS import ExecutionReportOMS
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
 from test_framework.java_api_wrappers.ors_messages.OrderModificationRequest import OrderModificationRequest
@@ -85,6 +85,11 @@ class QAP_T3244(TestCase):
                                                                   {JavaApiFields.AllocAccountID.value: self.account,
                                                                    JavaApiFields.AllocQty.value: self.qty}]}}})
         self._trade_order(self._create_order)
+        order_reply = self.ja_manager.get_last_message(ORSMessageType.OrderReply.value).get_parameters()[
+            JavaApiFields.OrdReplyBlock.value]
+        self.ja_manager.compare_values({JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value},
+                                       order_reply,
+                                       'Verify that order created (precondition)')
         # endregion
 
         # region step 1-5
@@ -96,6 +101,11 @@ class QAP_T3244(TestCase):
                                                      {JavaApiFields.ClOrdID.value: bca.client_orderid(9),
                                                       JavaApiFields.Side.value: SubmitRequestConst.Side_Sell.value})
         self._create_order()
+        order_reply = self.ja_manager.get_last_message(ORSMessageType.OrderReply.value).get_parameters()[
+            JavaApiFields.OrdReplyBlock.value]
+        self.ja_manager.compare_values({JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value},
+                                       order_reply,
+                                       'Verify that order created (step 5)')
         # endregion
 
         # region step 6: Check that LeavesSellQty increased
@@ -107,6 +117,7 @@ class QAP_T3244(TestCase):
                                        position_report,
                                        f'Verify that LeavesSellQty increased on {self.qty} (step 6)')
         # endregion
+
 
     def _extract_positions(self, firm_account):
         self.request_for_position.set_default(SubscriptionRequestTypes.SubscriptionRequestType_SUB.value,
