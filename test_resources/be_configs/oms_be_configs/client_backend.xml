@@ -33,6 +33,11 @@
         <external>true</external>
 		<maintainOnConfirmation>false</maintainOnConfirmation>
     </positions>
+    <limits>
+        <buyingPower>
+            <enabled>false</enabled> <!-- Buying power validation and calculation token -->
+        </buyingPower>
+    </limits>
     <washbook>
 	<enabled>true</enabled>
         <default>DefaultWashBook</default> <!-- AccountID of the default wash book -->

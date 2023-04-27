@@ -111,7 +111,7 @@ class OmsClients(Enum):
     client_pos_1 = "36ONE"  # Institutional
     client_pos_2 = "ABAXX"  # Institutional
     client_pos_3 = "SBK"  # Firm
-    client_pos_5 = "CLIENT_RET_POSIT"
+    client_pos_5 = "CLIENT_POSIT_RET"
     client_pos_4 = "TEST"  # BDA test
     """Dummy"""
     client_dummy = "DUMMY"
@@ -172,7 +172,7 @@ class OmsVenueClientNames(Enum):
     client_pos_3_venue_1 = "SBK_PARIS"
     client_pos_1_venue_1 = "36ONE_PARIS"
     client_pos_1_venue_2 = "36ONE_EUREX"
-    client_pos_5_venue_1 = 'CLIENT_RET_POSIT_PARIS'
+    client_pos_5_venue_1 = 'CLIENT_RET_PARIS'
     """Care"""
     client_co_1_venue_1 = "CLIENT_FIX_CARE_PARIS"
     client_co_2_venue_1 = "CLIENT_FIX_CARE_WB_PARIS"
@@ -659,3 +659,7 @@ class OMSPartyRoles(Enum):
     party_role_executing_trader = 'ExecutingTrader'
     party_role_contra_firm = 'ContraFirm'
     party_role_executing_firm = 'ExecutingFirm'
+
+
+class OMSCashAccountIDs(Enum):
+    cash_account_id_client_posit_ret_sa_1 = 200004
