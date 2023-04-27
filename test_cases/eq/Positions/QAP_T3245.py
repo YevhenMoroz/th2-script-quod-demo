@@ -118,8 +118,6 @@ class QAP_T3245(TestCase):
         # region step 6: Check that LeavesSellQty still the same
         leaves_sell_qty = \
         self.db_manager.execute_query(f"SELECT leavessellqty FROM posit WHERE accountid = '{self.account}'")[0]
-        print(leaves_sell_qty)
-        print('LEAVES SELL QTY')
         self.ja_manager.compare_values({JavaApiFields.LeavesSellQty.value: '0.0'},
                                        {JavaApiFields.LeavesSellQty.value: str(float(leaves_sell_qty))},
                                        f'Verify that LeavesSellQty still the same on {self.qty} (step 6)')
