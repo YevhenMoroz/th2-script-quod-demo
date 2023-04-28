@@ -22,7 +22,7 @@ timeouts = True
 
 
 @try_except(test_id=Path(__file__).name[:-3])
-class QAP_T6942(TestCase):
+class QAP_T6941(TestCase):
     def __init__(self, report_id, session_id=None, data_set=None, environment=None):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
@@ -69,6 +69,7 @@ class QAP_T6942(TestCase):
                                                                   JavaApiFields.AllocQty.value: self.qty}]}},
                                                          JavaApiFields.AccountGroupID.value: self.client,
                                                          JavaApiFields.OrdQty.value: self.qty,
+                                                         JavaApiFields.Side.value: SubmitRequestConst.Side_Sell.value,
                                                          JavaApiFields.Price.value: self.price})
         self.ja_manager.send_message_and_receive_response(self.order_submit, response_time=15_000)
         order_reply = self.ja_manager.get_last_message(ORSMessageType.OrderReply.value).get_parameters()[
@@ -90,8 +91,8 @@ class QAP_T6942(TestCase):
             execution_report, 'Verify that CO order partially filled (step 2)')
         # endregion
 
-        # region step 3: Check that BuyAvgPx has properly calculated value
-        buy_avg_px_before = position[JavaApiFields.BuyAvgPx.value]
+        # region step 3: Check that SellAvgPx has properly calculated value
+        sell_avg_px_before = position[JavaApiFields.SellAvgPx.value]
         posit_qty_before = position[JavaApiFields.PositQty.value]
         position_after_first_trade = \
             self.ja_manager.get_last_message_by_multiple_filter(PKSMessageType.PositionReport.value,
@@ -100,17 +101,17 @@ class QAP_T6942(TestCase):
                 JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
                 JavaApiFields.PositionBlock.value][0]
         fees = float(trade_qty) * float(self.price) / 100 * float(5)
-        buy_avg_px_expected = PositionCalculationManager.calculate_buy_avg_px_execution_buy_side(posit_qty_before,
+        sell_avg_px_expected = PositionCalculationManager.calculate_sell_avg_px_execution_sell_side_net(posit_qty_before,
                                                                                                  trade_qty, self.price,
-                                                                                                 buy_avg_px_before,
+                                                                                                 sell_avg_px_before,
                                                                                                  fees=str(fees))
-        self.ja_manager.compare_values({JavaApiFields.BuyAvgPx.value: buy_avg_px_expected},
+        self.ja_manager.compare_values({JavaApiFields.SellAvgPx.value: sell_avg_px_expected},
                                        position_after_first_trade,
-                                       f'Verify that {JavaApiFields.BuyAvgPx.value} of {self.sec_account} has properly calculated value (step 3)')
+                                       f'Verify that {JavaApiFields.SellAvgPx.value} of {self.sec_account} has properly calculated value (step 3)')
         # endregion
 
         # region step 4: Trade Care order again
-        second_price = '1.2'
+        second_price = '2.1'
         self.trade_entry_oms.set_default_trade(order_id, second_price, trade_qty)
         self.ja_manager.send_message_and_receive_response(self.trade_entry_oms)
         execution_report = self.ja_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
@@ -120,7 +121,7 @@ class QAP_T6942(TestCase):
             execution_report, 'Verify that Care order fully filled (step 4)')
         # endregion
 
-        # region step 5 : Verify that BuyAvgPx value calculated properly
+        # region step 5 : Verify that SellAvgPx value calculated properly
         position_after_second_trade = \
             self.ja_manager.get_last_message_by_multiple_filter(PKSMessageType.PositionReport.value,
                                                                 [JavaApiFields.PositQty.value,
@@ -129,14 +130,14 @@ class QAP_T6942(TestCase):
                 JavaApiFields.PositionBlock.value][0]
         fees = float(trade_qty) * float(second_price) / 100 * float(5)
         posit_qty_before_second_trade = position_after_first_trade[JavaApiFields.PositQty.value]
-        buy_avg_px_expected_after_second_trade = PositionCalculationManager.calculate_buy_avg_px_execution_buy_side(
+        sell_avg_px_expected_after_second_trade = PositionCalculationManager.calculate_sell_avg_px_execution_sell_side_net(
             posit_qty_before_second_trade,
             trade_qty, second_price,
-            buy_avg_px_expected,
+            sell_avg_px_expected,
             fees=str(fees))
-        self.ja_manager.compare_values({JavaApiFields.BuyAvgPx.value: buy_avg_px_expected_after_second_trade},
+        self.ja_manager.compare_values({JavaApiFields.SellAvgPx.value: sell_avg_px_expected_after_second_trade},
                                        position_after_second_trade,
-                                       f'Verify that {JavaApiFields.BuyAvgPx.value} of {self.sec_account} has properly calculated value (step 5)')
+                                       f'Verify that {JavaApiFields.SellAvgPx.value} of {self.sec_account} has properly calculated value (step 5)')
         # endregion
 
         # region step 6: Cancel Care order
@@ -149,16 +150,16 @@ class QAP_T6942(TestCase):
                                        ord_reply, 'Verify that order canceled (step 6)')
         # endregion
 
-        # region step 7: Check BuyAvgPx
+        # region step 7: Check SellAvgPx
         position_after_cancel = \
             self.ja_manager.get_last_message_by_multiple_filter(PKSMessageType.PositionReport.value,
                                                                 [JavaApiFields.PositQty.value,
                                                                  self.sec_account]).get_parameters()[
                 JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
                 JavaApiFields.PositionBlock.value][0]
-        self.ja_manager.compare_values({JavaApiFields.BuyAvgPx.value: buy_avg_px_expected_after_second_trade},
+        self.ja_manager.compare_values({JavaApiFields.SellAvgPx.value: sell_avg_px_expected_after_second_trade},
                                        position_after_cancel,
-                                       f'Verify that {JavaApiFields.BuyAvgPx.value} does not change (step 7)')
+                                       f'Verify that {JavaApiFields.SellAvgPx.value} does not change (step 7)')
         # endregion
 
     def _extract_cum_values_for_acc(self, acc):
