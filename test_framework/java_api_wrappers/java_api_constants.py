@@ -282,6 +282,7 @@ class JavaApiFields(Enum):
     TradeEntryRequestBlock = 'TradeEntryRequestBlock'
     LastMkt = 'LastMkt'
     BuyAvgPx = 'BuyAvgPx'
+    SellAvgPx = 'SellAvgPx'
     TransferredInAmt = 'TransferredInAmt'
     TransferredOutAmt = 'TransferredOutAmt'
     SecurityAccountPLBlock = 'SecurityAccountPLBlock'
