@@ -96,6 +96,7 @@ class SshClient:
                 return True
         return False
 
+
 if __name__ == "__main__":
     client = SshClient(host='', port=22, username='', password='', su_user='', su_pass='')
     try:
