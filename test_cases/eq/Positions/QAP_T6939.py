@@ -169,7 +169,7 @@ class QAP_T6939(TestCase):
             self.cancel_request.set_default(order_id)
             self.ja_manager.send_message_and_receive_response(self.cancel_request)
             ord_reply = self.ja_manager.get_last_message(ORSMessageType.OrdReply.value,
-                                                               order_id).get_parameter(
+                                                        OrderReplyConst.TransStatus_CXL.value).get_parameter(
                 JavaApiFields.OrdReplyBlock.value)
             self.ja_manager.compare_values({JavaApiFields.ExecType.value: OrderReplyConst.TransStatus_CXL.value},
                                                  ord_reply, 'Verify that order canceled (step 6)')
