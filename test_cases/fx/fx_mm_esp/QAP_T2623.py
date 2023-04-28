@@ -12,8 +12,6 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.forex.FixMessageExecutionReportFX import FixMessageExecutionReportFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
-from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
-    FixMessageMarketDataSnapshotFullRefreshSellFX
 from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleFX import FixMessageNewOrderSingleFX
 from test_framework.ssh_wrappers.ssh_client import SshClient
 from xml.etree.ElementTree import parse as parse_xml
@@ -57,21 +55,28 @@ class QAP_T2623(TestCase):
         order_id = response[-1].get_parameter("OrderID")
         self.execution_report.set_params_from_new_order_single(self.new_order_single, response=response[-1])
         self.fix_verifier.check_fix_message(self.execution_report)
-        self.ssh_client.get_file("/Logs/quod314/QUOD.QS_ESP_FIX_TH2.log",
-                                 self.temp_path)
-        logs = open(self.temp_path, "r")
-        self.result = "Silver1 haven't mapped in ClientAccountGroupID, it's most likely a bug"
-        for line in logs:
-            self.key = re.findall(rf"^.*{order_id}.*ClientAccountGroupID=.Silver1.*$", line)
-            if self.key:
-                self.result = "ok"
-                break
+        self.result = self.ssh_client.find_regex_pattern("/Logs/quod314/QUOD.QS_ESP_FIX_TH2.log",
+                                                         rf"^.*{order_id}.*ClientAccountGroupID=.Silver1.*$")
+        if self.result:
+            self.result = "ok"
+        else:
+            self.result = "Silver1 haven't mapped in ClientAccountGroupID, it's most likely a bug"
+        # self.ssh_client.get_file("/Logs/quod314/QUOD.QS_ESP_FIX_TH2.log",
+        #                          self.temp_path)
+        # logs = open(self.temp_path, "r")
+        # self.result = "Silver1 haven't mapped in ClientAccountGroupID, it's most likely a bug"
+        # for line in logs:
+        #     self.key = re.findall(rf"^.*{order_id}.*ClientAccountGroupID=.Silver1.*$", line)
+        #     if self.key:
+        #         self.result = "ok"
+        #         break
+
         self.verifier.set_parent_id(self.test_id)
         self.verifier.set_event_name("Check \"ClientAccountGroupID\" tag")
         self.verifier.compare_values("status", "ok", self.result)
         self.verifier.verify()
-        logs.close()
-        os.remove(self.temp_path)
+        # logs.close()
+        # os.remove(self.temp_path)
         # endregion
         # region precondition: Prepare QS configuration
         self.tree = parse_xml(self.local_path)
@@ -93,21 +98,28 @@ class QAP_T2623(TestCase):
         order_id = response[-1].get_parameter("OrderID")
         self.execution_report.set_params_from_new_order_single(self.new_order_single, response=response[-1])
         self.fix_verifier.check_fix_message(self.execution_report)
-        self.ssh_client.get_file("/Logs/quod314/QUOD.QS_ESP_FIX_TH2.log",
-                                 self.temp_path)
-        logs = open(self.temp_path, "r")
-        self.result = "QUOD7 haven't mapped in ClientAccountGroupID, it's most likely a bug"
-        for line in logs:
-            self.key = re.findall(rf"^.*{order_id}.*ClientAccountGroupID=.QUOD7.*$", line)
-            if self.key:
-                self.result = "ok"
-                break
+
+        self.result = self.ssh_client.find_regex_pattern("/Logs/quod314/QUOD.QS_ESP_FIX_TH2.log",
+                                                         rf"^.*{order_id}.*ClientAccountGroupID=.Silver1.*$")
+        if self.result:
+            self.result = "ok"
+        else:
+            self.result = "Silver1 haven't mapped in ClientAccountGroupID, it's most likely a bug"
+        # self.ssh_client.get_file("/Logs/quod314/QUOD.QS_ESP_FIX_TH2.log",
+        #                          self.temp_path)
+        # logs = open(self.temp_path, "r")
+        # self.result = "QUOD7 haven't mapped in ClientAccountGroupID, it's most likely a bug"
+        # for line in logs:
+        #     self.key = re.findall(rf"^.*{order_id}.*ClientAccountGroupID=.QUOD7.*$", line)
+        #     if self.key:
+        #         self.result = "ok"
+        #         break
         self.verifier.set_parent_id(self.test_id)
         self.verifier.set_event_name("Check \"ClientAccountGroupID\" tag")
         self.verifier.compare_values("status", "ok", self.result)
         self.verifier.verify()
-        logs.close()
-        os.remove(self.temp_path)
+        # logs.close()
+        # os.remove(self.temp_path)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
