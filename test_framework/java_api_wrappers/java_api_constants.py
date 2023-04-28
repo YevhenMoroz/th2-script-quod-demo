@@ -217,6 +217,7 @@ class JavaApiFields(Enum):
     MiscFeeAmt = 'MiscFeeAmt'
     MiscFeeRate = 'MiscFeeRate'
     MiscFeeCurr = 'MiscFeeCurr'
+    MiscFeeCategory = 'MiscFeeCategory'
     ExecutionPolicy = 'ExecutionPolicy'
     ManualDayCumAmt = 'ManualDayCumAmt'
     ManualDayCumQty = 'ManualDayCumQty'

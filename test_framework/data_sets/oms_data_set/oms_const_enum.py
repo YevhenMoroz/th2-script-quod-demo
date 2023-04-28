@@ -78,6 +78,7 @@ class OmsInstrumentId(Enum):
     instrument_4 = "0dzj8AKkVyG-HT4dY2lA2Q"
     instrument_5 = "zjZwA8LXItn246hPYfpe9w"  # MultyLeg
     instrument_6 = "HNUAw6jnU8PDj2cvSkJlYg"  # Leg instrument
+    instrument_7 = "4o_6NqkKiqQpmUhKO4xUEw"  # MultiListed instrument
 
 
 class OmsListingId(Enum):
@@ -86,12 +87,16 @@ class OmsListingId(Enum):
     listing_3 = "704"
     listing_4 = "2259"
     listing_5 = "16734"  # MultyLeg
+    listing_6 = "488"  # one listing of MultiListed instrument
+    listing_7 = "1233"  # one listing of MultiListed instrument
+    listing_8 = "3346"  # one listing of MultiListed instrument
 
 
 class OmsVenues(Enum):
     venue_1 = "PARIS"
     venue_2 = "EUREX"
     venue_3 = "JSE"
+    venue_4 = "CHIX"
 
 
 class OmsLookupForVenues(Enum):
@@ -281,6 +286,7 @@ class OmsMic(Enum):  # Market Identifier Code
     mic_2 = "XEUR"  # EUREX
     mic_3 = "TOMX"  # OMX - MultyLeg
     mic_1_blm = "XPAR_BLM"  # PARIS bloomberg code
+    mic_4 = "CHIX"
 
 
 class OmsCurrency(Enum):
@@ -342,6 +348,7 @@ class OMSFeeType(Enum):
     stamp = "STA"
     tax = "TAX"
     value_added_tax = "VAT"
+    charges = "CHA"
 
 
 class OMSExecScope(Enum):
@@ -643,6 +650,16 @@ class OMSCounterParty_JavaAPI_FOR_ES(Enum):
 
 class OMSGatingRuleIDs(Enum):
     main_rule_id = '2200035'
+
+
+class OMSCommissionAmountType(Enum):
+    broker = 'BRK'
+    retail = 'RET'
+    sales = 'SAL'
+    local = 'LOC'
+    research = 'REP'
+    unspecified = 'UNS'
+    acceptance = 'ACC'
 
 
 class OMSChargesType(Enum):
