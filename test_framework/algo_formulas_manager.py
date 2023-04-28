@@ -692,33 +692,34 @@ class AlgoFormulasManager:
     @staticmethod
     def update_endtime_for_trading_phase_by_phase_name(phase_list: list, phase_name: TradingPhases, end_time: datetime):
         new_phase_list = phase_list
+        new_end_time = end_time + timedelta(minutes=1) - datetime.timedelta(seconds=end_time.second, microseconds=end_time.microsecond)
         if phase_name == TradingPhases.PreOpen:
-            new_phase_list[0].update(endTime=end_time)
-            new_phase_list[1].update(beginTime=end_time, endTime=end_time + timedelta(minutes=5))
-            new_phase_list[2].update(beginTime=end_time + timedelta(minutes=5), endTime=end_time + timedelta(minutes=5))
-            new_phase_list[3].update(beginTime=end_time + timedelta(minutes=5), endTime=end_time + timedelta(minutes=4))
-            new_phase_list[4].update(beginTime=end_time + timedelta(minutes=4), endTime=end_time + timedelta(minutes=5))
-            new_phase_list[5].update(beginTime=end_time + timedelta(minutes=10), endTime=end_time + timedelta(minutes=5))
+            new_phase_list[0].update(endTime=new_end_time)
+            new_phase_list[1].update(beginTime=new_end_time, endTime=new_end_time + timedelta(minutes=5))
+            new_phase_list[2].update(beginTime=new_end_time + timedelta(minutes=5), endTime=new_end_time + timedelta(minutes=5))
+            new_phase_list[3].update(beginTime=new_end_time + timedelta(minutes=5), endTime=new_end_time + timedelta(minutes=4))
+            new_phase_list[4].update(beginTime=new_end_time + timedelta(minutes=4), endTime=new_end_time + timedelta(minutes=5))
+            new_phase_list[5].update(beginTime=new_end_time + timedelta(minutes=10), endTime=new_end_time + timedelta(minutes=5))
         elif phase_name == TradingPhases.Open:
-            new_phase_list[1].update(endTime=end_time)
-            new_phase_list[2].update(beginTime=end_time + timedelta(minutes=5), endTime=end_time + timedelta(minutes=5))
-            new_phase_list[3].update(beginTime=end_time + timedelta(minutes=5), endTime=end_time + timedelta(minutes=4))
-            new_phase_list[4].update(beginTime=end_time + timedelta(minutes=4), endTime=end_time + timedelta(minutes=5))
-            new_phase_list[5].update(beginTime=end_time + timedelta(minutes=5), endTime=end_time + timedelta(minutes=5))
+            new_phase_list[1].update(endTime=new_end_time)
+            new_phase_list[2].update(beginTime=new_end_time + timedelta(minutes=5), endTime=new_end_time + timedelta(minutes=5))
+            new_phase_list[3].update(beginTime=new_end_time + timedelta(minutes=5), endTime=new_end_time + timedelta(minutes=4))
+            new_phase_list[4].update(beginTime=new_end_time + timedelta(minutes=4), endTime=new_end_time + timedelta(minutes=5))
+            new_phase_list[5].update(beginTime=new_end_time + timedelta(minutes=5), endTime=new_end_time + timedelta(minutes=5))
         elif phase_name == TradingPhases.PreClosed:
-            new_phase_list[2].update(endTime=end_time)
-            new_phase_list[3].update(beginTime=end_time + timedelta(minutes=5), endTime=end_time + timedelta(minutes=4))
-            new_phase_list[4].update(beginTime=end_time + timedelta(minutes=4), endTime=end_time + timedelta(minutes=5))
-            new_phase_list[5].update(beginTime=end_time + timedelta(minutes=5), endTime=end_time + timedelta(minutes=5))
+            new_phase_list[2].update(endTime=new_end_time)
+            new_phase_list[3].update(beginTime=new_end_time + timedelta(minutes=5), endTime=new_end_time + timedelta(minutes=4))
+            new_phase_list[4].update(beginTime=new_end_time + timedelta(minutes=4), endTime=new_end_time + timedelta(minutes=5))
+            new_phase_list[5].update(beginTime=new_end_time + timedelta(minutes=5), endTime=new_end_time + timedelta(minutes=5))
         elif phase_name == TradingPhases.AtLast:
-            new_phase_list[3].update(endTime=end_time)
-            new_phase_list[4].update(beginTime=end_time + timedelta(minutes=5), endTime=end_time + timedelta(minutes=4))
-            new_phase_list[5].update(beginTime=end_time + timedelta(minutes=4), endTime=end_time + timedelta(minutes=5))
+            new_phase_list[3].update(endTime=new_end_time)
+            new_phase_list[4].update(beginTime=new_end_time + timedelta(minutes=5), endTime=new_end_time + timedelta(minutes=4))
+            new_phase_list[5].update(beginTime=new_end_time + timedelta(minutes=4), endTime=new_end_time + timedelta(minutes=5))
         elif phase_name == TradingPhases.Closed:
-            new_phase_list[4].update(endTime=end_time)
-            new_phase_list[5].update(beginTime=end_time + timedelta(minutes=5), endTime=end_time + timedelta(minutes=5))
+            new_phase_list[4].update(endTime=new_end_time)
+            new_phase_list[5].update(beginTime=new_end_time + timedelta(minutes=5), endTime=new_end_time + timedelta(minutes=5))
         elif phase_name == TradingPhases.Expiry:
-            new_phase_list[5].update(endTime=end_time)
+            new_phase_list[5].update(endTime=new_end_time)
 
         return new_phase_list
 
