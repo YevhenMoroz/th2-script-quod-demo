@@ -10,6 +10,7 @@ from test_cases.algo.Algo_Redburn.Algo_POV_Scaling.QAP_T4464 import QAP_T4464
 from test_cases.algo.Algo_Redburn.Algo_POV_Scaling.QAP_T4470 import QAP_T4470
 from test_cases.algo.Algo_Redburn.Algo_POV_Scaling.QAP_T4478 import QAP_T4478
 from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T4386 import QAP_T4386
+from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T8719 import QAP_T8719
 from test_framework.configurations.component_configuration import ComponentConfigurationAlgo
 
 
@@ -55,6 +56,7 @@ def test_run(parent_id=None, version=None):
 
         # region Auction
         QAP_T4386(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T8719(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
         # region POV Scaling
