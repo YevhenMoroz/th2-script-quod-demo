@@ -94,6 +94,7 @@ class AllocationReportConst(Enum):
 
 class AllocationInstructionConst(Enum):
     SettlType_REG = 'REG'
+    SettlType_TOM = 'TOM'
     RootMiscFeeType_EXC = 'EXC'
     CommissionAmountType_BRK = 'BRK'
     COMM_AND_FEES_BASIS_A = 'A'
@@ -357,6 +358,7 @@ class JavaApiFields(Enum):
     AllocationInstructionQtyBlock = 'AllocationInstructionQtyBlock'
     BookingQty = 'BookingQty'
     WashBookAccountID = 'WashBookAccountID'
+    SettlType = 'SettlType'
     SettlCurrency = 'SettlCurrency'
     SettlCurrAmt = 'SettlCurrAmt'
     SettlCurrFxRate = 'SettlCurrFxRate'
