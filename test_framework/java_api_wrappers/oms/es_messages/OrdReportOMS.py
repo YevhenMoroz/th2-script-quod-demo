@@ -1,3 +1,4 @@
+from copy import deepcopy
 from datetime import datetime
 
 from pandas import Timestamp as tm
@@ -53,3 +54,23 @@ class OrdReportOMS(OrdReport):
         self.update_fields_in_component('OrdReportBlock', {"LastVenueOrdID": ord_id, "Price": price, 'ClOrdID': ord_id,
                                                            'ExecType': 'Eliminated'})
         return self
+
+    def set_default_done_for_day(self, execution_report, ord_id):
+        self.change_parameters(deepcopy(self.base_parameters))
+        self.update_fields_in_component('OrdReportBlock', {
+            "InstrumentBlock": execution_report["InstrumentBlock"],
+            "LastVenueOrdID": execution_report["LastVenueOrdID"],
+            "ClOrdID": ord_id,
+            "VenueExecID": bca.client_orderid(9),
+            "ReplySource": "Exchange",
+            "TransactTime": datetime.utcnow().isoformat(),
+            "Side": execution_report['Side'],
+            "OrdQty": execution_report['OrdQty'],
+            "Price": execution_report['Price'],
+            "CumQty": "0.000000000",
+            "LeavesQty": '0.0',
+            "AvgPrice": execution_report['Price'],
+            "ExecType": "DoneForDay",
+            "ReplyReceivedTime": datetime.utcnow().isoformat(),
+        })
+        self.remove_fields_from_component('OrdReportBlock', ['VenueAccount'])

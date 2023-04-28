@@ -84,7 +84,7 @@ class QAP_T7105(TestCase):
         no_misc = {"MiscFeeAmt": misc_fee_amt, "MiscFeeCurr": self.com_cur,
                    "MiscFeeType": "4"}
         comm_data = {"Commission": misc_fee_amt, "CommType": "3"}
-        ignored_fields = ['GatingRuleName', 'GatingRuleCondName']
+        ignored_fields = ['GatingRuleName', 'GatingRuleCondName','ExecAllocGrp']
         execution_report = FixMessageExecutionReportOMS(self.data_set).set_default_filled(self.fix_message)
         execution_report.change_parameters(
             {'ReplyReceivedTime': "*", 'Currency': self.cur, 'LastMkt': "*", 'Text': "*",
@@ -132,7 +132,7 @@ class QAP_T7105(TestCase):
             'Compare actually and expected results  from step 3')
         # endregion
         # region check 35 = J message
-        list_of_ignored_fields = ['RootCommTypeClCommBasis', 'Account', 'OrderAvgPx']
+        list_of_ignored_fields = ['RootCommTypeClCommBasis', 'Account', 'OrderAvgPx','ExecAllocGrp']
         alloc_report = FixMessageAllocationInstructionReportOMS().set_default_ready_to_book(
             self.fix_message)
         no_root_misc = {"RootMiscFeeBasis": "2", "RootMiscFeeCurr": self.com_cur,

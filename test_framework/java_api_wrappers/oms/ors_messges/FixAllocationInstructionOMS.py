@@ -12,7 +12,7 @@ class FixAllocationInstructionOMS(FixAllocationInstruction):
         self.data_set = data_set
         self.base_parameters = {
             'SEND_SUBJECT': 'QUOD.ORS.FIX',
-            'REPLY_SUBJECT': 'QUOD.FIX_REPLY.gtwquod4',
+            'REPLY_SUBJECT': 'QUOD.FIX_REPLY.gtwquod10',
             "AllocationInstructionBlock": {
                 "OrdAllocList": {
                     "OrdAllocBlock": [{"ClOrdID": "*"}]},
@@ -49,5 +49,5 @@ class FixAllocationInstructionOMS(FixAllocationInstruction):
     def set_default_preliminary(self, ord_id):
         self.change_parameters(self.base_parameters)
         self.update_fields_in_component('AllocationInstructionBlock',
-                                        {"OrdAllocList": {"OrdAllocBlock": [{"ClOrdID": ord_id}]}})
+                                        {"OrdAllocList": {"OrdAllocBlock": [{"OrdID": ord_id, "ClOrdID": ord_id}]}})
         return self

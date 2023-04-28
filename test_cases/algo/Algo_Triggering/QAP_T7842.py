@@ -14,8 +14,6 @@ from test_framework.fix_wrappers.algo.FixMessageOrderCancelRequestAlgo import Fi
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
-from test_framework.data_sets import constants
-#TODO checking for the fix PALGO-993
 
 class QAP_T7842(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
@@ -113,26 +111,26 @@ class QAP_T7842(TestCase):
         self.fix_verifier_sell.check_fix_message(new_Triggering_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
 
-        time.sleep(2)
+        time.sleep(3)
         
         # region Send OCRR (35=G for price) for Triggering order
         case_id_2 = bca.create_event("Modify Triggering Order Price", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_2)
 
         self.Triggering_ord_mod_px = FixMessageOrderCancelReplaceRequestAlgo(self.Triggering_order)
-        self.Triggering_ord_mod_px.change_parameter('Price', self.price_mod)#.remove_parameter('TriggeringInstruction')
+        self.Triggering_ord_mod_px.change_parameter('Price', self.price_mod)
 
         self.fix_manager_sell.send_message_and_receive_response(self.Triggering_ord_mod_px, case_id_2)
         # endregion
 
-        time.sleep(2)
+        time.sleep(3)
 
         # region Check Sell side
         self.fix_verifier_sell.check_fix_message(self.Triggering_ord_mod_px, key_parameters=self.key_params, direction=self.ToQuod, message_name='Sell side OCRR')
 
-        replaced_Trig_ord_px = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.Triggering_order, self.gateway_side_sell, self.status_new)
-        replaced_Trig_ord_px.change_parameter('Price', self.price_mod)#.remove_parameter('TriggeringInstruction')
-        self.fix_verifier_sell.check_fix_message(replaced_Trig_ord_px, key_parameters=self.key_params_cl, message_name='Sell side ExecReport Replaced')
+        replaced_Trig_ord_px = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.Triggering_ord_mod_px, self.gateway_side_sell, self.status_cancel_replace)
+        replaced_Trig_ord_px.change_parameter('Price', self.price_mod)
+        self.fix_verifier_sell.check_fix_message(replaced_Trig_ord_px, key_parameters=self.key_params, message_name='Sell side ExecReport Replaced')
         # endregion
 
         # region Send OCRR (35=G for qty) for Triggering order
@@ -140,19 +138,19 @@ class QAP_T7842(TestCase):
         self.fix_verifier_sell.set_case_id(case_id_3)
 
         self.Triggering_ord_mod_qty = FixMessageOrderCancelReplaceRequestAlgo(self.Triggering_order)
-        self.Triggering_ord_mod_qty.change_parameter('OrderQty', self.qty_mod)#.remove_parameter('TriggeringInstruction')
+        self.Triggering_ord_mod_qty.change_parameter('OrderQty', self.qty_mod)
 
         self.fix_manager_sell.send_message_and_receive_response(self.Triggering_ord_mod_qty, case_id_3)
         # endregion
 
-        time.sleep(2)
+        time.sleep(3)
 
         # region Check Sell side
         self.fix_verifier_sell.check_fix_message(self.Triggering_ord_mod_qty, key_parameters=self.key_params, direction=self.ToQuod, message_name='Sell side OCRR')
 
-        replaced_Trig_ord_qty = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.Triggering_order, self.gateway_side_sell, self.status_new)
-        replaced_Trig_ord_qty.change_parameter('OrderQty', self.qty_mod)#.remove_parameter('TriggeringInstruction')
-        self.fix_verifier_sell.check_fix_message(replaced_Trig_ord_qty, key_parameters=self.key_params_cl, message_name='Sell side ExecReport Replaced')
+        replaced_Trig_ord_qty = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.Triggering_ord_mod_qty, self.gateway_side_sell, self.status_cancel_replace)
+        replaced_Trig_ord_qty.change_parameter('OrderQty', self.qty_mod)
+        self.fix_verifier_sell.check_fix_message(replaced_Trig_ord_qty, key_parameters=self.key_params, message_name='Sell side ExecReport Replaced')
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -160,10 +158,13 @@ class QAP_T7842(TestCase):
         # region Cancel Algo Order
         case_id_4 = bca.create_event("Cancel parent Algo Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_4)
-        # endregion
 
         cancel_request_auction_order = FixMessageOrderCancelRequest(self.Triggering_order)
         self.fix_manager_sell.send_message_and_receive_response(cancel_request_auction_order, case_id_4)
+
+        time.sleep(2)
+
         self.fix_verifier_sell.check_fix_message(cancel_request_auction_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
+        # endregion
 
         RuleManager(Simulators.algo).remove_rules(self.rule_list)

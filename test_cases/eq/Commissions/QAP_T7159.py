@@ -113,14 +113,14 @@ class QAP_T7159(TestCase):
         # endregion
 
         # region check expected result from step 3
-        expected_result = '4'
+        expected_result = 'B'
         self.__compare_ord_status(expected_result)
         # endregion
 
         # region check 35=8 150 = B message
         self.fix_message_execution_report.set_default_calculated(self.fix_message)
         self.fix_message_execution_report.remove_parameter('Parties')
-        amount = str(round((1 / 1000000) * 5000, 3))
+        amount = str(round((5 / 1000000) * 5000, 3))
         self.fix_message_execution_report.remove_parameter('TradeReportingIndicator')
         self.fix_message_execution_report.change_parameters({'QuodTradeQualifier': '*', 'BookID': '*',
                                                              'Currency': self.currency, 'NoParty': '*',

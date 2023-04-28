@@ -49,8 +49,8 @@ class QAP_T8892(TestCase):
         self.percentage = 100
         self.price = 30
         self.price2 = AFM.calc_ticks_offset_minus(self.price, 1, 0.005)
-
-
+        self.indicative_volume = 0
+        self.historical_volume = 1200.0
         self.tif_atc = TimeInForce.AtTheClose.value
         # endregion
 

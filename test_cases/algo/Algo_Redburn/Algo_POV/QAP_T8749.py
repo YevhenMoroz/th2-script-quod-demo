@@ -6,7 +6,7 @@ from pathlib import Path
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
-from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
+from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, TradingPhases
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
 from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import FixMessageMarketDataSnapshotFullRefreshAlgo
@@ -16,7 +16,9 @@ from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
 from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
-from test_framework.algo_formulas_manager import AlgoFormulasManager
+from test_framework.algo_formulas_manager import AlgoFormulasManager as AFM
+from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
+from test_framework.ssh_wrappers.ssh_client import SshClient
 
 
 class QAP_T8749(TestCase):
@@ -32,6 +34,7 @@ class QAP_T8749(TestCase):
         self.fix_manager_feed_handler = FixManager(self.fix_env1.feed_handler, self.test_id)
         self.fix_verifier_sell = FixVerifier(self.fix_env1.sell_side, self.test_id)
         self.fix_verifier_buy = FixVerifier(self.fix_env1.buy_side, self.test_id)
+        self.restapi_env1 = self.environment.get_list_web_admin_rest_api_environment()[0]
         # endregion
 
         # region order parameters
@@ -49,9 +52,9 @@ class QAP_T8749(TestCase):
         self.qty_ltq_2 = 15_000
         self.qty_ltq_3 = self.qty_ltq_4 = 20_000
         
-        self.qty_child_1 = AlgoFormulasManager.get_pov_child_qty_on_ltq(self.percentage_volume, self.qty_ltq_1, self.qty)
-        self.qty_child_2 = AlgoFormulasManager.get_pov_child_qty_on_ltq(self.percentage_volume, self.qty_ltq_2, self.qty)
-        self.qty_child_3 = AlgoFormulasManager.get_pov_child_qty_on_ltq(self.percentage_volume, self.qty_ltq_3, self.qty)
+        self.qty_child_1 = AFM.get_pov_child_qty_on_ltq(self.percentage_volume, self.qty_ltq_1, self.qty)
+        self.qty_child_2 = AFM.get_pov_child_qty_on_ltq(self.percentage_volume, self.qty_ltq_2, self.qty)
+        self.qty_child_3 = AFM.get_pov_child_qty_on_ltq(self.percentage_volume, self.qty_ltq_3, self.qty)
 
         self.check_order_sequence = False
 
@@ -97,14 +100,37 @@ class QAP_T8749(TestCase):
         self.key_params = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_2")
         # endregion
 
+        self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile1")
         self.rule_list = []
+
+        self.rest_api_manager = RestApiAlgoManager(session_alias=self.restapi_env1.session_alias_wa, case_id=self.test_id)
+
+        # region SSH
+        self.config_file = "client_sats.xml"
+        self.xpath = ".//maxChildren"
+        self.new_config_value = "3"
+        self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
+        self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user, self.ssh_client_env.password, self.ssh_client_env.su_user, self.ssh_client_env.su_password)
+        self.default_config_value = self.ssh_client.get_and_update_file(self.config_file, {self.xpath: self.new_config_value})
+        # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        # region precondition: Prepare SATS configuration
+        self.ssh_client.send_command("qrestart SATS")
+        time.sleep(35)
+        # endregion
+
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
         nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, False, 0, self.price)
         self.rule_list = [nos_ioc_rule]
+        # endregion
+
+        # region Update Trading Phase
+        self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify trading phase profile", self.test_id))
+        trading_phases = AFM.get_timestamps_for_current_phase(TradingPhases.Open)
+        self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
         # endregion
 
         # region Clear Market Data
@@ -115,7 +141,7 @@ class QAP_T8749(TestCase):
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
 
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data Incremental to clear the MarketDepth", self.test_id))
-        market_data_incremental_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
+        market_data_incremental_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.s_par, self.fix_env1.feed_handler).set_phase(TradingPhases.Open)
         market_data_incremental_par.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
         self.fix_manager_feed_handler.send_message(market_data_incremental_par)
 
@@ -166,7 +192,7 @@ class QAP_T8749(TestCase):
 
         # region Send Market Data to trigger an MinParticipation behavior
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data Incremental to trigger a worse price behavior", self.test_id))
-        market_data_incremental_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
+        market_data_incremental_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.s_par, self.fix_env1.feed_handler).set_phase(TradingPhases.Open)
         market_data_incremental_par.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.price_ltq, MDEntrySize=self.qty_ltq_2)
         self.fix_manager_feed_handler.send_message(market_data_incremental_par)
 
@@ -193,7 +219,7 @@ class QAP_T8749(TestCase):
 
         # region Send MarketData to trigger aggressive child order generation
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data Incremental to trigger a worse price behavior", self.test_id))
-        market_data_incremental_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
+        market_data_incremental_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.s_par, self.fix_env1.feed_handler).set_phase(TradingPhases.Open)
         market_data_incremental_par.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.price_ltq, MDEntrySize=self.qty_ltq_3)
         self.fix_manager_feed_handler.send_message(market_data_incremental_par)
 
@@ -220,7 +246,7 @@ class QAP_T8749(TestCase):
 
         # region Send MarketData to trigger aggressive child order generation
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data Incremental to trigger a worse price behavior", self.test_id))
-        market_data_incremental_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
+        market_data_incremental_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.s_par, self.fix_env1.feed_handler).set_phase(TradingPhases.Open)
         market_data_incremental_par.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.price_ltq, MDEntrySize=self.qty_ltq_4)
         self.fix_manager_feed_handler.send_message(market_data_incremental_par)
         # endregion
@@ -256,3 +282,16 @@ class QAP_T8749(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         RuleManager(Simulators.algo).remove_rules(self.rule_list)
+
+        # region Update Trading Phase
+        self.rest_api_manager.set_case_id(case_id=bca.create_event("Revert trading phase profile", self.test_id))
+        trading_phases = AFM.get_default_timestamp_for_trading_phase()
+        self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
+        # endregion
+
+        # region config reset
+        self.ssh_client.get_and_update_file(self.config_file, {self.xpath: self.default_config_value})
+        self.ssh_client.send_command("qrestart SATS")
+        time.sleep(35)
+        self.ssh_client.close()
+        # endregion

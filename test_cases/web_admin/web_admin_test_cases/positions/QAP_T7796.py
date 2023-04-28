@@ -104,6 +104,8 @@ class QAP_T7796(CommonTestCase):
             cash_positions_values_tab.select_default_cash_position_checkbox()
             cash_positions_wizard.click_on_save_changes()
 
+        cash_positions_page.set_name(self.test_data['cash_position_2']['name'])
+        time.sleep(1)
         if not cash_positions_page.is_searched_cash_account_found(self.test_data['cash_position_2']['name']):
             cash_positions_page.click_on_new()
             cash_positions_values_tab.set_name(self.test_data['cash_position_2']['name'])

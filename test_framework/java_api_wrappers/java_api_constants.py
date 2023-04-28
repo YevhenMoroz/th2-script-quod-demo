@@ -20,6 +20,7 @@ class ExecutionReportConst(Enum):
     LastCapacity_Agency = 'A'
     ExecOrigin_M = 'M'
     ExecOrigin_E = 'E'
+    ExecType_Trade = 'Trade'
 
 
 class BasketMessagesConst(Enum):
@@ -81,6 +82,7 @@ class AllocationReportConst(Enum):
     MatchStatus_UNM = 'UNM'
     AllocSummaryStatus_MAG = 'MAG'
     AllocStatus_APP = 'APP'
+    AllocStatus_REC = 'REC'
     AllocStatus_CXL = 'CXL'
     AllocReportType_ACC = 'ACC'
     ConfirmationService_EXT = 'EXT'
@@ -154,15 +156,20 @@ class QtyPercentageProfile(Enum):
 
 class JavaApiFields(Enum):
     ExecCommission = 'ExecCommission'
+    AllocationInstructionBlock = 'AllocationInstructionBlock'
     TransExecStatus = 'TransExecStatus'
     TransStatus = 'TransStatus'
+    InstrumentBlock = 'InstrumentBlock'
     ExecutionReportBlock = 'ExecutionReportBlock'
     CounterpartList = "CounterpartList"
     CounterpartBlock = "CounterpartBlock"
+    OrderModificationRequestBlock = 'OrderModificationRequestBlock'
+    ClientAccountGroupID = 'ClientAccountGroupID'
     PartyRole = "PartyRole"
     CounterpartID = "CounterpartID"
     OrderNotificationBlock = "OrdNotificationBlock"
     OrdID = 'OrdID'
+    VenueOrdID = 'VenueOrdID'
     TimeInForce = 'TimeInForce'
     ExpireDate = 'ExpireDate'
     ExecID = 'ExecID'
@@ -176,6 +183,7 @@ class JavaApiFields(Enum):
     ComputeBookingFeesCommissionsRequestBlock = 'ComputeBookingFeesCommissionsRequestBlock'
     ClOrdID = 'ClOrdID'
     OrdReplyBlock = 'OrdReplyBlock'
+    EffectiveDate = 'EffectiveDate'
     OrdStatus = 'OrdStatus'
     ExecType = 'ExecType'
     NewOrderListReplyBlock = 'NewOrderListReplyBlock'
@@ -184,6 +192,7 @@ class JavaApiFields(Enum):
     ListExecutionPolicy = 'ListExecutionPolicy'
     ListOrderStatus = 'ListOrderStatus'
     NewOrderSingleBlock = 'NewOrderSingleBlock'
+    PosValidity = 'PosValidity'
     ClientCommissionDataBlock = 'ClientCommissionDataBlock'
     ClientCommission = 'ClientCommission'
     OrderBagNotificationBlock = 'OrderBagNotificationBlock'
@@ -284,6 +293,7 @@ class JavaApiFields(Enum):
     VenueActGrpName = 'VenueActGrpName'
     LastVenueOrdID = 'LastVenueOrdID'
     VenueExecID = 'VenueExecID'
+    RouteBlock = 'RouteBlock'
     """List Wave"""
     OrderListWaveNotificationBlock = 'OrderListWaveNotificationBlock'
     OrderNotificationElements = "OrdNotificationElements"
@@ -344,6 +354,7 @@ class JavaApiFields(Enum):
     SettlLocationID = 'SettlLocationID'
     SettlementModelID = 'SettlementModelID'
     Qty = 'Qty'
+    TradeDate = 'TradeDate'
     Side = 'Side'
     AllocationInstructionQtyList = 'AllocationInstructionQtyList'
     AllocationInstructionQtyBlock = 'AllocationInstructionQtyBlock'
@@ -403,6 +414,7 @@ class TimeInForces(Enum):
     DAY = 'DAY'
     GTD = 'GTD'
     ATC = 'ATC'
+    GTC = 'GTC'
 
 
 class OrdTypes(Enum):
@@ -451,3 +463,9 @@ class PosReqTypes(Enum):
 
 class PositionTransferReportConst(Enum):
     TransferTransType_NEW = 'NEW'
+
+
+class PositionValidities(Enum):
+    PosValidity_ITD = 'ITD'
+    PosValidity_DEL = 'DEL'
+    PosValidity_TP1 = 'TP1'

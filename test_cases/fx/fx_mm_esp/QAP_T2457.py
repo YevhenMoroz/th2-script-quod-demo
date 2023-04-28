@@ -64,8 +64,8 @@ class QAP_T2457(TestCase):
         self.fix_subscribe.set_md_req_parameters_maker(). \
             change_parameters({"SenderSubID": self.data_set.get_client_by_name('client_mm_11')}). \
             update_repeating_group('NoRelatedSymbols', self.no_related_symbols)
-        self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
-        self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands, published=False)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
+        self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands, published=False, response=response[0])
         self.fix_md_snapshot.get_parameter("NoMDEntries").pop(3)
         self.fix_verifier.check_fix_message(self.fix_md_snapshot)
         # endregion

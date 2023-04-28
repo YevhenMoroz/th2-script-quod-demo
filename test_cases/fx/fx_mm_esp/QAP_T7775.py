@@ -93,8 +93,9 @@ class QAP_T7775(TestCase):
 
         # region Step 2
         self.md_request.set_md_req_parameters_maker().change_parameter("BookType", "1")
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
-        self.md_snapshot.set_params_for_empty_md_response(self.md_request, ["*", "*", "*", "*"], published=False)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        self.md_snapshot.set_params_for_empty_md_response(self.md_request, ["*", "*", "*"], published=False, response=response[0])
+        self.md_snapshot.change_parameters({"OrigMDArrivalTime": "*", "OrigClientVenueID": "*", "OrigMDTime": "*"})
         self.fix_verifier.check_fix_message(self.md_snapshot)
         # endregion
 

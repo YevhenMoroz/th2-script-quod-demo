@@ -39,9 +39,9 @@ class QAP_T2451(TestCase):
         # region step 1
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.iridium)
         self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols)
-        self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
 
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"], published=False)
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"], published=False, response=response[0])
         time.sleep(5)
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot,
                                             direction=DirectionEnum.FromQuod,

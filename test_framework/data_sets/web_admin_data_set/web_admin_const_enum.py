@@ -268,6 +268,7 @@ class WebAdminAccountIdSource(Enum):
 
 class WebAdminDefaultRoute(Enum):
     default_route_1 = "ESDEMO"
+    default_route_2 = "ESFSSO"
 
 
 class WebAdminDefaultExecutionStrategy(Enum):

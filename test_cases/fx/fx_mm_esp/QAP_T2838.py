@@ -95,7 +95,7 @@ class QAP_T2838(TestCase):
             if i["MDEntryPositionNo"] != position_number:
                 position_number = i["MDEntryPositionNo"]
                 bands.append("*")
-        self.md_snapshot.set_params_for_md_response(self.md_request, bands, published=False)
+        self.md_snapshot.set_params_for_md_response(self.md_request, bands, published=False, response=response[0])
         self.fix_verifier.check_fix_message(self.md_snapshot)
         # endregion
 
@@ -118,7 +118,7 @@ class QAP_T2838(TestCase):
             if i["MDEntryPositionNo"] != position_number:
                 position_number = i["MDEntryPositionNo"]
                 bands.append("*")
-        self.md_snapshot.set_params_for_md_response(self.md_request, bands)
+        self.md_snapshot.set_params_for_md_response(self.md_request, bands, response=response[0])
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot,
                                             direction=DirectionEnum.FromQuod,
                                             key_parameters=["MDReqID"])

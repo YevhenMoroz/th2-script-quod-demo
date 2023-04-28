@@ -34,7 +34,7 @@ channels = dict()
 
 
 def test_run(parent_id=None, version=None):
-    report_id = bca.create_event(f"PEQ Acceptance v.188" if version is None else f"PEQ Acceptance v.188 | {version}", parent_id)
+    report_id = bca.create_event(f"PEQ Acceptance v.190" if version is None else f"PEQ Acceptance v.190 | {version}", parent_id)
     seconds, nanos = timestamps()  # Store case start time
     configuration = ComponentConfiguration("AcceptanceList")
     data_set = configuration.data_set
@@ -110,5 +110,5 @@ def test_run(parent_id=None, version=None):
 
 
 if __name__ == '__main__':
-    test_run()
+    test_run(version="5.1.177.190")
     Stubs.factory.close()

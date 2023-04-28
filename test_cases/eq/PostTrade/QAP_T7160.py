@@ -46,7 +46,7 @@ class QAP_T7160(TestCase):
         self.bs_connectivity = self.fix_env.buy_side
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
-        self.client = self.data_set.get_client_by_name("client_pt_11")  # MOClient8
+        self.client = self.data_set.get_client_by_name("client_pt_8")  # MOClient8
         # self.client = "MOClient9"
         self.qty = "100"
         self.price = "20"

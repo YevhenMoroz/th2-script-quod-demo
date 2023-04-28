@@ -1,8 +1,6 @@
-from test_framework.data_sets.base_data_set import BaseDataSet
-from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
 from test_framework.data_sets.message_types import QSMessageType
 from test_framework.java_api_wrappers.JavaApiMessage import JavaApiMessage
-from test_framework.java_api_wrappers.fx.QuoteRequestActionReplyFX import QuoteRequestActionReplyFX
+from test_framework.java_api_wrappers.ors_messages.QuoteRequestActionReply import QuoteRequestActionReply
 from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
 
 
@@ -13,7 +11,7 @@ class OrderQuoteFX(JavaApiMessage):
         super().change_parameters(parameters)
 
     # region Quotes
-    def prepare_params(self, action_reply: QuoteRequestActionReplyFX):
+    def prepare_params(self, action_reply: QuoteRequestActionReply):
         estimation_block = action_reply.get_parameter("QuoteRequestActionReplyBlock")["EstimatedQuoteBlock"]
         params_for_request = {
             "SEND_SUBJECT": "QUOD.QS_RFQ_FIX_TH2.FE",
@@ -31,7 +29,7 @@ class OrderQuoteFX(JavaApiMessage):
         super().change_parameters(params_for_request)
         return self
 
-    def set_params_for_quote(self, quote_request: FixMessageQuoteRequestFX, action_reply: QuoteRequestActionReplyFX):
+    def set_params_for_quote(self, quote_request: FixMessageQuoteRequestFX, action_reply: QuoteRequestActionReply):
         self.prepare_params(action_reply)
         estimation_block = action_reply.get_parameter("QuoteRequestActionReplyBlock")["EstimatedQuoteBlock"]
         if "Side" not in quote_request.get_parameter("NoRelatedSymbols")[0]:
@@ -64,7 +62,7 @@ class OrderQuoteFX(JavaApiMessage):
         return self
 
     def set_params_for_quote_synergy(self, quote_request: FixMessageQuoteRequestFX,
-                                     action_reply: QuoteRequestActionReplyFX):
+                                     action_reply: QuoteRequestActionReply):
         self.prepare_params(action_reply)
         self.change_parameter("SEND_SUBJECT", "QUOD.QS_RFQ_FIX_CNX_TH2.FE")
         self.change_parameter("REPLY_SUBJECT", "QUOD.FE.QS_RFQ_FIX_CNX_TH2")
@@ -99,7 +97,7 @@ class OrderQuoteFX(JavaApiMessage):
         return self
 
     def set_params_for_swap_quote(self, quote_request: FixMessageQuoteRequestFX,
-                                  action_reply: QuoteRequestActionReplyFX):
+                                  action_reply: QuoteRequestActionReply):
         self.prepare_params(action_reply)
         estimation_block = action_reply.get_parameter("QuoteRequestActionReplyBlock")["EstimatedQuoteBlock"]
         if "Side" not in quote_request.get_parameter("NoRelatedSymbols")[0]:
@@ -132,7 +130,7 @@ class OrderQuoteFX(JavaApiMessage):
         return self
 
     def set_params_for_quote_ccy2(self, quote_request: FixMessageQuoteRequestFX,
-                                  action_reply: QuoteRequestActionReplyFX):
+                                  action_reply: QuoteRequestActionReply):
         self.prepare_params(action_reply)
         estimation_block = action_reply.get_parameter("QuoteRequestActionReplyBlock")["EstimatedQuoteBlock"]
         if "Side" not in quote_request.get_parameter("NoRelatedSymbols")[0]:
@@ -164,7 +162,7 @@ class OrderQuoteFX(JavaApiMessage):
                                                 "OrderQty"]})
         return self
 
-    def set_params_for_fwd(self, quote_request: FixMessageQuoteRequestFX, action_reply: QuoteRequestActionReplyFX):
+    def set_params_for_fwd(self, quote_request: FixMessageQuoteRequestFX, action_reply: QuoteRequestActionReply):
         self.set_params_for_quote(quote_request, action_reply)
         estimation_block = action_reply.get_parameter("QuoteRequestActionReplyBlock")["EstimatedQuoteBlock"]
         if "Side" not in quote_request.get_parameter("NoRelatedSymbols")[0]:
@@ -181,7 +179,7 @@ class OrderQuoteFX(JavaApiMessage):
             self.update_fields_in_component("QuoteBlock", {"BidSpotRate": estimation_block["BidSpotRate"]})
             self.update_fields_in_component("QuoteBlock", {"BidForwardPoints": estimation_block["BidForwardPoints"]})
 
-    def set_params_for_fwd_ccy2(self, quote_request: FixMessageQuoteRequestFX, action_reply: QuoteRequestActionReplyFX):
+    def set_params_for_fwd_ccy2(self, quote_request: FixMessageQuoteRequestFX, action_reply: QuoteRequestActionReply):
         self.set_params_for_quote_ccy2(quote_request, action_reply)
         estimation_block = action_reply.get_parameter("QuoteRequestActionReplyBlock")["EstimatedQuoteBlock"]
         if "Side" not in quote_request.get_parameter("NoRelatedSymbols")[0]:
@@ -200,7 +198,7 @@ class OrderQuoteFX(JavaApiMessage):
 
     # endregion Quotes
     # region Swaps
-    def prepare_params_swap(self, action_reply: QuoteRequestActionReplyFX):
+    def prepare_params_swap(self, action_reply: QuoteRequestActionReply):
         estimation_block = action_reply.get_parameter("QuoteRequestActionReplyBlock")["EstimatedQuoteBlock"]
         params_for_request = {
             "SEND_SUBJECT": "QUOD.QS_RFQ_FIX_TH2.FE",
@@ -223,10 +221,10 @@ class OrderQuoteFX(JavaApiMessage):
         return self
 
     def set_params_for_swap_for_dealer(self, quote_request: FixMessageQuoteRequestFX,
-                                       action_reply: QuoteRequestActionReplyFX):
+                                       action_reply: QuoteRequestActionReply):
         self.prepare_params_swap(action_reply)
 
-    def set_params_for_swap(self, quote_request: FixMessageQuoteRequestFX, action_reply: QuoteRequestActionReplyFX):
+    def set_params_for_swap(self, quote_request: FixMessageQuoteRequestFX, action_reply: QuoteRequestActionReply):
         self.prepare_params_swap(action_reply)
         estimation_block = action_reply.get_parameter("QuoteRequestActionReplyBlock")["EstimatedQuoteBlock"]
         reply_leg_quote_block = estimation_block["LegQuoteList"]["LegQuoteBlock"]

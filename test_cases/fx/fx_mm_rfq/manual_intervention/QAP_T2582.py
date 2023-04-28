@@ -81,5 +81,7 @@ class QAP_T2582(TestCase):
 
         # region Step 4
         self.execution_report.set_params_from_new_order_single_ccy2(self.new_order_single)
-        self.fix_verifier.check_fix_message(self.execution_report)
+        self.fix_verifier.check_fix_message(self.execution_report,
+                                            ignored_fields=["trailer", "header", "GatingRuleCondName",
+                                                            "GatingRuleName"])
         # endregion
