@@ -95,7 +95,7 @@ class QAP_T11031(TestCase):
         execution_report = self.ja_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
             JavaApiFields.ExecutionReportBlock.value]
         self.ja_manager.compare_values(
-            {JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_PFL.value},
+            {JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_FIL.value},
             execution_report, 'Verify that CO order fully filled (step 2)')
         # endregion
 
