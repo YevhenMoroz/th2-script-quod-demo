@@ -6,7 +6,8 @@ from datetime import datetime
 
 from test_cases.algo.Algo_Multilisted.QAP_T8142 import QAP_T8142
 from test_cases.algo.Algo_Multilisted.QAP_T4053 import QAP_T4053
-# from test_cases.algo.Algo_Multilisted.QAP_T4043 import QAP_T4043
+from test_cases.algo.Algo_Multilisted.QAP_T4043 import QAP_T4043
+from test_cases.algo.Algo_Multilisted.QAP_T4053 import QAP_T4053
 from test_cases.algo.Algo_Multilisted.QAP_T4058 import QAP_T4058
 from test_cases.algo.Algo_Multilisted.QAP_T4059 import QAP_T4059
 from test_cases.algo.Algo_Multilisted.QAP_T4137 import  QAP_T4137
@@ -90,7 +91,7 @@ def test_run(parent_id=None, version=None):
     report_id = bca.create_event(f"Algo_Multilisted" if version is None else f"Algo_Multilisted (verification) | {version}", parent_id)
     try:
         configuration = ComponentConfiguration("Multilisted")
-        # QAP_T4053(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute() venues should'nt support IOC
+        QAP_T4053(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4137(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4121(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4106(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
@@ -147,6 +148,8 @@ def test_run(parent_id=None, version=None):
         QAP_T4140(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4100(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4101(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        if __name__ == '__main__':
+            QAP_T4043(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
     except Exception:
         logging.error("Error execution", exc_info=True)

@@ -1,7 +1,7 @@
 <regression>
     <target_server_win></target_server_win>
-    <name>TestRun WebAdmin</name>
-    <version></version>
+    <name>Regression 192v</name>
+    <version>5.1.179.192</version>
     <product_lines>
         <product_line name="algo" run="False">
             <components>
@@ -36,6 +36,9 @@
                         <ssh_client_environments>
                             <ssh_client_environment>quod310_ssh_client</ssh_client_environment>
                         </ssh_client_environments>
+                        <rest_environments>
+                            <web_admin_rest_api_environment>quod310_columbia_web_admin_site</web_admin_rest_api_environment>
+                        </rest_environments>
                     </environments>
                 </component>
                 <component name="Iceberg" run="True">
@@ -125,6 +128,9 @@
                         <rest_environments>
                             <web_admin_rest_api_environment>quod319_kuiper_web_admin_site</web_admin_rest_api_environment>
                         </rest_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod319_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
                     </environments>
                 </component>
                 <component name="Synth_min_qty" run="False">
@@ -203,7 +209,7 @@
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
-                            <fix_environment>quod316_ganymede_standard</fix_environment>
+                            <fix_environment>quod310_columbia_standard</fix_environment>
                         </fix_environments>
                     </environments>
                 </component>

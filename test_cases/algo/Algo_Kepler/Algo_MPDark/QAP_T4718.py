@@ -124,40 +124,40 @@ class QAP_T4718(TestCase):
         self.dma_chix_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
         self.dma_chix_order.change_parameters(dict(Account=self.account_chix, ExDestination=self.ex_destination_chix, OrderQty=self.qty_child))
         self.dma_chix_order.add_tag(dict(MinQty=self.minQty))
-        self.fix_verifier_buy.check_fix_message(self.dma_chix_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_chix_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
         # endregion
 
         time.sleep(2)
         # region check reject first dma child order
         er_reject_dma_chix_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_chix_order, self.gateway_side_buy, self.status_reject)
-        self.fix_verifier_buy.check_fix_message(er_reject_dma_chix_order, self.key_params_ER_reject_child, self.ToQuod, "Buy Side ExecReport Reject child DMA 1 order")
+        self.fix_verifier_buy.check_fix_message_kepler(er_reject_dma_chix_order, self.key_params_ER_reject_child, self.ToQuod, "Buy Side ExecReport Reject child DMA 1 order")
         # endregion
 
         # region Check child DMA order on venue BATS DARKPOOL UK
         self.dma_bats_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
         self.dma_bats_order.change_parameters(dict(Account=self.account_bats, ExDestination=self.ex_destination_bats, OrderQty=self.qty_child))
         self.dma_bats_order.add_tag(dict(MinQty=self.minQty))
-        self.fix_verifier_buy.check_fix_message(self.dma_bats_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 2 order')
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_bats_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 2 order')
         # endregion
 
         time.sleep(2)
 
         # region check reject second dma child order
         er_reject_dma_bats_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_bats_order, self.gateway_side_buy, self.status_reject)
-        self.fix_verifier_buy.check_fix_message(er_reject_dma_bats_order, self.key_params_ER_reject_child, self.ToQuod, "Buy Side ExecReport Reject child DMA 2 order")
+        self.fix_verifier_buy.check_fix_message_kepler(er_reject_dma_bats_order, self.key_params_ER_reject_child, self.ToQuod, "Buy Side ExecReport Reject child DMA 2 order")
         # endregion
 
         # region Check child DMA order on venue ITG
         self.dma_itg_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
         self.dma_itg_order.change_parameters(dict(Account=self.account_itg_cboe_tqdarkeu, ExDestination=self.ex_destination_itg, OrderQty=self.qty_child, Instrument='*'))
         self.dma_itg_order.add_tag(dict(MinQty=self.minQty))
-        self.fix_verifier_buy.check_fix_message(self.dma_itg_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 3 order')
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_itg_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 3 order')
 
         time.sleep(2)
 
         # region check reject third dma child order
         er_reject_dma_itg_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_itg_order, self.gateway_side_buy, self.status_reject)
-        self.fix_verifier_buy.check_fix_message(er_reject_dma_itg_order, self.key_params_ER_reject_child, self.ToQuod, "Buy Side ExecReport Reject child DMA 3 order")
+        self.fix_verifier_buy.check_fix_message_kepler(er_reject_dma_itg_order, self.key_params_ER_reject_child, self.ToQuod, "Buy Side ExecReport Reject child DMA 3 order")
         # endregion
 
         # region Eliminate Algo Order

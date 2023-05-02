@@ -111,7 +111,7 @@ class QAP_T4939(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Fill DMA order", self.test_id))
         er_fill_DMA_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.DMA_order, self.gateway_side_buy, self.status_fill)
         er_fill_DMA_order_params.add_tag(dict(misc5='#'))
-        self.fix_verifier_buy.check_fix_message(er_fill_DMA_order_params, key_parameters=self.key_params_ER_fill, direction=self.ToQuod, message_name='Buy side ExecReport Fill')
+        self.fix_verifier_buy.check_fix_message_kepler(er_fill_DMA_order_params, key_parameters=self.key_params_ER_fill, direction=self.ToQuod, message_name='Buy side ExecReport Fill')
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
