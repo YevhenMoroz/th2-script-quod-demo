@@ -37,6 +37,7 @@ from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T3845 import QA
 from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T3847 import QAP_T3847
 from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T3856 import QAP_T3856
 from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T3905 import QAP_T3905
+from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T7225 import QAP_T7225
 from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T8321 import QAP_T8321
 from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T8502 import QAP_T8502
 from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T8848 import QAP_T8848
@@ -45,6 +46,7 @@ from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T8857 import QA
 from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T9132 import QAP_T9132
 from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T10629 import QAP_T10629
 from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T10639 import QAP_T10639
+from test_cases.web_admin.web_admin_test_cases.middle_office.QAP_T11228 import QAP_T11228
 
 
 class RunMiddleOffice:
@@ -121,6 +123,8 @@ class RunMiddleOffice:
                       environment=configuration.environment).run()
             QAP_T3905(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
+            QAP_T7225(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
             QAP_T8321(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T8502(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
@@ -136,6 +140,8 @@ class RunMiddleOffice:
             QAP_T10629(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                        environment=configuration.environment).run()
             QAP_T10639(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                       environment=configuration.environment).run()
+            QAP_T11228(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                        environment=configuration.environment).run()
 
             end_time = time.monotonic()

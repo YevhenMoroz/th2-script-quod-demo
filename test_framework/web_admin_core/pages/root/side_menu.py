@@ -33,7 +33,7 @@ from test_framework.web_admin_core.pages.general.entitlements.constants import \
 from test_framework.web_admin_core.pages.general.settings.settings_constants import SettingsConstants
 from test_framework.web_admin_core.pages.middle_office.commissions.commissions_constants import CommissionsConstants
 from test_framework.web_admin_core.pages.middle_office.fees.fees_constants import FeesConstants
-from test_framework.web_admin_core.pages.middle_office.allocation_matching_profiles.constants import \
+from test_framework.web_admin_core.pages.middle_office.allocation_matching_profiles.constants import Constants as \
     AllocationMatchingProfilesConstants
 from test_framework.web_admin_core.pages.middle_office.settlement_models.constants import \
     SettlementModelsConstants
@@ -220,7 +220,7 @@ class SideMenu(CommonPage):
     def open_allocation_matching_profiles_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.ALLOCATION_MATCHING_PROFILES_ITEM_XPATH, RootConstants.MIDDLE_OFFICE_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(AllocationMatchingProfilesConstants.ALLOCATION_MATCHING_PROFILES_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(AllocationMatchingProfilesConstants.MainPage.MAIN_PAGE_TITLE_XPATH)
 
     def open_settlement_models_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.SETTLEMENT_MODELS_ITEM_XPATH, RootConstants.MIDDLE_OFFICE_TOGGLE_CSS_SELECTOR,
