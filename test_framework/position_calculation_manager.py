@@ -30,7 +30,7 @@ class PositionCalculationManager:
                                                  cross_rate=1):
         if float(posit_qty) < 0:
             realized_pl = -(
-                        min(-float(posit_qty), float(exec_qty)) * (float(exec_price) - float(net_weighted_avg_px))) - \
+                    min(-float(posit_qty), float(exec_qty)) * (float(exec_price) - float(net_weighted_avg_px))) - \
                           ((float(client_commission) + float(fees)) * float(cross_rate))
             print(realized_pl)
             print(float(exec_price) - float(net_weighted_avg_px))
@@ -80,24 +80,51 @@ class PositionCalculationManager:
                 return '0.0'
 
     @staticmethod
-    def calculate_buy_avg_px(posit_qty, exec_qty, exec_price, buy_avg_px, cross_rate='1', fees='0',
-                             client_commission='0'):
-        if float(posit_qty) >= 0 or (float(posit_qty) < 0 and float(exec_qty) < abs(float(posit_qty))):
-            buy_avg_px = (float(buy_avg_px) * float(posit_qty) + float(exec_qty) * float(cross_rate) *
-                          float(exec_price) + float(fees) *
-                          float(cross_rate) + float(client_commission) * float(cross_rate)) / \
-                         (float(posit_qty) + float(exec_qty))
-        elif float(posit_qty) < 0:
-            if float(exec_qty) > abs(float(posit_qty)):
-                buy_avg_px = (float(exec_qty) * float(cross_rate) *
-                              float(exec_price) + float(fees) *
-                              float(cross_rate) + float(client_commission) * float(cross_rate)) / \
-                             (float(exec_qty))
-            elif float(exec_qty) == abs(float(posit_qty)):
-                buy_avg_px = 0
+    def calculate_buy_avg_px_execution_buy_side(posit_qty, exec_qty, exec_price, buy_avg_px, cross_rate='1', fees='0',
+                                                client_commission='0'):
+        if float(posit_qty) >= 0:
+            buy_avg_px = (float(buy_avg_px) * float(posit_qty) + float(exec_qty) * float(exec_price) * float(
+                cross_rate) + (float(client_commission) + float(fees)) * float(cross_rate)) / (
+                                 float(posit_qty) + float(exec_qty))
+            return str(buy_avg_px)
+        if float(posit_qty) < 0:
+            if float(exec_qty) < -float(posit_qty):
+                buy_avg_px = (float(buy_avg_px) * float(posit_qty) + float(exec_qty) * float(exec_price) * float(
+                    cross_rate) + (float(client_commission) + float(fees)) * float(cross_rate)) / (
+                                     float(posit_qty) + float(exec_qty))
+                return str(buy_avg_px)
+            if float(exec_qty) > -float(posit_qty):
+                buy_avg_px = (float(exec_qty) * float(exec_price) * float(cross_rate) + (
+                        float(fees) + float(client_commission)) * float(cross_rate)) / float(exec_qty)
+                return str(buy_avg_px)
 
-        return buy_avg_px
+            if float(exec_qty) == -float(posit_qty):
+                return '0.0'
+        else: return buy_avg_px
 
+    @staticmethod
+    def calculate_sell_avg_px_execution_sell_side_net(posit_qty, exec_qty, exec_price, sell_avg_px, cross_rate='1',
+                                                      fees='0',
+                                                      client_commission='0'):
+        if float(posit_qty) <= 0:
+            sell_avg_px = (float(sell_avg_px) * (-float(posit_qty)) + (
+                    float(exec_qty) * float(exec_price) * float(cross_rate) - (
+                    float(fees) + float(client_commission)) * float(cross_rate))) / (
+                                  -float(posit_qty) + float(exec_qty))
+            return str(sell_avg_px)
+        if float(posit_qty) > 0:
+            if float(exec_qty) < float(posit_qty):
+                sell_avg_px = (float(sell_avg_px) * float(posit_qty) - (
+                        float(exec_qty) * float(exec_price) * float(cross_rate) - (
+                        float(fees) + float(client_commission)) * float(cross_rate))) / (
+                                      float(posit_qty) - float(exec_qty))
+                return str(sell_avg_px)
+            if float(exec_qty) > float(posit_qty):
+                sell_avg_px = (float(exec_qty) * float(exec_price) * float(cross_rate) - (float(fees) + float(client_commission)) * float(cross_rate))/float(exec_qty)
+                return str(sell_avg_px)
+            if float(exec_qty) == -float(posit_qty):
+                return '0.0'
+        else: return sell_avg_px
     @staticmethod
     def calculate_net_weighted_avg_px_for_position_transfer_source_acc(posit_qty, qty_to_transfer, net_weighted_avg_px,
                                                                        transfer_price):
@@ -105,7 +132,7 @@ class PositionCalculationManager:
             if float(qty_to_transfer) > 0:
                 net_weighted_avg_px = (float(net_weighted_avg_px) * -(float(posit_qty)) +
                                        float(qty_to_transfer) * float(transfer_price)) / (
-                                              -(float(posit_qty)) + float(transfer_price))
+                                              -(float(posit_qty)) + float(qty_to_transfer))
                 return str(net_weighted_avg_px)
             if float(qty_to_transfer) < float(posit_qty):
                 net_weighted_avg_px = float(qty_to_transfer) * float(transfer_price) / float(qty_to_transfer)
@@ -135,3 +162,33 @@ class PositionCalculationManager:
             return str(realized_pl)
         else:
             return '0.0'
+
+    @staticmethod
+    def calculate_net_weighted_avg_px_for_position_transfer_destination_acc(posit_qty, qty_to_transfer,
+                                                                            net_weighted_avg_px,
+                                                                            transfer_price):
+        if float(posit_qty) >= 0:
+            if float(qty_to_transfer) > 0:
+                net_weighted_avg_px = (float(net_weighted_avg_px) * float(posit_qty) + float(qty_to_transfer) * float(
+                    transfer_price)) / (float(posit_qty) + float(qty_to_transfer))
+                return str(net_weighted_avg_px)
+            if float(qty_to_transfer) < -float(posit_qty):
+                net_weighted_avg_px = -float(qty_to_transfer) * float(transfer_price) / -float(qty_to_transfer)
+                return str(net_weighted_avg_px)
+            if float(qty_to_transfer) == -float(posit_qty):
+                return '0.0'
+            else:
+                return str(net_weighted_avg_px)
+        if float(posit_qty) < 0:
+            if float(qty_to_transfer) < 0:
+                net_weighted_avg_px = (float(net_weighted_avg_px) * (-float(posit_qty)) + (
+                    -float(qty_to_transfer)) * float(
+                    transfer_price)) / (-float(posit_qty) - float(qty_to_transfer))
+                return str(net_weighted_avg_px)
+            if float(qty_to_transfer) > -float(posit_qty):
+                net_weighted_avg_px = float(qty_to_transfer) * float(transfer_price) / float(qty_to_transfer)
+                return str(net_weighted_avg_px)
+            if float(qty_to_transfer) == -float(posit_qty):
+                return '0.0'
+            else:
+                return str(net_weighted_avg_px)
