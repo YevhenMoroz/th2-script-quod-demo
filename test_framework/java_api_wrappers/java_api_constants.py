@@ -185,6 +185,7 @@ class JavaApiFields(Enum):
     AllocationReportBlock = 'AllocationReportBlock'
     UnrealizedPL = 'UnrealizedPL'
     ConfirmationReportBlock = 'ConfirmationReportBlock'
+    ConfirmationBlock = 'ConfirmationBlock'
     AffirmStatus = 'AffirmStatus'
     ConfirmationService = 'ConfirmationService'
     ClientAllocID = 'ClientAllocID'

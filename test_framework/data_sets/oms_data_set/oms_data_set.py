@@ -10,8 +10,7 @@ from test_framework.data_sets.oms_data_set.oms_const_enum import OmsVenues, OmsC
     OMSVenueListForCommissionAndFees, OMSWashBookRule, OMSReferencePrice, OMSClientListID, OMSISINSecurityAltIDs, \
     OMSSecurityIDSourceForListings, OMS_SymbolForListingsFromWebAdmin, OMSTickSizeProfile, OmsJavaApiInstruments, \
     OMSCounterPartyIDs_FIX, OMSCounterPartyIDs_JavaAPI, OMSVenueClientAccountName, OMSGatingRuleIDs, \
-    OMSVenueAccountNamesOfSecurityAccounts, OMSCounterParty_JavaAPI_FOR_ES, OMSCommissionAmountType, OMSChargesType, OMSPartyRoles
-    OMSVenueAccountNamesOfSecurityAccounts, OMSCounterParty_JavaAPI_FOR_ES, OMSChargesType, OMSPartyRoles, \
+    OMSVenueAccountNamesOfSecurityAccounts, OMSCounterParty_JavaAPI_FOR_ES, OMSCommissionAmountType, OMSChargesType, OMSPartyRoles,\
     OMSCashAccountIDs
 
 
