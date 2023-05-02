@@ -156,14 +156,10 @@ class QAP_T8157(TestCase):
         # endregion
 
     def _set_up_wash_book_rule(self):
-        self.rest_wash_book_message.disable_care_wash_book_rule()
-        self.rest_api_manager.send_post_request(self.rest_wash_book_message)
         self.rest_wash_book_message.modify_wash_book_rule(client=self.client, washbook_account=self.wash_book)
         self.rest_api_manager.send_post_request(self.rest_wash_book_message)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.rest_wash_book_message.clear_washbook_rule()
-        self.rest_api_manager.send_post_request(self.rest_wash_book_message)
-        self.rest_wash_book_message.enable_care_wash_book_rule()
         self.rest_api_manager.send_post_request(self.rest_wash_book_message)

@@ -198,6 +198,8 @@ class PKSMessageType(Enum):
     PositionReport = "Order_PositionReport"
     RetailPositionConversionRequest = "Order_RetailPositionConversionRequest"
     RequestForPositionsAck = "Order_RequestForPositionsAck"
+    RequestForOverdueRetailPositions = 'Order_RequestForOverdueRetailPositions'
+    RequestForOverdueRetailPositionsAck = 'Order_RequestForOverdueRetailPositionsAck'
 
 
 class QSMessageType(Enum):
