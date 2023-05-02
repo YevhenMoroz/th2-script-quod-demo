@@ -69,7 +69,9 @@ class QAP_T7606(TestCase):
         self.child_order.set_default_child_dma(ord_id)
         self.child_order.update_fields_in_component("NewOrderSingleBlock",
                                                     {'AccountGroupID': self.data_set.get_client_by_name(
-                                                        "client_pos_1"), "Side": "Sell"})
+                                                        "client_pos_1"), "Side": "Sell", 'RouteList': {'RouteBlock': [{
+                                                          'RouteID': self.data_set.get_route_id_by_name('route_1')
+                                                      }]}})
         try:
             new_order_single_rule = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(
                 self.fix_env.buy_side,
