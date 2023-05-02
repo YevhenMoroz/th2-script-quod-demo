@@ -14,13 +14,15 @@ from test_framework.web_admin_core.utils.web_driver_container import WebDriverCo
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
 
 
-class QAP_T3389(CommonTestCase):
+class QAP_T8997(CommonTestCase):
 
-    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
+    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None,
+                 db_manager=None):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
+        self.db_manager = db_manager
 
         self.name = self.__class__.__name__
         self.client_cash_account_id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
@@ -47,7 +49,7 @@ class QAP_T3389(CommonTestCase):
             values_tab.set_client_cash_account_id(self.client_cash_account_id)
             values_tab.set_venue_cash_account_id(self.venue_cash_account_id)
             values_tab.set_currency(self.currency)
-            self.client = random.choice(values_tab.get_all_client_from_drop_menu_by_patter('client'))
+            self.client = random.choice(values_tab.get_all_client_from_drop_menu_by_patter('cl'))
             values_tab.set_client(self.client)
             wizard.click_on_save_changes()
             cash_positions_page.set_name(self.name)
@@ -69,8 +71,15 @@ class QAP_T3389(CommonTestCase):
             cash_positions_page.click_on_edit()
             time.sleep(1)
 
-            self.verify(f"Value of the Collateral field is rewrote on new value {self.amount}.",
+            self.verify(f"Value of the Collateral field added correct {self.amount}.",
                         "{:.2f}".format(self.amount), str(positions_tab.get_collateral()))
+            # TODO
+            # Now only done for Postgres, needs to be completed for Oracle
+            self.db_manager.my_db.execute(f"SELECT collateralcash FROM cashaccount WHERE cashaccountname = '{self.name}'")
+            collateral_balance = self.db_manager.my_db.fetchall()[0][0]
+
+            self.verify("cash account transaction in the database is stored correct",
+                        int(self.amount), int(collateral_balance))
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

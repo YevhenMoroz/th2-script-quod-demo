@@ -2,20 +2,9 @@ import sys
 import time
 import traceback
 import random
-import string
+
 
 from custom import basic_custom_actions
-from test_framework.db_wrapper.db_manager import DBManager
-
-from test_framework.web_admin_core.pages.clients_accounts.clients.clients_values_sub_wizard import \
-    ClientsValuesSubWizard
-from test_framework.web_admin_core.pages.clients_accounts.clients.clients_assignments_sub_wizard \
-    import ClientsAssignmentsSubWizard
-from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
-from test_framework.web_admin_core.pages.clients_accounts.clients.clients_wizard import ClientsWizard
-from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
-from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_page import AccountsPage
-from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_wizard import AccountsWizard
 from test_framework.web_admin_core.pages.positions.security_positions.main_page import MainPage as SecurityPositionsPage
 
 from test_framework.web_admin_core.pages.login.login_page import LoginPage

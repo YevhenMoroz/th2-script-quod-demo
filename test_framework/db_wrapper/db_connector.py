@@ -19,6 +19,7 @@ class DBConnector:
                 """
                 mydb = oracle.connect(dsn=f"{host}/{name}", user=user, password=password)
                 with mydb.cursor():
+                    mydb.autocommit = True
                     return mydb.cursor()
 
             if db_type.lower() == 'mongo':
