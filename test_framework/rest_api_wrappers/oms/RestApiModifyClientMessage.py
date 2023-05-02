@@ -1,40 +1,11 @@
-from test_framework.environments.full_environment import FullEnvironment
+from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.rest_api_wrappers.RestApiMessages import RestApiMessages
 
 
-class RestApiModifyAccountGroupMessage(RestApiMessages):
-    def __init__(self, data_set, enviroment: FullEnvironment):
+class RestApiModifyClientMessage(RestApiMessages):
+    def __init__(self, data_set: BaseDataSet):
         super().__init__("", data_set)
         self.message_type = "ModifyAccountGroup"
-        self._base_parametes = {"accountGroupName": "CLIENT_REST_API",
-                                "clientAccountGroupID": "CLIENT_REST_API",
-                                "accountGroupID": "CLIENT_REST_API",
-                                "accountType": "AC",
-                                "FIXOrderRecipientUserID": "JavaApiUser",
-                                "FIXOrderRecipientRoleID": "TRA",
-                                "accountScheme": "S", "transactionType": "C",
-                                "accountGroupDesc": "",
-                                "FIXOrderRecipientDeskID": enviroment.get_list_fe_environment()[0].desk_ids[0],
-                                "discloseExec": "R",
-                                "clearingAccountType": "INS",
-                                "bookingInst": "AUT",
-                                "middleOfficeDeskID":  enviroment.get_list_fe_environment()[0].desk_ids[1],
-                                "allocationInst": "AUT",
-                                "confirmationService": "MAN",
-                                "blockApproval": "AUT",
-                                "pxPrecision": '3',
-                                "roundingDirection": "RDO",
-                                "giveUpMatchingID": "CLIENT_REST_API",
-                                "orderAckPreference": "AUT",
-                                "venueAccountGroup": [{"venueClientActGrpName": "CLIENT_REST_API", "venueID": "EUREX",
-                                                       "venueActGrpName": "CLIENT_REST_API", "stampFeeExemption": 'false',
-                                                       "levyFeeExemption": 'false', "perTransacFeeExemption": 'false'}],
-                                "routeAccountGroup": [
-                                    {"routeID": self.data_set.get_route_id_by_name('route_1'), "routeActGrpName": "CLIENT_REST_API", "agentFeeExemption": 'true'}],
-                                "managerDesk": [{"deskID": enviroment.get_list_fe_environment()[0].desk_ids[1]}]}
-
-    def set_default(self):
-        self.parameters.update(self._base_parametes)
 
     def set_params_for_comm_client(self, agent_fee_for_route=False):
         base_parameters = {
@@ -126,7 +97,6 @@ class RestApiModifyAccountGroupMessage(RestApiMessages):
                 }
             ]
         }
-        self.parameters.update(base_parameters)
         if agent_fee_for_route: self.change_params({"routeAccountGroup": [
                 {
                     "routeID": "24",
@@ -134,4 +104,7 @@ class RestApiModifyAccountGroupMessage(RestApiMessages):
                     "agentFeeExemption": "true"
                 }
             ]})
+        self.set_params(base_parameters)
         return self
+
+
