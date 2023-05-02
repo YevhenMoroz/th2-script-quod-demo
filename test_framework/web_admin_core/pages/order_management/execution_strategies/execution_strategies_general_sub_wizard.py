@@ -78,3 +78,6 @@ class ExecutionStrategiesGeneralSubWizard(CommonPage):
 
     def get_error_type_after_empty_saved(self):
         return self.find_by_xpath(ExecutionStrategiesConstants.INCORRECT_OR_MISSING_VALUES_ERROR).text
+
+    def get_all_values_of_parameters_in_sub_wizard(self) -> list:
+        return self.get_all_items_from_table_column(ExecutionStrategiesConstants.VALUES_OF_PARAMETERS_IN_SUB_WIZARD)
