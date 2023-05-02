@@ -232,6 +232,7 @@ class CSMessageType(Enum):
     CDOrdAssign = 'Order_CDOrdAssign'
     CDAssignReply = 'Order_CDAssignReply'
     UnMatchRequest = 'Internal_UnMatchRequest'
+    OrdTransferNotification = 'Order_OrdTransferNotification'
 
 
 class MDAMessageType(Enum):
