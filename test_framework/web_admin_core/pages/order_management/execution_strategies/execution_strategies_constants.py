@@ -97,7 +97,7 @@ class ExecutionStrategiesConstants:
     OFFSET_AT_SUB_WIZARD ='//*[text()="Offset *"]/preceding-sibling::input'
     ABSOLUTE_VALUE_AT_SUB_WIZARD ='//*[text()="Absolute Value *"]/preceding-sibling::input'
 
-
+    VALUES_OF_PARAMETERS_IN_SUB_WIZARD = '//tr//td[3]//span[@class="ng-star-inserted"]'
     # JUST FOR ACTIONS SUB WIZARD
     PLUS_BUTTON_AT_ACTIONS_SUB_WIZARD = '//*[@class="form-table-details-wrapper"]//ancestor::p-table//*[@nbtooltip="Add"]'
     CHECKMARK_BUTTON_AT_ACTIONS_SUB_WIZARD = '//*[@class="form-table-details-wrapper"]//ancestor::p-table//*[@data-name="checkmark"]'

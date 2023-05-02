@@ -81,3 +81,6 @@ class ExecutionStrategiesLitSweepingSubWizard(CommonPage):
 
     def click_on_delete_at_actions_sub_wizard(self):
         self.find_by_xpath(ExecutionStrategiesConstants.DELETE_BUTTON_AT_ACTIONS_SUB_WIZARD).click()
+
+    def get_all_values_of_parameters_in_sub_wizard(self) -> list:
+        return self.get_all_items_from_table_column(ExecutionStrategiesConstants.VALUES_OF_PARAMETERS_IN_SUB_WIZARD)
