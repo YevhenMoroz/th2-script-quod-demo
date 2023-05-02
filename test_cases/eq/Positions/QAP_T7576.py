@@ -20,7 +20,7 @@ logger.setLevel(logging.INFO)
 seconds, nanos = timestamps()
 
 
-class QAP_T7590(TestCase):
+class QAP_T7576(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
@@ -36,7 +36,7 @@ class QAP_T7590(TestCase):
         self.java_api_connectivity = self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
         self.posit_transfer = PositionTransferInstructionOMS(self.data_set)
-        self.instrument_id = self.data_set.get_instrument_id_by_name('instrument_1')
+        self.instrument_id = self.data_set.get_instrument_id_by_name('instrument_2')
         self.request_for_position = RequestForPositions()
         self.qty = '100'
         self.price = '2'
@@ -48,11 +48,34 @@ class QAP_T7590(TestCase):
         # region precondition: Create Position Transfer
 
         # part 1: Get Positions of source and destination account
-        source_position_before = self._extract_postion_for_account(self.source_acc)
-        destination_position_before = self._extract_postion_for_account(self.destination_acc)
+        self._extract_postion_for_account(self.source_acc)
+        self._extract_postion_for_account(self.destination_acc)
         # end_of_part
+        # endregion
 
-        # part 2
+        # region precondition: Set up one more position transfer
+        self.posit_transfer.set_default_transfer(self.source_acc, self.destination_acc,
+                                                 self.qty,
+                                                 self.price)
+        self.posit_transfer.update_fields_in_component(JavaApiFields.PositionTransferInstructionBlock.value, {JavaApiFields.InstrID.value: self.instrument_id})
+        self.java_api_manager.send_message_and_receive_response(self.posit_transfer)
+        source_posit_before_create = \
+            self.java_api_manager.get_last_message_by_multiple_filter(PKSMessageType.PositionReport.value,
+                                                                      [JavaApiFields.PositQty.value,
+                                                                       self.source_acc]).get_parameters()[
+                JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
+                JavaApiFields.PositionBlock.value][0]
+        destination_position_before_create = \
+            self.java_api_manager.get_last_message_by_multiple_filter(PKSMessageType.PositionReport.value,
+                                                                      [JavaApiFields.PositQty.value,
+                                                                       self.destination_acc]).get_parameters()[
+                JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
+                JavaApiFields.PositionBlock.value][0]
+        unrealized_pl_source_acc_before = self._get_common_unrealized_pls(self.source_acc)
+        unrealized_pl_destination_acc_before = self._get_common_unrealized_pls(self.destination_acc)
+        # endregion
+
+        # region step 1-4
         self.posit_transfer.set_default_transfer(self.source_acc, self.destination_acc, self.qty, self.price)
         self.posit_transfer.update_fields_in_component(JavaApiFields.PositionTransferInstructionBlock.value, {
             JavaApiFields.InstrID.value: self.instrument_id})
@@ -63,95 +86,71 @@ class QAP_T7590(TestCase):
         self.java_api_manager.compare_values(
             {JavaApiFields.TransferTransType.value: PositionTransferReportConst.TransferTransType_NEW.value},
             position_transfer_report,
-            'Verify that PositionTransfer created (precondition)')
-        transfer_id = position_transfer_report[JavaApiFields.PositionTransferID.value]
-        source_posit_before_amend = \
+            'Verify that PositionTransfer created (step 4)')
+        source_posit_after_create = \
             self.java_api_manager.get_last_message_by_multiple_filter(PKSMessageType.PositionReport.value,
                                                                       [JavaApiFields.PositQty.value,
                                                                        self.source_acc]).get_parameters()[
                 JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
                 JavaApiFields.PositionBlock.value][0]
-        destination_position_before_amend = \
+        destination_position_after_create = \
             self.java_api_manager.get_last_message_by_multiple_filter(PKSMessageType.PositionReport.value,
                                                                       [JavaApiFields.PositQty.value,
                                                                        self.destination_acc]).get_parameters()[
                 JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
                 JavaApiFields.PositionBlock.value][0]
-        unrealized_pl_source_acc_before = self._get_common_unrealized_pls(self.source_acc)
-        unrealized_pl_destination_acc_before = self._get_common_unrealized_pls(self.destination_acc)
         # end_of_part
 
         # endregion
 
-        # region step 1-3: Amend Position Transfer
-        amended_qty_to_transfer = '50'
-        self.posit_transfer.set_default_amend_transfer(self.source_acc, self.destination_acc, transfer_id,
-                                                       amended_qty_to_transfer,
-                                                       self.price)
-        self.java_api_manager.send_message_and_receive_response(self.posit_transfer)
-        position_transfer_report = self.java_api_manager.get_last_message(ORSMessageType.PositionTransferReport.value). \
-            get_parameters()[JavaApiFields.PositionTransferReportBlock.value]
-        self.java_api_manager.compare_values({JavaApiFields.QtyToTransfer.value: str(float(amended_qty_to_transfer))},
-                                             position_transfer_report,
-                                             'Verify that position transfer amended (step 3)')
-        # endregion
-
-        # region step 4: Check that PositQty of source account increased
-        source_posit_after_amend = \
-            self.java_api_manager.get_last_message_by_multiple_filter(PKSMessageType.PositionReport.value,
-                                                                      [JavaApiFields.PositQty.value,
-                                                                       self.source_acc]).get_parameters()[
-                JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
-                JavaApiFields.PositionBlock.value][0]
-        source_posit_qty_after_amend = source_posit_after_amend[JavaApiFields.PositQty.value]
-        expected_increased_qty = str(float(source_posit_qty_after_amend) -
-                                     float(source_posit_before_amend[JavaApiFields.PositQty.value]))
-        self.java_api_manager.compare_values({'IncreasedQty': str(float(amended_qty_to_transfer))},
-                                             {'IncreasedQty': expected_increased_qty},
-                                             f'Verify that for {self.source_acc} {JavaApiFields.PositQty.value} increased on {amended_qty_to_transfer} (step 4)')
-        # endregion
-
-        # region step 5 Check that unrealized_pl_common and unrealized_pl changes properly
-        net_weighted_avg_px_source_acc_before = source_position_before[JavaApiFields.NetWeightedAvgPx.value]
-        posit_qty_source_before_transfer = source_position_before[JavaApiFields.PositQty.value]
-        calculated_net_weighted_avg_px = PositionCalculationManager.calculate_net_weighted_avg_px_for_position_transfer_source_acc(
-            posit_qty_source_before_transfer, amended_qty_to_transfer, net_weighted_avg_px_source_acc_before, self.price)
-        unrealized_pl_specify_expected = str(float(source_posit_qty_after_amend) * (float(self.mid_px) - float(calculated_net_weighted_avg_px)))
-        unrealized_pls_actual_source_acc_after = self._get_common_unrealized_pls(self.source_acc)
-        unrealized_pl_common_expected = str(float(unrealized_pl_source_acc_before[0]) - float(unrealized_pl_source_acc_before[1])+ float(unrealized_pl_specify_expected))
-        self.java_api_manager.compare_values({JavaApiFields.UnrealizedPL.value: unrealized_pl_specify_expected},
-                                             {JavaApiFields.UnrealizedPL.value: unrealized_pls_actual_source_acc_after[1]},
-                                             f'Verify that Unrealized PL of {self.source_acc} has properly value (step 5)')
-        self.java_api_manager.compare_values({JavaApiFields.UnrealizedPL.value: unrealized_pl_common_expected},
-                                             {JavaApiFields.UnrealizedPL.value: unrealized_pls_actual_source_acc_after[0]},
-                                             f'Verify that Total Unrealized PL of {self.source_acc} has properly value (step 5)')
-        # endregion
-
-        # region step 6: Verify that PositQty of destination account decreased
-        destination_posit_after_amend = \
-            self.java_api_manager.get_last_message_by_multiple_filter(PKSMessageType.PositionReport.value,
-                                                                      [JavaApiFields.PositQty.value,
-                                                                       self.destination_acc]).get_parameters()[
-                JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
-                JavaApiFields.PositionBlock.value][0]
-        destination_posit_qty_after_amend = destination_posit_after_amend[JavaApiFields.PositQty.value]
-        expected_decreased_qty = str(float(destination_position_before_amend[JavaApiFields.PositQty.value]) -
-                                     float(destination_posit_qty_after_amend))
-        self.java_api_manager.compare_values({'DecreasedQty': str(float(amended_qty_to_transfer))},
+        # region step 5: Check that PositQty of source account decreased
+        source_posit_qty_after_create = source_posit_after_create[JavaApiFields.PositQty.value]
+        source_posit_qty_before_create = source_posit_before_create[JavaApiFields.PositQty.value]
+        expected_decreased_qty = str(float(source_posit_qty_before_create) -
+                                     float(source_posit_qty_after_create))
+        self.java_api_manager.compare_values({'DecreasedQty': str(float(self.qty))},
                                              {'DecreasedQty': expected_decreased_qty},
-                                             f'Verify that for {self.destination_acc} {JavaApiFields.PositQty.value} decreased on {amended_qty_to_transfer} (step 6)')
-        net_weighted_avg_px_destination_acc_before = destination_position_before[JavaApiFields.NetWeightedAvgPx.value]
-
-        posit_qty_destination_before_transfer = destination_position_before[JavaApiFields.PositQty.value]
-        expected_net_weighted_avg_px_destination = PositionCalculationManager.calculate_net_weighted_avg_px_for_position_transfer_destination_acc(posit_qty_destination_before_transfer, amended_qty_to_transfer, net_weighted_avg_px_destination_acc_before, self.price)
-        self.java_api_manager.compare_values({JavaApiFields.NetWeightedAvgPx.value: expected_net_weighted_avg_px_destination},
-                                             destination_posit_after_amend, f'Verify that for {self.destination_acc}, {JavaApiFields.NetWeightedAvgPx.value} calculated properly (step 6)')
-
+                                             f'Verify that for {self.source_acc} {JavaApiFields.PositQty.value} decreased on {self.qty} (step 5)')
         # endregion
 
-        # region step 7: Calculate UnrealizedPl(common and for instrument) for destination account
+        # region step 6 Check that unrealized_pl_common and unrealized_pl  properly calculated
+        net_weighted_avg_px_source_acc_before = source_posit_before_create[JavaApiFields.NetWeightedAvgPx.value]
+        calculated_net_weighted_avg_px = PositionCalculationManager.calculate_net_weighted_avg_px_for_position_transfer_source_acc(
+            source_posit_qty_before_create, self.qty, net_weighted_avg_px_source_acc_before,
+            self.price)
         unrealized_pl_specify_expected = str(
-            float(destination_posit_qty_after_amend) * (float(self.mid_px) - float(expected_net_weighted_avg_px_destination)))
+            float(source_posit_qty_after_create) * (float(self.mid_px) - float(calculated_net_weighted_avg_px)))
+        unrealized_pls_actual_source_acc_after = self._get_common_unrealized_pls(self.source_acc)
+        unrealized_pl_common_expected = str(
+            float(unrealized_pl_source_acc_before[0]) - float(unrealized_pl_source_acc_before[1]) + float(
+                unrealized_pl_specify_expected))
+        self.java_api_manager.compare_values({JavaApiFields.UnrealizedPL.value: unrealized_pl_specify_expected},
+                                             {JavaApiFields.UnrealizedPL.value: unrealized_pls_actual_source_acc_after[
+                                                 1]},
+                                             f'Verify that Unrealized PL of {self.source_acc} has properly value (step 6)')
+        self.java_api_manager.compare_values({JavaApiFields.UnrealizedPL.value: unrealized_pl_common_expected},
+                                             {JavaApiFields.UnrealizedPL.value: unrealized_pls_actual_source_acc_after[
+                                                 0]},
+                                             f'Verify that Total Unrealized PL of {self.source_acc} has properly value (step 6)')
+        # endregion
+
+        # region step 7: Verify that PositQty of destination account decreased
+        destination_posit_qty_after = destination_position_after_create[JavaApiFields.PositQty.value]
+        destination_posit_qty_before = destination_position_before_create[JavaApiFields.PositQty.value]
+        expected_increased_qty = str(float(destination_posit_qty_after) -
+                                     float(destination_posit_qty_before))
+        self.java_api_manager.compare_values({'IncreasedQty': str(float(self.qty))},
+                                             {'IncreasedQty': expected_increased_qty},
+                                             f'Verify that for {self.destination_acc} {JavaApiFields.PositQty.value} increased on {self.qty} (step 7)')
+        # endregion
+
+        # region step 8: Check that unrealized_pl_common and unrealized_pl change properly calculated
+        net_weighted_avg_px_source_acc_before = destination_position_before_create[JavaApiFields.NetWeightedAvgPx.value]
+        calculated_net_weighted_avg_px = PositionCalculationManager.calculate_net_weighted_avg_px_for_position_transfer_destination_acc(
+            destination_posit_qty_before, self.qty, net_weighted_avg_px_source_acc_before,
+            self.price)
+        unrealized_pl_specify_expected = str(
+            float(destination_posit_qty_after) * (float(self.mid_px) - float(calculated_net_weighted_avg_px)))
         unrealized_pls_actual_destination_acc_after = self._get_common_unrealized_pls(self.destination_acc)
         unrealized_pl_common_expected = str(
             float(unrealized_pl_destination_acc_before[0]) - float(unrealized_pl_destination_acc_before[1]) + float(
@@ -159,11 +158,11 @@ class QAP_T7590(TestCase):
         self.java_api_manager.compare_values({JavaApiFields.UnrealizedPL.value: unrealized_pl_specify_expected},
                                              {JavaApiFields.UnrealizedPL.value: unrealized_pls_actual_destination_acc_after[
                                                  1]},
-                                             f'Verify that Unrealized PL of {self.destination_acc} has properly value (step 7)')
+                                             f'Verify that Unrealized PL of {self.destination_acc} has properly value (step 8)')
         self.java_api_manager.compare_values({JavaApiFields.UnrealizedPL.value: unrealized_pl_common_expected},
                                              {JavaApiFields.UnrealizedPL.value: unrealized_pls_actual_destination_acc_after[
                                                  0]},
-                                             f'Verify that Total Unrealized PL of {self.destination_acc} has properly value (step 7)')
+                                             f'Verify that Total Unrealized PL of {self.destination_acc} has properly value (step 8)')
         # endregion
 
     def _extract_postion_for_account(self, account):
