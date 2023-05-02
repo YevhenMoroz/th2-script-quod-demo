@@ -335,6 +335,7 @@ class OMSCommissionProfiles(Enum):
     abs_amt_gbp_small = 800021
     amt_plus_client = 600020
     sixbps = 800024
+    perc_amt_gbp = 1000044
 
 
 class OMSFeeType(Enum):

@@ -350,6 +350,8 @@ class JavaApiFields(Enum):
     CommissionCurrency = 'CommissionCurrency'
     CommissionAmount = 'CommissionAmount'
     ClientCommissionList = 'ClientCommissionList'
+    ExecAllocList = 'ExecAllocList'
+    ExecAllocBlock = 'ExecAllocBlock'
     ClientCommissionBlock = 'ClientCommissionBlock'
     AllocReportID = 'AllocReportID'
     AllocInstructionID = 'AllocInstructionID'
