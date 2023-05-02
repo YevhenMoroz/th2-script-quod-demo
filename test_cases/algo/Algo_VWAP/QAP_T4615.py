@@ -12,7 +12,7 @@ from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMes
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, TradingPhases, Reference
+from test_framework.data_sets.constants import TradingPhases, Reference
 from test_framework.algo_formulas_manager import AlgoFormulasManager as AFM
 from test_framework.algo_mongo_manager import AlgoMongoManager as AMM
 from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import \

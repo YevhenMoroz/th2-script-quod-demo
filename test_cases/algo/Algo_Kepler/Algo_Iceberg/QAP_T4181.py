@@ -188,7 +188,7 @@ class QAP_T4181(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Check 2 DMA orders", self.test_id))
 
         self.fix_verifier_buy.check_fix_message_sequence([self.dma_1_order, self.dma_2_order], key_parameters_list=[None, None], direction=self.FromQuod, pre_filter=self.pre_filter, check_order=False)
-        self.fix_verifier_buy.check_fix_message_sequence([er_pending_new_dma_1_order_params, er_new_dma_1_order_params, er_fill_dma_1_order, er_pending_new_dma_2_order_params, er_new_dma_2_order_params, er_fill_dma_2_order], key_parameters_list=[self.key_params_ER_child, self.key_params_ER_child, self.key_params_ER_child, self.key_params_ER_child, self.key_params_ER_child, self.key_params_ER_child], direction=self.ToQuod, pre_filter=None)
+        self.fix_verifier_buy.check_fix_message_sequence([er_pending_new_dma_1_order_params, er_new_dma_1_order_params, er_fill_dma_1_order, er_pending_new_dma_2_order_params, er_new_dma_2_order_params, er_fill_dma_2_order], key_parameters_list=[self.key_params_ER_child, self.key_params_ER_child, self.key_params_ER_child, self.key_params_ER_child, self.key_params_ER_child, self.key_params_ER_child], direction=self.ToQuod, pre_filter=None, check_order=False)
         # endregion
 
         time.sleep(10)

@@ -1,6 +1,7 @@
 import logging
 from custom import basic_custom_actions as bca
 from stubs import Stubs
+from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T4225 import QAP_T4225
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T4350 import QAP_T4350
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T4351 import QAP_T4351
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T8791 import QAP_T8791
@@ -8,6 +9,8 @@ from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T8845 import QAP_T8845
 from test_cases.algo.Algo_Redburn.Algo_POV_Scaling.QAP_T4464 import QAP_T4464
 from test_cases.algo.Algo_Redburn.Algo_POV_Scaling.QAP_T4470 import QAP_T4470
 from test_cases.algo.Algo_Redburn.Algo_POV_Scaling.QAP_T4478 import QAP_T4478
+from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T4386 import QAP_T4386
+from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T8719 import QAP_T8719
 from test_framework.configurations.component_configuration import ComponentConfigurationAlgo
 
 
@@ -28,6 +31,7 @@ def test_run(parent_id=None, version=None):
         QAP_T4351(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4350(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4470(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4225(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
         # region MinParticipation
@@ -51,6 +55,8 @@ def test_run(parent_id=None, version=None):
         # endregion
 
         # region Auction
+        QAP_T4386(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T8719(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
         # region POV Scaling

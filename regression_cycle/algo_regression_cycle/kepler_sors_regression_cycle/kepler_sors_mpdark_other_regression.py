@@ -1,4 +1,6 @@
 import logging
+import time
+
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4581 import QAP_T4581
@@ -53,6 +55,7 @@ def test_run(parent_id=None, version=None):
         QAP_T4360(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4429(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4431(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        time.sleep(10)
         QAP_T4521(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4522(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4578(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()

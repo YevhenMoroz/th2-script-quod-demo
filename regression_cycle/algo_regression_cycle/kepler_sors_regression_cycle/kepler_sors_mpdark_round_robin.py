@@ -92,6 +92,7 @@ def test_run(parent_id=None, version=None):
         QAP_T10526(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10527(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10528(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        time.sleep(5)
         QAP_T10529(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10530(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10531(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
