@@ -122,36 +122,36 @@ class QAP_T4717(TestCase):
         self.dma_chix_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
         self.dma_chix_order.change_parameters(dict(Account=self.account_chix, ExDestination=self.ex_destination_chix, OrderQty=self.qty_child))
         self.dma_chix_order.add_tag(dict(MinQty=self.minQty))
-        self.fix_verifier_buy.check_fix_message(self.dma_chix_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_chix_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
         # endregion
 
         # region check eliminate first dma child order
         er_eliminate_dma_chix_order = FixMessageExecutionReportAlgo().set_params_for_nos_eliminate_rule(self.dma_chix_order)
-        self.fix_verifier_buy.check_fix_message(er_eliminate_dma_chix_order, self.key_params_ER_eliminate_child, self.ToQuod, "Buy Side ExecReport Eliminate child DMA 1 order")
+        self.fix_verifier_buy.check_fix_message_kepler(er_eliminate_dma_chix_order, self.key_params_ER_eliminate_child, self.ToQuod, "Buy Side ExecReport Eliminate child DMA 1 order")
         # endregion
 
         # region Check child DMA order on venue BATS DARKPOOL UK
         self.dma_bats_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
         self.dma_bats_order.change_parameters(dict(Account=self.account_bats, ExDestination=self.ex_destination_bats, OrderQty=self.qty_child))
         self.dma_bats_order.add_tag(dict(MinQty=self.minQty))
-        self.fix_verifier_buy.check_fix_message(self.dma_bats_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 2 order')
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_bats_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 2 order')
         # endregion
 
         # region check eliminate second dma child order
         er_eliminate_dma_bats_order = FixMessageExecutionReportAlgo().set_params_for_nos_eliminate_rule(self.dma_bats_order)
-        self.fix_verifier_buy.check_fix_message(er_eliminate_dma_bats_order, self.key_params_ER_eliminate_child, self.ToQuod, "Buy Side ExecReport Eliminate child DMA 2 order")
+        self.fix_verifier_buy.check_fix_message_kepler(er_eliminate_dma_bats_order, self.key_params_ER_eliminate_child, self.ToQuod, "Buy Side ExecReport Eliminate child DMA 2 order")
         # endregion
 
         # region Check child DMA order on venue ITG
         self.dma_itg_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
         self.dma_itg_order.change_parameters(dict(Account=self.account_itg_cboe_tqdarkeu, ExDestination=self.ex_destination_itg, OrderQty=self.qty_child, Price=self.price, Instrument='*'))
         self.dma_itg_order.add_tag(dict(MinQty=self.minQty))
-        self.fix_verifier_buy.check_fix_message(self.dma_itg_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 3 order')
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_itg_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 3 order')
         # endregion
         
         # region check eliminate second dma child order
         er_eliminate_dma_itg_order = FixMessageExecutionReportAlgo().set_params_for_nos_eliminate_rule(self.dma_itg_order)
-        self.fix_verifier_buy.check_fix_message(er_eliminate_dma_itg_order, self.key_params_ER_eliminate_child, self.ToQuod, "Buy Side ExecReport Eliminate child DMA 3 order")
+        self.fix_verifier_buy.check_fix_message_kepler(er_eliminate_dma_itg_order, self.key_params_ER_eliminate_child, self.ToQuod, "Buy Side ExecReport Eliminate child DMA 3 order")
         # endregion
         
         er_eliminate_mp_dark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_eliminate)

@@ -135,12 +135,12 @@ class QAP_T4614(TestCase):
 
         # region check that RFQ send to CHIX LIS UK
         nos_chixlis_rfq = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_RFQ_params().change_parameters(dict(Account=self.client, OrderQty=self.qty, ExDestination=self.ex_destination_chixlis, Instrument='*'))
-        self.fix_verifier_buy.check_fix_message(nos_chixlis_rfq, key_parameters=self.key_params_with_ex_destination, message_name='Buy side RFQ on CHIXLIS', direction=self.FromQuod)
+        self.fix_verifier_buy.check_fix_message_kepler(nos_chixlis_rfq, key_parameters=self.key_params_with_ex_destination, message_name='Buy side RFQ on CHIXLIS', direction=self.FromQuod)
         # endregion
 
         # region check that RFQ send to TURQUOISE LIS
         nos_trql_rfq = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_RFQ_params().change_parameters(dict(Account=self.client, OrderQty=self.qty, ExDestination=self.ex_destination_trql, Instrument='*'))
-        self.fix_verifier_buy.check_fix_message(nos_trql_rfq, key_parameters=self.key_params_with_ex_destination, message_name='Buy side RFQ on TQLIS')
+        self.fix_verifier_buy.check_fix_message_kepler(nos_trql_rfq, key_parameters=self.key_params_with_ex_destination, message_name='Buy side RFQ on TQLIS')
         # endregion
 
         # region dark orders sended on market
@@ -148,77 +148,77 @@ class QAP_T4614(TestCase):
         # CHIXDELTA
         self.dma_chix_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
         self.dma_chix_order.change_parameters(dict(Account=self.client_chix_delta, ExDestination=self.ex_destination_chix_dark, OrderQty=self.qty_chix_child))
-        self.fix_verifier_buy.check_fix_message(self.dma_chix_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle dark child on chix_delta')
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_chix_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle dark child on chix_delta')
 
         er_pending_new_dma_chix_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_chix_order, self.gateway_side_buy, self.status_pending)
         er_pending_new_dma_chix_order_params.change_parameters(dict(ExDestination=self.ex_destination_chix_dark))
-        self.fix_verifier_buy.check_fix_message(er_pending_new_dma_chix_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew dark child on chix_delta')
+        self.fix_verifier_buy.check_fix_message_kepler(er_pending_new_dma_chix_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew dark child on chix_delta')
 
         er_new_dma_chix_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_chix_order, self.gateway_side_buy, self.status_new)
         er_new_dma_chix_order_params.change_parameters(dict(ExDestination=self.ex_destination_chix_dark))
-        self.fix_verifier_buy.check_fix_message(er_new_dma_chix_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New dark child on chix_delta')
+        self.fix_verifier_buy.check_fix_message_kepler(er_new_dma_chix_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New dark child on chix_delta')
 
         # BATSDARK
         self.dma_bats_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
         self.dma_bats_order.change_parameters(dict(Account=self.client_bats_dark, ExDestination=self.ex_destination_bats_dark, OrderQty=self.qty_bats_child))
-        self.fix_verifier_buy.check_fix_message(self.dma_bats_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle dark child on bats_dark')
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_bats_order, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle dark child on bats_dark')
 
         er_pending_new_dma_bats_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_bats_order, self.gateway_side_buy, self.status_pending)
         er_pending_new_dma_bats_order_params.change_parameters(dict(ExDestination=self.ex_destination_bats_dark))
-        self.fix_verifier_buy.check_fix_message(er_pending_new_dma_bats_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew dark child on bats_dark')
+        self.fix_verifier_buy.check_fix_message_kepler(er_pending_new_dma_bats_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew dark child on bats_dark')
 
         er_new_dma_bats_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_bats_order, self.gateway_side_buy, self.status_new)
         er_new_dma_bats_order_params.change_parameters(dict(ExDestination=self.ex_destination_bats_dark))
-        self.fix_verifier_buy.check_fix_message(er_new_dma_bats_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport dark child on bats_dark')
+        self.fix_verifier_buy.check_fix_message_kepler(er_new_dma_bats_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport dark child on bats_dark')
         # endregion
 
         # region MO partial filled
         self.fix_verifier_buy.set_case_id(bca.create_event("Full fill dark order on BATS DARK", self.test_id))
         er_filled_batsdark = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_bats_order,side=GatewaySide.Buy, status=Status.Fill)
-        self.fix_verifier_buy.check_fix_message(er_filled_batsdark, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child order')
+        self.fix_verifier_buy.check_fix_message_kepler(er_filled_batsdark, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child order')
         # endregion
 
         # region check cancel second dma child order
         self.fix_verifier_buy.set_case_id(bca.create_event("Dark venue order on CHIXDELTA canceled", self.test_id))
         er_cancel_chix_delta_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_chix_order, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message(er_cancel_chix_delta_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel dark child on chix_delta")
+        self.fix_verifier_buy.check_fix_message_kepler(er_cancel_chix_delta_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel dark child on chix_delta")
         # endregion
 
         # region dark orders sended on market
         self.fix_verifier_buy.set_case_id(bca.create_event("After trade on dark venue algo generate new dark childs", self.test_id))
         # CHIXDELTA
         self.dma_chix_order2 = deepcopy(self.dma_chix_order).change_parameter("OrderQty", self.qty_chix_child2)
-        self.fix_verifier_buy.check_fix_message(self.dma_chix_order2, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle dark child on chix_delta')
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_chix_order2, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle dark child on chix_delta')
 
         er_pending_new_dma_chix_order_params2 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_chix_order2, self.gateway_side_buy, self.status_pending)
         er_pending_new_dma_chix_order_params2.change_parameters(dict(ExDestination=self.ex_destination_chix_dark))
-        self.fix_verifier_buy.check_fix_message(er_pending_new_dma_chix_order_params2, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew dark child on chix_delta')
+        self.fix_verifier_buy.check_fix_message_kepler(er_pending_new_dma_chix_order_params2, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew dark child on chix_delta')
 
         er_new_dma_chix_order_params2 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_chix_order2, self.gateway_side_buy, self.status_new)
         er_new_dma_chix_order_params2.change_parameters(dict(ExDestination=self.ex_destination_chix_dark))
-        self.fix_verifier_buy.check_fix_message(er_new_dma_chix_order_params2, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New dark child on chix_delta')
+        self.fix_verifier_buy.check_fix_message_kepler(er_new_dma_chix_order_params2, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New dark child on chix_delta')
 
         # BATSDARK
         self.dma_bats_order2 = deepcopy(self.dma_bats_order).change_parameter("OrderQty", self.qty_bats_child2)
-        self.fix_verifier_buy.check_fix_message(self.dma_bats_order2, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle dark child on bats_dark')
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_bats_order2, key_parameters=self.key_params_with_ex_destination, message_name='Buy side NewOrderSingle dark child on bats_dark')
 
         er_pending_new_dma_bats_order_params2 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_bats_order, self.gateway_side_buy, self.status_pending)
         er_pending_new_dma_bats_order_params2.change_parameters(dict(ExDestination=self.ex_destination_bats_dark))
-        self.fix_verifier_buy.check_fix_message(er_pending_new_dma_bats_order_params2, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew dark child on bats_dark')
+        self.fix_verifier_buy.check_fix_message_kepler(er_pending_new_dma_bats_order_params2, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew dark child on bats_dark')
 
         er_new_dma_bats_order_params2 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_bats_order, self.gateway_side_buy, self.status_new)
         er_new_dma_bats_order_params2.change_parameters(dict(ExDestination=self.ex_destination_bats_dark))
-        self.fix_verifier_buy.check_fix_message(er_new_dma_bats_order_params2, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport dark child on bats_dark')
+        self.fix_verifier_buy.check_fix_message_kepler(er_new_dma_bats_order_params2, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport dark child on bats_dark')
         # endregion
         # region chixlist rfq accepted
         case_id_3 = bca.create_event("RFQ accepted on CHIXLIS", self.test_id)
         self.fix_verifier_buy.set_case_id(case_id_3)
 
         er_rfq_new = FixMessageExecutionReportAlgo().set_RFQ_accept_params_new(nos_chixlis_rfq)
-        self.fix_verifier_buy.check_fix_message(er_rfq_new, key_parameters=self.key_params_RFQ, message_name='Buy side RFQ reply NEW on CHIXLIS', direction=self.ToQuod)
+        self.fix_verifier_buy.check_fix_message_kepler(er_rfq_new, key_parameters=self.key_params_RFQ, message_name='Buy side RFQ reply NEW on CHIXLIS', direction=self.ToQuod)
 
         er_rfq_restated = FixMessageExecutionReportAlgo().set_RFQ_accept_params_restated(er_rfq_new).change_parameters({"OrderQty": self.qty})
-        self.fix_verifier_buy.check_fix_message(er_rfq_restated, key_parameters=self.key_params_RFQ, message_name='Buy side RFQ reply RESTATED on CHIXLIS', direction=self.ToQuod)
+        self.fix_verifier_buy.check_fix_message_kepler(er_rfq_restated, key_parameters=self.key_params_RFQ, message_name='Buy side RFQ reply RESTATED on CHIXLIS', direction=self.ToQuod)
 
         # endregion
         # region quote canceled on TRQX
@@ -226,11 +226,11 @@ class QAP_T4614(TestCase):
         self.fix_verifier_buy.set_case_id(case_id_4)
 
         ocr_rfq_canceled = FixMessageOrderCancelRequestAlgo().set_cancel_RFQ(nos_trql_rfq).change_parameter("ExDestination", self.ex_destination_trqx)
-        self.fix_verifier_buy.check_fix_message(ocr_rfq_canceled, key_parameters=self.key_params_with_ex_destination, message_name='Buy side cancel RFQ on TRQX', direction=self.FromQuod)
+        self.fix_verifier_buy.check_fix_message_kepler(ocr_rfq_canceled, key_parameters=self.key_params_with_ex_destination, message_name='Buy side cancel RFQ on TRQX', direction=self.FromQuod)
 
         # TRQX accepted cancel rfq
         er_rfq_cancel_accepted = FixMessageExecutionReportAlgo().set_RFQ_cancel_accepted(nos_trql_rfq).change_parameter("ExDestination", self.ex_destination_trqx)
-        self.fix_verifier_buy.check_fix_message(er_rfq_cancel_accepted, key_parameters=self.key_params_RFQ, message_name='Buy side cancel RFQ accepted on TRQX', direction=self.ToQuod)
+        self.fix_verifier_buy.check_fix_message_kepler(er_rfq_cancel_accepted, key_parameters=self.key_params_RFQ, message_name='Buy side cancel RFQ accepted on TRQX', direction=self.ToQuod)
         # endregion
 
         # region MO on Venue ChixLis
@@ -238,23 +238,23 @@ class QAP_T4614(TestCase):
         self.fix_verifier_buy.set_case_id(case_id_5)
 
         nos_chixlis_order = FixMessageNewOrderSingleAlgo().set_DMA_after_RFQ_params().change_parameter("OrderQty", self.qty_after_trade)
-        self.fix_verifier_buy.check_fix_message(nos_chixlis_order, key_parameters=self.key_params_RFQ_MO, message_name='Buy side send MO on CHIXLIS', direction=self.FromQuod)
+        self.fix_verifier_buy.check_fix_message_kepler(nos_chixlis_order, key_parameters=self.key_params_RFQ_MO, message_name='Buy side send MO on CHIXLIS', direction=self.FromQuod)
 
         er_pending_new_dma_2_chix_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(nos_chixlis_order, self.gateway_side_buy, self.status_pending)
         er_pending_new_dma_2_chix_order_params.change_parameters(dict(ExDestination=self.ex_destination_chixlis))
-        self.fix_verifier_buy.check_fix_message(er_pending_new_dma_2_chix_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child order')
+        self.fix_verifier_buy.check_fix_message_kepler(er_pending_new_dma_2_chix_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child order')
 
         er_new_dma_2_chix_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(nos_chixlis_order, self.gateway_side_buy, self.status_new)
         er_new_dma_2_chix_order_params.change_parameters(dict(ExDestination=self.ex_destination_chixlis))
-        self.fix_verifier_buy.check_fix_message(er_new_dma_2_chix_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child order')
+        self.fix_verifier_buy.check_fix_message_kepler(er_new_dma_2_chix_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child order')
 
         # region check cancel second dma child order
         self.fix_verifier_buy.set_case_id(bca.create_event("Second 2 Dark venue order canceled", self.test_id))
         er_cancel_chix_delta_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_chix_order2, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message(er_cancel_chix_delta_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel dark child on chix_delta")
+        self.fix_verifier_buy.check_fix_message_kepler(er_cancel_chix_delta_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel dark child on chix_delta")
 
         er_cancel_bats_dark_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_bats_order2, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message(er_cancel_bats_dark_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel dark child on bats_dark")
+        self.fix_verifier_buy.check_fix_message_kepler(er_cancel_bats_dark_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel dark child on bats_dark")
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

@@ -121,12 +121,12 @@ class QAP_T4708(TestCase):
 
         # region check that RFQ send to CHIX LIS UK
         nos_chixlis_rfq = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_RFQ_params().change_parameters(dict(Account=self.client, OrderQty=self.qty, ExDestination=self.ex_destination_chixlis, Instrument='*'))
-        self.fix_verifier_buy.check_fix_message(nos_chixlis_rfq, key_parameters=self.key_params_NOS_child, message_name='Buy side RFQ on CHIXLIS')
+        self.fix_verifier_buy.check_fix_message_kepler(nos_chixlis_rfq, key_parameters=self.key_params_NOS_child, message_name='Buy side RFQ on CHIXLIS')
         # endregion
 
         # region check that RFQ send to TURQUOISE LIS
         nos_trql_rfq = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_RFQ_params().change_parameters(dict(Account=self.client, OrderQty=self.qty, ExDestination=self.ex_destination_trql, Instrument='*'))
-        self.fix_verifier_buy.check_fix_message(nos_trql_rfq, key_parameters=self.key_params_NOS_child, message_name='Buy side RFQ on TQLIS')
+        self.fix_verifier_buy.check_fix_message_kepler(nos_trql_rfq, key_parameters=self.key_params_NOS_child, message_name='Buy side RFQ on TQLIS')
         # endregion
 
         # region chixlist rfq accepted
@@ -134,10 +134,10 @@ class QAP_T4708(TestCase):
         self.fix_verifier_buy.set_case_id(case_id_3)
 
         er_rfq_new_chixlis = FixMessageExecutionReportAlgo().set_RFQ_accept_params_new(nos_chixlis_rfq)
-        self.fix_verifier_buy.check_fix_message(er_rfq_new_chixlis, key_parameters=self.key_params_RFQ, message_name='Buy side RFQ reply NEW on CHIXLIS', direction=self.ToQuod)
+        self.fix_verifier_buy.check_fix_message_kepler(er_rfq_new_chixlis, key_parameters=self.key_params_RFQ, message_name='Buy side RFQ reply NEW on CHIXLIS', direction=self.ToQuod)
 
         er_rfq_restated_chixlis = FixMessageExecutionReportAlgo().set_RFQ_accept_params_restated(er_rfq_new_chixlis).change_parameters({"OrderQty": self.qty})
-        self.fix_verifier_buy.check_fix_message(er_rfq_restated_chixlis, key_parameters=self.key_params_RFQ, message_name='Buy side RFQ reply RESTATED on CHIXLIS', direction=self.ToQuod)
+        self.fix_verifier_buy.check_fix_message_kepler(er_rfq_restated_chixlis, key_parameters=self.key_params_RFQ, message_name='Buy side RFQ reply RESTATED on CHIXLIS', direction=self.ToQuod)
         # endregion
 
         # region quote canceled on TRQX
@@ -145,11 +145,11 @@ class QAP_T4708(TestCase):
         self.fix_verifier_buy.set_case_id(case_id_4)
 
         ocr_rfq_canceled = FixMessageOrderCancelRequestAlgo().set_cancel_RFQ(nos_trql_rfq).change_parameter("ExDestination", "TRQX")
-        self.fix_verifier_buy.check_fix_message(ocr_rfq_canceled, key_parameters=self.key_params_NOS_child, message_name='Buy side cancel RFQ on TRQX', direction=self.FromQuod)
+        self.fix_verifier_buy.check_fix_message_kepler(ocr_rfq_canceled, key_parameters=self.key_params_NOS_child, message_name='Buy side cancel RFQ on TRQX', direction=self.FromQuod)
 
         # TRQX accepted cancel rfq
         er_rfq_cancel_accepted = FixMessageExecutionReportAlgo().set_RFQ_cancel_accepted(nos_trql_rfq).change_parameter("ExDestination", "TRQX")
-        self.fix_verifier_buy.check_fix_message(er_rfq_cancel_accepted, key_parameters=self.key_params_RFQ, message_name='Buy side cancel RFQ accepted on TRQX', direction=self.ToQuod)
+        self.fix_verifier_buy.check_fix_message_kepler(er_rfq_cancel_accepted, key_parameters=self.key_params_RFQ, message_name='Buy side cancel RFQ accepted on TRQX', direction=self.ToQuod)
         # endregion
 
         # region MO on Venue ChixLis
@@ -158,20 +158,20 @@ class QAP_T4708(TestCase):
 
         self.nos_chixlis_order = FixMessageNewOrderSingleAlgo().set_DMA_after_RFQ_params()
         self.nos_chixlis_order.change_parameters(dict(OrderQty=self.qty))
-        self.fix_verifier_buy.check_fix_message(self.nos_chixlis_order, key_parameters=self.key_params_RFQ_MO, message_name='Buy side send MO on CHIXLIS', direction=self.FromQuod)
+        self.fix_verifier_buy.check_fix_message_kepler(self.nos_chixlis_order, key_parameters=self.key_params_RFQ_MO, message_name='Buy side send MO on CHIXLIS', direction=self.FromQuod)
 
         er_pending_new_dma_chixlis_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.nos_chixlis_order, self.gateway_side_buy, self.status_pending)
-        self.fix_verifier_buy.check_fix_message(er_pending_new_dma_chixlis_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child order on CHIXLIS')
+        self.fix_verifier_buy.check_fix_message_kepler(er_pending_new_dma_chixlis_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child order on CHIXLIS')
 
         er_new_dma_chixlis_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.nos_chixlis_order, self.gateway_side_buy, self.status_new)
-        self.fix_verifier_buy.check_fix_message(er_new_dma_chixlis_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child order on CHIXLIS')
+        self.fix_verifier_buy.check_fix_message_kepler(er_new_dma_chixlis_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child order on CHIXLIS')
         # endregion
 
         time.sleep(50)
 
         # region Check fill LIS child after LIS Resident time
         er_fill_dma_chixlis_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.nos_chixlis_order, self.gateway_side_buy, self.status_fill)
-        self.fix_verifier_buy.check_fix_message(er_fill_dma_chixlis_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Fill Child order on CHIXLIS')
+        self.fix_verifier_buy.check_fix_message_kepler(er_fill_dma_chixlis_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Fill Child order on CHIXLIS')
         # endregion
 
         # region Check fill algo order

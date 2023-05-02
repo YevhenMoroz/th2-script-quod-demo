@@ -41,7 +41,7 @@ class QAP_T9161(TestCase):
         self.qty_bid_1 = self.qty_ask = 100
         self.qty_bid_2 = 200
         self.strat_param_type_int = constants.StrategyParameterType.Float.value
-        self.tif_fok = constants.TimeInForce.FillOrKill.value
+        self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
         # endregion
 
         # region Gateway Side
@@ -91,9 +91,9 @@ class QAP_T9161(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
-        nos_fok_rule = rule_manager.add_NewOrdSingle_FOK(self.fix_env1.buy_side, self.account, self.ex_destination_1, True, self.price, self.qty_bid_2)
+        nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, True, self.qty_bid_2, self.price)
 
-        self.rule_list = [nos_fok_rule]
+        self.rule_list = [nos_ioc_rule]
         # endregion
         
         # region Send_MarkerData
@@ -149,7 +149,7 @@ class QAP_T9161(TestCase):
 
         # region Check child DMA order
         self.dma_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        self.dma_order.change_parameters(dict(OrderQty=self.qty_bid_2, Price=self.price, Instrument='*', Side=self.side, TimeInForce=self.tif_fok))
+        self.dma_order.change_parameters(dict(OrderQty=self.qty_bid_2, Price=self.price, Instrument='*', Side=self.side, TimeInForce=self.tif_ioc, MinQty=self.min_trig_qty))
         self.fix_verifier_buy.check_fix_message(self.dma_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Child DMA')
 
         self.pending_dma_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_pending)

@@ -75,4 +75,13 @@ class ValuesTab(CommonPage):
 
 
 class PositionsTab(CommonPage):
-    pass
+    def get_temporary_cash(self):
+        return self.find_by_xpath(Constants.Wizard.PositionsTab.TEMPORARY_CASH).text
+
+    def get_reserved_limit(self):
+        return self.find_by_xpath(Constants.Wizard.PositionsTab.RESERVED_LIMIT).text
+
+    def get_collateral_limit(self):
+        return self.find_by_xpath(Constants.Wizard.PositionsTab.COLLATERAL_LIMIT).text
+
+
