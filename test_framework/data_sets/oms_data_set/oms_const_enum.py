@@ -79,6 +79,7 @@ class OmsInstrumentId(Enum):
     instrument_5 = "zjZwA8LXItn246hPYfpe9w"  # MultyLeg
     instrument_6 = "HNUAw6jnU8PDj2cvSkJlYg"  # Leg instrument
     instrument_7 = "4o_6NqkKiqQpmUhKO4xUEw"  # MultiListed instrument
+    instrument_8 = 'KojIbEE6b0HgK4VBgy8F9w'  # MFD instrument
 
 
 class OmsListingId(Enum):
@@ -90,6 +91,7 @@ class OmsListingId(Enum):
     listing_6 = "488"  # one listing of MultiListed instrument
     listing_7 = "1233"  # one listing of MultiListed instrument
     listing_8 = "3346"  # one listing of MultiListed instrument
+    listing_9 = "10100000077"  # listing for MFD instrument
 
 
 class OmsVenues(Enum):
@@ -476,6 +478,7 @@ class OMSCounterpartID(Enum):
 
 class OMSInstrType(Enum):
     equity = "EQU"
+    mutual_fund = 'MFD'
 
 
 class OMSContraFirm(Enum):
