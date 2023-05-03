@@ -2,6 +2,7 @@ import logging
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_cases.algo.Algo_Redburn.Algo_MOE.QAP_T11237 import QAP_T11237
+from test_cases.algo.Algo_Redburn.Algo_MOE.QAP_T4205 import QAP_T4205
 from test_cases.algo.Algo_Redburn.Algo_MOE.QAP_T4310 import QAP_T4310
 from test_cases.algo.Algo_Redburn.Algo_MOE.QAP_T8592 import QAP_T8592
 from test_cases.algo.Algo_Redburn.Algo_MOE.QAP_T8625 import QAP_T8625
@@ -25,6 +26,7 @@ def test_run(parent_id=None, version=None):
         QAP_T8592(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T11237(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T9063(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4205(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8625(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
