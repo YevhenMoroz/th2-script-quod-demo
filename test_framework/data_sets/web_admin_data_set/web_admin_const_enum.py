@@ -309,6 +309,17 @@ class WebAdminStrategyType(Enum):
     strategy_type_7 = "Custom one"
     strategy_type_8 = "Quod Auction"
     strategy_type_9 = "Quod Financial Internal Synthetic Order Type"
+    strategy_type_10 = "Quod Financial Internal Auction Participate"
+    strategy_type_11 = "Quod Financial Internal VWAP"
+    strategy_type_12 = "Quod Financial Internal Synthetic Pegged"
+    strategy_type_13 = "Quod Financial Internal Best Effort Synthetic Pegged"
+    strategy_type_14 = "Quod Financial Internal Pair Trading"
+    strategy_type_15 = "Quod Financial Internal Trailing Stop"
+    strategy_type_16 = "Quod Financial Internal Synthetic Iceberg"
+    strategy_type_17 = "Quod Financial Internal Synthetic Block"
+    strategy_type_18 = "Quod Financial Internal Percentage on Close"
+    strategy_type_19 = "Quod Financial Internal Triggering"
+    strategy_type_20 = "Quod Financial Internal Synthetic Time-in-Force"
 
 
 class WebAdminExecPolicy(Enum):
