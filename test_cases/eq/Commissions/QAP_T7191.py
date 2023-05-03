@@ -119,7 +119,7 @@ class QAP_T7191(TestCase):
             self.compute_request.set_list_of_order_alloc_block(list_of_cl_ord_id[counter], list_of_orders[counter],
                                                                post_trd_sts)
             self.compute_request.set_list_of_exec_alloc_block(qty, list_of_executions[counter], price, post_trd_sts)
-            self.compute_request.set_default_compute_booking_request(qty, price, self.client)
+            self.compute_request.set_default_compute_booking_request(qty, str(float(price)/100), self.client)
             self.java_api_manager.send_message_and_receive_response(self.compute_request)
             compute_reply = self.java_api_manager.get_last_message(ORSMessageType.ComputeBookingFeesCommissionsReply.value). \
                     get_parameters()[JavaApiFields.ComputeBookingFeesCommissionsReplyBlock.value]
