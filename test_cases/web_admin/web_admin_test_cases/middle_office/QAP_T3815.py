@@ -7,7 +7,7 @@ import traceback
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.middle_office.allocation_matching_profiles.main_page import \
-    AllocationMatchingProfilesPage
+    MainPage
 from test_framework.web_admin_core.pages.middle_office.allocation_matching_profiles.wizard import \
     AllocationMatchingProfilesWizard
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
@@ -35,7 +35,7 @@ class QAP_T3815(CommonTestCase):
 
         try:
             self.precondition()
-            page = AllocationMatchingProfilesPage(self.web_driver_container)
+            page = MainPage(self.web_driver_container)
             wizard = AllocationMatchingProfilesWizard(self.web_driver_container)
             page.click_on_more_actions()
             page.click_on_edit()

@@ -94,6 +94,7 @@ class AllocationReportConst(Enum):
 
 class AllocationInstructionConst(Enum):
     SettlType_REG = 'REG'
+    SettlType_TOM = 'TOM'
     RootMiscFeeType_EXC = 'EXC'
     CommissionAmountType_BRK = 'BRK'
     COMM_AND_FEES_BASIS_A = 'A'
@@ -157,8 +158,16 @@ class QtyPercentageProfile(Enum):
 class JavaApiFields(Enum):
     ExecCommission = 'ExecCommission'
     AllocationInstructionBlock = 'AllocationInstructionBlock'
+    RequestForOverdueRetailPositionsAckBlock = 'RequestForOverdueRetailPositionsAckBlock'
     TransExecStatus = 'TransExecStatus'
+    RetailPositList = 'RetailPositList'
+    RetailPositBlock = 'RetailPositBlock'
+    PositionType = 'PositionType'
+    OverdueRetailPositList = 'OverdueRetailPositList'
+    AccountID = 'AccountID'
+    PosGoodTillDate = 'PosGoodTillDate'
     TransStatus = 'TransStatus'
+    LeavesSellQty = 'LeavesSellQty'
     InstrumentBlock = 'InstrumentBlock'
     ExecutionReportBlock = 'ExecutionReportBlock'
     CounterpartList = "CounterpartList"
@@ -170,11 +179,14 @@ class JavaApiFields(Enum):
     OrderNotificationBlock = "OrdNotificationBlock"
     OrdID = 'OrdID'
     VenueOrdID = 'VenueOrdID'
+    PositionTransferInstructionBlock = 'PositionTransferInstructionBlock'
     TimeInForce = 'TimeInForce'
     ExpireDate = 'ExpireDate'
     ExecID = 'ExecID'
     AllocationReportBlock = 'AllocationReportBlock'
+    UnrealizedPL = 'UnrealizedPL'
     ConfirmationReportBlock = 'ConfirmationReportBlock'
+    ConfirmationBlock = 'ConfirmationBlock'
     AffirmStatus = 'AffirmStatus'
     ConfirmationService = 'ConfirmationService'
     ClientAllocID = 'ClientAllocID'
@@ -184,6 +196,7 @@ class JavaApiFields(Enum):
     ClOrdID = 'ClOrdID'
     OrdReplyBlock = 'OrdReplyBlock'
     EffectiveDate = 'EffectiveDate'
+    CashAccountID = 'CashAccountID'
     OrdStatus = 'OrdStatus'
     ExecType = 'ExecType'
     NewOrderListReplyBlock = 'NewOrderListReplyBlock'
@@ -272,6 +285,7 @@ class JavaApiFields(Enum):
     TradeEntryRequestBlock = 'TradeEntryRequestBlock'
     LastMkt = 'LastMkt'
     BuyAvgPx = 'BuyAvgPx'
+    SellAvgPx = 'SellAvgPx'
     TransferredInAmt = 'TransferredInAmt'
     TransferredOutAmt = 'TransferredOutAmt'
     SecurityAccountPLBlock = 'SecurityAccountPLBlock'
@@ -360,6 +374,7 @@ class JavaApiFields(Enum):
     AllocationInstructionQtyBlock = 'AllocationInstructionQtyBlock'
     BookingQty = 'BookingQty'
     WashBookAccountID = 'WashBookAccountID'
+    SettlType = 'SettlType'
     SettlCurrency = 'SettlCurrency'
     SettlCurrAmt = 'SettlCurrAmt'
     SettlCurrFxRate = 'SettlCurrFxRate'
@@ -455,6 +470,7 @@ class CDResponsesConst(Enum):
 
 class SubscriptionRequestTypes(Enum):
     SubscriptionRequestType_SUB = 'SUB'
+    SubscriptionRequestType_UNS = 'UNS'
 
 
 class PosReqTypes(Enum):
@@ -469,3 +485,9 @@ class PositionValidities(Enum):
     PosValidity_ITD = 'ITD'
     PosValidity_DEL = 'DEL'
     PosValidity_TP1 = 'TP1'
+    PosValidity_TP2 = 'TP2'
+    PosValidity_TP3 = 'TP3'
+    PosValidity_TP4 = 'TP4'
+    PosValidity_TP5 = 'TP5'
+    PosValidity_TP6 = 'TP6'
+    PosValidity_TP7 = 'TP7'

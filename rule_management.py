@@ -186,12 +186,13 @@ class RuleManager:
                 traded_qty=traded_qty,
                 delay=delay))
 
-    def add_NewOrdSingleExecutionReportPendingAndNew(self, session: str, account: str, venue: str, price: float):
+    def add_NewOrdSingleExecutionReportPendingAndNew(self, session: str, account: str, venue: str, price: float, delay: int = 0):
         return self.sim.createNewOrdSingleExecutionReportPendingAndNew(
             request=TemplateNewOrdSingleExecutionReportPendingAndNew(connection_id=ConnectionID(session_alias=session),
                                                                      account=account,
                                                                      venue=venue,
-                                                                     price=price))
+                                                                     price=price,
+                                                                     delay=delay))
 
     def add_NewOrdSingleExecutionReportOnlyPending(self, session: str, account: str, venue: str, price: float):
         return self.sim.createNewOrdSingleExecutionReportOnlyPending(
@@ -669,11 +670,12 @@ class RuleManager:
                                                              venue=venue,
                                                              delay=delay))
 
-    def add_NewOrdSingleExecutionReportAll(self, session: str, account: str, venue: str):
+    def add_NewOrdSingleExecutionReportAll(self, session: str, account: str, venue: str, delay: int = 0):
         return self.sim.createNewOrdSingleExecutionReportAll(
             request=TemplateNewOrdSingleExecutionReportAll(connection_id=ConnectionID(session_alias=session),
                                                        account=account,
-                                                       venue=venue))
+                                                       venue=venue,
+                                                       delay=delay))
 
     def add_NewOrdSingleExecutionReportIOCAll(self, session: str, account: str, venue: str, delay: int = 0):
         return self.sim.createNewOrdSingleExecutionReportIOCAll(

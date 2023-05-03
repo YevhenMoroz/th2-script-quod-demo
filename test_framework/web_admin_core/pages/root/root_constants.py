@@ -82,6 +82,7 @@ class RootConstants:
     SECURITY_POSITIONS_ITEM_XPATH = "//a[@title='Security Positions']"
     FX_POSITIONS_ITEM_XPATH = "//a[@title='FX Positions']"
     CASH_POSITIONS_XPATH = "//a[@title='Cash Positions']"
+    POSITIONS_ICON_XPATH = '//a[@title="Positions"]//*[@data-name="bar-chart"]//*[@d]'
 
     OTHERS_TOGGLE_CSS_SELECTOR = "a[title='Others']"
     COUNTERPARTS_ITEM_XPATH = "//a[@title='Counterparts']"

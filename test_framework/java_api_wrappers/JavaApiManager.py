@@ -480,6 +480,13 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id(), filterFields=filter_dict, response_time=response_time))
+        elif message.get_message_type() == PKSMessageType.RequestForOverdueRetailPositions.value:
+            print('Common')
+            response = self.act.submitRequestForOverdueRetailPosition(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), response_time=response_time))
         else:
             response = None
         return self.parse_response(response)

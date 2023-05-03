@@ -8,7 +8,6 @@ from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
-from test_framework.fix_wrappers.algo.FixMessageOrderCancelReplaceRequestAlgo import FixMessageOrderCancelReplaceRequestAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
 from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import FixMessageMarketDataSnapshotFullRefreshAlgo
 from test_framework.fix_wrappers.FixManager import FixManager
@@ -16,7 +15,6 @@ from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
 from test_framework.algo_formulas_manager import AlgoFormulasManager
-from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
 
 class QAP_T4627(TestCase):
@@ -34,18 +32,16 @@ class QAP_T4627(TestCase):
         self.fix_verifier_sell = FixVerifier(self.fix_env1.sell_side, self.test_id)
         self.fix_verifier_buy = FixVerifier(self.fix_env1.buy_side, self.test_id)
         self.rest_api_manager = RestApiAlgoManager(session_alias='rest_wa310columbia')
-        # self.rest_api_manager = RestApiAlgoManager(session_alias=self.restapi_env1.session_alias_wa)
         # endregion
 
         # region order parameters
-        # self.tick_size = 0.005
+        self.tick_size = 0.001
         self.algo_policy_id = "Test Modification TWAP Algo Policy"
         self.aggressivity = 2
         self.order_type = constants.OrderType.Limit.value
         self.qty = 1000
         self.price = self.price_ask = 1
         self.price_bid = 0.8
-        # self.mid_price = int((self.price_ask + self.price_bid)/2)
         self.qty_bid = self.qty_ask = 1_000_000
         self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
         self.tif_day = constants.TimeInForce.Day.value
@@ -60,7 +56,7 @@ class QAP_T4627(TestCase):
         self.slice2_2_qty = AlgoFormulasManager.get_next_twap_slice(self.qty, self.waves_2-1)
         self.slice2_3_qty = AlgoFormulasManager.get_next_twap_slice(self.qty, self.waves_2-2)
         self.slice2_4_qty = AlgoFormulasManager.get_next_twap_slice(self.qty, self.waves_2-3)
-        # self.slice1_price = self.slice2_price = self.price_bid-self.tick_size
+        self.slice1_price = self.slice2_price = self.price_bid-self.tick_size
         # endregion
 
         # region Gateway Side
@@ -99,7 +95,6 @@ class QAP_T4627(TestCase):
         # endregion
 
         self.rule_list = []
-        #TODO RestAPI review
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -110,8 +105,7 @@ class QAP_T4627(TestCase):
 
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price) # _bid-self.tick_size
-        # ocrr_rule = rule_manager.add_OrderCancelReplaceRequest(self.fix_env1.buy_side, self.account, self.ex_destination_1, True)
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.slice1_price) # _bid-self.tick_size
         ocrr_rule = rule_manager.add_OrderCancelReplaceRequest_ExecutionReport(self.fix_env1.buy_side, False)
         ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_1, True)
         ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, False, 0, 40, 0)
@@ -139,7 +133,7 @@ class QAP_T4627(TestCase):
         self.twap_order1 = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_TWAP_params()
         self.twap_order1.add_fields_into_repeating_group('NoStrategyParameters', [dict(StrategyParameterName='StartDate', StrategyParameterType=19, StrategyParameterValue=start_time),
                                                                                  dict(StrategyParameterName='EndDate', StrategyParameterType=19, StrategyParameterValue=end_time)])
-        # self.twap_order1.add_tag(dict())
+        self.twap_order1.add_tag(dict(ClientAlgoPolicyID=self.algo_policy_id))
         self.twap_order1.add_ClordId((os.path.basename(__file__)[:-3]))
         self.twap_order1.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ClientAlgoPolicyID=self.algo_policy_id))
         self.fix_manager_sell.send_message_and_receive_response(self.twap_order1, case_id_1)
@@ -155,9 +149,6 @@ class QAP_T4627(TestCase):
         self.fix_verifier_sell.check_fix_message(pending_twap_order1_params1, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew')
 
         new_twap_order1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_order1, self.gateway_side_sell, self.status_new)
-        new_twap_order1_params.change_parameter('NoParty', '*').remove_parameter('SecondaryAlgoPolicyID')
-        # new_twap_order1_params.update_repeating_group('NoStrategyParameters', [dict(StrategyParameterName='Waves', StrategyParameterType='1', StrategyParameterValue=self.waves_1),
-        #                                                       dict(StrategyParameterName='Aggressivity', StrategyParameterType='1', StrategyParameterValue=self.aggressivity)])
         self.fix_verifier_sell.check_fix_message(new_twap_order1_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
         
@@ -260,6 +251,11 @@ class QAP_T4627(TestCase):
         eliminate_slice1_5_order.change_parameters(dict(Price=self.price, TimeInForce=self.tif_ioc, OrigClOrdID='*')).remove_parameters(['ExDestination'])
         self.fix_verifier_buy.check_fix_message(eliminate_slice1_5_order, self.key_params, self.ToQuod, "Buy Side ExecReport Eliminate Child DMA Slice1_5")
         # endregion
+
+        # region check elimination parent TWAP order 1
+        eliminate_twap_order1 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_order1, self.gateway_side_sell, self.status_eliminate)
+        self.fix_verifier_sell.check_fix_message(eliminate_twap_order1, key_parameters=self.key_params_cl,  message_name='Sell side ExecReport eliminated')
+        # endregion
         
         # region change strategy
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify strategy", self.test_id))
@@ -277,7 +273,7 @@ class QAP_T4627(TestCase):
         self.twap_order2 = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_TWAP_params()
         self.twap_order2.add_fields_into_repeating_group('NoStrategyParameters', [dict(StrategyParameterName='StartDate', StrategyParameterType=19, StrategyParameterValue=start_time),
                                                                                  dict(StrategyParameterName='EndDate', StrategyParameterType=19, StrategyParameterValue=end_time)])
-        # self.twap_order2.add_tag(dict())
+        self.twap_order2.add_tag(dict(ClientAlgoPolicyID="Test Modification TWAP Algo Policy"))
         self.twap_order2.add_ClordId((os.path.basename(__file__)[:-3]))
         self.twap_order2.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ClientAlgoPolicyID=self.algo_policy_id))
         self.fix_manager_sell.send_message_and_receive_response(self.twap_order2, case_id_1)
@@ -294,8 +290,6 @@ class QAP_T4627(TestCase):
 
         new_twap_order2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_order2, self.gateway_side_sell, self.status_new)
         new_twap_order2_params.change_parameter('NoParty', '*')
-        new_twap_order2_params.update_repeating_group('NoStrategyParameters', [dict(StrategyParameterName='Waves', StrategyParameterType='1', StrategyParameterValue=self.waves_2),
-                                                              dict(StrategyParameterName='Aggressivity', StrategyParameterType='1', StrategyParameterValue=self.aggressivity)])
         self.fix_verifier_sell.check_fix_message(new_twap_order2_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
         
@@ -318,6 +312,8 @@ class QAP_T4627(TestCase):
         eliminate_slice2_1_order.change_parameters(dict(Price=self.price, TimeInForce=self.tif_ioc, OrigClOrdID='*')).remove_parameters(['ExDestination'])
         self.fix_verifier_buy.check_fix_message(eliminate_slice2_1_order, self.key_params, self.ToQuod, "Buy Side ExecReport Eliminate Child DMA Slice2_1")
         # endregion
+
+        time.sleep(75)
 
         # region Check child DMA order Slice2_2
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order - Slice2_2", self.test_id))
@@ -377,29 +373,16 @@ class QAP_T4627(TestCase):
         self.fix_verifier_buy.check_fix_message(eliminate_slice2_4_order, self.key_params, self.ToQuod, "Buy Side ExecReport Eliminate Child DMA Slice2_4")
         # endregion
 
-    @try_except(test_id=Path(__file__).name[:-3])
-    def run_post_conditions(self):
-        # # region Cancel Algo Order
-        # case_id_3 = bca.create_event("Cancel Algo Order", self.test_id)
-        # self.fix_verifier_sell.set_case_id(case_id_3)
-        # cancel_request_twap_order = FixMessageOrderCancelRequest(self.twap_order)
-        # 
-        # self.fix_manager_sell.send_message_and_receive_response(cancel_request_twap_order, case_id_3)
-        # self.fix_verifier_sell.check_fix_message(cancel_request_twap_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
-        # # endregion
+        time.sleep(75)
 
-        # region check elimination parent TWAP order 1
-        eliminate_twap_order1 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_order1, self.gateway_side_sell, self.status_eliminate)
-        eliminate_twap_order1.change_parameter('NoParty', '*')
-        self.fix_verifier_sell.check_fix_message(eliminate_twap_order1, key_parameters=self.key_params_cl,  message_name='Sell side ExecReport eliminated')
-        # endregion
-        
         # region check elimination parent TWAP order 2
         eliminate_twap_order2 = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_order2, self.gateway_side_sell, self.status_eliminate)
-        eliminate_twap_order2.change_parameter('NoParty', '*')
         self.fix_verifier_sell.check_fix_message(eliminate_twap_order2, key_parameters=self.key_params_cl,  message_name='Sell side ExecReport eliminated')
         # endregion
-        
+
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
         # region revert strategy
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify strategy", self.test_id))
         self.rest_api_manager.modify_strategy_parameter(self.algo_policy_id, "Waves", str(self.waves_1))

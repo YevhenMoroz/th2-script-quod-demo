@@ -1,4 +1,6 @@
 import logging
+import time
+
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 
@@ -139,6 +141,7 @@ def test_run(parent_id=None, version=None):
         QAP_T4745(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4744(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4743(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        time.sleep(5)
         QAP_T4742(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4741(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion

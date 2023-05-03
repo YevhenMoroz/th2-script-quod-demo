@@ -35,31 +35,33 @@ class QAP_T3949(CommonTestCase):
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_washbook_page()
         time.sleep(2)
-        wash_book_main_menu = WashBookPage(self.web_driver_container)
-        wash_book_main_menu.click_on_new_button()
-        wash_book_wizard = WashBookWizard(self.web_driver_container)
-        wash_book_wizard.set_id_at_values_tab(self.id)
-        wash_book_wizard.set_ext_id_client_at_values_tab(self.ext_id_client)
-        wash_book_wizard.set_client_at_values_tab(self.client)
-        wash_book_wizard.set_client_id_source_at_values_tab(self.client_id_source)
-        wash_book_wizard_assignment_tab = WashBookAssignmentsSubWizard(self.web_driver_container)
-        wash_book_wizard_assignment_tab.set_institution(self.institution)
-        wash_book_wizard.click_on_save_changes()
-        wash_book_main_menu.set_id_filter(self.id)
-        time.sleep(1)
-        wash_book_main_menu.click_on_more_actions()
 
     def test_context(self):
         try:
             self.precondition()
-            wash_book_main_menu = WashBookPage(self.web_driver_container)
-            expected_pdf_content = ["ID: {}".format(wash_book_main_menu.get_id_at_main_page()),
-                                    "Ext ID Client: {}".format(wash_book_main_menu.get_ext_id_client_at_main_page()),
-                                    "Client ID Source: BIC",
-                                    "Clearing Account Type: Institution"]
 
+            wash_book_main_menu = WashBookPage(self.web_driver_container)
+            wash_book_main_menu.click_on_new_button()
+            wash_book_wizard = WashBookWizard(self.web_driver_container)
+            wash_book_wizard.set_id_at_values_tab(self.id)
+            wash_book_wizard.set_ext_id_client_at_values_tab(self.ext_id_client)
+            wash_book_wizard.set_client_at_values_tab(self.client)
+            wash_book_wizard.set_client_id_source_at_values_tab(self.client_id_source)
+            wash_book_wizard_assignment_tab = WashBookAssignmentsSubWizard(self.web_driver_container)
+            wash_book_wizard_assignment_tab.set_institution(self.institution)
+            expected_pdf_content = [f"ID: {self.id}",
+                                    f"Ext ID Client: {self.ext_id_client}",
+                                    "Client ID Source: BIC",
+                                    "Clearing Account Type: Institution"
+                                    f"Institution: {self.institution}"]
             self.verify(f"Is PDF contains {expected_pdf_content}", True,
-                        wash_book_main_menu.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
+                        wash_book_wizard.click_on_download_pdf_button_and_check_data(expected_pdf_content))
+
+            wash_book_wizard.click_on_save_changes()
+            wash_book_main_menu.set_id_filter(self.id)
+            time.sleep(1)
+            self.verify("WashBook Account is created and displayed on WashBook Accounts page.", True,
+                        wash_book_main_menu.is_searched_entity_found(self.id))
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')

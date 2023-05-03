@@ -83,11 +83,25 @@ class ClientsPage(CommonPage):
         popup.click()
         return text
 
-    def load_client_from_global_filter(self, user_id):
-        self.set_client_name_for_load(user_id)
-        time.sleep(2)
+    def load_client_from_global_filter(self, client):
+        self.set_client_name_for_load(client)
+        time.sleep(1)
         self.click_on_load_button()
-        time.sleep(2)
+        time.sleep(1)
+
+    def is_client_lookup_displayed_in_header(self):
+        return self.is_element_present(ClientsConstants.CLIENT_LOAD_FILTER)
 
     def is_searched_client_found(self, value):
         return self.is_element_present(ClientsConstants.DISPLAYED_CLIENT_XPATH.format(value))
+
+    def set_global_filter(self, value):
+        self.set_text_by_xpath(ClientsConstants.MAIN_PAGE_GLOBAL_FILTER_XPATH, value)
+
+    def get_venue_names(self):
+        self.horizontal_scroll(ClientsConstants.VENUE_NAMES_ROW)
+        return self.find_by_xpath(ClientsConstants.VENUE_NAMES_ROW).text
+
+    def get_route_names(self):
+        self.horizontal_scroll(ClientsConstants.ROUTE_NAMES_ROW)
+        return self.find_by_xpath(ClientsConstants.ROUTE_NAMES_ROW).text

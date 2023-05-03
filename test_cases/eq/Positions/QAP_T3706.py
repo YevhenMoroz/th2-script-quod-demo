@@ -9,6 +9,7 @@ from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.db_wrapper.db_manager import DBManager
+from pandas import Timestamp as tm
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, PositionValidities
 from test_framework.java_api_wrappers.oms.es_messages.ExecutionReportOMS import ExecutionReportOMS
@@ -52,6 +53,13 @@ class QAP_T3706(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        # region precondition:
+        self.db_manager.execute_query(
+            f"UPDATE institution SET posflatteningtime='{(tm(datetime.datetime.utcnow().isoformat()) + datetime.timedelta(minutes=5)).strftime('%Y-%m-%dT %H:%M:%S')}' WHERE institutionname ='QUOD FINANCIAL 1'")
+        self.ssh_client.send_command('qrestart all')
+        time.sleep(200)
+        # endregion
+
         # region Step 1: Create DMA orders
         pos_validity_list = [PositionValidities.PosValidity_DEL.value, PositionValidities.PosValidity_TP1.value]
         route_params = {JavaApiFields.RouteBlock.value: [{JavaApiFields.RouteID.value: self.data_set.get_route_id_by_name("route_1")}]}
