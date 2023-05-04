@@ -166,6 +166,8 @@ class JavaApiFields(Enum):
     RetailPositBlock = 'RetailPositBlock'
     PositionType = 'PositionType'
     ErrorMsg = "ErrorMsg"
+    OrdModify = 'OrdModify'
+    OrdModifyID = 'OrdModifyID'
     OverdueRetailPositList = 'OverdueRetailPositList'
     AccountID = 'AccountID'
     PosGoodTillDate = 'PosGoodTillDate'
