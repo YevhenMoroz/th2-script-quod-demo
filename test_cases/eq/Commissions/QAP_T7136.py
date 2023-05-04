@@ -129,9 +129,9 @@ class QAP_T7136(TestCase):
                           JavaApiFields.MiscFeeCurr.value: currency_GBP, JavaApiFields.MiscFeeRate.value: '1.0',
                           JavaApiFields.MiscFeeType.value: ExecutionReportConst.MiscFeeType_EXC.value}
         agent_fees_dict = {JavaApiFields.MiscFeeAmt.value: agent_fees_amount,
-                           JavaApiFields.MiscFeeBasis.value: ExecutionReportConst.MiscFeeBasis_P.value,
+                           JavaApiFields.MiscFeeBasis.value: ExecutionReportConst.MiscFeeBasis_A.value,
                            JavaApiFields.MiscFeeCurr.value: currency_GBP,
-                           JavaApiFields.MiscFeeRate.value: fee_agent_rate,
+                           JavaApiFields.MiscFeeRate.value: agent_fees_amount,
                            JavaApiFields.MiscFeeType.value: ExecutionReportConst.MiscFeeType_AGE.value}
         self.java_api_manager.compare_values(exch_fees_dict, fees_list[0],
                                              'Verify that ExchFees properly calculated (step 1)')
