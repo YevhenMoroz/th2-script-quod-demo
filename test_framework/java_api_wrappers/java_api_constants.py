@@ -165,6 +165,7 @@ class JavaApiFields(Enum):
     RetailPositList = 'RetailPositList'
     RetailPositBlock = 'RetailPositBlock'
     PositionType = 'PositionType'
+    ErrorMsg = "ErrorMsg"
     OverdueRetailPositList = 'OverdueRetailPositList'
     AccountID = 'AccountID'
     PosGoodTillDate = 'PosGoodTillDate'
@@ -193,6 +194,8 @@ class JavaApiFields(Enum):
     ConfirmationService = 'ConfirmationService'
     ClientAllocID = 'ClientAllocID'
     PostTradeStatus = 'PostTradeStatus'
+    MessageReply = 'MessageReply'
+    MessageReplyBlock = 'MessageReplyBlock'
     OrdUpdateBlock = 'OrdUpdateBlock'
     ComputeBookingFeesCommissionsRequestBlock = 'ComputeBookingFeesCommissionsRequestBlock'
     ClOrdID = 'ClOrdID'
