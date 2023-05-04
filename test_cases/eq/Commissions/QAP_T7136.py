@@ -80,7 +80,6 @@ class QAP_T7136(TestCase):
         # end_of_part
 
         # part 2: Set configuration for Agent fees
-        self.rest_commission_sender.set_modify_fees_message()
         self.ssh_client.send_command("/home/quod317/quod/script/site_scripts/change_book_agent_misk_fee_type_on_Y")
         self.ssh_client.send_command("qrestart QUOD.ORS QUOD.CS QUOD.ESBUYTH2TEST")
         time.sleep(80)
@@ -110,6 +109,7 @@ class QAP_T7136(TestCase):
                 JavaApiFields.ListingBlock.value: [{JavaApiFields.ListingID.value: listing_id}]},
             JavaApiFields.InstrID.value: instrument_id,
             JavaApiFields.Currency.value: currency,
+            JavaApiFields.OrdQty.value: qty,
             JavaApiFields.AccountGroupID.value: self.client,
             JavaApiFields.Price.value: price
         })
@@ -199,7 +199,8 @@ class QAP_T7136(TestCase):
             JavaApiFields.ComputeBookingFeesCommissionsReplyBlock.value]
         exch_fees_dict = {JavaApiFields.RootMiscFeeAmt.value: str(float(exch_fees_amount) * 2),
                           JavaApiFields.RootMiscFeeBasis.value: ExecutionReportConst.MiscFeeBasis_B.value,
-                          JavaApiFields.RootMiscFeeCurr.value: currency_GBP, JavaApiFields.MiscFeeRate.value: '1.0',
+                          JavaApiFields.RootMiscFeeCurr.value: currency_GBP,
+                          JavaApiFields.RootMiscFeeRate.value: '1.0',
                           JavaApiFields.RootMiscFeeType.value: ExecutionReportConst.MiscFeeType_EXC.value}
         agent_fees_dict = {JavaApiFields.RootMiscFeeAmt.value: str(float(agent_fees_amount) * 2),
                            JavaApiFields.RootMiscFeeBasis.value: ExecutionReportConst.MiscFeeBasis_P.value,
@@ -207,7 +208,9 @@ class QAP_T7136(TestCase):
                            JavaApiFields.RootMiscFeeRate.value: fee_agent_rate,
                            JavaApiFields.RootMiscFeeType.value: ExecutionReportConst.MiscFeeType_AGE.value}
         fees_list = compute_reply[JavaApiFields.RootMiscFeesList.value][JavaApiFields.RootMiscFeesBlock.value]
+        print(fees_list)
         self._sort_fee_list(fees_list, JavaApiFields.RootMiscFeeAmt.value)
+        print(fees_list)
         self.java_api_manager.compare_values(exch_fees_dict, fees_list[0],
                                              'Verify that ExchFees properly calculated (step 4) ComputeBookingFeesCommissionsRequest')
         self.java_api_manager.compare_values(agent_fees_dict, fees_list[1],
@@ -255,7 +258,7 @@ class QAP_T7136(TestCase):
         # end_of_part
         # endregion
 
-    @try_except
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.rest_commission_sender.clear_fees()
         self.ssh_client.send_command("/home/quod317/quod/script/site_scripts/change_book_agent_misc_fee_type_on_N")
@@ -263,6 +266,7 @@ class QAP_T7136(TestCase):
         time.sleep(90)
 
     def _split_co_order(self, qty, price, order_id):
+        new_order_single = trade_rule = None
         try:
             new_order_single = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(
                 self.bs_connectivity, self.venue_client, self.mic, float(price))
@@ -274,8 +278,9 @@ class QAP_T7136(TestCase):
         except Exception as e:
             logger.error(f'{e}')
         finally:
-            self.rule_manager.remove_rule(new_order_single)
-            self.rule_manager.remove_rule(trade_rule)
+            if new_order_single is not None and trade_rule is not None:
+                self.rule_manager.remove_rule(new_order_single)
+                self.rule_manager.remove_rule(trade_rule)
 
     def _sort_fee_list(self, fee_list, field):
         for counter in range(len(fee_list)):
