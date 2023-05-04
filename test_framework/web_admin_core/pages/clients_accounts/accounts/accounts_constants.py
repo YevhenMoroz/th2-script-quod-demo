@@ -10,6 +10,9 @@ class AccountsConstants:
     DISPLAYED_ACCOUNT_XPATH = "//*[text()='{}']"
     REQUEST_FAILED_MESSAGE_XPATH = "//nb-toast[contains(@class, 'danger')]"
     DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span'
+    MULTISELECT_DROP_DOWN = '//*[@id="textCash Accounts"]'
+    MULTISELECT_FORM_LOOK_UP = '//input[@role="textbox"]'
+    UNABLE_UNASSIGN_CASH_ACCOUNT_MESSAGE = '//*[@class="overlapping-warning"]'
 
     MAIN_PAGE_CLIENT_MATCHING_ID_XPATH = '(//*[@col-id="clientMatchingID"])[2]//*[@class="ag-group-value"]'
 
@@ -19,6 +22,7 @@ class AccountsConstants:
     WIZARD_CLIENT_COMBOBOX_XPATH = "//input[@id='accountGroup']"
     WIZARD_DESCRIPTION_INPUT_XPATH = "//input[@id='accountDesc']"
     WIZARD_POSITION_SOURCE_COMBOBOX_XPATH = "//input[@id='positionSource']"
+    WIZARD_CASH_ACCOUNTS_XPATH = '//*[@id="Cash Accounts"]'
     WIZARD_CLEARING_ACCOUNT_TYPE_COMBOBOX_XPATH = "//input[@id='clearingAccountType']"
     WIZARD_CLIENT_ID_SOURCE_COMBOBOX_XPATH = "//input[@id='clientAccountIDSource']"
     WIZARD_DEFAULT_ACCOUNT_CHECKBOX_XPATH = "//nb-checkbox[@formcontrolname='defaultAccount']"
@@ -75,6 +79,9 @@ class AccountsConstants:
     ROUTES_DELETE_BUTTON_XPATH = "//*[text()=' Routes ']/following-sibling::nb-accordion-item-body//*[@data-name='trash-2']"
     ROUTES_CREATE_ENTITY_BUTTON_XPATH = "//*[text()=' Routes ']/following-sibling::nb-accordion-item-body//*[@data-name='checkmark']"
     ROUTES_DISCARD_ENTITY_BUTTON_XPATH = "//*[text()=' Routes ']/following-sibling::nb-accordion-item-body//*[@data-name='close']"
+
+    ROUTES_ROUTE_ACCOUNT_NAME_TABLE_ROW = '//*[normalize-space()="Route Account Name"]//ancestor::p-table//td[2]//span[@class="ng-star-inserted"]'
+    ROUTES_ROUTE_TABLE_ROW = '//*[normalize-space()="Route Account Name"]//ancestor::p-table//td[3]//span[@class="ng-star-inserted"]'
 
     ID_INPUT_GRID_FILTER_XPATH = "//ag-grid-angular/div/div[1]/div/div[1]/div[2]/div/div[2]/div[1]/div[1]/div/input"
     ID_VALUE_GRID_XPATH = "//div[contains(@class, 'ag-row-first')]//div[@col-id='accountID']//span[contains(@class, 'ag-group-value')]"

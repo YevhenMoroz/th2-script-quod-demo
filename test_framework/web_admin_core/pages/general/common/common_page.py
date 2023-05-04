@@ -172,3 +172,28 @@ class CommonPage(CP):
 
     def get_site_name_from_header(self):
         return self.find_by_xpath(CommonConstants.SITE_NAME_XPATH).text
+
+    def set_browser_throttling(self, throttling: str = 'slow' or 'fast'):
+        """
+        Slow 3G Custom:
+            download_throughput: 376 * 1024
+            latency: 1000 (ms)
+        Fast 3G Custom:
+            download_throughput: 1500 * 1024
+            latency: 300 (ms)
+        """
+        if throttling == 'slow':
+            self.web_driver_container.get_driver().set_network_conditions(
+                offline=False, latency=1000, download_throughput=376 * 1024, upload_throughput=250 * 1024)
+        if throttling == 'fast':
+            self.web_driver_container.get_driver().set_network_conditions(
+                offline=False, latency=300, download_throughput=1500 * 1024, upload_throughput=376 * 1024)
+
+    def is_loading_overlay_displayed(self, attempts_to_verify=10):
+        i = 0
+        result = []
+        while attempts_to_verify > i:
+            result.append(self.is_element_present(CommonConstants.LOADING_OVERLAY))
+            i += 1
+            time.sleep(0.25)
+        return True if True in result else False

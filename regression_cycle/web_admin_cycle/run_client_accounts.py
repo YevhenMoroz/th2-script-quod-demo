@@ -91,6 +91,11 @@ from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T9090 import 
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T9436 import QAP_T9436
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T10609 import QAP_T10609
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T10617 import QAP_T10617
+from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T10722 import QAP_T10722
+from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T10724 import QAP_T10724
+from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T10914 import QAP_T10914
+from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T10946 import QAP_T10946
+from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T10959 import QAP_T10959
 
 
 class RunClientsAccounts:
@@ -276,6 +281,16 @@ class RunClientsAccounts:
             QAP_T10609(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                        environment=configuration.environment).run()
             QAP_T10617(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                       environment=configuration.environment).run()
+            QAP_T10722(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                       environment=configuration.environment).run()
+            QAP_T10724(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                       environment=configuration.environment).run()
+            QAP_T10914(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                       environment=configuration.environment).run()
+            QAP_T10946(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                       environment=configuration.environment).run()
+            QAP_T10959(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                        environment=configuration.environment).run()
 
             end_time = time.monotonic()

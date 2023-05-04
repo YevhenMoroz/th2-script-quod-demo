@@ -14,6 +14,12 @@ class AccountsRoutesSubWizard(CommonPage):
         self.set_text_by_xpath(AccountsConstants.ROUTES_ROUTE_ACCOUNT_NAME_FILTER_XPATH, route_account_name)
         self.set_text_by_xpath(AccountsConstants.ROUTES_ROUTE_FILTER_XPATH, route)
 
+    def get_all_route_account_names_in_table(self):
+        return self.get_all_items_from_table_column(AccountsConstants.ROUTES_ROUTE_ACCOUNT_NAME_TABLE_ROW)
+
+    def get_all_routes_in_table(self):
+        return self.get_all_items_from_table_column(AccountsConstants.ROUTES_ROUTE_TABLE_ROW)
+
     def click_edit_button(self):
         self.find_by_xpath(AccountsConstants.ROUTES_EDIT_BUTTON_XPATH).click()
 

@@ -30,3 +30,4 @@ class CommonConstants:
     ERROR_MESSAGE_POP_UP = '//nb-toast[contains(@class, "danger")]'
     ERROR_POP_UP_TEXT = '//nb-toast//*[@class="message"]'
     INFO_POP_UP_TEXT = '//nb-toast//*[@class="title subtitle"]'
+    LOADING_OVERLAY = '//*[@ref="eOverlayWrapper"]/span'
