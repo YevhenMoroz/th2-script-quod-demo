@@ -39,6 +39,7 @@ class RootConstants:
     CLIENTS_ITEM_XPATH = "//a[@title='Clients']"
     CLIENT_GROUPS_ITEM_XPATH = "//a[@title='Client Groups']"
     CLIENT_LISTS_ITEM_XPATH = "//a[@title='Client Lists']"
+    ACCOUNT_LISTS_ITEM_XPATH = "//a[@title='Account Lists']"
     CASH_ACCOUNTS_ITEM_XPATH = "//a[@title='CashAccounts']"
     EXTERNAL_CLIENT_GROUP_IDS_ITEM_XPATH = "//a[@title='External Client Group IDs']"
 
