@@ -208,9 +208,7 @@ class QAP_T7136(TestCase):
                            JavaApiFields.RootMiscFeeRate.value: fee_agent_rate,
                            JavaApiFields.RootMiscFeeType.value: ExecutionReportConst.MiscFeeType_AGE.value}
         fees_list = compute_reply[JavaApiFields.RootMiscFeesList.value][JavaApiFields.RootMiscFeesBlock.value]
-        print(fees_list)
         self._sort_fee_list(fees_list, JavaApiFields.RootMiscFeeAmt.value)
-        print(fees_list)
         self.java_api_manager.compare_values(exch_fees_dict, fees_list[0],
                                              'Verify that ExchFees properly calculated (step 4) ComputeBookingFeesCommissionsRequest')
         self.java_api_manager.compare_values(agent_fees_dict, fees_list[1],
