@@ -182,7 +182,7 @@ class AlgoFixInstruments(Enum):
         Symbol='QUODTESTQA06',
         SecurityID='TESTQA06',
         SecurityIDSource='8',
-        SecurityExchange='QDL1',
+        SecurityExchange='XPAR',
         SecurityType='CS'
     )
 
@@ -512,6 +512,21 @@ class AlgoMic(Enum):
     mic_45 = "QDV2"   # QDVENUE2
     mic_46 = "QDV3"   # QDVENUE3
     mic_47 = "XBRU"   # Euronext Brussel
+    mic_48 = "XUMP"   # UBSPERIODIC
+    mic_49 = "BEUP"   # CBOEEUPERIODIC
+    mic_50 = "DHEL"   # HELSINKIPA
+    mic_51 = "DSTO"   # STOCKHOLMPA
+    mic_52 = "XPAL"   # ITGIPA
+    mic_53 = "DCSE"   # COPENHAGENPA
+    mic_54 = "LIQU"   # LIQUIDNET
+    mic_55 = "LEUE"   # LIQUIDNETEU
+    mic_56 = "SGMU"   # SIGMAXEU
+    mic_57 = "BATP"   # BATSPERIODIC
+    mic_58 = "MHEL"   # HELSINKIDARK
+    mic_59 = "SGMV"   # SIGMAXPAEU
+    mic_60 = "MCSE"   # COPENHAGENDARK
+    mic_61 = "MSTO"   # STOCKHOLMDARK
+    mic_62 = "TQEA"   # TQLITAUCTIONEU
 
 
 class AlgoListingId(Enum):
@@ -579,6 +594,9 @@ class AlgoListingId(Enum):
     listing_60 = "2025020536"       # CHIX UK for QUODTESTQA09
     listing_61 = "2025020537"       # BATS UK for QUODTESTQA09
     listing_62 = "2248"       # AST_MI for TRQX @ Columbia
+    listing_63 = "2325020560"       # Euronext Paris for QUODTESTQA06
+    listing_64 = "2325020561"       # CHIX UK for QUODTESTQA06
+    listing_65 = "2325020562"       # BATS UK for QUODTESTQA06
     listing_dp = "890"       # DP for PARIS @ Columbia
     listing_sqi = "1130"       # SQI for PARIS @ Columbia
     listing_org = "1004"       # ORG for PARIS @ Columbia
