@@ -1,7 +1,7 @@
 <regression>
     <target_server_win></target_server_win>
-    <name>Regression 192v</name>
-    <version>5.1.179.192</version>
+    <name>Regression 191v</name>
+    <version>5.1.178.191</version>
     <product_lines>
         <product_line name="algo" run="False">
             <components>
@@ -205,12 +205,15 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="Pair_trading" run="False">
+                <component name="Pair_trading" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
                             <fix_environment>quod310_columbia_standard</fix_environment>
                         </fix_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod310_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
                     </environments>
                 </component>
                 <component name="Acceptance_list" run="False">
@@ -982,6 +985,7 @@
                     <data_set>WebAdminDataSet</data_set>
                     <environments>
                         <web_admin_environments>
+                            <web_admin_environment>quod310_web_admin_columbia_chrome</web_admin_environment>
                             <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
                             <web_admin_environment>test_site_web_admin_chrome</web_admin_environment>
                         </web_admin_environments>

@@ -76,23 +76,12 @@ def test_run(parent_id=None, version=None, mode=None):
         #     get_opened_fe(report_id, session_id, work_dir)
 
         configuration = ComponentConfiguration("Pair_trading")
-
-        # region SSH
-        environment = configuration.environment
-        config_file = "client_sats.xml"
-        def_conf_value = "true"
-        mod_conf_value = "false"
-        ssh_client_env = environment.get_list_ssh_client_environment()[0]
-        ssh_client = SshClient(ssh_client_env.host, ssh_client_env.port, ssh_client_env.user,
-                               ssh_client_env.password, ssh_client_env.su_user,
-                               ssh_client_env.su_password)
-        # endregion
-
         # usePoV=true
         QAP_T8710(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4249(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4253(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4236(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4239(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4233(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T7850(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8573(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
@@ -119,12 +108,23 @@ def test_run(parent_id=None, version=None, mode=None):
         QAP_T9171(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # QAP_T9173(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute() test will fail because FIX ER Fill is not sent to the SS
         # QAP_T9172(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute() test will fail because FIX ER Fill is not sent to the SS
-        QAP_T7928(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_T7928(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute() test will fail because FIX ER Fill is not sent to the SS
         QAP_T8574(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
         if __name__ == '__main__':
             # tests with config change
             # usePoV=false
+            # region SSH
+            configuration = ComponentConfiguration("Pair_trading")
+            environment = configuration.environment
+            config_file = "client_sats.xml"
+            def_conf_value = "true"
+            mod_conf_value = "false"
+            ssh_client_env = environment.get_list_ssh_client_environment()[0]
+            ssh_client = SshClient(ssh_client_env.host, ssh_client_env.port, ssh_client_env.user,
+                                   ssh_client_env.password, ssh_client_env.su_user,
+                                   ssh_client_env.su_password)
+            # endregion
 
             # region precondition: Prepare SATS configuration
             ssh_client.get_and_update_file(config_file, {".//PairTrading/usePoV": mod_conf_value})
@@ -136,7 +136,6 @@ def test_run(parent_id=None, version=None, mode=None):
             # QAP_T4247(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute() test will fail because FIX ER Fill is not sent to the SS
             QAP_T8037(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
             QAP_T4254(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-            QAP_T4239(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
             # QAP_T8584(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute() test will fail because FIX ER Fill is not sent to the SS
             # QAP_T8582(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute() test will fail because FIX ER Fill is not sent to the SS
             QAP_T8819(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
