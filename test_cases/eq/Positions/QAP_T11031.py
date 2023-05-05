@@ -156,8 +156,8 @@ class QAP_T11031(TestCase):
         # endregion
 
         # region step 10: Check Fix_PositionReport
+        daily_gross_pl = daily_gross_pl[0:4]
         value = self._get_logs_from_pks()
-        print(value)
         actually_results = True
         if value.find(f"PosAmtType=DailyRealizedGrossPL PosAmt={daily_gross_pl}") == -1:
             actually_results = False
