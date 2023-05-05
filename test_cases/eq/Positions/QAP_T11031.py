@@ -163,7 +163,7 @@ class QAP_T11031(TestCase):
             actually_results = False
         self.ja_manager.compare_values({'DailyRealizedGrossPL_Is_Present': True},
                                              {'DailyRealizedGrossPL_Is_Present': actually_results},
-                                             'Verify that DailyRealizedGrossPL  is present (step 3)')
+                                             'Verify that DailyRealizedGrossPL  is present (step 10)')
         # endregion
 
     def _extract_cum_values_for_acc(self, acc):
