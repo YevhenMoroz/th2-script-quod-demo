@@ -3,7 +3,7 @@ import math
 from copy import deepcopy
 from datetime import time, date, timezone, timedelta
 from datetime import datetime as dt
-from math import ceil
+from math import ceil, floor
 from decimal import Decimal
 
 from test_framework.data_sets.constants import TradingPhases
@@ -263,7 +263,7 @@ class AlgoFormulasManager:
 
     @staticmethod
     def change_datetime_from_epoch_to_normal(datetime_epoch) -> dt:
-        return datetime.datetime.fromtimestamp(datetime_epoch).astimezone(tz=timezone.utc)
+        return datetime.datetime.fromtimestamp(datetime_epoch)
 
     @staticmethod
     def change_datetime_from_epoch_to_normal_with_milisec(datetime_epoch) -> dt:
@@ -334,7 +334,7 @@ class AlgoFormulasManager:
     @staticmethod
     def get_timestamps_for_current_phase(phase: TradingPhases, dateformat="full"):
         if dateformat == "full":
-            tm = dt.now()
+            tm = dt.utcnow()
         else:
             tm = dt.utcnow()
         if phase == TradingPhases.PreOpen:
@@ -771,3 +771,64 @@ class AlgoFormulasManager:
                     return (phase_from_list['beginTime'] - now).seconds
                 else:
                     return (phase_from_list['endTime'] - now).seconds
+
+    @staticmethod
+    def get_vwap_childs(volumes, start_date: datetime, end_date: datetime, parent_qty):
+        # region algo slices
+        # time_for_slice = (end_date - start_date).seconds / waves
+        time_for_slice = 60
+        list_volume = list()
+        start_date2 = deepcopy(start_date)
+        while start_date2 < end_date:
+
+            list_volume.append(dict(start=start_date2, end=(start_date2 + timedelta(seconds=time_for_slice))))
+            start_date2 = start_date2 + timedelta(seconds=time_for_slice)
+        # endregion
+
+        # region volume slices
+        sum = 0
+        for volume in volumes:
+            if (end_date.time() >= volume['MDTime'].time() >= start_date.time()) and volume['LastAuctionPhase']== '':
+                sum += volume['LastTradedQty']
+
+            if volume['MDTime'].time() != end_date.time():
+                for volume_share in list_volume:
+                    if volume['MDTime'].time() == volume_share['start'].time():
+                        volume_share['volume'] = volume['LastTradedQty']
+            else:
+                for volume_share in list_volume:
+                    if volume['MDTime'].time() == volume_share['start'].time():
+                        if 'volume' not in volume_share.keys():
+                            volume_share['volume'] = volume['LastTradedQty']
+                        else:
+                            volume_share['volume'] = volume_share['volume'] + volume['LastTradedQty']
+                    if volume['MDTime'].time() == volume_share['end'].time():
+                        if 'volume' not in volume_share.keys():
+                            volume_share['volume'] = volume['LastTradedQty']
+                        else:
+                            volume_share['volume'] = volume_share['volume'] + volume['LastTradedQty']
+        # endregion
+
+        # region qty calculation
+        for volume_share in list_volume:
+            volume_share['qty'] = round(Decimal(volume_share['volume'] / sum * parent_qty),2)
+        # endregion
+
+        # region rounding
+        temp_rounding = 0
+        for volume_share in list_volume:
+            unrounded_qty = volume_share['qty'] + temp_rounding
+            rounded_qty = floor(unrounded_qty)
+            temp_rounding = unrounded_qty - rounded_qty
+            volume_share['qty'] = rounded_qty
+            print()
+
+        # endregion
+
+        # region return value
+        return_list = list()
+        for volume_share in list_volume:
+            return_list.append(volume_share['qty'])
+        #endregion
+
+        return return_list
