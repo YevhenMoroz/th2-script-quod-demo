@@ -208,6 +208,8 @@ class ClientAlgoPolicy(Enum):
     qa_mpdark_rr_1 = "QA_Auto_MPDark_RR_1"
     qa_mpdark_rr_2 = "QA_Auto_MPDark_RR_2"
     qa_mpdark_rr_3 = "QA_Auto_MPDark_RR_3"
+    qa_mpdark_rr_4 = "QA_Auto_MPDark_RR_4"
+    qa_mpdark_rr_5 = "QA_Auto_MPDark_RR_5"
     qa_sorping = "QA_SORPING"
     qa_sorping_1 = "QA_Auto_SORPING_1"
     qa_sorping_2 = "QA_Auto_SORPING_2"
@@ -370,6 +372,7 @@ class ReadLogVerifiers(Enum):
     log_319_check_exec_type = "log319-check-exec-type"
     log_319_cancel_child = "log319-cancel-child"
     log_319_check_dfd_mapping_buy_side = "log319-check-dfd-mapping-buy-side"
+    log319_check_resident_time_calculation = "log319-check-resident-time-calculation"
 
 
 class ExecType(Enum):
