@@ -118,7 +118,8 @@ class QAP_T7164(TestCase):
 
         # region Set DiscloseExec = Manual
         self.order_action_request.set_default([order_id])
-        self.java_api_manager.send_message_and_receive_response(self.order_action_request)
+        order_dict = {order_id: order_id}
+        self.java_api_manager.send_message_and_receive_response(self.order_action_request, order_dict)
         order_notification = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value, order_id). \
             get_parameters()[JavaApiFields.OrderNotificationBlock.value]
         self.java_api_manager.compare_values(
