@@ -75,7 +75,6 @@ class QAP_T7572(TestCase):
         # region step  1-2 : Extract position for acc1 and acc2
         posit_acc1_before_transfer = self._extract_cum_values_for_acc(self.acc1)
         common_daily_pl_before_transfer = self._extract_daily_pl_from_position_ack()
-        print(common_daily_pl_before_transfer)
         posit_acc2_before_transfer = self._extract_cum_values_for_acc(self.acc2)
         # endregion
 
