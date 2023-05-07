@@ -62,7 +62,7 @@ class QAP_T7600(TestCase):
         # region Step 3
         self.trd_req.set_default_trade(ord_id)
         self.ja_manager.send_message_and_receive_response(self.trd_req)
-        posit = self.ja_manager.get_last_message(PKSMessageType.PositionReport.value).get_parameters()[
+        posit = self.ja_manager.get_last_message_by_multiple_filter(PKSMessageType.PositionReport.value,[JavaApiFields.PositQty.value]).get_parameters()[
             JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
             JavaApiFields.PositionBlock.value][0]
         exp_cum_buy_qty = str(float(cum_buy_qty) + 100)
@@ -75,7 +75,7 @@ class QAP_T7600(TestCase):
         # region Step 5
         self.allocation_instruction.set_default_book(ord_id)
         self.ja_manager.send_message_and_receive_response(self.allocation_instruction)
-        posit = self.ja_manager.get_last_message(PKSMessageType.PositionReport.value).get_parameters()[
+        posit = self.ja_manager.get_last_message_by_multiple_filter(PKSMessageType.PositionReport.value, [JavaApiFields.PositQty.value]).get_parameters()[
             JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
             JavaApiFields.PositionBlock.value][0]
         self.ja_manager.compare_values({"CumBuyQty": cum_buy_qty}, posit, "Check CumBuyQty decreased")
