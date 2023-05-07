@@ -55,7 +55,7 @@ class QAP_T7600(TestCase):
             JavaApiFields.OrderNotificationBlock.value]["OrdID"]
         self.trd_req.set_default_trade(ord_id2)
         self.ja_manager.send_message_and_receive_response(self.trd_req)
-        cum_buy_qty = self.ja_manager.get_last_message(PKSMessageType.PositionReport.value).get_parameters()[
+        cum_buy_qty = self.ja_manager.get_last_message_by_multiple_filter(PKSMessageType.PositionReport.value,[JavaApiFields.PositQty.value]).get_parameters()[
             JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
             JavaApiFields.PositionBlock.value][0]["CumBuyQty"]
         # endregion
