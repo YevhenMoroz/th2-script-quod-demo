@@ -1,4 +1,9 @@
+import os
+import re
 from pathlib import Path
+
+from pkg_resources import resource_filename
+
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from test_cases.fx.fx_wrapper.common_tools import random_qty
@@ -17,9 +22,10 @@ from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.fx.OrderQuoteFX import OrderQuoteFX
 from test_framework.java_api_wrappers.fx.QuoteRequestActionRequestFX import QuoteRequestActionRequestFX
 from test_framework.java_api_wrappers.fx.TradeEntryRequestFX import TradeEntryRequestFX
+from test_framework.ssh_wrappers.ssh_client import SshClient
 
 
-class QAP_T9406(TestCase):
+class QAP_T11057(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
         super().__init__(report_id, session_id, data_set, environment)
@@ -46,6 +52,14 @@ class QAP_T9406(TestCase):
         self.currency = self.data_set.get_currency_by_name("currency_gbp")
         self.trade_request = TradeEntryRequestFX()
         self.execution_report = FixMessageExecutionReportTradeEntryRequestFX()
+        self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
+        self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
+                                    self.ssh_client_env.password, self.ssh_client_env.su_user,
+                                    self.ssh_client_env.su_password)
+        self.config_file = "client_qf_kharkiv_quod7_th2.xml"
+        self.local_path = resource_filename("test_resources.be_configs.fx_be_configs", self.config_file)
+        self.remote_path = f"/home/{self.ssh_client_env.su_user}/quod/cfg/{self.config_file}"
+        self.temp_path = os.path.join(os.path.expanduser('~'), 'PycharmProjects', 'th2-script-quod-demo', 'temp')
         self.qty = random_qty(9, len=9)
         self.instrument = {
             "Symbol": self.symbol,
@@ -57,11 +71,21 @@ class QAP_T9406(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Step 1
         self.trade_request.set_default_params()
-        exec_misc = self.trade_request.get_parameters()["TradeEntryRequestBlock"]["ExecMiscBlock"]["ExecMisc0"]
-        response: list = self.java_api_manager.send_message_and_receive_response(self.trade_request)[0].get_parameters()
+        self.java_api_manager.send_message(self.trade_request)
+        self.ssh_client.get_file("/Logs/quod314/QUOD.QSFE.log",
+                                 self.temp_path)
+        logs = open(self.temp_path, "r")
+        self.result = "pass"
+        for line in logs:
+            self.key = re.findall(r"^.*ListingQuoting_pkg\.ListingQuoting_r.*$", line)
+            if self.key:
+                self.result = "failed"
+                break
         self.verifier.set_parent_id(self.test_id)
-        self.verifier.set_event_name("Check ExecMisc")
-        self.verifier.compare_values("ExecMisc", exec_misc, response["ExecutionReportBlock"]["ExecMiscBlock"]["ExecMisc0"])
+        self.verifier.set_event_name("Check that \"ListingQuoting_pkg.ListingQuoting_r\" is not present in logs")
+        self.verifier.compare_values("status", "pass", self.result)
         self.verifier.verify()
+        logs.close()
+        os.remove(self.temp_path)
         # endregion
 

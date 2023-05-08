@@ -1,6 +1,5 @@
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from custom.verifier import Verifier
 from stubs import Stubs
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
@@ -10,14 +9,12 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.forex.FixMessageExecutionReportPrevQuotedFX import \
     FixMessageExecutionReportPrevQuotedFX
-from test_framework.fix_wrappers.forex.FixMessageNewOrderMultiLegFX import FixMessageNewOrderMultiLegFX
-from test_framework.fix_wrappers.forex.FixMessageNewOrderMultiLegSynergyFX import FixMessageNewOrderMultiLegSynergyFX
 from test_framework.fix_wrappers.forex.FixMessageNewOrderSinglePrevQuotedFX import FixMessageNewOrderSinglePrevQuotedFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteRequestSynergyFX import FixMessageQuoteRequestSynergyFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteSynergyFX import FixMessageQuoteSynergyFX
 
 
-class QAP_T8635(TestCase):
+class QAP_T8024(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
         super().__init__(report_id, session_id, data_set, environment)
@@ -29,10 +26,35 @@ class QAP_T8635(TestCase):
         self.quote_request = FixMessageQuoteRequestSynergyFX(data_set=self.data_set)
         self.quote = FixMessageQuoteSynergyFX()
         self.client = self.data_set.get_client_by_name("client_mm_3")
-        self.order = FixMessageNewOrderMultiLegSynergyFX()
+        self.order = FixMessageNewOrderSinglePrevQuotedFX()
         self.execution_report = FixMessageExecutionReportPrevQuotedFX()
-        self.verifier = Verifier(self.test_id)
-        self.venue_type = str()
+        self.no_legs = [
+            {
+                "InstrumentLeg": {
+                    "LegSymbol": self.data_set.get_symbol_by_name("symbol_2"),
+                    "LegSymbolSfx": self.data_set.get_symbol_by_name("symbol_2"),
+                    "LegCurrency": self.data_set.get_currency_by_name("currency_gbp"),
+                    "LegSide": "1",
+                },
+
+                "LegSettlDate": self.data_set.get_settle_date_by_name("spot"),
+                "LegQty": "1000000",
+                "LegRefID": bca.client_orderid(9)
+            },
+            {
+                "InstrumentLeg": {
+                    "LegSymbol": self.data_set.get_symbol_by_name("symbol_2"),
+                    "LegSymbolSfx": self.data_set.get_symbol_by_name("symbol_2"),
+                    "LegCurrency": self.data_set.get_currency_by_name("currency_gbp"),
+                    "LegSide": "1",
+                },
+
+                "LegSettlDate": self.data_set.get_settle_date_by_name("wk1"),
+                "LegQty": "1000000",
+                "LegRefID": bca.client_orderid(9)
+            }
+        ]
+
         self.party = [{
             "PartyID": self.client,
             "PartyIDSource": "D",
@@ -42,25 +64,12 @@ class QAP_T8635(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Step 1
-        self.quote_request.set_rfq_synergy_params_multileg()
+        self.quote_request.set_rfq_synergy_params_multileg().get_parameter("NoRelatedSym")[0].update({"NoLegs": self.no_legs})
         self.quote_request.update_value_in_repeating_group("NoRelatedSym", "NoPartyIDs", self.party)
-        self.quote_request.add_tag({"VenueType": "M"})
         response: list = self.fix_manager_sel.send_message_and_receive_response(self.quote_request, self.test_id)
         # endregion
         # region step 2
         self.quote.set_params_for_multileg(self.quote_request)
-        self.quote.add_tag({"VenueType": "M"})
+        self.quote.get_parameter("NoLegs")[0].pop("LegOfferForwardPoints")
+        self.quote.get_parameter("NoLegs")[0].update({"LegBidPx": "*"})
         self.fix_verifier.check_fix_message(self.quote)
-        # endregion
-        # region Step 3
-        self.order.set_default_prev_quoted_multileg(self.quote_request, response[0], price="1.18999", side="1")
-        self.order.add_tag({"VenueType": "M"})
-        exec_report = self.fix_manager_sel.send_message_and_receive_response(self.order)[-1]
-        self.venue_type = exec_report.get_parameters()['VenueType']
-        # endregion
-        # region Step 4
-        self.verifier.set_parent_id(self.test_id)
-        self.verifier.set_event_name("Check VenueType mapping (OrderMultilegFIX message)")
-        self.verifier.compare_values("VenueType", "M", self.venue_type)
-        self.verifier.verify()
-        # endregion

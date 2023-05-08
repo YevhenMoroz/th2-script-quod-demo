@@ -17,7 +17,7 @@ from test_framework.fix_wrappers.forex.FixMessageQuoteRequestSynergyFX import Fi
 from test_framework.fix_wrappers.forex.FixMessageQuoteSynergyFX import FixMessageQuoteSynergyFX
 
 
-class QAP_T8635(TestCase):
+class QAP_T8023(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
         super().__init__(report_id, session_id, data_set, environment)
@@ -32,35 +32,41 @@ class QAP_T8635(TestCase):
         self.order = FixMessageNewOrderMultiLegSynergyFX()
         self.execution_report = FixMessageExecutionReportPrevQuotedFX()
         self.verifier = Verifier(self.test_id)
-        self.venue_type = str()
+        self.eur_usd = self.data_set.get_symbol_by_name("symbol_1")
+        self.eur_gbp = self.data_set.get_symbol_by_name("symbol_3")
+        self.eur = self.data_set.get_currency_by_name("currency_eur")
+        self.eur_usd_leg = {"LegSymbol": self.eur_usd,
+                            "LegSymbolSfx": self.eur_usd,
+                            "LegCurrency": self.eur,
+                            "LegSide": "1"}
+        self.eur_gbp_leg = {"LegSymbol": self.eur_gbp,
+                            "LegSymbolSfx": self.eur_gbp,
+                            "LegCurrency": self.eur,
+                            "LegSide": "1"}
         self.party = [{
             "PartyID": self.client,
             "PartyIDSource": "D",
             "PartyRole": "1"
         }]
+        self.expected_text = "11733 Given currency (GBP) is neither base (EUR) nor quote (USD) " \
+                             "/ 11759 Requests in RFQ block must concern the same currency pair"
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Step 1
         self.quote_request.set_rfq_synergy_params_multileg()
         self.quote_request.update_value_in_repeating_group("NoRelatedSym", "NoPartyIDs", self.party)
-        self.quote_request.add_tag({"VenueType": "M"})
-        response: list = self.fix_manager_sel.send_message_and_receive_response(self.quote_request, self.test_id)
+        # self.quote_request.add_tag({"VenueType": "M"})
+        self.quote_request.get_parameters()["NoRelatedSym"][0]["NoLegs"][0].update(
+            {"InstrumentLeg": self.eur_usd_leg})
+        self.quote_request.get_parameters()["NoRelatedSym"][0]["NoLegs"][1].update(
+            {"InstrumentLeg": self.eur_gbp_leg})
+        quote = self.fix_manager_sel.send_message_and_receive_response(self.quote_request, self.test_id)[0]
         # endregion
-        # region step 2
-        self.quote.set_params_for_multileg(self.quote_request)
-        self.quote.add_tag({"VenueType": "M"})
-        self.fix_verifier.check_fix_message(self.quote)
-        # endregion
-        # region Step 3
-        self.order.set_default_prev_quoted_multileg(self.quote_request, response[0], price="1.18999", side="1")
-        self.order.add_tag({"VenueType": "M"})
-        exec_report = self.fix_manager_sel.send_message_and_receive_response(self.order)[-1]
-        self.venue_type = exec_report.get_parameters()['VenueType']
-        # endregion
-        # region Step 4
+        # region Step 2
+        self.actual_text = quote.get_parameters()['Text']
         self.verifier.set_parent_id(self.test_id)
-        self.verifier.set_event_name("Check VenueType mapping (OrderMultilegFIX message)")
-        self.verifier.compare_values("VenueType", "M", self.venue_type)
+        self.verifier.set_event_name("Check FreeNotes (QuoteFIX message)")
+        self.verifier.compare_values("FreeNotes", self.expected_text, self.actual_text)
         self.verifier.verify()
         # endregion
