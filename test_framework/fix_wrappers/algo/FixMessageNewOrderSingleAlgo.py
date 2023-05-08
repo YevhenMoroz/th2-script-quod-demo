@@ -1558,19 +1558,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_2'),
             'OrderCapacity': 'A',
             'Currency': 'EUR',
-            'TargetStrategy': '1001',
-            'NoStrategyParameters': [
-                {
-                    'StrategyParameterName': 'AvailableVenues',
-                    'StrategyParameterType': '13',
-                    'StrategyParameterValue': 'true'
-                },
-                {
-                    'StrategyParameterName': 'AllowMissingPrimary',
-                    'StrategyParameterType': '13',
-                    'StrategyParameterValue': 'true'
-                },
-            ]
+            'TargetStrategy': '1001'
         }
         super().change_parameters(base_parameters)
         return self

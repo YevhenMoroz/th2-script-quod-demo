@@ -137,7 +137,7 @@ class QAP_T8619(TestCase):
         self.fix_verifier_sell.check_fix_message(pending_PairTrad_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew')
 
         new_PairTrad_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.PairTrad_order, self.gateway_side_sell, self.status_new)
-        new_PairTrad_order_params.remove_parameter('NoParty')
+        
 
         self.fix_verifier_sell.check_fix_message(new_PairTrad_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
@@ -212,7 +212,6 @@ class QAP_T8619(TestCase):
 
         # region Check Parent order eliminate
         eliminate_PairTrad_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.PairTrad_order, self.gateway_side_sell, self.status_eliminate)
-        eliminate_PairTrad_order_params.remove_parameter('NoParty')
         self.fix_verifier_sell.check_fix_message(eliminate_PairTrad_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport Eliminate')
         # endregion
         
