@@ -235,4 +235,13 @@ class ReadLogMessageAlgo(ReadLogMessage):
         super().change_parameters(base_parameters)
         return self
 
+    def set_compare_message_for_check_dfd_mapping_buy_side(self) -> ReadLogMessage:
+        base_parameters = {
+            "ClOrdID": "*",
+            "ExecType": "Eliminated",
+            "EliminationHandling": "StopChildCreation"
+        }
+        super().change_parameters(base_parameters)
+        return self
+
 

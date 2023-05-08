@@ -7,7 +7,7 @@ import traceback
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.middle_office.allocation_matching_profiles.main_page import \
-    AllocationMatchingProfilesPage
+    MainPage
 from test_framework.web_admin_core.pages.middle_office.allocation_matching_profiles.wizard import \
     AllocationMatchingProfilesWizard
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
@@ -30,7 +30,7 @@ class QAP_T3816(CommonTestCase):
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_allocation_matching_profiles_page()
-        page = AllocationMatchingProfilesPage(self.web_driver_container)
+        page = MainPage(self.web_driver_container)
         page.click_on_new()
         wizard = AllocationMatchingProfilesWizard(self.web_driver_container)
         wizard.set_name(self.fix_matching_profile_name)
@@ -41,7 +41,7 @@ class QAP_T3816(CommonTestCase):
 
         try:
             self.precondition()
-            page = AllocationMatchingProfilesPage(self.web_driver_container)
+            page = MainPage(self.web_driver_container)
             wizard = AllocationMatchingProfilesWizard(self.web_driver_container)
             page.set_name(self.fix_matching_profile_name)
             time.sleep(1)

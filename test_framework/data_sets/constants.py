@@ -222,6 +222,7 @@ class ClientAlgoPolicy(Enum):
     qa_sorping_11 = "QA_Auto_SORPING_11"
     qa_sorping_12 = "QA_Auto_SORPING_12"
     qa_sorping_13 = "QA_Auto_SORPING_13"
+    qa_sorping_14 = "QA_Auto_SORPING_14"
     qa_multiple_y = 'QA_Auto_SORPING_ME_Y'
     qa_multiple_n = 'QA_Auto_SORPING_ME_N'
     qa_iceberg = 'QA_Auto_ICEBERG'
@@ -368,6 +369,7 @@ class ReadLogVerifiers(Enum):
     log_319_check_party_info_buy_side = "log319-check-party-info-buy-side"
     log_319_check_exec_type = "log319-check-exec-type"
     log_319_cancel_child = "log319-cancel-child"
+    log_319_check_dfd_mapping_buy_side = "log319-check-dfd-mapping-buy-side"
 
 
 class ExecType(Enum):
@@ -423,6 +425,14 @@ class SshClientEnv(Enum):
     DB_PASSWORD_314 = "quod314prd"
 
 
+    HOST_319 = "10.0.22.39"
+    PORT_319 = 22
+    USER_319 = ""
+    PASSWORD_319 = ""
+    SU_USER_319 = "quod319"
+    SU_PASSWORD_319 = "quod319"
+
+
 class DataBaseEnv(Enum):
     # 317 site
     HOST_317 = "10.0.22.69"
@@ -447,6 +457,17 @@ class DataBaseEnv(Enum):
     USER_320 = "quod320prd"
     PASS_320 = "quod320prd"
     DB_TYPE_320 = "postgresql"
+    # 306 Oracle
+    HOST_306 = "10.0.22.57"
+    NAME_306 = "DBSHIVA2"
+    USER_306 = "quod306prd"
+    PASS_306 = "quod306prd"
+    DB_TYPE_306 = "oracle"
+    # 310 mongo
+    HOST_310 = "10.0.22.31"
+    PORT_310 = 27310
+    NAME_310 = "filteredQuoteDB"
+    DB_TYPE_310 = "mongo"
 
 
 class FreeNotesReject(Enum):

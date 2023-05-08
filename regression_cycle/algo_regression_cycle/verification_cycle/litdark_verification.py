@@ -8,6 +8,8 @@ from test_framework.environments.fix_environment import FixEnvironment
 from test_framework.data_sets.environment_type import EnvironmentType
 from test_cases.algo.Algo_LitDark.QAP_T7732 import QAP_T7732
 from test_cases.algo.Algo_LitDark.QAP_T7728 import QAP_T7728
+from test_cases.algo.Algo_LitDark.QAP_T7729 import QAP_T7729
+from test_cases.algo.Algo_LitDark.QAP_T7730 import QAP_T7730
 
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
@@ -28,6 +30,8 @@ def test_run(parent_id=None, version=None):
         configuration = ComponentConfiguration("Lit_dark")
         QAP_T7732(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T7728(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T7729(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T7730(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
     except Exception:
         logging.error("Error execution", exc_info=True)
 

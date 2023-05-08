@@ -121,10 +121,10 @@ class QAP_T10504(TestCase):
 
         self.dma_chix_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
         self.dma_chix_order.change_parameters(dict(Account=self.account_chix, ExDestination=self.ex_destination_chix, OrderQty=self.qty, Instrument=self.instrument))
-        self.fix_verifier_buy.check_fix_message(self.dma_chix_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_chix_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
         er_reject_dma_chix_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_chix_order, self.gateway_side_buy, self.status_reject)
-        self.fix_verifier_buy.check_fix_message(er_reject_dma_chix_order_params, key_parameters=self.key_params_ER_reject_child, direction=self.ToQuod, message_name='Buy side ExecReport Reject Child DMA 1 order')
+        self.fix_verifier_buy.check_fix_message_kepler(er_reject_dma_chix_order_params, key_parameters=self.key_params_ER_reject_child, direction=self.ToQuod, message_name='Buy side ExecReport Reject Child DMA 1 order')
         # endregion
 
         time.sleep(2)
@@ -132,10 +132,10 @@ class QAP_T10504(TestCase):
         # region Check child DMA order on venue BATS DARKPOOL UK
         self.dma_bats_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
         self.dma_bats_order.change_parameters(dict(Account=self.account_bats, ExDestination=self.ex_destination_bats, OrderQty=self.qty, Instrument=self.instrument))
-        self.fix_verifier_buy.check_fix_message(self.dma_bats_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 2 order')
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_bats_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 2 order')
 
         er_reject_dma_bats_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_bats_order, self.gateway_side_buy, self.status_reject)
-        self.fix_verifier_buy.check_fix_message(er_reject_dma_bats_order_params, key_parameters=self.key_params_ER_reject_child, direction=self.ToQuod, message_name='Buy side ExecReport Reject Child DMA 2 order')
+        self.fix_verifier_buy.check_fix_message_kepler(er_reject_dma_bats_order_params, key_parameters=self.key_params_ER_reject_child, direction=self.ToQuod, message_name='Buy side ExecReport Reject Child DMA 2 order')
         # endregion
 
         time.sleep(2)
@@ -143,10 +143,10 @@ class QAP_T10504(TestCase):
         # region Check child DMA order on venue CBOE DARKPOOL EU
         self.dma_cboe_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
         self.dma_cboe_order.change_parameters(dict(Account=self.account_cboe, ExDestination=self.ex_destination_cboe, OrderQty=self.qty, Instrument=self.instrument))
-        self.fix_verifier_buy.check_fix_message(self.dma_cboe_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 3 order')
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_cboe_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 3 order')
 
         er_reject_dma_cboe_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_cboe_order, self.gateway_side_buy, self.status_reject)
-        self.fix_verifier_buy.check_fix_message(er_reject_dma_cboe_order_params, key_parameters=self.key_params_ER_reject_child, direction=self.ToQuod, message_name='Buy side ExecReport Reject Child DMA 3 order')
+        self.fix_verifier_buy.check_fix_message_kepler(er_reject_dma_cboe_order_params, key_parameters=self.key_params_ER_reject_child, direction=self.ToQuod, message_name='Buy side ExecReport Reject Child DMA 3 order')
         # endregion
 
         # region Check that parent order eliminated

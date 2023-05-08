@@ -71,6 +71,7 @@ class BaseDataSet:
     venue_client_account_name = None
     gating_rule_ids = None
     counterpart_java_api_for_es = None
+    fix_leg_instruments = None
     charges_type = None
     # region fields added by Web Admin team
     user = None
@@ -953,4 +954,10 @@ class BaseDataSet:
         if hasattr(self.charges_type, name):
             return getattr(self.charges_type, name).value
         return ValueError(f"{self.charges_type} not found!")
+
+    def get_fix_leg_instrument_by_name(self, name: str):
+        if hasattr(self.fix_leg_instruments, name):
+            return getattr(self.fix_leg_instruments, name).value
+        raise ValueError(f"{self.fix_leg_instruments} not found!")
+
     # endregion

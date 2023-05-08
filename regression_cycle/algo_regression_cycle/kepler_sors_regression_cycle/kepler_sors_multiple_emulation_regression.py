@@ -1,6 +1,10 @@
 import logging
+import time
+
 from custom import basic_custom_actions as bca
 from stubs import Stubs
+from test_cases.algo.Algo_Kepler.Algo_Multiple_Emulation.QAP_T4832 import QAP_T4832
+from test_cases.algo.Algo_Kepler.Algo_Multiple_Emulation.QAP_T4837 import QAP_T4837
 from test_framework.configurations.component_configuration import ComponentConfiguration
 
 from test_cases.algo.Algo_Kepler.Algo_Multiple_Emulation.QAP_T4908 import QAP_T4908
@@ -70,6 +74,7 @@ def test_run(parent_id=None, version=None):
         QAP_T4817(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4818(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4819(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        time.sleep(10)
         QAP_T4820(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4823(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4825(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
@@ -77,9 +82,11 @@ def test_run(parent_id=None, version=None):
         QAP_T4829(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4830(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4831(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4832(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4833(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4835(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4836(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4837(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4838(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4840(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4841(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
@@ -99,6 +106,7 @@ def test_run(parent_id=None, version=None):
         QAP_T4863(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4864(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4865(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        time.sleep(10)
         QAP_T4875(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4881(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4888(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()

@@ -1,3 +1,5 @@
+import time
+
 from test_framework.web_admin_core.pages.positions.wash_books.wash_books_constants import WashBookConstants
 from test_framework.web_admin_core.pages.common_page import CommonPage
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -57,5 +59,11 @@ class WashBookWizard(CommonPage):
 
     def click_on_no_button(self):
         self.find_by_xpath(WashBookConstants.NO_BUTTON_AT_WIZARD).click()
+
+    def click_on_download_pdf_button_and_check_data(self, value):
+        self.clear_download_directory()
+        self.find_by_xpath(WashBookConstants.WIZARD_DOWNLOAD_PDF_BUTTON).click()
+        time.sleep(2)
+        return self.is_pdf_contains_value(value)
 
     # endregion

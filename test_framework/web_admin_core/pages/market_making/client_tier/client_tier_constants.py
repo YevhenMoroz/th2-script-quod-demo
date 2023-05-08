@@ -92,7 +92,7 @@ class ClientTierConstants:
     MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_DOWNLOAD_PDF_XPATH = "//*[@nbtooltip='Download PDF']//*[@data-name='download']"
     MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_PIN_ROW_XPATH = "//*[@class='cdk-overlay-container']//*[@nbtooltip='Click to Pin Row']"
     MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_DOWNLOAD_CSV_XPATH = "//*[@class='ctis-grid']//*[@data-name='download']"
-    MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_NEW_BUTTON_XPATH = "//*[@class='ctis-grid']//*[text()='New']"
+    MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_NEW_BUTTON_XPATH = "//*[@class='ctis-grid']//*[normalize-space()='New']"
 
     MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_SYMBOL_FILTER_XPATH = "//*[@class='ctis-grid']//*[@class='ag-header-container']/div[2]/div[1]//input"
     MAIN_PAGE_CLIENT_TIER_INSTRUMENTS_RFQ_RESPONSE_STREAM_TTL_FILTER_XPATH = "//*[@class='ctis-grid']//*[@class='ag-header-container']/div[2]/div[2]//input"
