@@ -12,6 +12,12 @@ class MainWizard(CommonPage):
     def click_on_close(self):
         self.find_by_xpath(Constants.Wizard.CLOSE_WIZARD_BUTTON).click()
 
+    def click_on_ok_button(self):
+        self.find_by_xpath(Constants.Wizard.OK_BUTTON).click()
+
+    def is_confirmation_of_leave_wizard_displayed(self):
+        return self.is_element_present(Constants.Wizard.LEAVE_CONFIRMATION_POP_UP)
+
     def click_on_save_changes(self):
         self.find_by_xpath(Constants.Wizard.SAVE_CHANGES_BUTTON).click()
 
@@ -67,12 +73,83 @@ class ValuesTab(CommonPage):
     def set_security_accounts(self, value):
         self.set_multiselect_field_value(Constants.Wizard.ValuesTab.SECURITY_ACCOUNTS, value)
 
+    def get_security_accounts(self):
+        return self.find_by_xpath(Constants.Wizard.ValuesTab.SECURITY_ACCOUNTS_VALUES).text
+
+    def is_security_account_displayed_by_pattern(self, sec_acc_name=None):
+        if not self.is_element_present(Constants.Wizard.MULTISELECT_FORM_LOOK_UP):
+            self.find_by_xpath(Constants.Wizard.ValuesTab.SECURITY_ACCOUNTS).click()
+        if sec_acc_name is None:
+            return self.is_element_present(Constants.Wizard.MULTISELECT_FORM_NO_RESULT_TEXT)
+        else:
+            self.set_text_by_xpath(Constants.Wizard.MULTISELECT_FORM_LOOK_UP, sec_acc_name)
+            time.sleep(1)
+            return self.is_element_present(Constants.Wizard.MULTISELECT_FORM_ITEM)
+
     def select_margin_account_checkbox(self):
         self.find_by_xpath(Constants.Wizard.ValuesTab.MARGIN_ACCOUNT_CHECKBOX).click()
+
+    def is_margin_account_checkbox_selected(self):
+        return self.is_checkbox_selected(Constants.Wizard.ValuesTab.MARGIN_ACCOUNT_CHECKBOX)
+
+    def is_margin_account_checkbox_enabled(self):
+        return self.is_checkbox_enabled(Constants.Wizard.ValuesTab.MARGIN_ACCOUNT_CHECKBOX)
 
     def select_default_cash_position_checkbox(self):
         self.find_by_xpath(Constants.Wizard.ValuesTab.DEFAULT_CASH_POSITION_CHECKBOX).click()
 
+    def is_default_cash_position_checkbox_selected(self):
+        return self.is_checkbox_selected(Constants.Wizard.ValuesTab.DEFAULT_CASH_POSITION_CHECKBOX)
+
+    def get_warning_message(self):
+        return self.find_by_xpath(Constants.Wizard.ValuesTab.WARNING_MESSAGE).text
+
+    def is_warning_message_displayed(self):
+        return self.is_element_present(Constants.Wizard.ValuesTab.WARNING_MESSAGE)
+
 
 class PositionsTab(CommonPage):
-    pass
+    def get_actual_balance(self):
+        return self.find_by_xpath(Constants.Wizard.PositionsTab.ACTUAL_BALANCE).text
+
+    def get_initial_balance(self):
+        return self.find_by_xpath(Constants.Wizard.PositionsTab.INITIAL_BALANCE).text
+
+    def get_unsettled_sell_amount(self):
+        return self.find_by_xpath(Constants.Wizard.PositionsTab.UNSETTLED_SELL_AMOUNT).text
+
+    def get_cash_deposited(self):
+        return self.find_by_xpath(Constants.Wizard.PositionsTab.CASH_DEPOSITED).text
+
+    def get_cash_loan(self):
+        return self.find_by_xpath(Constants.Wizard.PositionsTab.CASH_LOAN).text
+
+    def get_temporary_cash(self):
+        return self.find_by_xpath(Constants.Wizard.PositionsTab.TEMPORARY_CASH).text
+
+    def get_collateral(self):
+        return self.find_by_xpath(Constants.Wizard.PositionsTab.COLLATERAL).text
+
+    def get_available_balance(self):
+        return self.find_by_xpath(Constants.Wizard.PositionsTab.AVAILABLE_BALANCE).text
+
+    def get_reserved_amount(self):
+        return self.find_by_xpath(Constants.Wizard.PositionsTab.RESERVED_AMOUNT).text
+
+    def get_unsettled_buy_amount(self):
+        return self.find_by_xpath(Constants.Wizard.PositionsTab.UNSETTLED_BUY_AMOUNT).text
+
+    def get_cash_withdrawn(self):
+        return self.find_by_xpath(Constants.Wizard.PositionsTab.CASH_WITHDRAWN).text
+
+    def get_cash_held_by_transactions(self):
+        return self.find_by_xpath(Constants.Wizard.PositionsTab.CASH_HELD_BY_TRANSACTIONS).text
+
+    def get_booked_cash_loan(self):
+        return self.find_by_xpath(Constants.Wizard.PositionsTab.BOOKED_CASH_LOAN).text
+
+    def get_booked_temporary_cash(self):
+        return self.find_by_xpath(Constants.Wizard.PositionsTab.BOOKED_TEMPORARY_CASH).text
+
+    def get_booked_collateral(self):
+        return self.find_by_xpath(Constants.Wizard.PositionsTab.BOOKED_COLLATERAL).text

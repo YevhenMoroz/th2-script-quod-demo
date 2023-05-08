@@ -131,7 +131,7 @@ class QAP_T7501(TestCase):
         self.return_result(responses, ORSMessageType.AllocationReport.value)
         expected_alloc_status = self.result.get_parameters()['AllocationReportBlock']['AllocStatus']
         expected_match_status = self.result.get_parameters()['AllocationReportBlock']['MatchStatus']
-        self.java_api_manager.compare_values({MiddleOfficeColumns.sts.value: AllocationReportConst.AllocStatus_ACK.value,
+        self.java_api_manager.compare_values({MiddleOfficeColumns.sts.value: AllocationReportConst.AllocStatus_APP.value,
                                         MiddleOfficeColumns.match_status.value: AllocationReportConst.MatchStatus_MAT.value},
                                        {MiddleOfficeColumns.sts.value: expected_alloc_status,
                                         MiddleOfficeColumns.match_status.value: expected_match_status},

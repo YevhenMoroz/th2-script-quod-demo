@@ -82,15 +82,14 @@ class QAP_T4101(TestCase):
         self.rule_list = [nos_rule]
         # endregion
 
-        case_id_0 = bca.create_event("Send Market Data", self.test_id)
         # region Send_MarketData
-        self.fix_manager_feed_handler.set_case_id(case_id_0)
+        self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data PARIS", self.test_id))
         market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
         market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid)
         market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
 
-        self.fix_manager_feed_handler.set_case_id(case_id_0)
+        self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data TRQX", self.test_id))
         market_data_snap_shot_trqx = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_trqx, self.fix_env1.feed_handler)
         market_data_snap_shot_trqx.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid)
         market_data_snap_shot_trqx.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)

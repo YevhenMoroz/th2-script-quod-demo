@@ -78,6 +78,7 @@ class OmsInstrumentId(Enum):
     instrument_4 = "0dzj8AKkVyG-HT4dY2lA2Q"
     instrument_5 = "zjZwA8LXItn246hPYfpe9w"  # MultyLeg
     instrument_6 = "HNUAw6jnU8PDj2cvSkJlYg"  # Leg instrument
+    instrument_7 = "4o_6NqkKiqQpmUhKO4xUEw"  # MultiListed instrument
 
 
 class OmsListingId(Enum):
@@ -86,12 +87,16 @@ class OmsListingId(Enum):
     listing_3 = "704"
     listing_4 = "2259"
     listing_5 = "16734"  # MultyLeg
+    listing_6 = "488"  # one listing of MultiListed instrument
+    listing_7 = "1233"  # one listing of MultiListed instrument
+    listing_8 = "3346"  # one listing of MultiListed instrument
 
 
 class OmsVenues(Enum):
     venue_1 = "PARIS"
     venue_2 = "EUREX"
     venue_3 = "JSE"
+    venue_4 = "CHIX"
 
 
 class OmsLookupForVenues(Enum):
@@ -111,6 +116,7 @@ class OmsClients(Enum):
     client_pos_1 = "36ONE"  # Institutional
     client_pos_2 = "ABAXX"  # Institutional
     client_pos_3 = "SBK"  # Firm
+    client_pos_5 = "CLIENT_POSIT_RET"
     client_pos_4 = "TEST"  # BDA test
     """Dummy"""
     client_dummy = "DUMMY"
@@ -121,12 +127,12 @@ class OmsClients(Enum):
     client_pt_4 = "MOClient4"  # CS = Manual, AP = Auto, Other Manual
     client_pt_5 = "MOClient5"  # CS = Manual, BA = Auto, Other Manual
     client_pt_6 = "MOClient6"  # CS = CTM, Other Manual
-    client_pt_7 = "CLIENT_FIX_POSTTRADE"  # To automatically accept care orders sent via FIX
-    client_pt_8 = "MOClient7"
+    client_pt_7 = "MOClient7"  # To automatically accept care orders sent via FIX
+    client_pt_8 = "MOClient8"
     client_pt_9 = "MOClient_9"
     client_pt_10 = "MOClient10"  # CS Manual Fully auto
     client_pt_pp_3 = "MOClient_PP_3"  # client with price precision 3 and Round = Down
-    client_pt_11 = "MOClient8"  # CS=FIX, Other Manual
+    client_fix_pt = "CLIENT_FIX_POSTTRADE"  # CS=FIX, Other Manual
     """Care"""
     client_co_1 = "CLIENT_FIX_CARE"  # also used for Basket
     client_co_2 = "CLIENT_FIX_CARE_WB"
@@ -135,6 +141,7 @@ class OmsClients(Enum):
     client_com_2 = "CLIENT_COMM_2"
     client_fees_1 = "CLIENT_FEES_1"
     client_com_exempted = "CLIENT_COMM_1_EXEMPTED"
+    client_rest_api = "CLIENT_REST_API"
     """Counterparts"""
     client_counterpart_1 = "CLIENT_COUNTERPART"
     client_counterpart_2 = "CLIENT_COUNTERPART2"
@@ -164,11 +171,13 @@ class OmsVenueClientNames(Enum):
     client_pt_5_venue_1 = "MOClient5_PARIS"
     client_pt_6_venue_1 = "MOClient6_PARIS"
     client_pt_7_venue_1 = "MOClient7_PARIS"
+    client_pt_8_venue_1 = "MOClient8_PARIS"
     client_pt_9_venue_1 = "MOClient9_PARIS"
     client_pt_10_venue_1 = "MOClient10_PARIS"
     client_pos_3_venue_1 = "SBK_PARIS"
     client_pos_1_venue_1 = "36ONE_PARIS"
     client_pos_1_venue_2 = "36ONE_EUREX"
+    client_pos_5_venue_1 = 'CLIENT_RET_PARIS'
     """Care"""
     client_co_1_venue_1 = "CLIENT_FIX_CARE_PARIS"
     client_co_2_venue_1 = "CLIENT_FIX_CARE_WB_PARIS"
@@ -192,6 +201,7 @@ class OmsAccounts(Enum):
     client_pos_3_acc_2 = "Prime_Optimise"
     client_pos_3_acc_3 = "PROP"
     client_pos_3_acc_4 = "PROP_TEST"
+    client_pos_5_acc_1 = "CLIENT_POSIT_RET_SA1"
     """PostTrade"""
     client_pt_1_acc_1 = "MOClient_SA1"
     client_pt_1_acc_2 = "MOClient_SA2"
@@ -208,9 +218,11 @@ class OmsAccounts(Enum):
     client_pt_6_acc_1 = "MOClient6_SA1"
     client_pt_6_acc_2 = "MOClient6_SA2"
     client_pt_7_acc_1 = "MOClient7_SA1"
+    client_pt_8_acc_1 = "MOClient8_SA1"
     client_pt_9_acc_1 = "MOClient9_SA1"
     client_pt_10_acc_1 = "MOClient10_SA1"
     client_pt_pp_3_acc_1 = "MOClient_PP3_SA1"
+    dummy_sec_account = "DummyAccount"
     """Care"""
     client_co_1_acc_1 = "CLIENT_FIX_CARE_SA1"
     """Dummy"""
@@ -223,6 +235,7 @@ class OmsAccounts(Enum):
     client_com_2_acc_1 = "CLIENT_COMM_2_SA1"
     client_com_2_acc_2 = "CLIENT_COMM_2_SA2"
     client_com_2_acc_3 = "CLIENT_COMM_2_SA3"
+    client_rest_api_acc_1 = 'CLIENT_REST_API_ACC_1'
     client_fees_1_acc_1 = "CLIENT_FEES_1_SA1"
     """Counterparts"""
     client_counterpart_1_acc_1 = "CLIENT_COUNTERPART_SA1"
@@ -276,6 +289,7 @@ class OmsMic(Enum):  # Market Identifier Code
     mic_2 = "XEUR"  # EUREX
     mic_3 = "TOMX"  # OMX - MultyLeg
     mic_1_blm = "XPAR_BLM"  # PARIS bloomberg code
+    mic_4 = "CHIX"
 
 
 class OmsCurrency(Enum):
@@ -337,6 +351,7 @@ class OMSFeeType(Enum):
     stamp = "STA"
     tax = "TAX"
     value_added_tax = "VAT"
+    charges = "CHA"
 
 
 class OMSExecScope(Enum):
@@ -555,7 +570,7 @@ class OMSTickSizeProfile(Enum):
 
 
 class OMSCounterPartyIDs_FIX(Enum):
-    counterpart_id_gtwquod4 = {'PartyRole': "36", 'PartyRoleQualifier': '1011', 'PartyID': "gtwquod4",
+    counterpart_id_gtwquod4 = {'PartyRole': "36", 'PartyID': "gtwquod4",
                                'PartyIDSource': "D"}
     counterpart_id_market_maker_th2_route = {'PartyRole': "66", 'PartyRoleQualifier': '12',
                                              'PartyID': "MarketMaker - TH2Route",
@@ -592,6 +607,10 @@ class OMSCounterPartyIDs_FIX(Enum):
     counterpart_java_api_user = {'PartyRole': '36',
                                  'PartyID': "JavaApiUser",
                                  'PartyIDSource': "D"}
+    counterpart_secondary_account_number = {'PartyRole': '45', 'PartyID': 'SecondaryAccountNumber',
+                                            'PartyIDSource': 'C'}
+    counterpart_settlement_account = {'PartyRole': '91', 'PartyID': 'SettlementAccount',
+                                      'PartyIDSource': 'C'}
     entering_firm = {
         'PartyRole': '7',
         'PartyRoleQualifier': '12',
@@ -613,6 +632,10 @@ class OMSCounterPartyIDs_JavaAPI(Enum):
     counterpart_custodian_user_2 = {'PartyRole': "CUS", 'CounterpartID': '800006'}
     counterpart_agent = {'CounterpartID': '1400025', 'PartyRole': 'AGE'}
     counterpart_entering_firm = {'CounterpartID': '1200012', 'PartyRole': 'ENF'}
+    counterpart_secondary_account_number = {'CounterpartID': '1200022', 'PartyRole': 'SAN'}
+    counterpart_settlement_account = {'CounterpartID': '1200023', 'PartyRole': 'SAC'}
+    counterpart_executing_trader = {'CounterpartID': '1200013', 'PartyRole': 'EXT'}
+    counterpart_executing_trader_2 = {'CounterpartID': '1200021', 'PartyRole': 'EXT'}
 
 
 class OMSVenueClientAccountName(Enum):
@@ -630,3 +653,30 @@ class OMSCounterParty_JavaAPI_FOR_ES(Enum):
 
 class OMSGatingRuleIDs(Enum):
     main_rule_id = '2200035'
+
+
+class OMSCommissionAmountType(Enum):
+    broker = 'BRK'
+    retail = 'RET'
+    sales = 'SAL'
+    local = 'LOC'
+    research = 'REP'
+    unspecified = 'UNS'
+    acceptance = 'ACC'
+
+
+class OMSChargesType(Enum):
+    charges = 'CHA'
+
+
+class OMSPartyRoles(Enum):
+    party_role_regulatory_body = 'RegulatoryBody'
+    party_role_regulatory_custodian_user = 'Custodian'
+    party_role_market_maker = 'MarketMaker'
+    party_role_executing_trader = 'ExecutingTrader'
+    party_role_contra_firm = 'ContraFirm'
+    party_role_executing_firm = 'ExecutingFirm'
+
+
+class OMSCashAccountIDs(Enum):
+    cash_account_id_client_posit_ret_sa_1 = 200004

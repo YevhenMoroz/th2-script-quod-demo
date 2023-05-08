@@ -76,6 +76,19 @@ class SshClientEnvironment(BaseEnvironment):
                 SshClientEnvironment.environment_instances.update(
                     {EnvironmentType.quod314_ssh_client.value: site_environment})
             return SshClientEnvironment.environment_instances[EnvironmentType.quod314_ssh_client.value]
+        elif env.value == EnvironmentType.quod319_ssh_client.value:
+            if EnvironmentType.quod319_ssh_client.value not in SshClientEnvironment.environment_instances.keys():
+                site_environment = SshClientEnvironment(
+                    environment_type=EnvironmentType.quod319_fe.value,
+                    host=SshClientEnv.HOST_319.value,
+                    port=SshClientEnv.PORT_319.value,
+                    user=SshClientEnv.USER_319.value,
+                    password=SshClientEnv.PASSWORD_319.value,
+                    su_user=SshClientEnv.SU_USER_319.value,
+                    su_password=SshClientEnv.SU_PASSWORD_319.value,
+                )
+                SshClientEnvironment.environment_instances.update({EnvironmentType.quod319_ssh_client.value: site_environment})
+            return SshClientEnvironment.environment_instances[EnvironmentType.quod319_ssh_client.value]
         else:
             raise Exception('No such environment')
 

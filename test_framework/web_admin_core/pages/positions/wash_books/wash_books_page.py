@@ -98,3 +98,7 @@ class WashBookPage(CommonPage):
         return self.is_element_present(WashBookConstants.SEARCHED_ENTITY_XPATH.format(value))
 
     # endregion
+
+    def get_page_icon_attributes(self):
+        page_icon = self.find_elements_by_xpath(WashBookConstants.PAGE_ICON)
+        return [_.get_attribute('d') for _ in page_icon]

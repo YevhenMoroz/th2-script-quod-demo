@@ -118,7 +118,7 @@ class QAP_T7034(TestCase):
             "ExecType": "B",
             "OrdStatus": "B",
             "ClOrdID": cl_ord_id})
-        amount = str(round((1 / 1000000) * 10000, 3))
+        amount = str(round((5 / 1000000) * 10000, 3))
         self.fix_message_execution_report.change_parameters({'QuodTradeQualifier': '*', 'BookID': '*',
                                                              'Currency': self.currency, 'NoParty': '*',
                                                              'CommissionData': '*',

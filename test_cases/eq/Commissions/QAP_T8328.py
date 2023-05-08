@@ -204,10 +204,10 @@ class QAP_T8328(TestCase):
         actually_result = \
         allocation_report[JavaApiFields.RootMiscFeesList.value][JavaApiFields.RootMiscFeesBlock.value][0]
         self.java_api_manager.compare_values(expected_result, actually_result,
-                                             'Check that block has agent fee. Part of step 3')
+                                             'Check that block has agent fee. Part of step 4')
         # endregion
 
-        # region step 4
+        # region step 5-6
         self.approve_block.set_default_approve(alloc_id)
         responses = self.java_api_manager.send_message_and_receive_response(self.approve_block)
         print_message('Approve Block. Part of step 4', responses)
@@ -219,7 +219,7 @@ class QAP_T8328(TestCase):
             "AllocQty": self.qty,
             "AvgPx": new_avg_px})
         responses = self.java_api_manager.send_message_and_receive_response(self.confirmation_request)
-        print_message('Allocate block step 4', responses)
+        print_message('Allocate block step 5', responses)
         confirmation_report = \
             self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[
                 JavaApiFields.ConfirmationReportBlock.value]
@@ -232,7 +232,7 @@ class QAP_T8328(TestCase):
         actually_result = \
         confirmation_report[JavaApiFields.MiscFeesList.value][JavaApiFields.MiscFeesBlock.value][0]
         self.java_api_manager.compare_values(expected_result, actually_result,
-                                             "Check that confirmation report has agent fee. Part of step 4")
+                                             "Check that confirmation report has agent fee. Part of step 6")
 
         # endregion
 

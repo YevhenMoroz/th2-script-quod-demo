@@ -10,7 +10,7 @@ from custom import basic_custom_actions as bca
 from custom.verifier import VerificationMethod, Verifier
 from stubs import Stubs
 from test_framework.data_sets.message_types import ORSMessageType, CSMessageType, ESMessageType, PKSMessageType, \
-    MDAMessageType, AQSMessageType
+    MDAMessageType, AQSMessageType, QSMessageType
 from test_framework.java_api_wrappers.JavaApiMessage import JavaApiMessage
 
 
@@ -56,7 +56,7 @@ class JavaApiManager:
                     request=ActJavaSubmitMessageRequest(
                         message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                                  message.get_parameters(), self.get_session_alias()),
-                        parent_event_id=self.get_case_id()))
+                        parent_event_id=self.get_case_id(), response_time=response_time))
             else:
                 response = self.act.submitTradeEntryFX(
                     request=ActJavaSubmitMessageRequest(
@@ -438,6 +438,55 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id(), filterFields=filter_dict, response_time=response_time))
+        elif message.get_message_type() == ORSMessageType.FixNewOrderList.value:
+            response = self.act.submitFixNewOrderList(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict, response_time=response_time))
+        elif message.get_message_type() == QSMessageType.QuoteManagementRequest.value:
+            response = self.act.submitQuoteManagementRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict, response_time=response_time))
+        elif message.get_message_type() == QSMessageType.ListingQuotingModificationRequest.value:
+            response = self.act.submitListingQuotingModificationRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict, response_time=response_time))
+        elif message.get_message_type() == QSMessageType.StopQuotingRequest.value:
+            response = self.act.submitStopQuotingRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict, response_time=response_time))
+        elif message.get_message_type() == ORSMessageType.CptyBlockRejectRequest.value:
+            response = self.act.submitCptyBlockRejectRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict, response_time=response_time))
+        elif message.get_message_type() == ORSMessageType.BlockValidateRequest.value:
+            response = self.act.submitBlockValidateRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict, response_time=response_time))
+        elif message.get_message_type() == ORSMessageType.MatchCptyMOBlocksRequest.value:
+            response = self.act.submitMatchCptyMOBlocksRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict, response_time=response_time))
+        elif message.get_message_type() == PKSMessageType.RequestForOverdueRetailPositions.value:
+            print('Common')
+            response = self.act.submitRequestForOverdueRetailPosition(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), response_time=response_time))
         else:
             response = None
         return self.parse_response(response)
@@ -488,11 +537,15 @@ class JavaApiManager:
                     class_ = getattr(importlib.import_module(f"{module_path}pks_messages.{pks_message_type.name}"),
                                      pks_message_type.name)
                     response_fix_message = class_()
+            for qs_message_type in QSMessageType:
+                if message_type == qs_message_type.value:
+                    class_ = getattr(importlib.import_module(f"{module_path}qs_messages.{qs_message_type.name}"),
+                                     qs_message_type.name)
+                    response_fix_message = class_()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
         self.response = response_messages
         return response_messages
-
 
     def get_case_id(self):
         return self.__case_id
