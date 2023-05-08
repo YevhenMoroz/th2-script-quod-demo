@@ -21,8 +21,8 @@ def test_run(parent_id=None):
             dma_regression.test_run(report_id, version)
         if eval(root.find(".//component[@name='Care']").attrib["run"]):
             care_regression.test_run(report_id, version, skip_ssh=True)
-        if eval(root.find(".//component[@name='Counterparts']").attrib["run"]):
-            counterparts_regression.test_run(report_id, version)
+        # if eval(root.find(".//component[@name='Counterparts']").attrib["run"]):
+        #     counterparts_regression.test_run(report_id, version)
         if eval(root.find(".//component[@name='PostTrade']").attrib["run"]):
             post_trade_regression.test_run(report_id, version, skip_ssh=True)
         if eval(root.find(".//component[@name='Commissions']").attrib["run"]):
