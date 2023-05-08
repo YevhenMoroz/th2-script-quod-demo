@@ -48,7 +48,7 @@ class QAP_T7351(TestCase):
         self.db_manager.execute_query(f"""UPDATE  venue SET  valvenueclientaccountname  = 'Y'
                                             WHERE venueid = 'PARIS'""")
         self.ssh_client.send_command("qrestart all")
-        time.sleep(250)
+        time.sleep(140)
         # endregion
 
         # region step 1-2: Create DMA order with  NIN (VenueClientAccountGroupName (VenueClientAccountName))
@@ -87,6 +87,6 @@ class QAP_T7351(TestCase):
         self.db_manager.execute_query(f"""UPDATE  venue SET  valvenueclientaccountname  = 'N'
                                                     WHERE venueid = 'PARIS'""")
         self.ssh_client.send_command("qrestart all")
-        time.sleep(250)
+        time.sleep(140)
         self.db_manager.close_connection()
         self.ssh_client.close()

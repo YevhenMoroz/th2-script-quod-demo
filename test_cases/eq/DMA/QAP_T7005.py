@@ -76,10 +76,10 @@ class QAP_T7005(TestCase):
     def _set_up_holiday(self, holiday_date):
         self.db_manager.execute_query(f"INSERT INTO holidaycalendar (holidayid, holidaydate,holidaydescription, alive, "
                                       f"tradingallowed) VALUES ('3', {holiday_date}, 'gvnch', 'Y','N')")
-        self.ssh_client.send_command("qrestart all")
-        time.sleep(180)
+        self.ssh_client.send_command("qrestart QUOD.ORS, QUOD.ESBUYTH2TEST")
+        time.sleep(60)
 
     def _remove_holiday(self):
         self.db_manager.execute_query(f"DELETE FROM holidaycalendar WHERE holidayid = '3'")
-        self.ssh_client.send_command("qrestart all")
-        time.sleep(180)
+        self.ssh_client.send_command("qrestart QUOD.ORS, QUOD.ESBUYTH2TEST")
+        time.sleep(60)

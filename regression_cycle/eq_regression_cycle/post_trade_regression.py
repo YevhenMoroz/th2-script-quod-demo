@@ -1,6 +1,7 @@
 import importlib
 import logging
 import os
+import time
 from datetime import datetime
 
 from get_project_root import root_path
@@ -34,6 +35,7 @@ def test_run(parent_id=None, version=None, skip_ssh=False, only_ssh=False):
 
             if (skip_ssh and not ssh_test) or (only_ssh and ssh_test) or (not skip_ssh and not only_ssh):
                 class_(report_id, None, data_set, configuration.environment).execute()
+                time.sleep(5)
 
     except Exception:
         logging.error("Error execution", exc_info=True)
