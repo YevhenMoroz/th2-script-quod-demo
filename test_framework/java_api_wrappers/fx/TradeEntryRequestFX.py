@@ -125,4 +125,7 @@ class TradeEntryRequestFX(JavaApiMessage):
 
     def get_exec_qty(self):
         return self.get_parameters()["TradeEntryRequestBlock"]["ExecQty"]
+
+    def get_exec_price(self):
+        return self.get_parameters()["TradeEntryRequestBlock"]["ExecPrice"]
     # endregion
