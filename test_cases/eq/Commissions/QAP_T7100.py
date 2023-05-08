@@ -12,6 +12,8 @@ from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, O
 from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS import AllocationInstructionOMS
 from test_framework.java_api_wrappers.oms.ors_messges.ConfirmationOMS import ConfirmationOMS
 from test_framework.java_api_wrappers.oms.ors_messges.DFDManagementBatchOMS import DFDManagementBatchOMS
+from test_framework.java_api_wrappers.oms.ors_messges.ForceAllocInstructionStatusRequestOMS import \
+    ForceAllocInstructionStatusRequestOMS
 from test_framework.java_api_wrappers.oms.ors_messges.TradeEntryOMS import TradeEntryOMS
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
 
@@ -39,6 +41,7 @@ class QAP_T7100(TestCase):
         self.java_api_manager = JavaApiManager(self.java_api_conn, self.test_id)
         self.dfd_management_request = DFDManagementBatchOMS(self.data_set)
         self.alloc_instr = AllocationInstructionOMS(self.data_set)
+        self.approve_message = ForceAllocInstructionStatusRequestOMS(self.data_set)
         self.instr_id = self.data_set.get_instrument_id_by_name("instrument_3")
         self.confirmation = ConfirmationOMS(self.data_set)
 
@@ -82,6 +85,11 @@ class QAP_T7100(TestCase):
             {JavaApiFields.AllocationReportBlock.value: JavaApiFields.ClientCommissionList.value}, alloc_report,
             "Check commission isn't present in the block", VerificationMethod.NOT_CONTAINS)
         alloc_id = alloc_report[JavaApiFields.AllocationReportBlock.value][JavaApiFields.ClAllocID.value]
+        # endregion
+
+        # region Approve block
+        self.approve_message.set_default_approve(alloc_id)
+        self.java_api_manager.send_message_and_receive_response(self.approve_message)
         # endregion
 
         # region allocate order
