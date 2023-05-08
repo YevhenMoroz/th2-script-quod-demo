@@ -56,7 +56,7 @@ class QAP_T10719(TestCase):
         self.ssh_client.send_command("~/quod/script/site_scripts/change_permission_script")
         self.ssh_client.put_file(self.remote_path, "temp.xml")
         self.ssh_client.send_command("qrestart QUOD.ORS QUOD.CS")
-        time.sleep(120)
+        time.sleep(80)
         # endregion
 
         # region step 1 : create CO
@@ -114,5 +114,5 @@ class QAP_T10719(TestCase):
     def run_post_conditions(self):
         self.ssh_client.put_file(self.remote_path, self.local_path)
         self.ssh_client.send_command("qrestart QUOD.ORS QUOD.CS")
-        time.sleep(120)
+        time.sleep(80)
         os.remove("temp.xml")
