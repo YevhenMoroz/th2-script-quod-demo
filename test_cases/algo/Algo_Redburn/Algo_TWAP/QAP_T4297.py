@@ -19,6 +19,7 @@ from test_framework.fix_wrappers.algo.FixMessageMarketDataIncrementalRefreshAlgo
 from test_framework.core.test_case import TestCase
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, TradingPhases
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
+from test_framework.formulas_and_calculation.trading_phase_manager import TradingPhaseManager
 
 
 class QAP_T4297(TestCase):
@@ -81,6 +82,11 @@ class QAP_T4297(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        # region EndDate for TradingPhases
+        now = datetime.now()
+        end_date_open = now + timedelta(minutes=10)
+        # endregion
+
         rule_manager = RuleManager(Simulators.algo)
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price)
         nos_rule1 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price_nav)
@@ -90,6 +96,7 @@ class QAP_T4297(TestCase):
         # region Update Trading Phase
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify trading phase profile", self.test_id))
         trading_phases = AFM.get_timestamps_for_current_phase(TradingPhases.Open)
+        trading_phases = AFM.update_endtime_for_trading_phase_by_phase_name(trading_phases, TradingPhases.Open, end_date_open)
         self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
         # end region
 
@@ -121,7 +128,7 @@ class QAP_T4297(TestCase):
 
         self.fix_manager_sell.send_message_and_receive_response(twap_nav_order, case_id_1)
 
-        time.sleep(5)
+        time.sleep(20)
 
         # region Check Sell side
         self.fix_verifier_sell.check_fix_message(twap_nav_order, direction=self.ToQuod, message_name='Sell side NewOrderSingle')

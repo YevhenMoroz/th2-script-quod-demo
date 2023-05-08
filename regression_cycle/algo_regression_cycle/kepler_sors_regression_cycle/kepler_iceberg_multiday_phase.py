@@ -1,4 +1,6 @@
 import logging
+import time
+
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_cases.algo.Algo_Kepler.Algo_Iceberg.QAP_T4181 import QAP_T4181
@@ -25,6 +27,7 @@ def test_run(parent_id=None, version=None):
         QAP_T4181(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4182(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4183(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        time.sleep(3)
         QAP_T5007(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T5008(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T5040(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()

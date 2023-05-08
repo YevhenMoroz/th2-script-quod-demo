@@ -111,7 +111,7 @@ class QAP_T10525(TestCase):
 
         self.dma_chix_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
         self.dma_chix_order.change_parameters(dict(Account=self.account_chix, ExDestination=self.ex_destination_chix, OrderQty=self.qty, Instrument=self.instrument))
-        self.fix_verifier_buy.check_fix_message(self.dma_chix_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order on venue CHIX DARKPOOL UK')
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_chix_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order on venue CHIX DARKPOOL UK')
         # endregion
 
         # region Cancel Algo Order
@@ -127,7 +127,7 @@ class QAP_T10525(TestCase):
 
         # region check eliminate child DMA order on venue cboe
         er_eliminate_dma_chix_order = FixMessageExecutionReportAlgo().set_params_for_nos_eliminate_rule(self.dma_chix_order)
-        self.fix_verifier_buy.check_fix_message(er_eliminate_dma_chix_order, self.key_params_ER_eliminate_child, self.ToQuod, "Buy Side ExecReport Eliminate child DMA 1 order on venue CHIX DARKPOOL UK")
+        self.fix_verifier_buy.check_fix_message_kepler(er_eliminate_dma_chix_order, self.key_params_ER_eliminate_child, self.ToQuod, "Buy Side ExecReport Eliminate child DMA 1 order on venue CHIX DARKPOOL UK")
         # endregion
         # region Check cancel parent MPDark order
         er_cancel_mp_dark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_cancel)

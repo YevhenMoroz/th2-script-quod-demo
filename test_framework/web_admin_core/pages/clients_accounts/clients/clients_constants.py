@@ -22,7 +22,7 @@ class ClientsConstants:
     ENABLE_DISABLE_TOGGLE_BUTTON_XPATH = "//div[contains(@class, 'toggle')]"
     INCORRECT_OR_MISSING_VALUES_MESSAGE_XPATH = "//*[text()='Incorrect or missing values']"
     REQUEST_FAILED_MESSAGE_XPATH = "//nb-toast[contains(@class, 'danger')]"
-    CLIENT_LOAD_FILTER = "//*[@id='lookup-input']"
+    CLIENT_LOAD_FILTER = '//form//input[contains(@class, "lookup-input")]'
     LOAD_BUTTON = "//button[contains(@class, 'lookup-btn')]"
     POPUP_TEXT_XPATH = "//nb-toast//span[@class='title subtitle']"
     DISPLAYED_CLIENT_XPATH = "//*[text()='{}']"
@@ -31,6 +31,7 @@ class ClientsConstants:
 
 
     # main page
+    MAIN_PAGE_GLOBAL_FILTER_XPATH = '//*[@class="left ng-star-inserted"]//input'
     MAIN_PAGE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
     MAIN_PAGE_DESCRIPTION_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[2]//input'
     MAIN_PAGE_CLEARING_ACCOUNT_TYPE_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[3]//input'
@@ -40,6 +41,9 @@ class ClientsConstants:
     MAIN_PAGE_CLIENT_GROUP_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[7]//input'
     MAIN_PAGE_CLEARING_ACCOUNT_TYPE_XPATH = '//*[@col-id="clearingAccountType"]//span//span[4]'
     MAIN_PAGE_CLIENT_NAME = '(//*[@ref="eCenterViewport"]//span[@ref="eValue"])[1]'
+
+    VENUE_NAMES_ROW = '//*[@col-id="venueClientActGrpNames"]//span[@ref="eValue"]'
+    ROUTE_NAMES_ROW = '//*[@col-id="routeActGrpNames"]//span[@ref="eValue"]'
 
     # values tab
     VALUES_TAB_ID_XPATH = '//*[@id="accountGroupID"]'

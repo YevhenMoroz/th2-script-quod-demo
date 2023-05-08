@@ -1,3 +1,5 @@
+import time
+
 from selenium.webdriver import ActionChains
 
 from test_framework.web_admin_core.pages.common_page import CommonPage
@@ -111,3 +113,11 @@ class FeesOrderFeeProfileSubWizard(CommonPage):
 
     def is_commission_profile_preview_displayed(self):
         return self.is_element_present(FeesConstants.ORDER_FEE_PROFILE_COMMISSION_PROFILE_PREVIEW_XPATH)
+
+    def get_all_rounding_direction_from_drop_menu(self):
+        self.find_by_xpath(FeesConstants.ORDER_FEE_PROFILE_ROUNDING_DIRECTION_XPATH).click()
+        time.sleep(1)
+        if not self.is_element_present(FeesConstants.DROP_DOWN_MENU_XPATH):
+            self.find_by_xpath(FeesConstants.ORDER_FEE_PROFILE_ROUNDING_DIRECTION_XPATH).click()
+            time.sleep(1)
+        return self.get_all_items_from_drop_down(FeesConstants.DROP_DOWN_MENU_XPATH)

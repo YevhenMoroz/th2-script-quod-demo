@@ -13,8 +13,14 @@ class DBConnector:
                 return mydb.cursor()
 
             if db_type.lower() == 'oracle':
+                """
+                A cursor will be closed automatically when the variable referencing it goes out of scope 
+                (and no further references are retained). A "with" block is a convenient way to ensure this
+                """
                 mydb = oracle.connect(dsn=f"{host}/{name}", user=user, password=password)
-                return mydb.cursor()
+                with mydb.cursor():
+                    mydb.autocommit = True
+                    return mydb.cursor()
 
             if db_type.lower() == 'mongo':
                 client = pymongo.MongoClient(host, port)

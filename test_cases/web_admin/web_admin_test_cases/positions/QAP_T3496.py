@@ -24,7 +24,6 @@ class QAP_T3496(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.db_manager = DBManager(environment.get_list_data_base_environment()[0])
 
         self.name = self.__class__.__name__
         self.client_cash_account_id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))

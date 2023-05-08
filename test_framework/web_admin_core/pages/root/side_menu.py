@@ -33,7 +33,7 @@ from test_framework.web_admin_core.pages.general.entitlements.constants import \
 from test_framework.web_admin_core.pages.general.settings.settings_constants import SettingsConstants
 from test_framework.web_admin_core.pages.middle_office.commissions.commissions_constants import CommissionsConstants
 from test_framework.web_admin_core.pages.middle_office.fees.fees_constants import FeesConstants
-from test_framework.web_admin_core.pages.middle_office.allocation_matching_profiles.constants import \
+from test_framework.web_admin_core.pages.middle_office.allocation_matching_profiles.constants import Constants as \
     AllocationMatchingProfilesConstants
 from test_framework.web_admin_core.pages.middle_office.settlement_models.constants import \
     SettlementModelsConstants
@@ -49,7 +49,7 @@ from test_framework.web_admin_core.pages.markets.routes.constants import RoutesC
 from test_framework.web_admin_core.pages.others.user_instr_symb_black_out.user_instr_symb_black_out_constants import \
     UserInstrSymbBlackOutConstants
 from test_framework.web_admin_core.pages.positions.fx_positions.fx_positions_constants import FxPositionsConstants
-from test_framework.web_admin_core.pages.positions.security_positions.security_positions_constants import \
+from test_framework.web_admin_core.pages.positions.security_positions.constants import Constants as \
     SecurityPositionsConstants
 from test_framework.web_admin_core.pages.price_cleansing.crossed_venue_rates.crossed_venue_rates_constants import \
     CrossedVenueRatesConstants
@@ -220,7 +220,7 @@ class SideMenu(CommonPage):
     def open_allocation_matching_profiles_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.ALLOCATION_MATCHING_PROFILES_ITEM_XPATH, RootConstants.MIDDLE_OFFICE_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(AllocationMatchingProfilesConstants.ALLOCATION_MATCHING_PROFILES_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(AllocationMatchingProfilesConstants.MainPage.MAIN_PAGE_TITLE_XPATH)
 
     def open_settlement_models_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.SETTLEMENT_MODELS_ITEM_XPATH, RootConstants.MIDDLE_OFFICE_TOGGLE_CSS_SELECTOR,
@@ -271,7 +271,7 @@ class SideMenu(CommonPage):
     def open_security_positions_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.SECURITY_POSITIONS_ITEM_XPATH, RootConstants.POSITIONS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(SecurityPositionsConstants.SECURITY_POSITIONS_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(SecurityPositionsConstants.MainPage.PAGE_TITLE_XPATH)
 
     def open_crossed_venue_rates_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.CROSSED_VENUE_RATES_ITEM_XPATH, RootConstants.PRICE_CLEANSING_TOGGLE_CSS_SELECTOR,
@@ -489,4 +489,8 @@ class SideMenu(CommonPage):
         self.find_by_css_selector(RootConstants.POSITIONS_TOGGLE_CSS_SELECTOR).click()
         time.sleep(1)
         return self.is_element_present(RootConstants.WASHBOOK_RULES_ITEM_XPATH)
+
+    def get_position_tab_icon_attributes(self):
+        icon_attributes = self.find_elements_by_xpath(RootConstants.POSITIONS_ICON_XPATH)
+        return [_.get_attribute('d') for _ in icon_attributes]
 

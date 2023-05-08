@@ -78,6 +78,8 @@ class OmsInstrumentId(Enum):
     instrument_4 = "0dzj8AKkVyG-HT4dY2lA2Q"
     instrument_5 = "zjZwA8LXItn246hPYfpe9w"  # MultyLeg
     instrument_6 = "HNUAw6jnU8PDj2cvSkJlYg"  # Leg instrument
+    instrument_7 = "4o_6NqkKiqQpmUhKO4xUEw"  # MultiListed instrument
+    instrument_8 = 'KojIbEE6b0HgK4VBgy8F9w'  # MFD instrument
 
 
 class OmsListingId(Enum):
@@ -86,12 +88,17 @@ class OmsListingId(Enum):
     listing_3 = "704"
     listing_4 = "2259"
     listing_5 = "16734"  # MultyLeg
+    listing_6 = "488"  # one listing of MultiListed instrument
+    listing_7 = "1233"  # one listing of MultiListed instrument
+    listing_8 = "3346"  # one listing of MultiListed instrument
+    listing_9 = "10100000077"  # listing for MFD instrument
 
 
 class OmsVenues(Enum):
     venue_1 = "PARIS"
     venue_2 = "EUREX"
     venue_3 = "JSE"
+    venue_4 = "CHIX"
 
 
 class OmsLookupForVenues(Enum):
@@ -111,6 +118,7 @@ class OmsClients(Enum):
     client_pos_1 = "36ONE"  # Institutional
     client_pos_2 = "ABAXX"  # Institutional
     client_pos_3 = "SBK"  # Firm
+    client_pos_5 = "CLIENT_POSIT_RET"
     client_pos_4 = "TEST"  # BDA test
     """Dummy"""
     client_dummy = "DUMMY"
@@ -171,6 +179,7 @@ class OmsVenueClientNames(Enum):
     client_pos_3_venue_1 = "SBK_PARIS"
     client_pos_1_venue_1 = "36ONE_PARIS"
     client_pos_1_venue_2 = "36ONE_EUREX"
+    client_pos_5_venue_1 = 'CLIENT_RET_PARIS'
     """Care"""
     client_co_1_venue_1 = "CLIENT_FIX_CARE_PARIS"
     client_co_2_venue_1 = "CLIENT_FIX_CARE_WB_PARIS"
@@ -189,11 +198,13 @@ class OmsAccounts(Enum):
     """Base"""
     client_1_acc_1 = "NEWACCOUNT"
     client_1_acc_2 = "TEST2"
+    client_1_acc_3 = 'CLIENT1_SA1'
     """PositionMgt"""
     client_pos_3_acc_1 = "Facilitation"
     client_pos_3_acc_2 = "Prime_Optimise"
     client_pos_3_acc_3 = "PROP"
     client_pos_3_acc_4 = "PROP_TEST"
+    client_pos_5_acc_1 = "CLIENT_POSIT_RET_SA1"
     """PostTrade"""
     client_pt_1_acc_1 = "MOClient_SA1"
     client_pt_1_acc_2 = "MOClient_SA2"
@@ -281,6 +292,7 @@ class OmsMic(Enum):  # Market Identifier Code
     mic_2 = "XEUR"  # EUREX
     mic_3 = "TOMX"  # OMX - MultyLeg
     mic_1_blm = "XPAR_BLM"  # PARIS bloomberg code
+    mic_4 = "CHIX"
 
 
 class OmsCurrency(Enum):
@@ -324,6 +336,7 @@ class OMSCommissionProfiles(Enum):
     abs_amt_gbp_small = 800021
     amt_plus_client = 600020
     sixbps = 800024
+    perc_amt_gbp = 1000044
 
 
 class OMSFeeType(Enum):
@@ -342,6 +355,7 @@ class OMSFeeType(Enum):
     stamp = "STA"
     tax = "TAX"
     value_added_tax = "VAT"
+    charges = "CHA"
 
 
 class OMSExecScope(Enum):
@@ -466,6 +480,7 @@ class OMSCounterpartID(Enum):
 
 class OMSInstrType(Enum):
     equity = "EQU"
+    mutual_fund = 'MFD'
 
 
 class OMSContraFirm(Enum):
@@ -600,7 +615,7 @@ class OMSCounterPartyIDs_FIX(Enum):
     counterpart_secondary_account_number = {'PartyRole': '45', 'PartyID': 'SecondaryAccountNumber',
                                             'PartyIDSource': 'C'}
     counterpart_settlement_account = {'PartyRole': '91', 'PartyID': 'SettlementAccount',
-                                            'PartyIDSource': 'C'}
+                                      'PartyIDSource': 'C'}
     entering_firm = {
         'PartyRole': '7',
         'PartyRoleQualifier': '12',
@@ -645,5 +660,28 @@ class OMSGatingRuleIDs(Enum):
     main_rule_id = '2200035'
 
 
+class OMSCommissionAmountType(Enum):
+    broker = 'BRK'
+    retail = 'RET'
+    sales = 'SAL'
+    local = 'LOC'
+    research = 'REP'
+    unspecified = 'UNS'
+    acceptance = 'ACC'
+
+
 class OMSChargesType(Enum):
     charges = 'CHA'
+
+
+class OMSPartyRoles(Enum):
+    party_role_regulatory_body = 'RegulatoryBody'
+    party_role_regulatory_custodian_user = 'Custodian'
+    party_role_market_maker = 'MarketMaker'
+    party_role_executing_trader = 'ExecutingTrader'
+    party_role_contra_firm = 'ContraFirm'
+    party_role_executing_firm = 'ExecutingFirm'
+
+
+class OMSCashAccountIDs(Enum):
+    cash_account_id_client_posit_ret_sa_1 = 200004

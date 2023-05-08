@@ -204,6 +204,9 @@ class CommonPage:
     def is_field_enabled(self, xpath):
         return self.find_by_xpath(xpath).is_enabled()
 
+    def is_checkbox_enabled(self, checkbox_xpath):
+        return self.find_by_xpath(checkbox_xpath+'//ancestor::nb-checkbox//input').is_enabled()
+
     def find_element_in_shadow_root(self, css_path):
         '''
         Method was created for searching elements in DOM for #shadow-root tags

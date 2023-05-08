@@ -88,8 +88,8 @@ class QAP_T8860(TestCase):
             float(position_of_dma_wb_after_transfer[JavaApiFields.PositQty.value]) - \
             float(position_of_dma_wb_before_transfer[JavaApiFields.PositQty.value]))
 
-        self.ja_manager.compare_values({"ExpectedDecreasedQty": self.transfer_qty},
-                                       {"ExpectedDecreasedQty": actually_increased_qty_for_dma_wb},
+        self.ja_manager.compare_values({"ExpectedIncreaseddQty": self.transfer_qty},
+                                       {"ExpectedIncreaseddQty": actually_increased_qty_for_dma_wb},
                                        f'check that {self.dma_washbook} positon increased on {self.transfer_qty} (step 4)'
                                        )
         actually_decreasing_qty_for_dma_wb = str(
