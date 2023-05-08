@@ -228,3 +228,5 @@ class QAP_T6994(TestCase):
         self.rest_commission_sender.clear_fees()
         self.manage_security_block.set_default_param()
         self.rest_api_manager.send_post_request(self.manage_security_block)
+        self.ssh_client.send_command("qrestart ORS")
+        time.sleep(30)
