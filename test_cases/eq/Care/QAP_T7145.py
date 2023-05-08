@@ -130,10 +130,10 @@ class QAP_T7145(TestCase):
         self.order_cancel_reject.change_parameters({'header': {
             JavaApiFields.SenderSubID.value: 'TARGET_SUB_ID',
             JavaApiFields.TargetSubID.value: 'SENDER_SUB_ID',
-            JavaApiFields.DeliverToCompID.value: 'DELIVER_TO_SUB_ID',
-            JavaApiFields.DeliverToSubID.value: 'DELIVER_TO_COMP_ID',
-            JavaApiFields.OnBehalfOfCompID.value: 'ON_BEHALF_OF_SUB_ID',
-            JavaApiFields.OnBehalfOfSubID.value: 'ON_BEHALF_OF_COMP_ID',
+            JavaApiFields.DeliverToCompID.value: 'ON_BEHALF_OF_COMP_ID',
+            JavaApiFields.DeliverToSubID.value: 'ON_BEHALF_OF_SUB_ID',
+            JavaApiFields.OnBehalfOfCompID.value: 'DELIVER_TO_COMP_ID',
+            JavaApiFields.OnBehalfOfSubID.value: 'DELIVER_TO_SUB_ID',
         }})
         self.fix_verifier.check_fix_message_fix_standard(self.order_cancel_reject, ignored_fields=list_ignore_field,
                                                          ignore_header=False)
