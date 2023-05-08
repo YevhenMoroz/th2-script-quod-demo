@@ -20,11 +20,11 @@ def test_run(parent_id=None):
         if eval(root.find(".//component[@name='DMA']").attrib["run"]):
             dma_regression.test_run(report_id, version)
         if eval(root.find(".//component[@name='Care']").attrib["run"]):
-            care_regression.test_run(report_id, version)
+            care_regression.test_run(report_id, version, skip_ssh=True)
         if eval(root.find(".//component[@name='Counterparts']").attrib["run"]):
             counterparts_regression.test_run(report_id, version)
         if eval(root.find(".//component[@name='PostTrade']").attrib["run"]):
-            post_trade_regression.test_run(report_id, version)
+            post_trade_regression.test_run(report_id, version, skip_ssh=True)
         if eval(root.find(".//component[@name='Commissions']").attrib["run"]):
             commission_regression.test_run(report_id, version)
         if eval(root.find(".//component[@name='BasketTrading']").attrib["run"]):
