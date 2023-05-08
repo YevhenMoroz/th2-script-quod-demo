@@ -276,7 +276,7 @@ class AlgoFormulasManager:
 
     @staticmethod
     def change_datetime_from_normal_to_epoch_with_milisecs(datetime: dt) -> int:
-        return int(datetime.timestamp()) * 1000
+        return int(datetime.replace(tzinfo=timezone.utc).timestamp()) * 1000
 
     @staticmethod
     def get_timestamps_for_previous_phase(phase: TradingPhases):
