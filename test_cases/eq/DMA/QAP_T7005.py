@@ -69,7 +69,6 @@ class QAP_T7005(TestCase):
                 order_reply, f'Verifying that order created and has properly {JavaApiFields.ExpireDate.value}')
             raise Exception()
         except Exception:
-            print("veg")
             bca.create_event("TEST FAILED before or after verifier", self.test_id,
                                               status='FAILED')
             exc_type, exc_value, exc_traceback = sys.exc_info()
