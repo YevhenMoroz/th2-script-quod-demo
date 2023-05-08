@@ -111,13 +111,45 @@ class QAP_T11194(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
-        nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_chixdelta, self.ex_destination_chixdelta, self.price)
-        nos_2_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_batsdark_kepler, self.ex_destination_batsdark, self.price)
-        nos_3_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_cboeeudark, self.ex_destination_cboeeudark, self.price)
-        ocr_1_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_chixdelta, self.ex_destination_chixdelta, True)
-        ocr_2_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_batsdark_kepler, self.ex_destination_batsdark, True)
-        ocr_3_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_cboeeudark, self.ex_destination_cboeeudark, True)
-        self.rule_list = [nos_1_rule, nos_2_rule, nos_3_rule, ocr_1_rule, ocr_2_rule, ocr_3_rule]
+        nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_batsdark_kepler, self.ex_destination_batsdark, self.price)
+        nos_2_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_kepler, self.ex_destination_batsperiodic, self.price)
+        nos_3_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_kepler, self.ex_destination_cboeeudark, self.price)
+        nos_4_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_kepler, self.ex_destination_cboeeuperiodic, self.price)
+        nos_5_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_kepler, self.ex_destination_copenhagendark, self.price)
+        nos_6_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_kepler, self.ex_destination_copenhagenpa, self.price)
+        nos_7_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_kepler, self.ex_destination_helsinkidark, self.price)
+        nos_8_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_kepler, self.ex_destination_helsinkipa, self.price)
+        nos_9_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_kepler, self.ex_destination_itg, self.price)
+        nos_10_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_kepler, self.ex_destination_itgipa, self.price)
+        nos_11_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_kepler, self.ex_destination_liquidnet, self.price)
+        nos_12_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_kepler, self.ex_destination_liquidneteu, self.price)
+        nos_13_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_kepler, self.ex_destination_sigmaxeu, self.price)
+        nos_14_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_kepler, self.ex_destination_sigmaxpaeu, self.price)
+        nos_15_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_kepler, self.ex_destination_stockholmdark, self.price)
+        nos_16_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_kepler, self.ex_destination_stockholmpa, self.price)
+        nos_17_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_kepler, self.ex_destination_tqdarkeu, self.price)
+        nos_18_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_kepler, self.ex_destination_tqlitaquctioneu, self.price)
+        nos_19_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_kepler, self.ex_destination_ubsperiodic, self.price)
+        ocr_1_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_batsdark_kepler, self.ex_destination_batsdark, True)
+        ocr_2_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_kepler, self.ex_destination_batsperiodic, True)
+        ocr_3_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_kepler, self.ex_destination_cboeeudark, True)
+        ocr_4_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_kepler, self.ex_destination_cboeeuperiodic, True)
+        ocr_5_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_kepler, self.ex_destination_copenhagendark, True)
+        ocr_6_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_kepler, self.ex_destination_copenhagenpa, True)
+        ocr_7_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_kepler, self.ex_destination_helsinkidark, True)
+        ocr_8_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_kepler, self.ex_destination_helsinkipa, True)
+        ocr_9_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_kepler, self.ex_destination_itg, True)
+        ocr_10_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_kepler, self.ex_destination_itgipa, True)
+        ocr_11_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_kepler, self.ex_destination_liquidnet, True)
+        ocr_12_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_kepler, self.ex_destination_liquidneteu, True)
+        ocr_13_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_kepler, self.ex_destination_sigmaxeu, True)
+        ocr_14_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_kepler, self.ex_destination_sigmaxpaeu, True)
+        ocr_15_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_kepler, self.ex_destination_stockholmdark, True)
+        ocr_16_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_kepler, self.ex_destination_stockholmpa, True)
+        ocr_17_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_kepler, self.ex_destination_tqdarkeu, True)
+        ocr_18_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_kepler, self.ex_destination_tqlitaquctioneu, True)
+        ocr_19_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_kepler, self.ex_destination_ubsperiodic, True)
+        self.rule_list = [nos_1_rule, nos_2_rule, nos_3_rule, nos_4_rule, nos_5_rule, nos_6_rule, nos_7_rule, nos_8_rule, nos_9_rule, nos_10_rule, nos_11_rule, nos_12_rule, nos_13_rule, nos_14_rule, nos_15_rule, nos_16_rule, nos_17_rule, nos_18_rule, nos_19_rule, ocr_1_rule, ocr_2_rule, ocr_3_rule, ocr_4_rule, ocr_5_rule, ocr_6_rule, ocr_7_rule, ocr_8_rule, ocr_9_rule, ocr_10_rule, ocr_11_rule, ocr_12_rule, ocr_13_rule, ocr_14_rule, ocr_15_rule, ocr_16_rule, ocr_17_rule, ocr_18_rule, ocr_19_rule]
         # endregion
 
         # region Send NewOrderSingle (35=D) for MP Dark order
@@ -147,11 +179,11 @@ class QAP_T11194(TestCase):
 
         time.sleep(5)
 
-        # region Check child DMA order on venue chixdelta DARKPOOL UK
+        # region Check child DMA order on venue BATDS DARKPOOL UK
         self.fix_verifier_buy.set_case_id(bca.create_event("Dark child DMA orders", self.test_id))
 
         self.dma_chixdelta_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
-        self.dma_chixdelta_order.change_parameters(dict(Account=self.account_chixdelta, ExDestination=self.ex_destination_chixdelta, OrderQty=self.qty, Instrument=self.instrument))
+        self.dma_chixdelta_order.change_parameters(dict(Account=self.account_batsdark_kepler, ExDestination=self.ex_destination_batsdark, OrderQty=self.qty, Instrument=self.instrument))
         self.fix_verifier_buy.check_fix_message_kepler(self.dma_chixdelta_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
         er_pending_new_dma_chixdelta_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_chixdelta_order, self.gateway_side_buy, self.status_pending)
@@ -171,9 +203,9 @@ class QAP_T11194(TestCase):
         self.fix_verifier_buy.check_fix_message_kepler(er_cancel_dma_chixdelta_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Cancel Child DMA 1 order')
         # endregion
 
-        # region Check child DMA order on venue batsdark DARKPOOL UK
+        # region Check child DMA order on venue BATS PERIODIC UK
         self.dma_batsdark_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
-        self.dma_batsdark_order.change_parameters(dict(Account=self.account_batsdark_kepler, ExDestination=self.ex_destination_batsdark, OrderQty=self.qty, Instrument=self.instrument))
+        self.dma_batsdark_order.change_parameters(dict(Account=self.account_kepler, ExDestination=self.ex_destination_batsperiodic, OrderQty=self.qty, Instrument=self.instrument))
         self.fix_verifier_buy.check_fix_message_kepler(self.dma_batsdark_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 2 order')
 
         er_pending_new_dma_batsdark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_batsdark_order, self.gateway_side_buy, self.status_pending)
@@ -201,9 +233,9 @@ class QAP_T11194(TestCase):
         self.fix_verifier_buy.check_fix_message_kepler(er_cancel_dma_batsdark_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Cancel Child DMA 2 order')
         # endregion
 
-        # region Check child DMA order on venue cboeeudark DARKPOOL EU
+        # region Check child DMA order on venue CBOE DARKPOOL EU
         self.dma_cboeeudark_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
-        self.dma_cboeeudark_order.change_parameters(dict(Account=self.account_cboeeudark, ExDestination=self.ex_destination_cboeeudark, OrderQty=self.qty, Instrument=self.instrument))
+        self.dma_cboeeudark_order.change_parameters(dict(Account=self.account_kepler, ExDestination=self.ex_destination_cboeeudark, OrderQty=self.qty, Instrument=self.instrument))
         self.fix_verifier_buy.check_fix_message_kepler(self.dma_cboeeudark_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 3 order')
 
         er_pending_new_dma_cboeeudark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_cboeeudark_order, self.gateway_side_buy, self.status_pending)

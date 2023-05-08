@@ -113,7 +113,7 @@ class QAP_T4273(TestCase):
         self.fix_verifier_sell.check_fix_message(pending_trailingstop_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew')
 
         new_trailingstop_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.trailingstop_order, self.gateway_side_sell, self.status_new)
-        new_trailingstop_order_params.change_parameter('NoParty', '*').remove_parameter('TargetStrategy')
+        new_trailingstop_order_params.remove_parameter('TargetStrategy')
         self.fix_verifier_sell.check_fix_message(new_trailingstop_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
 
@@ -127,6 +127,6 @@ class QAP_T4273(TestCase):
         self.fix_manager_sell.send_message_and_receive_response(cancel_request_trailingstop_order, case_id_2)
         self.fix_verifier_sell.check_fix_message(cancel_request_trailingstop_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
         cancel_trailingstop_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.trailingstop_order, self.gateway_side_sell, self.status_cancel)
-        cancel_trailingstop_order_params.remove_parameter('TargetStrategy').change_parameter('NoParty', '*')
+        cancel_trailingstop_order_params.remove_parameter('TargetStrategy')
         self.fix_verifier_sell.check_fix_message(cancel_trailingstop_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport Cancel')
         # endregion
