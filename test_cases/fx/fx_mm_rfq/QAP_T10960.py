@@ -109,8 +109,8 @@ class QAP_T10960(TestCase):
         quote_status = check_quote_status(quote_req_id, "quoterequestid", "unavailablepricestate")
         reason = check_quote_status(quote_req_id, "quoterequestid", "unavailablepricecause")
         self.verifier.set_event_name("check quote status and reason")
-        self.verifier.compare_values("quote status", "UNA", quote_status)
-        self.verifier.compare_values("quote reason", "FWM", reason)
+        self.verifier.compare_values("quote status", "EOF", quote_status)
+        self.verifier.compare_values("quote reason", "CUB", reason)
         self.verifier.verify()
 
         self.quote_request.set_rfq_params_fwd()
