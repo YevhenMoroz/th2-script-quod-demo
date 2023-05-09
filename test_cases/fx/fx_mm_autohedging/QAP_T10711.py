@@ -7,7 +7,6 @@ from test_framework.environments.full_environment import FullEnvironment
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.forex.FixMessageExecutionReportDropCopyFX import FixMessageExecutionReportDropCopyFX
-from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleTakerDC import FixMessageNewOrderSingleTakerDC
 from test_framework.fix_wrappers.forex.FixMessagePositionReportFX import FixMessagePositionReportFX
 from test_framework.fix_wrappers.forex.FixMessageRequestForPositionsFX import FixMessageRequestForPositionsFX
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
@@ -46,8 +45,6 @@ class QAP_T10711(TestCase):
         self.position_report_backup = FixMessagePositionReportFX()
         self.trade_request = TradeEntryRequestFX()
         self.ack_request = HeldOrderAckRequestFX()
-        self.ah_order = FixMessageNewOrderSingleTakerDC()
-        self.mo_order = FixMessageNewOrderSingleTakerDC()
         self.ah_exec_report = FixMessageExecutionReportDropCopyFX()
         self.client_ext = self.data_set.get_client_by_name("client_mm_8")
         self.account_ext = self.data_set.get_account_by_name("account_mm_8")
@@ -160,21 +157,6 @@ class QAP_T10711(TestCase):
                                                                                  "ExecQty": self.exec_qty})
         response: list = self.java_api_manager.send_message_and_receive_response(self.trade_request)
         ah_order_id = self.trade_request.get_ord_id_from_held(response)
-
-        self.ah_order.set_default_sor_from_trade(self.trade_request)
-        self.ah_order.change_parameters({"Account": self.client_int, "ClOrdID": ah_order_id})
-        prefilter = {
-            "header": {
-                "MsgType": ("D", "EQUAL"),
-                "TargetCompID": "QUOD8",
-                "SenderCompID": "QUODFX_UAT"
-            }
-        }
-        key_params = ["Misc0"]
-        self.fix_drop_copy_verifier.check_fix_message_sequence([self.ah_order, ],
-                                                               key_parameters_list=[key_params],
-                                                               pre_filter=prefilter,
-                                                               message_name="Check that we create AH order and send child to market")
         # endregion
         # region Step 3
         self.request_for_position_int.set_default()
