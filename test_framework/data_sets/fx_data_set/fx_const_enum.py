@@ -1,6 +1,6 @@
 from enum import Enum
 
-from custom.tenor_settlement_date import spo, wk1, wk2, wk3, today, tom, wk1_ndf, wk2_ndf, spo_ndf, broken_1, broken_2, \
+from custom.tenor_settlement_date import spo, wk1, wk2, wk3, today, tom, wk1_ndf, wk2_ndf, broken_1, broken_2, \
     broken_w1w2, broken_w2w3, broken_w3m1, spo_ndf, spo_java_api, wk1_java_api, wk2_java_api, today_java_api, tom_java_api
 
 
@@ -60,6 +60,7 @@ class FxClients(Enum):
     client_int_5 = "QUOD5"
     client_int_6 = "DEFAULT1"
     client_int_7 = "QUOD_INT"
+    client_pos_1 = "Client_pos_1"
 
     """"Clients for maker"""
     client_mm_1 = "Silver1"  # For ESP_MM testing
@@ -70,7 +71,7 @@ class FxClients(Enum):
     client_mm_6 = "Osmium1"  # For AutoHedger testing
     client_mm_7 = "Argentum1"  # Can be used for MM_Positions testing
     client_mm_8 = "AURUM1"  # For AutoHedger testing
-    client_mm_9 = "SWEDCUST3"
+    client_mm_9 = "Argentum2" # Can be used for MM_Positions testing
     client_mm_10 = "CLIENT1"  # For Deposit And Loan
     client_mm_11 = "Platinum1"  # For Margin Format testing
     client_mm_12 = "Konstantin1"  # For Java API testing
@@ -93,6 +94,8 @@ class FxAccounts(Enum):
     account_int_5 = "QUOD5_1"
     account_int_6 = "DEFAULT1_1"
     account_int_7 = "QUOD_INT_1"
+    account_pos_1 = "Account_pos_1"
+    account_pos_2 = "Account_pos_2"
 
     """Accounts for mm clients"""
     account_mm_1 = "Silver1_1"
@@ -103,6 +106,7 @@ class FxAccounts(Enum):
     account_mm_6 = "Osmium1_1"
     account_mm_7 = "Argentum1_1"
     account_mm_8 = "AURUM1_1"
+    account_mm_9 = "Argentum2_1"
 
 
 class FxClientTiers(Enum):
@@ -360,6 +364,7 @@ class FXListings(Enum):
     gbp_dkk_spo = "506403957"
     usd_zar_spo = "506406757"
     eur_gbp_spo = "506403285"
+    eur_gbp_wk1 = "506403289"
     usd_spo = "1106818783"
 
     # TODO add more listings

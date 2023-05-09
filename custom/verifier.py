@@ -12,6 +12,7 @@ class VerificationMethod(Enum):
     EQUALS = "EQUAL"
     NOT_EQUALS = "NOT EQUAL"
     CONTAINS = "CONTAINS"
+    NOT_CONTAINS = "NOT_CONTAINS"
 
 
 class Verifier:
@@ -36,6 +37,8 @@ class Verifier:
             passed = expected_value != actual_value
         elif verification_method is VerificationMethod.CONTAINS:
             passed = expected_value in actual_value
+        elif verification_method is VerificationMethod.NOT_CONTAINS:
+            passed = expected_value not in actual_value
         else:
             raise Exception("Unexpected verification method")
 
@@ -74,3 +77,8 @@ class Verifier:
         event_batch = EventBatch()
         event_batch.events.append(event)
         event_store.send(event_batch)
+        # TODO add this code as optional
+        # for field in self.fields:
+        #     f = self.fields[f"{field}"]
+        #     if f["status"] == 'FAILED' and not self.success:
+        #         raise ValueError('\033[91m' + f'expected={f["expected"]}, actual={f["actual"]}' + '\033[0m')

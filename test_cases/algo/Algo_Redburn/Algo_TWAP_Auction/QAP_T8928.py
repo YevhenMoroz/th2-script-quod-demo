@@ -45,7 +45,7 @@ class QAP_T8928(TestCase):
         self.indicative_volume = 0
         self.percentage = 10
         self.child_qty = AFM.get_next_twap_slice(self.qty, self.waves + 1)
-        self.child_qty_twap = AFM.get_next_twap_slice(self.qty, self.waves)
+        self.child_qty_twap = AFM.get_next_twap_slice(self.qty, self.waves) + 40 # recycle from auction slice
         self.price = 30
         self.price2 = AFM.calc_ticks_offset_minus(self.price, 1, 0.005)
 

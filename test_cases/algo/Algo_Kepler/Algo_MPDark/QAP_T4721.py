@@ -113,18 +113,18 @@ class QAP_T4721(TestCase):
 
         # region check that RFQ send to CHIX LIS UK and reject
         nos_chixlis_rfq = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_RFQ_params().change_parameters(dict(Account=self.client, OrderQty=self.qty, ExDestination=self.ex_destination_chixlis, Instrument='*'))
-        self.fix_verifier_buy.check_fix_message(nos_chixlis_rfq, key_parameters=self.key_params_with_ex_destination, message_name='Buy side RFQ on CHIXLIS')
+        self.fix_verifier_buy.check_fix_message_kepler(nos_chixlis_rfq, key_parameters=self.key_params_with_ex_destination, message_name='Buy side RFQ on CHIXLIS')
 
         er_rfq_reject_chixlis = FixMessageExecutionReportAlgo().set_RFQ_reject_params(nos_chixlis_rfq)
-        self.fix_verifier_buy.check_fix_message(er_rfq_reject_chixlis, key_parameters=self.key_params_RFQ, message_name='Buy side RFQ reply REJECT on CHIXLIS', direction=self.ToQuod)
+        self.fix_verifier_buy.check_fix_message_kepler(er_rfq_reject_chixlis, key_parameters=self.key_params_RFQ, message_name='Buy side RFQ reply REJECT on CHIXLIS', direction=self.ToQuod)
         # endregion
 
         # region check that RFQ send to TURQUOISE LIS and reject
         nos_trql_rfq = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_RFQ_params().change_parameters(dict(Account=self.client, OrderQty=self.qty, ExDestination=self.ex_destination_trql, Instrument='*'))
-        self.fix_verifier_buy.check_fix_message(nos_trql_rfq, key_parameters=self.key_params_with_ex_destination, message_name='Buy side RFQ on TQLIS')
+        self.fix_verifier_buy.check_fix_message_kepler(nos_trql_rfq, key_parameters=self.key_params_with_ex_destination, message_name='Buy side RFQ on TQLIS')
 
         er_rfq_reject_trqxlis = FixMessageExecutionReportAlgo().set_RFQ_reject_params(nos_trql_rfq)
-        self.fix_verifier_buy.check_fix_message(er_rfq_reject_trqxlis, key_parameters=self.key_params_RFQ, message_name='Buy side RFQ reply REJECT on TRQXLIS', direction=self.ToQuod)
+        self.fix_verifier_buy.check_fix_message_kepler(er_rfq_reject_trqxlis, key_parameters=self.key_params_RFQ, message_name='Buy side RFQ reply REJECT on TRQXLIS', direction=self.ToQuod)
         # endregion
 
         # region Check that parent order is Eliminated

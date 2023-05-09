@@ -59,7 +59,6 @@ class FixMessageRequestForPositionsFX(FixMessageRequestForPositions):
             "SubscriptionRequestType": "1",
             "TransactTime": datetime.utcnow().isoformat(),
             "Account": self.get_data_set().get_client_by_name("client_mm_1"),
-            "SettlDate": self.get_data_set().get_settle_date_by_name("spot"),
             "ClearingBusinessDate": self.get_data_set().get_settle_date_by_name("spot"),
 
         }

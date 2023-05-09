@@ -14,15 +14,16 @@ class FixMessageAllocationOMS(FixMessageAllocation):
         self.base_parameters = {
             'TransactTime': datetime.utcnow().isoformat(),
             'TradeDate': datetime.now(timezone.utc).strftime('%Y%m%d'),
-            'AllocID': basic_custom_actions.client_orderid(9),
             'AllocTransType': '0',
+            # 'AllocType': '2',
             'Shares': '100',
             'Side': '1',
             'AvgPx': '20'
         }
 
-    def set_fix42_preliminary(self, new_order_single: FixMessageNewOrderSingle, cl_ord_id, alloc_acc):
+    def set_fix42_preliminary(self, new_order_single: FixMessageNewOrderSingle, alloc_acc):
         change_parameters = {
+            'AllocID': basic_custom_actions.client_orderid(9),
             'NoAllocs': [
                 {
                     'AllocShares': new_order_single.get_parameter("OrderQty"),
@@ -34,18 +35,18 @@ class FixMessageAllocationOMS(FixMessageAllocation):
             'AvgPx': new_order_single.get_parameter("Price"),
             "NoOrders": [
                 {
-                    'ClOrdID': cl_ord_id,
+                    'ClOrdID': new_order_single.get_parameter('ClOrdID'),
                 }
             ],
             'Currency': new_order_single.get_parameter('Currency'),
             'NetMoney': str(
-                int(new_order_single.get_parameter("OrderQty")) * int(new_order_single.get_parameter("Price"))),
+                float(new_order_single.get_parameter("OrderQty")) * float(new_order_single.get_parameter("Price"))),
             "Symbol": new_order_single.get_parameter("Symbol"),
             "SecurityID": new_order_single.get_parameter("SecurityID"),
             "IDSource": new_order_single.get_parameter("IDSource"),
             "SecurityExchange": new_order_single.get_parameter("SecurityExchange"),
             'GrossTradeAmt': str(
-                int(new_order_single.get_parameter("OrderQty")) * int(new_order_single.get_parameter("Price"))),
+                float(new_order_single.get_parameter("OrderQty")) * float(new_order_single.get_parameter("Price"))),
         }
         self.change_parameters(self.base_parameters)
         self.change_parameters(change_parameters)

@@ -38,10 +38,10 @@ class QAP_T4208(TestCase):
         self.price_ask = 40
         self.price_bid = 30
         self.qty_bid = self.qty_ask = 10000
-        self.delay = 30000
+        self.delay = 10000
         self.tif_gtd = constants.TimeInForce.GoodTillDate.value
         now = datetime.utcnow()
-        self.ExpireTime = (now + timedelta(seconds=30)).strftime("%Y%m%d-%H:%M:%S")
+        self.ExpireTime = (now + timedelta(days=2)).strftime("%Y%m%d-%H:%M:%S")
         # endregion
 
         # region Gateway Side
@@ -106,7 +106,8 @@ class QAP_T4208(TestCase):
         self.Synthetic_TIF_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.ex_destination_1, TimeInForce=self.tif_gtd)).add_tag(dict(ExpireTime=self.ExpireTime))
         self.fix_manager_sell.send_message_and_receive_response(self.Synthetic_TIF_order, case_id_1)
         # endregion
-        time.sleep(30)
+
+        time.sleep(5)
 
         # region Check Sell side
         self.fix_verifier_sell.set_case_id(bca.create_event("Check Synthetic TIF order", self.test_id))
@@ -135,7 +136,7 @@ class QAP_T4208(TestCase):
         self.fix_verifier_buy.check_fix_message(er_new_dma_order, self.key_params_cl, self.ToQuod, message_name='Buy Side ExecReport New child DMA order')
         # endregion
 
-        time.sleep(30)
+        time.sleep(5)
         
         # region Check eliminate child DMA order
         er_eliminate_dma_order_params = FixMessageExecutionReportAlgo().set_params_for_nos_eliminate_rule(self.dma_order)
@@ -159,6 +160,8 @@ class QAP_T4208(TestCase):
         self.fix_manager_sell.send_message_and_receive_response(cancel_request_Synthetic_TIF_order, case_id_2)
         self.fix_verifier_sell.check_fix_message(cancel_request_Synthetic_TIF_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
         # endregion
+
+        time.sleep(2)
 
         # region Check that Synthetic TIF order was canceled
         er_cancel_Synthetic_TIF_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.Synthetic_TIF_order, self.gateway_side_sell, self.status_cancel)

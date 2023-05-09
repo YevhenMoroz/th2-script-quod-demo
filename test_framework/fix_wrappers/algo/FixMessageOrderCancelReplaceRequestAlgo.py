@@ -1,11 +1,11 @@
 from custom import basic_custom_actions
-from test_framework.fix_wrappers.FixMessageNewOrderSingle import FixMessageNewOrderSingle
+from test_framework.fix_wrappers.FixMessageNewOrderSingle import FixMessageNewOrderSingle, FixMessage
 from test_framework.fix_wrappers.FixMessageOrderCancelReplaceRequest import FixMessageOrderCancelReplaceRequest
 from datetime import datetime
 
 
 class FixMessageOrderCancelReplaceRequestAlgo(FixMessageOrderCancelReplaceRequest):
-    def __init__(self, new_order_single: FixMessageNewOrderSingle = None, parameters: dict = None):
+    def __init__(self, new_order_single: FixMessageNewOrderSingle or FixMessage = None, parameters: dict = None):
         super().__init__()
         super().change_parameters(parameters)
         self.__update_fix_message(new_order_single)

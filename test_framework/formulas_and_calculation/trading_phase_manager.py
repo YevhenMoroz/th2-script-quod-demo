@@ -1,14 +1,18 @@
 import datetime
 from copy import deepcopy
+from enum import Enum
 from typing import Dict, Union
 
 from test_framework.data_sets.constants import TradingPhases
 
 
+class TimeSlot(Enum):
+    current_phase = "current_phase"
+    previous_phase = "previous_phase"
+    next_phase = "next_phase"
 
 
-
-class PhaseTime():
+class PhaseTime:
     def __init__(self, start_time: datetime.datetime, end_time: Union[int, datetime.datetime], phase: TradingPhases):
         """
 
@@ -62,13 +66,15 @@ class PhaseTime():
         self._duration = value
     # endregion
 
-    def get_phase_datetime(self) -> Dict[str, Union[str, datetime.datetime]]:
+    def get_phase_datetime(self, new_standart: bool = False) -> Dict[str, Union[str, datetime.datetime]]:
         final_result = dict()
-        final_result["beginTime"] = self.start_time
-        final_result["endTime"] = self.end_time
-        final_result["submitAllowed"] = "True"
-        final_result["submitAllowed"] = "True"
-
+        if not new_standart:
+            final_result["beginTime"] = self.start_time
+            final_result["endTime"] = self.end_time
+            final_result["submitAllowed"] = "True"
+        else:
+            final_result["phaseBeginTime"] = self.start_time.strftime("%H:%M:%S")
+            final_result["phaseEndTime"] = self.end_time.strftime("%H:%M:%S")
 
         if self.trading_phase == TradingPhases.Open:
             final_result["tradingPhase"] = "OPN"
@@ -96,10 +102,10 @@ class PhaseTime():
         raise ValueError("Not Done")
 
 
-class TradingPhaseManager():
-    def __init__(self):
+class TradingPhaseManager:
+    def init(self):
         self._trading_phase_sequence = list()
-        super().__init__()
+        super().init()
 
     # region trading_phase_sequence getter/setter
     @property
@@ -109,7 +115,6 @@ class TradingPhaseManager():
     @trading_phase_sequence.setter
     def trading_phase_sequence(self, value):
         self._trading_phase_sequence = value
-
     # endregion
 
     def add_phase(self, phase: PhaseTime):
@@ -118,6 +123,39 @@ class TradingPhaseManager():
     def clean_phase(self):
         self.trading_phase_sequence = list()
 
+    # region get_phases
+    @staticmethod
+    def get_next_phase(phase: TradingPhases):
+        if phase == TradingPhases.PreOpen:
+            return TradingPhases.Open
+        elif phase == TradingPhases.Open:
+            return TradingPhases.PreClosed
+        elif phase == TradingPhases.PreClosed:
+            return TradingPhases.AtLast
+        elif phase == TradingPhases.AtLast:
+            return TradingPhases.Closed
+        elif phase == TradingPhases.Closed:
+            return None
+        else:
+            raise ValueError(f"Method get_next_phase can't handle phase {phase.value} ")
+
+    @staticmethod
+    def get_previous_phase(phase: TradingPhases):
+        if phase == TradingPhases.PreOpen:
+            return None
+        elif phase == TradingPhases.Open:
+            return TradingPhases.PreOpen
+        elif phase == TradingPhases.PreClosed:
+            return TradingPhases.Open
+        elif phase == TradingPhases.AtLast:
+            return TradingPhases.PreClosed
+        elif phase == TradingPhases.Closed:
+            return TradingPhases.AtLast
+        else:
+            raise ValueError(f"Method get_previous_phase can't handle phase {phase.value} ")
+    # endregion
+
+    # region build timestamp
     def build_default_timestamp_for_trading_phase(self):
         self.clean_phase()
         tm = datetime.datetime.now()
@@ -152,45 +190,30 @@ class TradingPhaseManager():
             phase=TradingPhases.Expiry
         ))
 
-    @staticmethod
-    def get_next_phase(phase: TradingPhases):
-        if phase == TradingPhases.PreOpen:
-            return TradingPhases.Open
-        elif phase == TradingPhases.Open:
-            return TradingPhases.PreClosed
-        elif phase == TradingPhases.PreClosed:
-            return TradingPhases.AtLast
-        elif phase == TradingPhases.AtLast:
-            return TradingPhases.Closed
-        elif phase == TradingPhases.Closed.value:
-            return None
+    def build_timestamps_for_trading_phase_sequence(self, phase: TradingPhases, time_slot: TimeSlot = TimeSlot.current_phase, duration=5):
+            self.clean_phase()
+            tm = datetime.datetime.utcnow()
+            tm = tm - datetime.timedelta(seconds=tm.second, microseconds=tm.microsecond)
+            if time_slot == TimeSlot.current_phase:
+                current_phase = PhaseTime(
+                    start_time=tm,
+                    end_time=tm + datetime.timedelta(minutes=duration),
+                    phase=phase
+                )
+            elif time_slot == TimeSlot.next_phase:
+                current_phase = PhaseTime(
+                    start_time=tm,
+                    end_time=tm + datetime.timedelta(minutes=2),
+                    phase=TradingPhaseManager.get_next_phase(phase)
+                )
+            else:
+                raise ValueError("Action at method build_timestamps_for_trading_phase_sequence for previous phase not developed yet")
+            self.add_phase(current_phase)
+            self.autocomplete_next_phases(current_phase, duration)
+            self.autocomplete_previous_phases(current_phase, duration)
+        # endregion timestamp
 
-    @staticmethod
-    def get_previous_phase(phase: TradingPhases):
-        if phase == TradingPhases.PreOpen:
-            return None
-        elif phase == TradingPhases.Open:
-            return TradingPhases.PreOpen
-        elif phase == TradingPhases.PreClosed:
-            return TradingPhases.Open
-        elif phase == TradingPhases.AtLast:
-            return TradingPhases.PreClosed
-        elif phase == TradingPhases.Closed:
-            return TradingPhases.AtLast
-
-    def build_timestamps_for_trading_phase_sequence(self, phase: TradingPhases, time_slot, duration=5):
-        self.clean_phase()
-        tm = datetime.datetime.now()
-        tm = tm - datetime.timedelta(seconds=tm.second, microseconds=tm.microsecond)
-        current_phase = PhaseTime(
-            start_time=tm,
-            end_time=tm + datetime.timedelta(minutes=duration),
-            phase=phase
-        )
-        self.add_phase(current_phase)
-        self.autocomplete_next_phases(current_phase, duration)
-        self.autocomplete_previous_phases(current_phase, duration)
-
+    # region autocomplete phases
     def autocomplete_next_phases(self, start_phase: PhaseTime, duration):
         phase = start_phase.trading_phase
         current_phase = deepcopy(start_phase)
@@ -216,11 +239,12 @@ class TradingPhaseManager():
                     phase=phase
                 )
                 self.add_phase(current_phase)
+    # endregion
 
-    def get_trading_phase_list(self):
+    def get_trading_phase_list(self, new_standard: bool = False):
         final_result = list()
         for a in self.trading_phase_sequence:
-            final_result.append(a.get_phase_datetime())
+            final_result.append(a.get_phase_datetime(new_standart=new_standard))
         return final_result
 
     def get_phase_time_by_phase(self, phase: TradingPhases) -> PhaseTime:
@@ -263,8 +287,10 @@ class TradingPhaseManager():
 
 
 # #Example of usage
-# trading_phase_manager = TradingPhaseManager()
+trading_phase_manager = TradingPhaseManager()
 # trading_phase_manager.build_default_timestamp_for_trading_phase()
-# trading_phase_manager.build_timestamps_for_trading_phase_sequence(TradingPhases.PreOpen, None, 5)
+trading_phase_manager.build_timestamps_for_trading_phase_sequence(TradingPhases.PreClosed, TimeSlot.next_phase, 10)
 # trading_phase_manager.update_endtime_for_trading_phase_by_phase_name(TradingPhases.PreOpen, 25)
-# trading_phase_list = trading_phase_manager.get_trading_phase_list()
+
+trading_phase_list = trading_phase_manager.get_trading_phase_list(new_standard=True)
+print()

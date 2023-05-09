@@ -116,3 +116,6 @@ class ExecutionStrategiesLitPassiveSubWizard(CommonPage):
             except NameError:
                 return False
         return True
+
+    def get_all_values_of_parameters_in_sub_wizard(self) -> list:
+        return self.get_all_items_from_table_column(ExecutionStrategiesConstants.VALUES_OF_PARAMETERS_IN_SUB_WIZARD)

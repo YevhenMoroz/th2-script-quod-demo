@@ -1,5 +1,6 @@
 import re
 from copy import deepcopy
+from typing import Union
 
 from custom import basic_custom_actions
 from th2_grpc_common.common_pb2 import Direction
@@ -326,6 +327,42 @@ class FixVerifier:
             )
         )
 
+    def check_fix_message_sequence_standard(self, fix_messages_list: list, key_parameters_list: list = None, direction: DirectionEnum = DirectionEnum.FromQuod,
+                                   message_name: str = None, pre_filter: dict = None, check_order=True):
+        if pre_filter is None:
+            pre_filter = {
+                'header': {
+                    'MsgType': ('0', "NOT_EQUAL")
+                }
+            }
+
+
+        pre_filter_req = basic_custom_actions.prefilter_to_grpc(pre_filter)
+        message_filters_req = list()
+        if len(fix_messages_list) != len(key_parameters_list):
+            raise ValueError("Not correct qty of object at list expect len(fix_messages_list) equal len(key_parameters_list)")
+
+        for index, message in enumerate(fix_messages_list):
+            if not isinstance(message, FixMessage):
+                raise ValueError("Not correct object type at fix_messages_list, expect only FixMessages")
+            message_filters_req.append(basic_custom_actions.filter_to_grpc_fix_standard(message.get_message_type(), message.get_parameters(), key_parameters_list[index]))
+
+        if message_name is None:
+            message_name = "Check banch of messages"
+
+        self.__verifier.submitCheckSequenceRule(
+            basic_custom_actions.create_check_sequence_rule(
+                check_order=check_order,
+                description=message_name,
+                prefilter=pre_filter_req,
+                msg_filters=message_filters_req,
+                checkpoint=self.__checkpoint,
+                connectivity=self.__session_alias,
+                event_id=self.__case_id,
+                direction=Direction.Value(direction.value)
+            )
+        )
+
     def check_no_message_found(self, message_timeout: 10000, direction: DirectionEnum = DirectionEnum.FromQuod, message_name: str = None, pre_filter: dict = None):
         if pre_filter is None:
             pre_filter = {
@@ -362,7 +399,8 @@ class FixVerifier:
                 basic_custom_actions.create_check_rule(
                     "Check NewOrderSingle",
                     basic_custom_actions.filter_to_grpc_fix_standard(FIXMessageType.NewOrderSingle.value,
-                                                                     fix_message.get_parameters(), key_parameters,ignored_fields),
+                                                                     fix_message.get_parameters(), key_parameters,
+                                                                     ignored_fields),
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
@@ -376,7 +414,8 @@ class FixVerifier:
                 basic_custom_actions.create_check_rule(
                     "Check ExecutionReport",
                     basic_custom_actions.filter_to_grpc_fix_standard(FIXMessageType.ExecutionReport.value,
-                                                                     fix_message.get_parameters(), key_parameters,ignored_fields),
+                                                                     fix_message.get_parameters(), key_parameters,
+                                                                     ignored_fields),
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
@@ -391,7 +430,8 @@ class FixVerifier:
                 basic_custom_actions.create_check_rule(
                     "Check ListStatus",
                     basic_custom_actions.filter_to_grpc_fix_standard(FIXMessageType.NewOrderList.value,
-                                                                     fix_message.get_parameters(), key_parameters,ignored_fields),
+                                                                     fix_message.get_parameters(), key_parameters,
+                                                                     ignored_fields),
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
@@ -406,7 +446,8 @@ class FixVerifier:
                 basic_custom_actions.create_check_rule(
                     "Check ListStatus",
                     basic_custom_actions.filter_to_grpc_fix_standard(FIXMessageType.ListStatus.value,
-                                                                     fix_message.get_parameters(), key_parameters,ignored_fields),
+                                                                     fix_message.get_parameters(), key_parameters,
+                                                                     ignored_fields),
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
@@ -421,7 +462,8 @@ class FixVerifier:
                 basic_custom_actions.create_check_rule(
                     "Check Confirmation",
                     basic_custom_actions.filter_to_grpc_fix_standard(FIXMessageType.Confirmation.value,
-                                                                     fix_message.get_parameters(), key_parameters,ignored_fields),
+                                                                     fix_message.get_parameters(), key_parameters,
+                                                                     ignored_fields),
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
@@ -436,7 +478,8 @@ class FixVerifier:
                 basic_custom_actions.create_check_rule(
                     "Check OrderCancelReject",
                     basic_custom_actions.filter_to_grpc_fix_standard(FIXMessageType.OrderCancelReject.value,
-                                                                     fix_message.get_parameters(), key_parameters,ignored_fields),
+                                                                     fix_message.get_parameters(), key_parameters,
+                                                                     ignored_fields),
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
@@ -451,7 +494,8 @@ class FixVerifier:
                 basic_custom_actions.create_check_rule(
                     "Check AllocationInstruction",
                     basic_custom_actions.filter_to_grpc_fix_standard(FIXMessageType.AllocationInstruction.value,
-                                                                     fix_message.get_parameters(), key_parameters,ignored_fields),
+                                                                     fix_message.get_parameters(), key_parameters,
+                                                                     ignored_fields),
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,
@@ -464,7 +508,8 @@ class FixVerifier:
             self.__verifier.submitCheckRule(
                 basic_custom_actions.create_check_rule(
                     'Check OrderCancelReplaceRequest',
-                    basic_custom_actions.filter_to_grpc(FIXMessageType.OrderCancelReplaceRequest.value, fix_message.get_parameters(),
+                    basic_custom_actions.filter_to_grpc(FIXMessageType.OrderCancelReplaceRequest.value,
+                                                        fix_message.get_parameters(),
                                                         key_parameters, ignored_fields),
                     self.__checkpoint,
                     self.__session_alias,
@@ -487,6 +532,26 @@ class FixVerifier:
                     Direction.Value(direction.value)
                 )
             )
+        elif fix_message.get_message_type() == FIXMessageType.PositionReport.value:
+            if key_parameters is None:
+                key_parameters = ["PosReqID"]
+
+            message_name = "Check Position Report  message"
+            self.__verifier.submitCheckRule(
+                basic_custom_actions.create_check_rule(
+                    message_name,
+                    basic_custom_actions.filter_to_grpc_fix_standard("PositionReport", fix_message.get_parameters(),
+                                                        key_parameters, ignored_fields),
+                    self.__checkpoint,
+                    self.__session_alias,
+                    self.__case_id,
+                    Direction.Value(direction.value)
+                )
+            )
         else:
             pass
+
         # TODO add exeption into else
+
+    def check_fix_message_kepler(self, fix_message: FixMessage, key_parameters: list = None, direction: DirectionEnum = DirectionEnum.FromQuod, message_name: str = None, ignored_fields: Union[list, tuple] = ('trailer', 'header', 'NoTradingSessions')):
+        self.check_fix_message(fix_message, key_parameters, direction, message_name, ignored_fields)

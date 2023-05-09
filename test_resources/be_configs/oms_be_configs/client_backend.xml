@@ -30,13 +30,19 @@
         </underlying>
         <scope>root</scope> <!-- root, leaf, or firstNonCare -->
         <virtual>true</virtual>
-        <external>true</external>
-		<maintainOnConfirmation>true</maintainOnConfirmation>
+        <external>false</external>
+		<maintainOnConfirmation>false</maintainOnConfirmation>
     </positions>
+    <limits>
+        <buyingPower>
+            <enabled>false</enabled> <!-- Buying power validation and calculation token -->
+        </buyingPower>
+    </limits>
     <washbook>
 	<enabled>true</enabled>
         <default>DefaultWashBook</default> <!-- AccountID of the default wash book -->
     </washbook>
+    <execVATCommissionsEnable>false</execVATCommissionsEnable>
     <clientCommissions>
         <enabled>true</enabled>
         <eventType>ALLEXEC</eventType><!-- supported values: DFD, ALLEXEC -->
@@ -45,4 +51,9 @@
     <automaticCalculatedReportEnabled>true</automaticCalculatedReportEnabled>
     <!-- [PEQ-8500] True: the OrderScope=DFD fees should be applied to the calculated execution. False: do not apply OrderScope=DFD fees to the calculated execution. Default value True-->
     <calculatedReportFeesDFD>true</calculatedReportFeesDFD>
+    <ignoreRecomputeInConfirmation>false</ignoreRecomputeInConfirmation>
+    <gateway>
+        <heartbeat>30</heartbeat>
+        <heartbeatMarket>3</heartbeatMarket> <!--market connection status notification interval in seconds -->
+     </gateway>
 </quod>
