@@ -41,7 +41,7 @@ class QAP_T9140(TestCase):
         self.fix_md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
         self.fix_md_snapshot_doubler = FixMessageMarketDataSnapshotFullRefreshSellFX()
         self.md_reject = FixMessageMarketDataRequestRejectFX()
-        self.silver = self.data_set.get_client_by_name("client_mm_3")
+        self.silver = self.data_set.get_client_by_name("client_mm_1")
         self.gbp_usd = self.data_set.get_symbol_by_name('symbol_2')
         self.hsbc = self.data_set.get_venue_by_name('venue_2')
         self.settle_type = self.data_set.get_settle_type_by_name("spot")
@@ -112,16 +112,14 @@ class QAP_T9140(TestCase):
         self.fix_md.change_parameter("MDReqID", self.md_id_hsbc)
         self.fix_md.change_parameter("NoMDEntries", self.md_entries)
         self.fix_md.change_parameter("Instrument", self.instrument)
-        self.fix_md.update_MDReqID(self.fix_md.get_parameter("MDReqID"),
-                                   self.fx_fh_connectivity,
-                                   'FX')
+        self.fix_md.update_MDReqID(self.fix_md.get_parameter("MDReqID"), self.fx_fh_connectivity, 'FX')
         self.fix_manager_gtw.send_message(self.fix_md, f"Send MD {self.md_id_hsbc}")
-        time.sleep(4)
+        time.sleep(8)
 
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.silver).change_parameter(
             'NoRelatedSymbols', self.no_related_symbols)
         self.fix_manager_mm.send_message_and_receive_response(self.md_request, self.test_id)
-        self.fix_md_snapshot.set_params_for_md_response(self.md_request)
+        self.fix_md_snapshot.set_params_for_md_response(self.md_request, ["*", "*"])
         self.fix_md_snapshot.get_parameter("NoMDEntries").pop(3)
         # self.fix_md_snapshot.add_tag({'PriceCleansingReason': '5'})
         self.fix_verifier.check_fix_message(self.fix_md_snapshot, ignored_fields=["header", "trailer", "CachedUpdate"])
