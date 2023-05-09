@@ -8,6 +8,8 @@ from test_cases.fx.fx_mm_autohedging.QAP_T10780 import QAP_T10780
 from test_cases.fx.fx_mm_autohedging.QAP_T2681 import QAP_T2681
 from test_cases.fx.fx_mm_autohedging.QAP_T2682 import QAP_T2682
 from test_cases.fx.fx_mm_autohedging.QAP_T2862 import QAP_T2862
+from test_cases.fx.fx_mm_autohedging.QAP_T9220 import QAP_T9220
+from test_cases.fx.fx_mm_autohedging.QAP_T9228 import QAP_T9228
 from test_cases.fx.fx_mm_autohedging.QAP_T9412 import QAP_T9412
 from test_cases.fx.fx_mm_autohedging.QAP_T9464 import QAP_T9464
 from test_cases.fx.fx_mm_autohedging.QAP_T9468 import QAP_T9468
@@ -33,6 +35,8 @@ def test_run(parent_id=None, version="5.1.178.191"):
         QAP_T10444(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2681(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2862(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T9220(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T9228(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T9412(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T9464(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T9468(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
