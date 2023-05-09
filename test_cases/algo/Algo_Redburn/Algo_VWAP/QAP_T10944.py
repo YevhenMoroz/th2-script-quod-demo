@@ -180,44 +180,40 @@ class QAP_T10944(TestCase):
 
             dma_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_RB_params()
             dma_order.change_parameters(dict(Account=self.account, ExDestination=self.mic, OrderQty=child, Price=self.child_price, Instrument=self.instrument))
-            # self.fix_verifier_buy.check_fix_message_kepler(dma_1_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
             list_new_order_single.append(dma_order)
 
             er_pending_new = FixMessageExecutionReportAlgo().set_params_from_new_order_single(dma_order, self.gateway_side_buy, self.status_pending)
-            # self.fix_verifier_buy.check_fix_message_kepler(er_pending_new_dma_1_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 1 order')
             list_pending_new.append(er_pending_new)
 
             er_new_dma = FixMessageExecutionReportAlgo().set_params_from_new_order_single(dma_order, self.gateway_side_buy, self.status_new)
-            # self.fix_verifier_buy.check_fix_message_kepler(er_new_dma_1_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 1 order')
             list_new.append(er_new_dma)
 
             er_fill_dma = FixMessageExecutionReportAlgo().set_params_from_new_order_single(dma_order, self.gateway_side_buy, self.status_fill)
-            # self.fix_verifier_buy.check_fix_message_kepler(er_new_dma_1_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 1 order')
             list_fill.append(er_fill_dma)
 
         self.fix_verifier_buy.set_case_id(bca.create_event("Check child orders", self.test_id))
         scheduler = sched.scheduler(time.time, time.sleep)
         scheduler.enterabs(self.end_date.timestamp(), 2, self.fix_verifier_buy.check_fix_message_sequence, kwargs=dict(
             fix_messages_list=list_new_order_single,
-            key_parameters_list=[self.key_params, self.key_params, self.key_params, self.key_params, self.key_params],
+            key_parameters_list=[self.key_params] * self.waves,
             direction=self.FromQuod,
             pre_filter=self.pre_fileter_35_D,
             check_order=True))
         scheduler.enterabs(self.end_date.timestamp(), 3, self.fix_verifier_buy.check_fix_message_sequence, kwargs=dict(
             fix_messages_list=list_pending_new,
-            key_parameters_list=[self.key_params, self.key_params, self.key_params, self.key_params, self.key_params],
+            key_parameters_list=[self.key_params] * self.waves,
             direction=self.ToQuod,
             pre_filter=self.pre_fileter_35_8_Pending_new,
             check_order=True))
         scheduler.enterabs(self.end_date.timestamp(), 4, self.fix_verifier_buy.check_fix_message_sequence, kwargs=dict(
             fix_messages_list=list_new,
-            key_parameters_list=[self.key_params, self.key_params, self.key_params, self.key_params, self.key_params],
+            key_parameters_list=[self.key_params] * self.waves,
             direction=self.ToQuod,
             pre_filter=self.pre_fileter_35_8_New,
             check_order=True))
         scheduler.enterabs(self.end_date.timestamp(), 5, self.fix_verifier_buy.check_fix_message_sequence, kwargs=dict(
             fix_messages_list=list_fill,
-            key_parameters_list=[self.key_params, self.key_params, self.key_params, self.key_params, self.key_params],
+            key_parameters_list=[self.key_params] * self.waves,
             direction=self.ToQuod,
             pre_filter=self.pre_fileter_35_8_Fill,
             check_order=True))
@@ -231,12 +227,12 @@ class QAP_T10944(TestCase):
 
         time.sleep(3)
         # region Cancel Algo Order
-        case_id_2 = bca.create_event("Check that algo is eliminated", self.test_id)
+        case_id_2 = bca.create_event("Check that algo is Filled", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_2)
         time.sleep(2)
 
         er_cancel_auction_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.vwap_algo, self.gateway_side_buy, self.status_fill)
-        er_cancel_auction_order.change_parameters(dict(LastQty=self.vwap_child[4], TradeDate='*', HandlInst='2', NoParty='*', SecAltIDGrp='*', SecondaryOrderID='*',
+        er_cancel_auction_order.change_parameters(dict(LastQty=self.vwap_child[len(self.vwap_child)-1], TradeDate='*', HandlInst='2', NoParty='*', SecAltIDGrp='*', SecondaryOrderID='*',
                                                        LastMkt=self.mic, QtyType=0, SecondaryClOrdID='*', SettlType='*', SecondaryExecID='*', GrossTradeAmt='*'))
         er_cancel_auction_order.remove_parameter('ExDestination')
         self.fix_verifier_sell.check_fix_message(er_cancel_auction_order, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Fill')
