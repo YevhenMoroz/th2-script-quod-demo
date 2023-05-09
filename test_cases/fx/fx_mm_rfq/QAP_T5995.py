@@ -34,7 +34,7 @@ class QAP_T5995(TestCase):
         self.fix_manager_fh_314 = FixManager(self.fx_fh_connectivity, self.test_id)
 
         self.settle_date_1w = self.data_set.get_settle_date_by_name("wk1")
-        self.settle_date_bda = self.data_set.get_settle_date_by_name("wk2_ndf")
+        self.settle_date_bda = self.data_set.get_settle_date_by_name("broken_w1w2")
         self.iridium1 = self.data_set.get_client_by_name("client_mm_3")
         self.eur_usd = self.data_set.get_symbol_by_name("symbol_1")
         self.sec_type_swap = self.data_set.get_security_type_by_name("fx_swap")
@@ -110,6 +110,7 @@ class QAP_T5995(TestCase):
         self.fix_md.update_repeating_group("NoMDEntries", self.correct_no_md_entries)
         self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
         self.fix_manager_fh_314.send_message(self.fix_md)
+        self.sleep(4)
         self.fix_md.set_market_data_fwd()
         self.fix_md.update_fields_in_component("Instrument", self.instrument_fwd)
         self.fix_md.update_repeating_group("NoMDEntries", self.incorrect_no_md_entries)
