@@ -1217,7 +1217,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         temp.update({
             "AlgoCst04": "invited",
             "ExecType": "D",
-            "AlgoCst03": "VenueQuoteID_O04r2TeUXbzb",
+            "AlgoCst03": "*",
             "ExecRestatementReason": "1",
             "QuoteType": "1",
             "LastMkt": er_rfq_new.get_parameter("ExDestination"),
