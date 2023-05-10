@@ -338,6 +338,14 @@ class AlgoFixInstruments(Enum):
         SecuritySubType='PAIR',
     )
 
+    instrument_pt_round = dict(
+        Symbol='TestPairRoundLot',
+        SecurityID='TestPairRoundLot',
+        SecurityIDSource='4',
+        SecurityType='MLEG',
+        SecuritySubType='PAIR',
+    )
+
 
 class AlgoFixLegInstruments(Enum):
     instrument_agta = dict(
@@ -373,7 +381,25 @@ class AlgoFixLegInstruments(Enum):
         LegSecurityIDSource='4',
         LegSecurityType='CS',
         # LegRatioQty='2.5', commented until fix-sell dictionary will be written correctly
+        # LegSide='2'
+    )
+
+    instrument_org = dict(
+        LegSymbol='ORG',
+        LegSecurityID='FR0000054611',
+        LegSecurityIDSource='4',
+        LegSecurityType='CS',
+        # LegRatioQty='1', commented until fix-sell dictionary will be written correctly
         # LegSide='1'
+    )
+
+    instrument_pvl = dict(
+        LegSymbol='PVL',
+        LegSecurityID='FR0000051377',
+        LegSecurityIDSource='4',
+        LegSecurityType='CS',
+        # LegRatioQty='', commented until fix-sell dictionary will be written correctly
+        # LegSide='2'
     )
 
 
@@ -555,6 +581,8 @@ class AlgoListingId(Enum):
     listing_62 = "2248"       # AST_MI for TRQX @ Columbia
     listing_dp = "890"       # DP for PARIS @ Columbia
     listing_sqi = "1130"       # SQI for PARIS @ Columbia
+    listing_org = "1004"       # ORG for PARIS @ Columbia
+    listing_pvl = "1033"       # PVL for PARIS @ Columbia
 
 
 class AlgoCurrency(Enum):
@@ -678,6 +706,14 @@ class AlgoPreFilter(Enum):
         },
         'ExecType': ('4', 'EQUAL'),
         'OrdStatus': ('4', 'EQUAL')
+    }
+
+    pre_filer_equal_ER_cancel_replace = {
+        'header': {
+            'MsgType': ('8', 'EQUAL')
+        },
+        'ExecType': ('5', 'EQUAL'),
+        'OrdStatus': ('0', 'EQUAL')
     }
 
     pre_filer_equal_ER_reject = {

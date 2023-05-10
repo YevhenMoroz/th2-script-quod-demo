@@ -60,6 +60,9 @@ class ExecutionStrategiesDarkSubWizard(CommonPage):
     def get_value(self):
         return self.find_by_xpath(ExecutionStrategiesConstants.VALUE_AT_PARAMETERS_SUB_WIZARD).text
 
+    def get_all_values_of_parameters_in_sub_wizard(self) -> list:
+        return self.get_all_items_from_table_column(ExecutionStrategiesConstants.VALUES_OF_PARAMETERS_IN_SUB_WIZARD)
+
     def set_value_by_dropdown_list_at_sub_wizard(self, value):
         self.set_combobox_value(ExecutionStrategiesConstants.VALUE_FIELD_AT_PARAMETERS_SUB_WIZARD, value)
 

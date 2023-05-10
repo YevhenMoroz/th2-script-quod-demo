@@ -1,5 +1,6 @@
 class WashBookConstants:
     WASHBOOK_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][normalize-space()='Wash Books']"
+    PAGE_ICON = '//span[@class="entity-title left"]//*[@data-name="bar-chart"]//*[@d]'
 
     # region ~~~MAIN PAGE~~~
     NEW_BUTTON_XPATH = '//*[normalize-space()="Wash Books"]//..//*[text()="New"]'
@@ -49,6 +50,7 @@ class WashBookConstants:
     SAVE_CHANGES_AT_WIZARD = '//*[text()="Save Changes"]'
     CLEAR_CHANGES_AT_WIZARD = '//*[text()="Clear Changes"]'
     NO_BUTTON_AT_WIZARD = '//button[normalize-space()="No"]'
+    WIZARD_DOWNLOAD_PDF_BUTTON = '//*[@nbtooltip="Download PDF"]'
 
     # -VALUES-
     ID_AT_VALUES_TAB = '//*[text()="ID *"]/preceding-sibling::input'

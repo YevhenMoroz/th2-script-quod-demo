@@ -1,5 +1,8 @@
 from pathlib import Path
 from datetime import datetime
+
+from decimal import *
+
 from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
@@ -102,7 +105,7 @@ class QAP_T2836(TestCase):
         self.response = self.fix_manager.send_message_and_receive_response(self.quote_request,
                                                            self.test_id)
         bid_fwd_pts = self.response[0].get_parameter("NoLegs")[1]["LegBidForwardPoints"]
-        self.bid_px_ccy2 = str(round(float(self.bid_px_ccy2) + float(bid_fwd_pts), 5))
+        self.bid_px_ccy2 = str(round(Decimal(float(self.bid_px_ccy2)) + Decimal(float(bid_fwd_pts)), 6))
         self.quote.set_params_for_quote_swap_ccy2(self.quote_request, near_leg_off_px=self.off_px_ccy2,
                                                   far_leg_bid_px=self.bid_px_ccy2)
         self.fix_verifier.check_fix_message(fix_message=self.quote, key_parameters=["QuoteReqID"])
@@ -123,7 +126,7 @@ class QAP_T2836(TestCase):
         self.response = self.fix_manager.send_message_and_receive_response(self.quote_request,
                                                            self.test_id)
         ask_fwd_pts = self.response[0].get_parameter("NoLegs")[1]["LegOfferForwardPoints"]
-        self.offer_px_ccy1 = str(round(float(self.offer_px_ccy1) + float(ask_fwd_pts), 5))
+        self.offer_px_ccy1 = str(round(Decimal(float(self.offer_px_ccy1)) + Decimal(float(ask_fwd_pts)), 6))
         self.quote.set_params_for_quote_swap(self.quote_request, near_leg_bid_px=self.bid_px_ccy1,
                                              far_leg_off_px=self.offer_px_ccy1)
         self.quote.remove_parameters(["BidSwapPoints", "BidPx"])

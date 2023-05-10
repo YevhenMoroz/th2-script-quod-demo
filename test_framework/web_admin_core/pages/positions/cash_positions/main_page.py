@@ -9,6 +9,9 @@ class MainPage(CommonPage):
     def __init__(self, web_driver_container: WebDriverContainer):
         super().__init__(web_driver_container)
 
+    def click_on_refresh_page(self):
+        self.find_by_xpath(Constants.MainPage.REFRESH_PAGE_BUTTON).click()
+
     def click_on_more_actions(self):
         self.find_by_xpath(Constants.MainPage.MORE_ACTIONS_BUTTON).click()
 
@@ -38,6 +41,11 @@ class MainPage(CommonPage):
 
     def set_transaction_type(self, value):
         self.select_value_from_dropdown_list(Constants.MainPage.TRANSACTION_TYPE, value)
+
+    def get_all_transaction_type_from_drop_down(self):
+        self.find_by_xpath(Constants.MainPage.TRANSACTION_TYPE).click()
+        time.sleep(1)
+        return self.get_all_items_from_drop_down(Constants.MainPage.TRANSACTION_TYPE_DROP_MENU)
 
     def set_amount(self, value):
         self.set_text_by_xpath(Constants.MainPage.AMOUNT, value)
@@ -92,3 +100,13 @@ class MainPage(CommonPage):
 
     def click_on_enable_disable_button(self):
         self.find_by_xpath(Constants.MainPage.TOGGLE_BUTTON).click()
+
+    def is_cash_position_enabled(self):
+        button_status = self.find_by_xpath(Constants.MainPage.TOGGLE_BUTTON).get_attribute("class")
+        return True if 'status-success' in button_status else False
+
+    def get_page_icon_attributes(self):
+        page_icon = self.find_elements_by_xpath(Constants.MainPage.PAGE_ICON)
+        return [_.get_attribute('d') for _ in page_icon]
+
+

@@ -54,7 +54,6 @@ class QAP_T3389(CommonTestCase):
             time.sleep(1)
 
     def test_context(self):
-        pass
         cash_positions_page = MainPage(self.web_driver_container)
         positions_tab = PositionsTab(self.web_driver_container)
 
@@ -71,7 +70,7 @@ class QAP_T3389(CommonTestCase):
             time.sleep(1)
 
             self.verify(f"Value of the Collateral field is rewrote on new value {self.amount}.",
-                        "{:.2f}".format(self.amount), str(positions_tab.get_collateral_limit()))
+                        "{:.2f}".format(self.amount), str(positions_tab.get_collateral()))
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

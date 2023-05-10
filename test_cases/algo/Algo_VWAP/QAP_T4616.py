@@ -98,7 +98,7 @@ class QAP_T4616(TestCase):
         self.ToQuod = DirectionEnum.ToQuod
         # endregion
 
-        self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile3")
+        self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile1")
         self.rest_api_manager = RestApiAlgoManager(session_alias=self.restapi_env1.session_alias_wa, case_id=self.test_id)
         self.db_manager = DBManager(self.environment.get_list_data_base_environment()[0])
         self.rule_list = []

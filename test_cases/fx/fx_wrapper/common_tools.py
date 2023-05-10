@@ -394,7 +394,7 @@ def restart_mpas():
     """
     Restart MPAS component on quod314 backend
     """
-    login_and_execute("qrestart QUOD.PKS")
+    login_and_execute("qrestart QUOD.MPAS")
 
 def stop_fxfh():
     """

@@ -153,7 +153,7 @@ class QAP_T4620(TestCase):
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
         # endregion
 
-        # region send day lowest
+        # region send close price
         self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send trading phase", self.test_id))
         self.incremental_refresh = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_close_px().update_MDReqID(self.listing_id, self.fix_env1.feed_handler).update_value_in_repeating_group('NoMDEntriesIR', 'MDEntryPx', self.close_px)
         self.fix_manager_feed_handler.send_message(fix_message=self.incremental_refresh)

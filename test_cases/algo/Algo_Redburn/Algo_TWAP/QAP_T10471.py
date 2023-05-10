@@ -4,7 +4,6 @@ from pathlib import Path
 
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
-from test_cases.algo.Algo_TWAP.QAP_T4655 import ToQuod
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.fix_wrappers.algo.FixMessageMarketDataIncrementalRefreshAlgo import FixMessageMarketDataIncrementalRefreshAlgo
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
@@ -219,7 +218,7 @@ class QAP_T10471(TestCase):
 
         cancel_request_twap_order = FixMessageOrderCancelRequest(self.twap_order)
         self.fix_manager_sell.send_message_and_receive_response(cancel_request_twap_order, self.case_id_cancel)
-        self.fix_verifier_sell.check_fix_message(cancel_request_twap_order, direction=ToQuod, message_name='Sell side Cancel Request')
+        self.fix_verifier_sell.check_fix_message(cancel_request_twap_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
 
         time.sleep(3)
 

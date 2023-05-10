@@ -1,5 +1,6 @@
 class WashBookRulesConstants:
     WASH_BOOK_RULES_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][normalize-space()='Wash Book Rules']"
+    PAGE_ICON = '//span[@class="entity-title left"]//*[@data-name="bar-chart"]//*[@d]'
     DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span'
     SEARCHED_ENTITY_XPATH = '//*[text()="{}"]'
 

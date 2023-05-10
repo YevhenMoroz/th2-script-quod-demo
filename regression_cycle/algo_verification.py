@@ -19,7 +19,7 @@ def test_run(parent_id=None):
         rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules_by_alias("fix-bs-310-columbia")
         logging.getLogger().setLevel(logging.WARN)
-        report_id = bca.create_event('Algo regression_cycle', parent_id)
+        report_id = bca.create_event(f'Algo_{mode} cycle', parent_id)
 
         tree = ElementTree.parse(f"{ROOT_DIR}/regression_run_config.xml")
         root = tree.getroot()

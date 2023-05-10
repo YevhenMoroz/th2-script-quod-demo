@@ -20,6 +20,8 @@ from test_cases.eq.GatingRules.QAP_T4928 import QAP_T4928
 from test_cases.eq.GatingRules.QAP_T4929 import QAP_T4929
 from test_cases.eq.GatingRules.QAP_T4930 import QAP_T4930
 from test_cases.eq.GatingRules.QAP_T4931 import QAP_T4931
+from test_cases.eq.Positions.QAP_T7598 import QAP_T7598
+from test_cases.eq.Positions.QAP_T7606 import QAP_T7606
 from test_cases.eq.PostTrade.QAP_T7517 import QAP_T7517
 from test_cases.eq.PostTrade.QAP_T7552 import QAP_T7552
 from test_framework.configurations.component_configuration import ComponentConfiguration
@@ -62,10 +64,10 @@ def test_run(parent_id=None, version=None):
             .execute()
         # QAP_T7608(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
         #     .execute()
-        # QAP_T7606(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
-        #     .execute()
-        # QAP_T7598(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
-        #     .execute()
+        QAP_T7606(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
+        QAP_T7598(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
         # QAP_T7561(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
         #     .execute()
         QAP_T7552(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \

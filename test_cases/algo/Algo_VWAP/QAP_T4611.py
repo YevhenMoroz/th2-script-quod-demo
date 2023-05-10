@@ -77,8 +77,6 @@ class QAP_T4611(TestCase):
         self.client = self.data_set.get_client_by_name("client_2")
         self.account = self.data_set.get_account_by_name('account_2')
         self.listing_id = self.data_set.get_listing_id_by_name("listing_36")
-        # endregion
-
         # Key parameters
         self.key_params_cl = self.data_set.get_verifier_key_parameters_by_name('verifier_key_parameters_1')
         self.key_params = self.data_set.get_verifier_key_parameters_by_name('verifier_key_parameters_3')

@@ -220,6 +220,7 @@ class QAP_T4116(TestCase):
         
         # region Check partial fill parent
         er_partial_fill_multilisting_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.multilisting_order_replace_params, self.gateway_side_sell, self.status_partial_fill)
+        er_partial_fill_multilisting_order_params.change_parameter('SettlType', '*')
         self.fix_verifier_sell.check_fix_message(er_partial_fill_multilisting_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Partial fill')
         # endregion
 
