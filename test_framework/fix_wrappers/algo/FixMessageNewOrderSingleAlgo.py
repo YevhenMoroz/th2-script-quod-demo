@@ -921,7 +921,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ShortCode': '17536',
             'AlgoCst01': 'firm-up',
-            'AlgoCst03': 'VenueQuoteID_O04r2TeUXbzb',
+            'AlgoCst03': '*',
             'QuoteID': '*',
             'ChildOrderID': '*',
             'misc5': '*'
