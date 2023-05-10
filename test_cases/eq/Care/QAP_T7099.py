@@ -45,7 +45,7 @@ class QAP_T7099(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region step 1: create CO order
-        desk = self.environment.get_list_fe_environment()[0].desk_ids[1]
+        desk = self.environment.get_list_fe_environment()[0].desk_ids[0]
         self.new_order_single.set_default_care_limit()
         self.new_order_single.update_fields_in_component('NewOrderSingleBlock', {'ClientAccountGroupID': self.client})
         qty = self.new_order_single.get_parameters()[JavaApiFields.NewOrderSingleBlock.value][

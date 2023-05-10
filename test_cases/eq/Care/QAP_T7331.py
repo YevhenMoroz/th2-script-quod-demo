@@ -69,7 +69,7 @@ class QAP_T7331(TestCase):
         time.sleep(80)
         # endergion
         # region precondition - step 1: create CO order via FIX
-        desk = self.environment.get_list_fe_environment()[0].desk_ids[1]
+        desk = self.environment.get_list_fe_environment()[0].desk_ids[0]
         self.new_order.set_default_care_limit()
         parent_cl_ord_id = self.new_order.get_parameters()[JavaApiFields.NewOrderSingleBlock.value][
             JavaApiFields.ClOrdID.value]

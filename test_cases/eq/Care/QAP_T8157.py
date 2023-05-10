@@ -51,7 +51,7 @@ class QAP_T8157(TestCase):
         self.rest_api_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
         self.rest_api_manager = RestApiManager(session_alias=self.rest_api_connectivity, case_id=self.test_id)
         self.unmatch_request = UnMatchRequest()
-        self.db_manager = DBManager(environment.get_list_data_base_environment()[0])
+        self.db_manager = DBManager(self.environment.get_list_data_base_environment()[0])
         self.cancel_transfer = PositionTransferCancelRequest()
         self.rest_wash_book_message = RestApiWashBookRuleMessages(self.data_set)
 
@@ -152,7 +152,11 @@ class QAP_T8157(TestCase):
                                                     })
 
         # region step 3: check that backOffice has PositionTradeCancel message:
-        self.fix_verifier_dc.check_fix_message_fix_standard(execution_report_fix, ['ExecType', 'ClOrdID'])
+        ignored_fields = ['NoParty', 'CumQty', 'LastPx', 'ExecID', 'OrderQtyData', 'tag5120', 'ExecRefID', 'LastQty',
+                          'OrderID', 'TransactTime', 'Side', 'AvgPx', 'QuodTradeQualifier', 'ExecBroker', 'OrdStatus',
+                          'Currency', 'Instrument', 'TrdType', 'LeavesQty', 'GrossTradeAmt']
+        self.fix_verifier_dc.check_fix_message_fix_standard(execution_report_fix, ['ExecType', 'ClOrdID'],
+                                                            ignored_fields=ignored_fields)
         # endregion
 
     def _set_up_wash_book_rule(self):

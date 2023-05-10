@@ -43,7 +43,6 @@ class QAP_T7194(TestCase):
         self.venue = self.data_set.get_mic_by_name('mic_1')  # XPAR
         self.client = self.data_set.get_client(
             'client_pt_4')  # Precondition: Client has price precision = 4, rounding direction = RoundUp
-        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
         self.order_submit = OrderSubmitOMS(self.data_set)

@@ -42,7 +42,7 @@ class QAP_T7348(TestCase):
         self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
                                     self.ssh_client_env.password, self.ssh_client_env.su_user,
                                     self.ssh_client_env.su_password)
-        self.db_manager = DBManager(environment.get_list_data_base_environment()[0])
+        self.db_manager = DBManager(self.environment.get_list_data_base_environment()[0])
         self.group_modify = HeldOrderAckRequest()
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -50,8 +50,8 @@ class QAP_T7348(TestCase):
         # region precondition:
         self.db_manager.execute_query(f"""UPDATE  venue SET  valvenueclientaccountname  = 'Y'
                                             WHERE venueid = 'PARIS'""")
-        self.ssh_client.send_command("qrestart all")
-        time.sleep(250)
+        self.ssh_client.send_command("qrestart AQS ORS")
+        time.sleep(120)
         # endregion
 
         # region step 1-2: Create CO order with wrong  NIN (VenueClientAccountGroupName (VenueClientAccountName))
@@ -64,7 +64,7 @@ class QAP_T7348(TestCase):
                                                                       'AllocClientAccountID': self.venue_client_account_name,
                                                                       'AllocQty': '100'}]}}
                                                           })
-        self.java_api_manager.send_message_and_receive_response(self.new_order_single, response_time=30000)
+        self.java_api_manager.send_message_and_receive_response(self.new_order_single)
 
         ord_notification = \
             self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameters()[
@@ -95,6 +95,6 @@ class QAP_T7348(TestCase):
         self.db_manager.execute_query(f"""UPDATE  venue SET  valvenueclientaccountname  = 'N'
                                                     WHERE venueid = 'PARIS'""")
         self.ssh_client.send_command("qrestart all")
-        time.sleep(250)
+        time.sleep(120)
         self.db_manager.close_connection()
         self.ssh_client.close()

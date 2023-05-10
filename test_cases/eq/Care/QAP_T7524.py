@@ -2,6 +2,7 @@ import time
 from rule_management import RuleManager, Simulators
 from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.oms.FixMessageCancelRejectReportOMS import FixMessageOrderCancelRejectReportOMS
 from test_framework.fix_wrappers.oms.FixMessageOrderCancelReplaceRequestOMS import \
     FixMessageOrderCancelReplaceRequestOMS
 import logging
@@ -38,6 +39,7 @@ class QAP_T7524(TestCase):
             "client_pt_1_venue_1")
         self.venue = self.data_set.get_mic_by_name("mic_1")
         self.new_qty = "4444"
+        self.fix_cancel_reject = FixMessageOrderCancelRejectReportOMS()
         self.cancel_replace_report = FixMessageOrderCancelReplaceRequestOMS(self.data_set)
         self.check_out = CheckOutOrderRequest()
         self.check_in = CheckInOrderRequest()
@@ -74,8 +76,8 @@ class QAP_T7524(TestCase):
         finally:
             self.rule_manager.remove_rule(cancel_replace_rule)
 
-        self.cancel_replace_report.set_default(self.fix_message)
-        self.cancel_replace_report.change_parameter("Text", "11629 Order is in locked state")
+        self.fix_cancel_reject.set_default(self.fix_message)
+        self.fix_cancel_reject.change_parameter("Text", "11629 Order is in locked state")
         self.fix_verifier.check_fix_message_fix_standard(self.cancel_replace_report)
         # endregion
 

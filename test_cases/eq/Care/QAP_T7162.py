@@ -39,7 +39,7 @@ class QAP_T7162(TestCase):
         self.remote_path = f"/home/{self.ssh_client_env.su_user}/quod/cfg/client_ors.xml"
         self.fix_responses = None
         self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
-        self.expected_sec_account = self.data_set.get_account_by_name('client_pt_1_acc_2')
+        self.expected_sec_account = self.data_set.get_account_by_name('client_pt_1_acc_1')
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
