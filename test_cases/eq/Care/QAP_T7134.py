@@ -118,7 +118,9 @@ class QAP_T7134(TestCase):
         list_ignore_field = ['CxlRejResponseTo', 'Account',
                              'Text', 'MsgType', 'MsgSeqNum',
                              'TargetCompID', 'SenderCompID', 'BeginString',
-                             'BodyLength', 'ApplVerID', 'SendingTime']
+                             'BodyLength', 'ApplVerID', 'SendingTime',
+                             'SettlDate', 'TimeInForce', 'Currency',
+                             'HandlInst', 'OrderCapacity', 'QtyType','OrigClOrdID']
         self.execution_report_fix.set_default_new(self.new_order)
         self.execution_report_fix.change_parameters({'header': {
             JavaApiFields.SenderSubID.value: 'TARGET_SUB_ID',
