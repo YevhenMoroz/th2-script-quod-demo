@@ -287,6 +287,23 @@ class FixVerifier:
                     Direction.Value(direction.value)
                 )
             )
+        elif fix_message.get_message_type() == FIXMessageType.RequestForPositionsAck.value:
+            if key_parameters is None:
+                key_parameters = ["PosReqID"]
+
+            if message_name is None:
+                message_name = "Check RequestForPositionsAck  message"
+            self.__verifier.submitCheckRule(
+                basic_custom_actions.create_check_rule(
+                    message_name,
+                    basic_custom_actions.filter_to_grpc("RequestForPositionsAck", fix_message.get_parameters(),
+                                                        key_parameters, ignored_fields),
+                    self.__checkpoint,
+                    self.__session_alias,
+                    self.__case_id,
+                    Direction.Value(direction.value)
+                )
+            )
         else:
             pass
         # TODO add exeption into else

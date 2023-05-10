@@ -15,12 +15,34 @@ class FixMessageRequestForPositionsAckFX(FixMessageRequestForPositionsAck):
     def set_params_from_reqeust(self, request: FixMessageRequestForPositions):
         base_parameters = {
             "PosReqID": request.get_parameter("PosReqID"),
-            "PosMaintRepID": "*",
+            "PosMaintRptID": "*",
             "PosReqType": "0",
             "SubscriptionRequestType": "1",
             "TotalNumPosReports": "*",
             "PosReqResult": "Valid",
             "PosReqStatus": "Completed",
+            "Account": request.get_parameter("Account"),
+            "Currency": request.get_parameter("Currency"),
+            "Instrument": request.get_parameter("Instrument"),
+        }
+        # "NoParty": [{
+        #     "PartyID": "CLIENT1_1",
+        #     "PartyIDSource": "POS",
+        #     "PartyRole": "D",
+        #
+        # }]
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_params_for_none(self, request: FixMessageRequestForPositions):
+        base_parameters = {
+            "PosReqID": request.get_parameter("PosReqID"),
+            "PosMaintRptID": "*",
+            "PosReqType": "0",
+            "SubscriptionRequestType": "1",
+            "TotalNumPosReports": "0",
+            "PosReqResult": "2",
+            "PosReqStatus": "0",
             "Account": request.get_parameter("Account"),
             "Currency": request.get_parameter("Currency"),
             "Instrument": request.get_parameter("Instrument"),
