@@ -276,7 +276,7 @@ class AlgoFormulasManager:
 
     @staticmethod
     def change_datetime_from_normal_to_epoch_with_milisecs(datetime: dt) -> int:
-        return int(datetime.timestamp()) * 1000
+        return int(datetime.replace(tzinfo=timezone.utc).timestamp()) * 1000
 
     @staticmethod
     def get_timestamps_for_previous_phase(phase: TradingPhases):
@@ -786,10 +786,10 @@ class AlgoFormulasManager:
         # endregion
 
         # region volume slices
-        sum = 0
+        sum_volume = 0
         for volume in volumes:
             if (end_date.time() >= volume['MDTime'].time() >= start_date.time()) and volume['LastAuctionPhase']== '':
-                sum += volume['LastTradedQty']
+                sum_volume += volume['LastTradedQty']
 
             if volume['MDTime'].time() != end_date.time():
                 for volume_share in list_volume:
@@ -811,7 +811,7 @@ class AlgoFormulasManager:
 
         # region qty calculation
         for volume_share in list_volume:
-            volume_share['qty'] = round(Decimal(volume_share['volume'] / sum * parent_qty),2)
+            volume_share['qty'] = round(Decimal(volume_share['volume'] / sum_volume * parent_qty),2)
         # endregion
 
         # region rounding
@@ -830,5 +830,9 @@ class AlgoFormulasManager:
         for volume_share in list_volume:
             return_list.append(volume_share['qty'])
         #endregion
+
+        sum_return_list = sum(return_list)
+        if sum_return_list != parent_qty:
+            raise ValueError(f"Calculated qty = {sum_return_list}, parent qty = {parent_qty}. Please check formula.")
 
         return return_list
