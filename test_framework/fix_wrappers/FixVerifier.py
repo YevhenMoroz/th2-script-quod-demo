@@ -387,7 +387,7 @@ class FixVerifier:
                     "Check ExecutionReport",
                     basic_custom_actions.filter_to_grpc_fix_standard(FIXMessageType.ExecutionReport.value,
                                                                      fix_message.get_parameters(), key_parameters,
-                                                                     ignored_fields),
+                                                                     ignored_fields, ignore_header),
                     self.__checkpoint,
                     self.__session_alias,
                     self.__case_id,

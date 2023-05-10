@@ -18,6 +18,7 @@ from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMess
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.fix_wrappers.oms.FixMessageOrderCancelReplaceRequestOMS import \
     FixMessageOrderCancelReplaceRequestOMS
+from test_framework.fix_wrappers.oms.FixMessageOrderCancelRequestOMS import FixMessageOrderCancelRequestOMS
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.cs_message.CDOrdAckBatchRequest import CDOrdAckBatchRequest
 from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, OrderReplyConst
@@ -29,7 +30,7 @@ timeouts = True
 
 
 @try_except(test_id=Path(__file__).name[:-3])
-class QAP_T7133(TestCase):
+class QAP_T7134(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set=None, environment=None):
         super().__init__(report_id, session_id, data_set, environment)
@@ -40,7 +41,7 @@ class QAP_T7133(TestCase):
         self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
         self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
         self.new_order = FixMessageNewOrderSingleOMS(self.data_set)
-        self.order_modification_request = FixMessageOrderCancelReplaceRequestOMS(self.data_set)
+        self.order_cancel_request = FixMessageOrderCancelRequestOMS()
         self.client = self.data_set.get_client_by_name("client_2")
         self.venue = self.data_set.get_mic_by_name('mic_1')
         self.venue_client_names = self.data_set.get_venue_client_names_by_name('client_2_venue_1')
@@ -65,8 +66,8 @@ class QAP_T7133(TestCase):
         cs.text = 'false'
         tree_cs.write("temp_cs.xml")
         tree_ors = ET.parse(self.local_path_ors)
-        tree_ors.getroot().find("ors/FrontToBack/publishPositiveModificationReply").text = 'true'
-        tree_ors.getroot().find("ors/FrontToBack/publishPendingModificationNotif").text = 'true'
+        tree_ors.getroot().find("ors/FrontToBack/publishPositiveCancelReply").text = 'true'
+        tree_ors.getroot().find("ors/FrontToBack/publishPendingCancelNotif").text = 'true'
         tree_ors.write('temp_ors.xml')
         self.ssh_client.send_command('~/quod/script/site_scripts/change_permission_script')
         self.ssh_client.put_file(self.remote_path_cs, "temp_cs.xml")
@@ -86,12 +87,13 @@ class QAP_T7133(TestCase):
             JavaApiFields.OnBehalfOfCompID.value: 'ON_BEHALF_OF_COMP_ID',
             JavaApiFields.OnBehalfOfSubID.value: 'ON_BEHALF_OF_SUB_ID'
         }})
-        self.fix_manager.send_message_and_receive_response_fix_standard(self.new_order)
-        execution_report_last = self.fix_manager.get_last_message('ExecutionReport').get_parameters()
-        order_id = execution_report_last['OrderID']
+        self.fix_manager.send_message_fix_standard(self.new_order)
+        cl_ord_id = self.new_order.get_parameters()['ClOrdID']
+        time.sleep(2)
+        order_id = self.db_manager.execute_query(f"SELECT ordid FROM ordr WHERE clordid = '{cl_ord_id}'")[0][0]
+        time.sleep(2)
         cd_ord_notif_id = str(int(
-            self.db_manager.execute_query(f"SELECT cdordnotifid FROM cdordnotif WHERE transid = '{order_id}'")[
-                0][0]))
+            self.db_manager.execute_query(f"SELECT cdordnotifid FROM cdordnotif WHERE transid = '{order_id}'")[0][0]))
         self.accept_request.set_default(order_id, cd_ord_notif_id, desk)
         self.java_api_manager.send_message_and_receive_response(self.accept_request)
         order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
@@ -103,12 +105,13 @@ class QAP_T7133(TestCase):
         # endregion
 
         # region step 2:
-        self.order_modification_request.set_default(self.new_order)
-        self.fix_manager.send_message(self.order_modification_request)
-        modify_status = \
-            self.db_manager.execute_query(f"SELECT modifystatus FROM ordmodify WHERE ordid='{order_id}'")[0][0]
-        self.fix_manager.compare_values({'ModifyStatus': 'SUB'}, {'ModifyStatus': modify_status},
-                                        'Verify that order has PMO status')
+        self.order_cancel_request.set_default(self.new_order)
+        self.fix_manager.send_message(self.order_cancel_request)
+        time.sleep(2)
+        cancel_status = \
+            self.db_manager.execute_query(f"SELECT cancelstatus FROM ordcancel WHERE ordid='{order_id}'")[0][0]
+        self.fix_manager.compare_values({'CancelStatus': 'SUB'}, {'CancelStatus': cancel_status},
+                                        'Verify that order has PCA status')
         # endregion
 
         # region step 3:
@@ -124,7 +127,7 @@ class QAP_T7133(TestCase):
             JavaApiFields.DeliverToSubID.value: 'ON_BEHALF_OF_SUB_ID',
             JavaApiFields.OnBehalfOfCompID.value: 'DELIVER_TO_COMP_ID',
             JavaApiFields.OnBehalfOfSubID.value: 'DELIVER_TO_SUB_ID',
-        }, 'ExecType': 'E', 'OrdStatus': 'E'})
+        }, 'ExecType': '6', 'OrdStatus': '6'})
         self.fix_verifier.check_fix_message_fix_standard(self.execution_report_fix, ignored_fields=list_ignore_field,
                                                          ignore_header=False)
         # endregion
