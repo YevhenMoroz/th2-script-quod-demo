@@ -484,7 +484,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'QuodFlatParameters': {
                 'WouldInAuction': '0',
                 'ExcludePricePoint2': '1',
-                'AtLast': '0'
+                'AtLast': '1'
             }
         }
         super().change_parameters(base_parameters)
