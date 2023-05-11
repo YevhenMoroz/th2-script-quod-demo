@@ -64,6 +64,6 @@ class QAP_T7386(TestCase):
         self.java_api_manager.get_last_message(ORSMessageType.RemoveOrdersFromOrderListReply.value).get_parameters()[
             JavaApiFields.RemoveOrdersFromOrderListReplyBlock.value]
         self.java_api_manager.compare_values(
-            {'FreeNotes': f'Runtime error (OrderList {list_id} is in a terminal stat)'},
+            {'FreeNotes': f'Runtime error (OrderList {list_id} is in a terminal state)'},
             remove_ords_from_list_reply, 'Check error in RemoveOrdersFromOrderListReply')
         # endregion
