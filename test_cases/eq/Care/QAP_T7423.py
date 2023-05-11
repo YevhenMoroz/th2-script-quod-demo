@@ -60,8 +60,8 @@ class QAP_T7423(TestCase):
                                                                                             float(self.price),
                                                                                             int(self.qty_dma),
                                                                                             delay=0)
-            response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
-            exec_id = response[5].get_parameters()['ExecID']
+            self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
+            exec_id =self.fix_manager.get_last_message("ExecutionReport", "EV").get_parameters()['ExecID']
         except Exception as e:
             logger.error(f'{e}')
 

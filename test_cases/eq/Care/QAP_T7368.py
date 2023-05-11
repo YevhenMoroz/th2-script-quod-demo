@@ -84,7 +84,8 @@ class QAP_T7368(TestCase):
 
         # region Step 2 - Splitting Care order and checking allocation accounts for a child order
         self.submit_request.set_default_child_dma(ord_id)
-        self.submit_request.update_fields_in_component("NewOrderSingleBlock", {"ExecutionPolicy": "DMA"})
+        self.submit_request.update_fields_in_component("NewOrderSingleBlock", {"ExecutionPolicy": "DMA",
+                                                                               "AccountGroupID": self.client})
         self.submit_request.remove_parameters(["CDOrdAssignInstructionsBlock"])
         self.submit_request.remove_fields_from_component("NewOrderSingleBlock", ["BookingType"])
         responses = self.java_api_manager.send_message_and_receive_response(self.submit_request)

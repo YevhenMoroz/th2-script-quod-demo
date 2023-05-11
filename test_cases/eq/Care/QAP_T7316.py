@@ -119,7 +119,7 @@ class QAP_T7316(TestCase):
         # region Step 2 - Care Split Care order by User1
         self.submit_request.set_default_child_care(
             parent_id=parent_ord_id,
-            desk=self.environment.get_list_fe_environment()[0].desk_ids[1],
+            desk=self.environment.get_list_fe_environment()[0].desk_ids[0],
             recipient=self.environment.get_list_fe_environment()[0].user_1,
             role=SubmitRequestConst.USER_ROLE_1.value,
         )

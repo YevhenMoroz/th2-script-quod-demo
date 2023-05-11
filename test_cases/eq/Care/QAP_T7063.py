@@ -48,7 +48,7 @@ class QAP_T7063(TestCase):
         # region precondition : Create CO order , accept its and split its
 
         # part 1: Create and Accept CO order
-        desk = self.environment.get_list_fe_environment()[0].desk_ids[1]
+        desk = self.environment.get_list_fe_environment()[0].desk_ids[0]
         self.new_order_single.set_default_care_limit()
         self.new_order_single.update_fields_in_component('NewOrderSingleBlock', {'ClientAccountGroupID': self.client})
         qty = self.new_order_single.get_parameters()[JavaApiFields.NewOrderSingleBlock.value][
