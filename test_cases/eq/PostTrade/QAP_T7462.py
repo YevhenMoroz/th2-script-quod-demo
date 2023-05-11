@@ -45,7 +45,7 @@ class QAP_T7462(TestCase):
         account1 = self.data_set.get_account_by_name("client_pt_8_acc_1")
         venue_client = self.data_set.get_venue_client_names_by_name("client_pt_8_venue_1")
         mic = self.data_set.get_mic_by_name("mic_1")
-        price = "10"
+        price = str(random.randint(10, 1000))
         change_params = {'Account': client, "Price": price}
         nos = FixMessageNewOrderSingleOMS(self.data_set).set_fix42_dma_limit().change_parameters(change_params)
         qty = nos.get_parameters()["OrderQty"]
@@ -63,7 +63,9 @@ class QAP_T7462(TestCase):
         # region Step 1
         price2 = str(float(price) + random.randint(10, 1000))
         nos.change_parameters({"Price": price2})
+        nos.print_parameters()
         self.fix_alloc.set_fix42_preliminary(nos, account1)
+        self.fix_alloc.print_parameters()
         self.fix_manager42.send_message_and_receive_response_fix_standard(self.fix_alloc)
         alloc_ack = self.fix_manager42.get_last_message(FIXMessageType.AllocationACK.value).get_parameters()
         self.fix_manager42.compare_values({"AllocStatus": "3"}, alloc_ack, "Step 1")
@@ -71,6 +73,7 @@ class QAP_T7462(TestCase):
         # region Step 2
         order_id = response[0].get_parameters()['OrderID']
         self.all_instr.set_default_book(order_id)
+        self.all_instr.update_fields_in_component("AllocationInstructionBlock", {"AvgPx": price})
         self.all_instr.update_fields_in_component("AllocationInstructionBlock",
                                                   {"InstrID": self.data_set.get_instrument_id_by_name(
                                                       "instrument_2"),
