@@ -143,6 +143,10 @@ class QAP_T11304(TestCase):
         # region Send MarketDate
         self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send trading phase - Open", self.test_id))
 
+        self.snapshot_full_refresh = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data()\
+            .update_MDReqID(self.listing_id, self.fix_env1.feed_handler)
+        self.fix_manager_feed_handler.send_message(fix_message=self.snapshot_full_refresh)
+
         self.incremental_refresh = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative() \
             .update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', 0) \
             .update_MDReqID(self.listing_id, self.fix_env1.feed_handler) \
