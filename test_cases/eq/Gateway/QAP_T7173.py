@@ -160,6 +160,7 @@ class QAP_T7173(TestCase):
             'ClOrdID': cl_ord_id,
             'OrderID': '*'
         }], 'AllocAccount': sec_acc_1,
+            'ConfirmTransType': '0',
             'CommissionData': {
                 'Commission': commission
             },
@@ -173,13 +174,13 @@ class QAP_T7173(TestCase):
             'SettlDate', 'AllocID', 'Currency', 'NetMoney',
             'MatchStatus', 'ConfirmStatus', 'TradeDate',
             'NoParty', 'AllocInstructionMiscBlock1', 'tag5120',
-            'CpctyConfGrp', 'ReportedPx', 'ConfirmTransType', 'Instrument',
+            'CpctyConfGrp', 'ReportedPx', 'Instrument',
             'GrossTradeAmt', 'ConfirmID',
             'MiscFeeCurr', 'MiscFeeType', 'CommCurrency', 'CommissionType', 'OrderAvgPx', 'tag11245'
         ]
         confirmation_report = FixMessageConfirmationReportOMS(self.data_set, change_parameters)
         self.fix_verifier.check_fix_message_fix_standard(confirmation_report,
-                                                         ['AllocAccount', 'NoOrders'],
+                                                         ['ConfirmTransType', 'AllocAccount', 'NoOrders'],
                                                          ignored_fields=list_of_ignored_fields)
         # endregion
 
