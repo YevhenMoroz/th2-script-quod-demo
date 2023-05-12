@@ -21,6 +21,7 @@ class QAP_T3832(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.venue_act_group_name_bic = "test"
+        self.name = 'DEMO'
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -30,6 +31,8 @@ class QAP_T3832(CommonTestCase):
         side_menu.open_clients_page()
         time.sleep(2)
         page = ClientsPage(self.web_driver_container)
+        page.set_name(self.name)
+        time.sleep(1)
         page.click_on_more_actions()
         time.sleep(2)
         page.click_on_edit()

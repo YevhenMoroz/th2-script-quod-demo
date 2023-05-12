@@ -56,6 +56,7 @@ class QAP_T3851(CommonTestCase):
             time.sleep(1)
             common_page.click_on_user_icon()
             common_page.click_on_logout()
+            time.sleep(2)
             login_page = LoginPage(self.web_driver_container)
             login_page.login_to_web_admin(self.login, self.password)
             side_menu = SideMenu(self.web_driver_container)

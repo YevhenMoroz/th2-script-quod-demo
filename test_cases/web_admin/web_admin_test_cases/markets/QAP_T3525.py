@@ -33,6 +33,7 @@ class QAP_T3525(CommonTestCase):
         self.new_symbol = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.lookup_symbol = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.instr_symbol = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        self.security_exchange = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.instr_type = self.data_set.get_instr_type("instr_type_1")
 
         self.venue = self.data_set.get_venue_by_name("venue_3")
@@ -40,7 +41,7 @@ class QAP_T3525(CommonTestCase):
 
         self.trading_phase = '200'
         self.trading_status = 'Trading'
-        self.trading_session = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        self.trading_session = ''.join(random.sample((string.ascii_uppercase + string.digits) * 4, 4))
         self.external_trading_status = 'Trading'
 
     def precondition(self):
@@ -56,6 +57,7 @@ class QAP_T3525(CommonTestCase):
         values_tab.set_lookup_symbol(self.lookup_symbol)
         values_tab.set_instr_symbol(self.instr_symbol)
         values_tab.set_instr_type(self.instr_type)
+        values_tab.set_security_exchange(self.security_exchange)
 
         attachment_tab = ListingsAttachmentSubWizard(self.web_driver_container)
         attachment_tab.set_venue(self.venue)

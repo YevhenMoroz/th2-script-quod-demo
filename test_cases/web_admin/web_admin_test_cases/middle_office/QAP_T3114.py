@@ -40,12 +40,13 @@ class QAP_T3114(CommonTestCase):
 
             page = MainPage(self.web_driver_container)
             page.click_on_new()
+            time.sleep(1)
             wizard = AllocationMatchingProfilesWizard(self.web_driver_container)
             wizard.set_name(self.name)
             wizard.set_avg_price_precision(self.avg_price_precision)
             wizard.set_tolerance_currency(self.tolerance_currency)
             wizard.set_net_tolerance_currency(self.net_tolerance_currency)
-            wizard.click_on_client_commission()
+            wizard.click_on_client_commission_checkbox()
             wizard.click_on_save_changes()
 
             page.set_name(self.name)
@@ -56,7 +57,7 @@ class QAP_T3114(CommonTestCase):
             expected_data = [self.name, self.avg_price_precision, self.tolerance_currency, self.net_tolerance_currency,
                              "True"]
             actual_data = [wizard.get_name(), wizard.get_avg_price_precision(), wizard.get_tolerance_currency(),
-                           wizard.get_net_tolerance_currency(), str(wizard.is_client_commission_selected())]
+                           wizard.get_net_tolerance_currency(), str(wizard.is_client_commission_checkbox_selected())]
 
             self.verify("New Allocation matching profile created and contains saved data", expected_data, actual_data)
 

@@ -80,6 +80,7 @@ class QAP_T3702(CommonTestCase):
             wizard.click_on_save_changes()
             time.sleep(2)
             main_page.set_institution_name(self.new_institution_name)
+            main_page.set_lei(self.lei)
             time.sleep(1)
             self.verify("Cloned Instrument is created and displayed", True,
                         main_page.is_searched_institution_found(self.new_institution_name))
@@ -102,7 +103,7 @@ class QAP_T3702(CommonTestCase):
             time.sleep(2)
             actual_result = False
             for i in main_page.get_csv_context():
-                if self.institution_name in i.values():
+                if self.new_institution_name in i.values():
                     actual_result = True
 
             self.verify("Download CSV button is worked", True, actual_result)

@@ -53,6 +53,7 @@ class QAP_T3753(CommonTestCase):
             assignment_tab.set_desk(self.desk)
             wizard = ClientsWizard(self.web_driver_container)
             wizard.click_on_save_changes()
+            time.sleep(1)
 
             main_page.set_name(self.name)
             time.sleep(1)

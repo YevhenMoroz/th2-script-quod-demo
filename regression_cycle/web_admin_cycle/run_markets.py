@@ -3,6 +3,7 @@ import traceback
 from datetime import timedelta
 
 from test_framework.configurations.component_configuration import ComponentConfiguration
+from test_framework.db_wrapper.db_manager import DBManager
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from custom import basic_custom_actions as bca
 
@@ -94,6 +95,7 @@ class RunMarkets:
     def __init__(self, root_report_id):
         self.second_lvl_id = bca.create_event("WA_Markets", root_report_id)
         self.web_driver_container = None
+        self.db_manager = None
 
     def execute(self):
         try:
@@ -101,6 +103,8 @@ class RunMarkets:
             self.web_driver_container = WebDriverContainer(
                 configuration.environment.get_list_web_admin_environment()[0].web_browser,
                 configuration.environment.get_list_web_admin_environment()[0].site_url)
+            self.db_manager = DBManager(configuration.environment.get_list_data_base_environment()[0])
+
             start_time = time.monotonic()
 
             QAP_T3115(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
@@ -152,7 +156,7 @@ class RunMarkets:
             QAP_T3545(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3550(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                      environment=configuration.environment).run()
+                      environment=configuration.environment, db_manager=self.db_manager).run()
             QAP_T3573(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3574(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,

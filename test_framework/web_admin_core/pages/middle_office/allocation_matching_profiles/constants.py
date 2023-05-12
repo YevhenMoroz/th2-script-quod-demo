@@ -31,27 +31,29 @@ class Constants:
         CLEAR_CHANGES_BUTTON = "//*[text()='Clear Changes']"
         CLOSE_WIZARD = "//*[@data-name='close']"
         REVERT_CHANGES = "//*[text()='Revert Changes']"
+        DOWNLOAD_PDF_BUTTON = '//*[@nbtooltip="Download PDF"]//*[@data-name="download"]'
         OK_BUTTON = '//*[text()="Ok"]'
         CANCEL_BUTTON = '//*[text()="Cancel"]'
         INCORRECT_OR_MISSING_VALUES = "//*[text()='Incorrect or missing values']"
-    # Wizard
 
-    WIZARD_FIX_MATCHING_PROFILE_NAME = '//*[@formcontrolname="blockMatchingProfileName"]'
-    WIZARD_AVG_PRICE_PRECISION  = '//*[@formcontrolname="avgPxPrecision"]'
-    WIZARD_GROSS_TOLERANCE  = '//*[@formcontrolname="grossTradeAmtTolerance"]'
-    WIZARD_NET_TOLERANCE  = '//*[@formcontrolname="netMoneyTolerance"]'
-    WIZARD_TOLERANCE_CURRENCY  = '//*[@id="grossTradeAmtToleranceCurr"]'
-    WIZARD_NET_TOLERANCE_CURRENCY  = '//*[@id="netMoneyToleranceCurr"]'
+    class ValuesTab:
+        NAME = '//*[@formcontrolname="blockMatchingProfileName"]'
 
+    class MatchingFieldsTab:
+        AVG_PRICE_PRECISION = '//*[@formcontrolname="avgPxPrecision"]'
+        GROSS_TOLERANCE = '//*[@formcontrolname="grossTradeAmtTolerance"]'
+        TOLERANCE_CURRENCY = '//*[@id="grossTradeAmtToleranceCurr"]'
+        NET_TOLERANCE = '//*[@formcontrolname="netMoneyTolerance"]'
+        NET_TOLERANCE_CURRENCY = '//*[@id="netMoneyToleranceCurr"]'
 
-    WIZARD_GROSS_AMOUNT_CHECKBOX = '//*[text()="Gross Amount"]/preceding-sibling::span'
-    WIZARD_NET_AMOUNT_CHECKBOX = '//*[text()="Net Amount"]/preceding-sibling::span'
-    WIZARD_SETTL_AMOUNT_CHECKBOX = '//*[text()="Settl Amount"]/preceding-sibling::span'
-    WIZARD_CLIENT_LEI_CHECKBOX = '//*[text()="Client LEI"]/preceding-sibling::span'
-    WIZARD_SETTL_DATE_CHECKBOX = '//*[text()="Settl Date"]/preceding-sibling::span'
-    WIZARD_CLIENT_BIC_CHECKBOX = '//*[text()="Client BIC"]/preceding-sibling::span'
-    WIZARD_CLIENT_COMMISSION_CHECKBOX = '//*[text()="Client Commission"]/preceding-sibling::span'
-    WIZARD_TRADE_DATE_CHECKBOX = '//*[text()="Trade Date"]/preceding-sibling::span'
+        GROSS_AMOUNT_CHECKBOX = '//*[normalize-space()="Gross Amount"]/preceding-sibling::span'
+        NET_AMOUNT_CHECKBOX = '//*[normalize-space()="Net Amount"]/preceding-sibling::span'
+        SETTL_AMOUNT_CHECKBOX = '//*[normalize-space()="Settl Amount"]/preceding-sibling::span'
+        CLIENT_LEI_CHECKBOX = '//*[normalize-space()="Client LEI"]/preceding-sibling::span'
+        SETTL_DATE_CHECKBOX = '//*[normalize-space()="Settl Date"]/preceding-sibling::span'
+        CLIENT_BIC_CHECKBOX = '//*[normalize-space()="Client BIC"]/preceding-sibling::span'
+        CLIENT_COMMISSION_CHECKBOX = '//*[normalize-space()="Client Commission"]/preceding-sibling::span'
+        TRADE_DATE_CHECKBOX = '//*[normalize-space()="Trade Date"]/preceding-sibling::span'
 
 
 

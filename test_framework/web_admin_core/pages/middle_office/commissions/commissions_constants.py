@@ -61,7 +61,7 @@ class CommissionsConstants:
     VALUES_TAB_VENUE_LIST_XPATH = '//*[normalize-space()="Dimensions"]//..//*[@id="venueList"]'
 
     # commission profiles
-    COMMISSION_PROFILES_COMMISSION_PROFILE_NAME_FILTER_XPATH = '//*[normalize-space(text()) = "Commission Profile Name"]//ancestor::client-commission-commission-profile//*[@placeholder="Filter"]'
+    COMMISSION_PROFILES_COMMISSION_PROFILE_NAME_FILTER_XPATH = '//*[normalize-space(text()) = "Commission Profile Name"]//ancestor::thead//*[@placeholder="Filter"]'
     COMMISSION_PROFILES_COMMISSION_PROFILE_NAME_XPATH = "//*[@placeholder = 'Commission Profile Name *']"
     COMMISSION_PROFILES_PLUS_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@nbtooltip="Add"]'
     COMMISSION_PROFILES_CHECKMARK_BUTTON_XPATH = '//*[@class="cp-instr-table-body"]//*[@data-name="checkmark"]'

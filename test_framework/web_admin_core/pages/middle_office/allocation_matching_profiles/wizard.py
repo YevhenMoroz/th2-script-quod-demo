@@ -11,110 +11,106 @@ class AllocationMatchingProfilesWizard(CommonPage):
         super().__init__(web_driver_container)
 
     def click_on_close(self):
-        self.find_by_xpath(Constants.CLOSE_WIZARD_XPATH).click()
+        self.find_by_xpath(Constants.Wizard.CLOSE_WIZARD).click()
 
     def click_on_save_changes(self):
-        self.find_by_xpath(Constants.SAVE_CHANGES_BUTTON_XPATH).click()
+        self.find_by_xpath(Constants.Wizard.SAVE_CHANGES_BUTTON).click()
 
     def click_on_revert_changes(self):
-        self.find_by_xpath(Constants.REVERT_CHANGES_XPATH).click()
-
-    def click_on_go_back(self):
-        self.find_by_xpath(Constants.GO_BACK_BUTTON_XPATH).click()
+        self.find_by_xpath(Constants.Wizard.REVERT_CHANGES).click()
 
     def click_download_pdf_entity_button_and_check_pdf(self, value):
         self.clear_download_directory()
-        self.find_by_xpath(Constants.DOWNLOAD_PDF_BUTTON_XPATH).click()
+        self.find_by_xpath(Constants.Wizard.DOWNLOAD_PDF_BUTTON).click()
         time.sleep(2)
         return self.is_pdf_contains_value(value)
 
     def is_incorrect_or_missing_value_message_displayed(self):
         if self.find_by_xpath(
-                Constants.INCORRECT_OR_MISSING_VALUES_XPATH).text == "Incorrect or missing values":
+                Constants.Wizard.INCORRECT_OR_MISSING_VALUES).text == "Incorrect or missing values":
             return True
-        else:
-            return False
+        return False
 
     def set_name(self, value):
-        self.set_text_by_xpath(Constants.WIZARD_FIX_MATCHING_PROFILE_NAME_XPATH, value)
+        self.set_text_by_xpath(Constants.ValuesTab.NAME, value)
 
     def get_name(self):
-        return self.get_text_by_xpath(Constants.WIZARD_FIX_MATCHING_PROFILE_NAME_XPATH)
+        return self.get_text_by_xpath(Constants.ValuesTab.NAME)
 
     def set_avg_price_precision(self, value):
-        self.set_text_by_xpath(Constants.WIZARD_AVG_PRICE_PRECISION_XPATH, value)
+        self.set_text_by_xpath(Constants.MatchingFieldsTab.AVG_PRICE_PRECISION, value)
 
     def get_avg_price_precision(self):
-        return self.get_text_by_xpath(Constants.WIZARD_AVG_PRICE_PRECISION_XPATH)
+        return self.get_text_by_xpath(Constants.MatchingFieldsTab.AVG_PRICE_PRECISION)
 
     def set_gross_tolerance(self, value):
-        self.set_text_by_xpath(Constants.WIZARD_GROSS_TOLERANCE_XPATH, value)
+        self.set_text_by_xpath(Constants.MatchingFieldsTab.GROSS_TOLERANCE, value)
 
     def get_gross_tolerance(self):
-        return self.get_text_by_xpath(Constants.WIZARD_GROSS_TOLERANCE_XPATH)
+        return self.get_text_by_xpath(Constants.MatchingFieldsTab.GROSS_TOLERANCE)
 
     def set_net_tolerance(self, value):
-        self.set_text_by_xpath(Constants.WIZARD_GROSS_TOLERANCE_XPATH, value)
+        self.set_text_by_xpath(Constants.MatchingFieldsTab.NET_TOLERANCE, value)
 
     def get_net_tolerance(self):
-        return self.get_text_by_xpath(Constants.WIZARD_GROSS_TOLERANCE_XPATH)
+        return self.get_text_by_xpath(Constants.MatchingFieldsTab.NET_TOLERANCE)
 
     def set_tolerance_currency(self, value):
-        self.set_combobox_value(Constants.WIZARD_TOLERANCE_CURRENCY_XPATH, value)
+        self.set_combobox_value(Constants.MatchingFieldsTab.TOLERANCE_CURRENCY, value)
 
     def get_tolerance_currency(self):
-        return self.get_text_by_xpath(Constants.WIZARD_TOLERANCE_CURRENCY_XPATH)
+        return self.get_text_by_xpath(Constants.MatchingFieldsTab.TOLERANCE_CURRENCY)
 
     def set_net_tolerance_currency(self, value):
-        self.set_combobox_value(Constants.WIZARD_NET_TOLERANCE_CURRENCY_XPATH, value)
+        self.set_combobox_value(Constants.MatchingFieldsTab.NET_TOLERANCE_CURRENCY, value)
 
     def get_net_tolerance_currency(self):
-        return self.get_text_by_xpath(Constants.WIZARD_NET_TOLERANCE_CURRENCY_XPATH)
+        return self.get_text_by_xpath(Constants.MatchingFieldsTab.NET_TOLERANCE_CURRENCY)
 
-    def click_on_gross_amount(self):
-        self.find_by_xpath(Constants.WIZARD_GROSS_AMOUNT_CHECKBOX_XPATH).click()
+    def click_on_gross_amount_checkbox(self):
+        self.find_by_xpath(Constants.MatchingFieldsTab.GROSS_AMOUNT_CHECKBOX).click()
 
-    def click_on_net_amount(self):
-        self.find_by_xpath(Constants.WIZARD_NET_AMOUNT_CHECKBOX_XPATH).click()
+    def click_on_net_amount_checkbox(self):
+        self.find_by_xpath(Constants.MatchingFieldsTab.NET_AMOUNT_CHECKBOX).click()
 
-    def click_on_settl_amount(self):
-        self.find_by_xpath(Constants.WIZARD_SETTL_AMOUNT_CHECKBOX_XPATH).click()
+    def click_on_settl_amount_checkbox(self):
+        self.find_by_xpath(Constants.MatchingFieldsTab.SETTL_AMOUNT_CHECKBOX).click()
 
-    def click_in_client_lei(self):
-        self.find_by_xpath(Constants.WIZARD_CLIENT_LEI_CHECKBOX_XPATH).click()
+    def click_in_client_lei_checkbox(self):
+        self.find_by_xpath(Constants.MatchingFieldsTab.CLIENT_LEI_CHECKBOX).click()
 
-    def click_on_settl_date(self):
-        self.find_by_xpath(Constants.WIZARD_SETTL_DATE_CHECKBOX_XPATH).click()
+    def click_on_settl_date_checkbox(self):
+        self.find_by_xpath(Constants.MatchingFieldsTab.SETTL_DATE_CHECKBOX).click()
 
-    def click_on_client_bic(self):
-        self.find_by_xpath(Constants.WIZARD_CLIENT_BIC_CHECKBOX_XPATH).click()
+    def click_on_client_bic_checkbox(self):
+        self.find_by_xpath(Constants.MatchingFieldsTab.CLIENT_BIC_CHECKBOX).click()
 
-    def click_on_client_commission(self):
-        self.find_by_xpath(Constants.WIZARD_CLIENT_COMMISSION_CHECKBOX_XPATH).click()
+    def click_on_client_commission_checkbox(self):
+        self.find_by_xpath(Constants.MatchingFieldsTab.CLIENT_COMMISSION_CHECKBOX).click()
 
-    def click_on_trade_date(self):
-        self.find_by_xpath(Constants.WIZARD_TRADE_DATE_CHECKBOX_XPATH).click()
+    def click_on_trade_date_checkbox(self):
+        self.find_by_xpath(Constants.MatchingFieldsTab.TRADE_DATE_CHECKBOX).click()
 
-    def is_gross_amount_selected(self):
-        return self.is_checkbox_selected(Constants.WIZARD_GROSS_AMOUNT_CHECKBOX_XPATH)
+    def is_gross_amount_checkbox_selected(self):
+        return self.is_checkbox_selected(Constants.MatchingFieldsTab.GROSS_AMOUNT_CHECKBOX)
 
-    def is_net_amount_selected(self):
-        return self.is_checkbox_selected(Constants.WIZARD_NET_AMOUNT_CHECKBOX_XPATH)
+    def is_net_amount_checkbox_selected(self):
+        return self.is_checkbox_selected(Constants.MatchingFieldsTab.NET_AMOUNT_CHECKBOX)
 
-    def is_settl_amount_selected(self):
-        return self.is_checkbox_selected(Constants.WIZARD_SETTL_AMOUNT_CHECKBOX_XPATH)
+    def is_settl_amount_checkbox_selected(self):
+        return self.is_checkbox_selected(Constants.MatchingFieldsTab.SETTL_AMOUNT_CHECKBOX)
 
-    def is_client_lei_selected(self):
-        return self.is_checkbox_selected(Constants.WIZARD_CLIENT_LEI_CHECKBOX_XPATH)
+    def is_client_lei_checkbox_selected(self):
+        return self.is_checkbox_selected(Constants.MatchingFieldsTab.CLIENT_LEI_CHECKBOX)
 
-    def is_settl_date_selected(self):
-        return self.is_checkbox_selected(Constants.WIZARD_SETTL_DATE_CHECKBOX_XPATH)
+    def is_settl_date_checkbox_selected(self):
+        return self.is_checkbox_selected(Constants.MatchingFieldsTab.SETTL_DATE_CHECKBOX)
 
-    def is_client_bic_selected(self):
-        return self.is_checkbox_selected(Constants.WIZARD_CLIENT_BIC_CHECKBOX_XPATH)
+    def is_client_bic_checkbox_selected(self):
+        return self.is_checkbox_selected(Constants.MatchingFieldsTab.CLIENT_BIC_CHECKBOX)
 
-    def is_client_commission_selected(self):
-        return self.is_checkbox_selected(Constants.WIZARD_CLIENT_COMMISSION_CHECKBOX_XPATH)
+    def is_client_commission_checkbox_selected(self):
+        return self.is_checkbox_selected(Constants.MatchingFieldsTab.CLIENT_COMMISSION_CHECKBOX)
 
-    def is_trade_date_selected(self):
-        return self.is_checkbox_selected(Constants.WIZARD_TRADE_DATE_CHECKBOX_XPATH)
+    def is_trade_date_checkbox_selected(self):
+        return self.is_checkbox_selected(Constants.MatchingFieldsTab.TRADE_DATE_CHECKBOX)

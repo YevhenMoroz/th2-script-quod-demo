@@ -87,6 +87,7 @@ class QAP_T3547(CommonTestCase):
             self.verify("Client List wizard has been open", True, client_list_wizard.is_client_list_wizard_opened())
             side_menu = SideMenu(self.web_driver_container)
             client_list_wizard.click_on_revert_changes()
+            time.sleep(1)
             side_menu.open_clients_page()
             time.sleep(1)
             client_page.set_name(self.clients[1])

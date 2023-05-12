@@ -49,7 +49,7 @@ class QAP_T3979(CommonTestCase):
         tick_size_points.click_on_checkmark_at_tick_size_points()
         tick_size_profile.click_on_checkmark()
         side_menu.click_on_venues_tab()
-        wizard.click_on_no_button()
+        #wizard.click_on_no_button()
 
     def test_context(self):
         try:

@@ -34,6 +34,7 @@ class QAP_T3347(CommonTestCase):
         self.new_symbol = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.lookup_symbol = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.instr_symbol = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
+        self.security_exchange = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.instr_type = self.data_set.get_instr_type("instr_type_1")
 
         self.venue = self.data_set.get_venue_by_name("venue_3")
@@ -52,6 +53,7 @@ class QAP_T3347(CommonTestCase):
         values_tab.set_lookup_symbol(self.lookup_symbol)
         values_tab.set_instr_symbol(self.instr_symbol)
         values_tab.set_instr_type(self.instr_type)
+        values_tab.set_security_exchange(self.security_exchange)
 
         attachment_tab = ListingsAttachmentSubWizard(self.web_driver_container)
         attachment_tab.set_venue(self.venue)
@@ -94,6 +96,7 @@ class QAP_T3347(CommonTestCase):
             common_act.click_on_info_error_message_pop_up()
             common_act.click_on_user_icon()
             common_act.click_on_logout()
+            time.sleep(2)
 
             login_page = LoginPage(self.web_driver_container)
             login_page.login_to_web_admin(self.login, self.password)

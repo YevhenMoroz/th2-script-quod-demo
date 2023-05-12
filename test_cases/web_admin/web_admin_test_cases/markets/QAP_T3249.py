@@ -24,7 +24,7 @@ class QAP_T3249(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
 
-        self.lookup_symbol = 'a'
+        self.lookup_symbol = 'us'
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

@@ -64,6 +64,7 @@ class QAP_T3903(CommonTestCase):
             users_login_wizard.set_password_expiration(self.password_expiration)
             users_wizard = UsersWizard(self.web_driver_container)
             users_wizard.click_on_save_changes()
+            time.sleep(1)
             users_page.set_user_id(self.user_id)
             time.sleep(1)
             self.verify("Is password expiry date contains value", self.password_expiration,

@@ -126,6 +126,7 @@ class QAP_T3635(CommonTestCase):
         time.sleep(1)
         common_act.click_on_logout()
         common_act.refresh_page(True)
+        time.sleep(2)
 
     def test_context(self):
         try:

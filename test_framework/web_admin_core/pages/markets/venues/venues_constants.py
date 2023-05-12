@@ -163,11 +163,11 @@ class VenuesConstants:
     HOLIDAYS_CALENDAR_TAB_DESCRIPTION_FILTER_XPATH = '//*[@class="holidayDescription ng2-smart-th ng-star-inserted"]//input'
 
     # --Trading phase profiles sub tab--
-    TRADING_PHASE_PROFILES_TAB_PLUS_BUTTON_XPATH = '//*[text()="Trading Phase Profiles "]/ancestor::nb-card//nb-card-body//*[@data-name="plus"]'
-    TRADING_PHASE_PROFILES_TAB_CHECKMARK_BUTTON_XPATH = '//*[text()="Trading Phase Profiles "]/ancestor::nb-card//nb-card-body//*[@data-name="checkmark"]'
-    TRADING_PHASE_PROFILES_TAB_CLOSE_BUTTON_XPATH = '//*[text()="Trading Phase Profiles "]/ancestor::nb-card//nb-card-body//*[@data-name="close"]'
-    TRADING_PHASE_PROFILES_TAB_EDIT_BUTTON_XPATH = '//*[text()="Trading Phase Profiles "]/ancestor::nb-card//nb-card-body//*[@data-name="edit"]'
-    TRADING_PHASE_PROFILES_TAB_DELETE_BUTTON_XPATH = '//*[text()="Trading Phase Profiles "]/ancestor::nb-card//nb-card-body//*[@data-name="trash-2"]'
+    TRADING_PHASE_PROFILES_TAB_PLUS_BUTTON_XPATH = '//*[normalize-space()="TradingPhaseProfile Desc"]//ancestor::p-table//*[@nbtooltip="Add"]'
+    TRADING_PHASE_PROFILES_TAB_CHECKMARK_BUTTON_XPATH = '//*[normalize-space()="TradingPhaseProfile Desc"]//ancestor::p-table//*[@data-name="checkmark"]'
+    TRADING_PHASE_PROFILES_TAB_CLOSE_BUTTON_XPATH = '//*[normalize-space()="TradingPhaseProfile Desc"]//ancestor::p-table//*[@data-name="close"]'
+    TRADING_PHASE_PROFILES_TAB_EDIT_BUTTON_XPATH = '//*[normalize-space()="TradingPhaseProfile Desc"]//ancestor::p-table//*[@data-name="edit"]'
+    TRADING_PHASE_PROFILES_TAB_DELETE_BUTTON_XPATH = '//*[normalize-space()="TradingPhaseProfile Desc"]//ancestor::p-table//*[@data-name="trash-2"]'
 
     TRADING_PHASE_PROFILES_TAB_TRADING_PHASE_PROFILE_DESC_XPATH = '//*[@placeholder="TradingPhaseProfile Desc *"]'
     TRADING_PHASE_PROFILES_TAB_TRADING_PHASE_PROFILE_DESC_FILTER_XPATH = '//*[normalize-space()="TradingPhaseProfile Desc"]//ancestor::thead//*[@placeholder="Filter"]'

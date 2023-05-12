@@ -93,6 +93,7 @@ class QAP_T3633(CommonTestCase):
         common_act.click_on_info_error_message_pop_up()
         common_act.click_on_user_icon()
         common_act.click_on_logout()
+        time.sleep(2)
 
     def test_context(self):
         try:

@@ -31,6 +31,7 @@ class QAP_T3240(CommonTestCase):
         self.lookup_symbol = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.instr_symbol = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.instr_type = 'MultiLeg'
+        self.security_exchange = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
 
         self.venue = self.data_set.get_venue_by_name("venue_3")
         self.currency = self.data_set.get_currency_by_name("currency_1")
@@ -69,6 +70,13 @@ class QAP_T3240(CommonTestCase):
             wizard.click_on_save_changes()
             time.sleep(0.5)
             self.verify("Listing not save, filled: Symbol, Lookup Symbol, Inst Symbol, Instr Type", True,
+                        wizard.is_error_message_displayed())
+
+            values_tab.set_security_exchange(self.security_exchange)
+            wizard.click_on_save_changes()
+            time.sleep(0.5)
+            self.verify("Listing not save, filled: Symbol, Lookup Symbol, Inst Symbol, Instr Type, Security Exchange",
+                        True,
                         wizard.is_error_message_displayed())
 
             attachment_tab.set_venue(self.venue)

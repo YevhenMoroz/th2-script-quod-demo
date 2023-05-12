@@ -249,7 +249,7 @@ class WebAdminRoute(Enum):
     route_1 = "ESFSSO"
     route_2 = "ESFIXED"
     route_3 = "ESSIMXETRA"
-    route_4 = "ESDEMO"
+    route_4 = "ESSIMCUR"
 
 
 class WebAdminClearingAccountType(Enum):
@@ -268,7 +268,7 @@ class WebAdminAccountIdSource(Enum):
 
 
 class WebAdminDefaultRoute(Enum):
-    default_route_1 = "ESDEMO"
+    default_route_1 = "ESSIMCUR"
     default_route_2 = "ESFSSO"
 
 

@@ -21,9 +21,11 @@ from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTes
 
 class QAP_T3550(CommonTestCase):
 
-    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
+    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None,
+                 db_manager=None):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
+        self.db_manager = db_manager
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.listing = 'DUMMY'
@@ -35,6 +37,7 @@ class QAP_T3550(CommonTestCase):
         self.venue = self.data_set.get_venue_by_name('venue_1')
         self.currency = self.data_set.get_currency_by_name('currency_1')
 
+        self.new_linting = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.new_symbol = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.new_lookup_symbol = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.new_instr_symbol = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
@@ -42,58 +45,54 @@ class QAP_T3550(CommonTestCase):
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
-        login_page.login_to_web_admin(self.login, self.password)
-        time.sleep(2)
-        side_menu = SideMenu(self.web_driver_container)
-        side_menu.open_listings_page()
         main_page = ListingsPage(self.web_driver_container)
-        main_page.load_listing_from_global_filter(self.listing)
+        side_menu = SideMenu(self.web_driver_container)
+        attachment_tab = ListingsAttachmentSubWizard(self.web_driver_container)
+        currency_tab = ListingsCurrencySubWizard(self.web_driver_container)
+        values_tab = ListingsValuesSubWizard(self.web_driver_container)
+        wizard = ListingsWizard(self.web_driver_container)
 
-        if not main_page.is_searched_listing_found(self.instr_symbol):
+        login_page.login_to_web_admin(self.login, self.password)
+        side_menu.open_listings_page()
+
+        self.db_manager.my_db.execute("SELECT INSTRSYMBOL FROM INSTRUMENT WHERE DUMMY = 'Y'")
+        dummy_listing = [_[0] for _ in self.db_manager.my_db]
+        if len(dummy_listing) == 0:
             main_page.click_on_new()
-            time.sleep(2)
-            values_tab = ListingsValuesSubWizard(self.web_driver_container)
             values_tab.set_symbol(self.symbol)
             values_tab.set_lookup_symbol(self.lookup_symbol)
             values_tab.set_instr_symbol(self.instr_symbol)
             values_tab.set_instr_type(self.instr_type)
             values_tab.set_security_exchange(self.security_exchange)
             values_tab.click_on_dummy()
-            attachment_tab = ListingsAttachmentSubWizard(self.web_driver_container)
             attachment_tab.set_venue(self.venue)
-            currency_tab = ListingsCurrencySubWizard(self.web_driver_container)
             currency_tab.set_currency(self.currency)
-            wizard = ListingsWizard(self.web_driver_container)
             wizard.click_on_save_changes()
-            time.sleep(2)
-            main_page.load_listing_from_global_filter(self.listing)
-            time.sleep(2)
-
-        main_page.click_on_more_actions()
-        time.sleep(1)
-        main_page.click_on_clone()
-        time.sleep(2)
+            time.sleep(1)
 
     def test_context(self):
+        values_tab = ListingsValuesSubWizard(self.web_driver_container)
+        attachment_tab = ListingsAttachmentSubWizard(self.web_driver_container)
+        currency_tab = ListingsCurrencySubWizard(self.web_driver_container)
+        main_page = ListingsPage(self.web_driver_container)
+        wizard = ListingsWizard(self.web_driver_container)
+
         try:
             self.precondition()
 
-            values_tab = ListingsValuesSubWizard(self.web_driver_container)
+            main_page.click_on_new()
             values_tab.set_symbol(self.new_symbol)
             values_tab.set_lookup_symbol(self.new_lookup_symbol)
             values_tab.set_instr_symbol(self.new_instr_symbol)
             values_tab.set_instr_type(self.instr_type)
             values_tab.set_security_exchange(self.new_security_exchange)
-            attachment_tab = ListingsAttachmentSubWizard(self.web_driver_container)
+            values_tab.click_on_dummy()
             attachment_tab.set_venue(self.venue)
-            currency_tab = ListingsCurrencySubWizard(self.web_driver_container)
             currency_tab.set_currency(self.currency)
-            wizard = ListingsWizard(self.web_driver_container)
             wizard.click_on_save_changes()
             time.sleep(2)
 
-            self.verify("Second DUMMY client is not saving", True,
-                        wizard.is_request_failed_message_displayed())
+            self.verify("Second DUMMY Listing is not saving", True, wizard.is_request_failed_message_displayed())
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
