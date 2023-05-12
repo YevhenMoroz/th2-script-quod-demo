@@ -81,7 +81,7 @@ class QAP_T6994(TestCase):
         self.rest_commission_sender.change_message_params(params)
         self.rest_commission_sender.send_post_request()
         self.ssh_client.send_command("qrestart ORS")
-        time.sleep(30)
+        time.sleep(60)
         # endregion
 
         # region send dma order
@@ -125,7 +125,8 @@ class QAP_T6994(TestCase):
         self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
 
         # region step 3 - Check commission
-        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameter(
+        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                                              JavaApiFields.BookingAllocInstructionID.value).get_parameter(
             JavaApiFields.AllocationReportBlock.value)
         order_update_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdUpdate.value).get_parameter(
             JavaApiFields.OrdUpdateBlock.value)
@@ -229,4 +230,4 @@ class QAP_T6994(TestCase):
         self.manage_security_block.set_default_param()
         self.rest_api_manager.send_post_request(self.manage_security_block)
         self.ssh_client.send_command("qrestart ORS")
-        time.sleep(30)
+        time.sleep(50)
