@@ -162,6 +162,7 @@ class QAP_T11312(TestCase):
         self.vwap_algo.add_ClordId((os.path.basename(__file__)[:-3]))
         self.vwap_algo.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.mic))
         self.vwap_algo.add_tag(dict(QuodFlatParameters=dict(Waves=self.waves, StartDate2=self.start_date.strftime("%Y%m%d-%H:%M:%S"), EndDate2=self.end_date.strftime("%Y%m%d-%H:%M:%S"))))
+        self.vwap_algo.add_tag(dict(NoStrategyParameters=[dict(StrategyParameterName='Interslice', StrategyParameterType='1', StrategyParameterValue='2')]))
         self.fix_manager_sell.send_message_and_receive_response(fix_message=self.vwap_algo, case_id=case_id_1)
         # endregion
 
