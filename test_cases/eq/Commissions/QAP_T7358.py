@@ -107,12 +107,13 @@ class QAP_T7358(TestCase):
                                                    "Currency": self.data_set.get_currency_by_name("currency_3"),
                                                    'AvgPx': new_avg_px})
         responses = self.java_api_manager.send_message_and_receive_response(self.all_instr)
-        self.__return_result(responses, ORSMessageType.AllocationReport.value)
-        alloc_report = self.result.get_parameter('AllocationReportBlock')
+        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                                              JavaApiFields.BookingAllocInstructionID.value).get_parameter(
+            'AllocationReportBlock')
         alloc_id = alloc_report[JavaApiFields.AllocInstructionID.value]
         # endregion
         # region check alloc instr
-        all_ignore_fields = ['Account', 'AvgPx', 'tag5120', 'RootSettlCurrAmt','OrderAvgPx','ExecAllocGrp']
+        all_ignore_fields = ['Account', 'AvgPx', 'tag5120', 'RootSettlCurrAmt', 'OrderAvgPx', 'ExecAllocGrp']
         alloc_instr_report = FixMessageAllocationInstructionReportOMS()
         alloc_instr_report.set_default_ready_to_book(self.fix_message)
         self.fix_verifier_dc.check_fix_message_fix_standard(alloc_instr_report, ignored_fields=all_ignore_fields)
@@ -151,7 +152,7 @@ class QAP_T7358(TestCase):
         # endregion
         # region check confirmation report
         conf_ignore_fields = ["CommissionData", 'Account', "AvgPx", "Currency", "tag5120",
-                              'OrderAvgPx', 'tag11245','ExecAllocGrp']
+                              'OrderAvgPx', 'tag11245', 'ExecAllocGrp']
         conf_report = FixMessageConfirmationReportOMS(self.data_set).set_default_confirmation_new(
             self.fix_message)
         conf_report.change_parameters(
