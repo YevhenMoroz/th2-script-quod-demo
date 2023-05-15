@@ -17,7 +17,7 @@ from test_framework.read_log_wrappers.algo.ReadLogVerifierAlgo import ReadLogVer
 from test_framework.read_log_wrappers.algo_messages.ReadLogMessageAlgo import ReadLogMessageAlgo
 
 
-class QAP_T11194(TestCase):
+class QAP_T11190(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -35,7 +35,7 @@ class QAP_T11194(TestCase):
         # region order parameters
         self.qty = 100
         self.price = 20
-        self.algopolicy = constants.ClientAlgoPolicy.qa_mpdark_rr_4.value
+        self.algopolicy = constants.ClientAlgoPolicy.qa_mpdark_rr_5.value
         # endregion
 
         # region Gateway Side
@@ -98,10 +98,10 @@ class QAP_T11194(TestCase):
         # endregion
 
         # region Compare message params
-        resident_time = 150
+        resident_time = 3000
         count_of_pools = 19
         temp_allotted_time = resident_time / count_of_pools / 1000
-        self.allotted_time = round(temp_allotted_time, 8)
+        self.allotted_time = round(temp_allotted_time, 6)
         # endregion
 
         self.pre_filter = self.data_set.get_pre_filter("pre_filer_equal_D")

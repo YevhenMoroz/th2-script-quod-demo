@@ -29,7 +29,7 @@ from test_framework.formulas_and_calculation.trading_phase_manager import Tradin
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
 
 
-class QAP_T11227(TestCase):
+class QAP_T11304(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -51,8 +51,10 @@ class QAP_T11227(TestCase):
         self.qty = 1000
         self.waves = 5
         self.percentage = 100
-        self.price = 30
-        self.child_price = AFM.calc_ticks_offset_minus(self.price, 1, 0.005)
+        self.price = 40
+        self.price_bbid = 30
+        self.price_bask = 40
+        self.child_price = AFM.calc_ticks_offset_minus(self.price_bbid, 1, 0.005)
         self.historical_volume = 1000.0
 
         self.tif_atc = TimeInForce.AtTheClose.value
@@ -135,7 +137,7 @@ class QAP_T11227(TestCase):
         # endregion
 
         self.start_date = datetime.utcnow().replace(tzinfo=timezone.utc)
-        self.start_date = self.start_date - timedelta(seconds=self.start_date.second, microseconds=self.start_date.microsecond) + timedelta(minutes=5)
+        self.start_date = self.start_date - timedelta(seconds=self.start_date.second, microseconds=self.start_date.microsecond) + timedelta(minutes=1)
         self.end_date = (self.start_date + timedelta(minutes=5))
 
         # region Send MarketDate
@@ -187,12 +189,15 @@ class QAP_T11227(TestCase):
 
         er_new_dma = FixMessageExecutionReportAlgo().set_params_from_new_order_single(dma_order, self.gateway_side_buy, self.status_new)
 
+        replace1 = FixMessageOrderCancelReplaceRequestAlgo(dma_order).change_parameters(dict(Price=35)).add_tag(dict(QtyType=0))
+        replace2 = FixMessageOrderCancelReplaceRequestAlgo(dma_order).change_parameters(dict(Price=self.price, TimeInForce=3)).add_tag(dict(QtyType=0))
+
         self.fix_verifier_buy.set_case_id(bca.create_event("Check child order", self.test_id))
 
         scheduler = sched.scheduler(time.time, time.sleep)
         scheduler.enterabs(self.start_date.timestamp() + 5, 1, self.fix_verifier_buy.check_fix_message, kwargs=dict(
             fix_message=dma_order,
-            key_parameters=[self.key_params] * self.waves,
+            key_parameters=self.key_params,
             direction=self.FromQuod,
             message_name="Buy side NewOrderSingle child order"))
         scheduler.enterabs(self.start_date.timestamp() + 5, 1, self.fix_verifier_buy.check_fix_message, kwargs=dict(
@@ -205,6 +210,16 @@ class QAP_T11227(TestCase):
             key_parameters=self.key_params,
             direction=self.ToQuod,
             message_name="Buy side ExecutionReport New child order"))
+        scheduler.enterabs(self.start_date.timestamp() + 65, 1, self.fix_verifier_buy.check_fix_message, kwargs=dict(
+            fix_message=replace1,
+            key_parameters=self.key_params,
+            direction=self.FromQuod,
+            message_name="Buy side OrderCancelReplaceRequest neutral phase"))
+        scheduler.enterabs(self.start_date.timestamp() + 65, 1, self.fix_verifier_buy.check_fix_message, kwargs=dict(
+            fix_message=replace2,
+            key_parameters=self.key_params,
+            direction=self.FromQuod,
+            message_name="Buy side OrderCancelReplaceRequest aggressive phase"))
 
         scheduler.run()
 

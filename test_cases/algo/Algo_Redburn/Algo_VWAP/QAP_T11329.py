@@ -15,7 +15,6 @@ from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, TradingPhases, TimeInForce, FreeNotesReject
 from test_framework.db_wrapper.db_manager import DBManager
-from test_framework.fix_wrappers.FixMessageOrderCancelReplaceRequest import FixMessageOrderCancelReplaceRequest
 from test_framework.fix_wrappers.algo.FixMessageMarketDataIncrementalRefreshAlgo import FixMessageMarketDataIncrementalRefreshAlgo
 from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import FixMessageMarketDataSnapshotFullRefreshAlgo
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
@@ -29,7 +28,7 @@ from test_framework.formulas_and_calculation.trading_phase_manager import Tradin
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
 
 
-class QAP_T11227(TestCase):
+class QAP_T11329(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -51,8 +50,9 @@ class QAP_T11227(TestCase):
         self.qty = 1000
         self.waves = 5
         self.percentage = 100
-        self.price = 30
-        self.child_price = AFM.calc_ticks_offset_minus(self.price, 1, 0.005)
+        self.price = 40
+        self.bid_price = 30
+        self.child_price = AFM.calc_ticks_offset_minus(self.bid_price, 1, 0.005)
         self.historical_volume = 1000.0
 
         self.tif_atc = TimeInForce.AtTheClose.value
@@ -105,7 +105,7 @@ class QAP_T11227(TestCase):
         self.pre_fileter_35_D = self.data_set.get_pre_filter('pre_filer_equal_D')
         self.pre_fileter_35_8_Pending_new = self.data_set.get_pre_filter('pre_filer_equal_ER_pending_new')
         self.pre_fileter_35_8_New = self.data_set.get_pre_filter('pre_filer_equal_ER_new')
-        self.pre_fileter_35_8_Fill = self.data_set.get_pre_filter('pre_filer_equal_ER_fill')
+        self.pre_fileter_35_G = self.data_set.get_pre_filter('pre_filer_equal_G')
         # endregion
 
 
@@ -123,7 +123,7 @@ class QAP_T11227(TestCase):
         # region Update Trading Phase
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify trading phase profile", self.test_id))
         trading_phase_manager = TradingPhaseManager()
-        trading_phase_manager.build_timestamps_for_trading_phase_sequence(TradingPhases.Open, TimeSlot.current_phase, 15)
+        trading_phase_manager.build_timestamps_for_trading_phase_sequence(TradingPhases.Open, TimeSlot.current_phase, 10)
         trading_phases = trading_phase_manager.get_trading_phase_list(new_standard=False)
         self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
         # end region
@@ -135,7 +135,7 @@ class QAP_T11227(TestCase):
         # endregion
 
         self.start_date = datetime.utcnow().replace(tzinfo=timezone.utc)
-        self.start_date = self.start_date - timedelta(seconds=self.start_date.second, microseconds=self.start_date.microsecond) + timedelta(minutes=5)
+        self.start_date = self.start_date - timedelta(seconds=self.start_date.second, microseconds=self.start_date.microsecond) + timedelta(minutes=1)
         self.end_date = (self.start_date + timedelta(minutes=5))
 
         # region Send MarketDate
@@ -160,6 +160,7 @@ class QAP_T11227(TestCase):
         self.vwap_algo.add_ClordId((os.path.basename(__file__)[:-3]))
         self.vwap_algo.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.mic))
         self.vwap_algo.add_tag(dict(QuodFlatParameters=dict(Waves=self.waves, StartDate2=self.start_date.strftime("%Y%m%d-%H:%M:%S"), EndDate2=self.end_date.strftime("%Y%m%d-%H:%M:%S"))))
+        self.vwap_algo.add_tag(dict(NoStrategyParameters=[dict(StrategyParameterName='Interslice', StrategyParameterType='1', StrategyParameterValue='2')]))
         self.fix_manager_sell.send_message_and_receive_response(fix_message=self.vwap_algo, case_id=case_id_1)
         # endregion
 
@@ -177,34 +178,70 @@ class QAP_T11227(TestCase):
 
 
         # region check sell side
-        self.vwap_child = AFM.get_vwap_childs(curve, self.start_date, self.end_date, self.qty)
+        self.vwap_child_all = AFM.get_vwap_childs(curve, self.start_date, self.end_date, self.qty)
+        self.vwap_child_without_1st_slice = AFM.get_vwap_childs(curve, self.start_date + timedelta(minutes=1), self.end_date, self.qty)
+        self.vwap_child_without_2nd_slice = AFM.get_vwap_childs(curve, self.start_date + timedelta(minutes=2), self.end_date, self.qty)
+        self.vwap_child_without_3rd_slice = AFM.get_vwap_childs(curve, self.start_date + timedelta(minutes=3), self.end_date, self.qty)
+        self.vwap_child_without_4th_slice = AFM.get_vwap_childs(curve, self.start_date + timedelta(minutes=4), self.end_date, self.qty)
 
-        dma_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_RB_params()
-        dma_order.change_parameters(dict(Account=self.account, ExDestination=self.mic, OrderQty=self.vwap_child[0], Price=self.child_price, Instrument=self.instrument))
-        dma_order.change_parameter('TransactTime', f'>{self.start_date.isoformat()[:-6]}')
+        self.vwap_child_list = [
+            self.vwap_child_all[0],
+            self.vwap_child_without_1st_slice[0],
+            self.vwap_child_without_2nd_slice[0],
+            self.vwap_child_without_3rd_slice[0],
+            self.vwap_child_without_4th_slice[0]
+        ]
 
-        er_pending_new = FixMessageExecutionReportAlgo().set_params_from_new_order_single(dma_order, self.gateway_side_buy, self.status_pending)
+        list_new_order_single = list()
+        list_pending_new = list()
+        list_new = list()
+        list_replace1 = list()
 
-        er_new_dma = FixMessageExecutionReportAlgo().set_params_from_new_order_single(dma_order, self.gateway_side_buy, self.status_new)
+        for child in self.vwap_child_list:
 
-        self.fix_verifier_buy.set_case_id(bca.create_event("Check child order", self.test_id))
+            dma_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_RB_params()
+            dma_order.change_parameters(dict(Account=self.account, ExDestination=self.mic, OrderQty=child, Price=self.child_price, Instrument=self.instrument))
+            list_new_order_single.append(dma_order)
 
+            er_pending_new = FixMessageExecutionReportAlgo().set_params_from_new_order_single(dma_order, self.gateway_side_buy, self.status_pending)
+            list_pending_new.append(er_pending_new)
+
+            er_new_dma = FixMessageExecutionReportAlgo().set_params_from_new_order_single(dma_order, self.gateway_side_buy, self.status_new)
+            list_new.append(er_new_dma)
+
+            replace1 = FixMessageOrderCancelReplaceRequestAlgo(dma_order).change_parameters(dict(Price=35)).add_tag(dict(QtyType=0))
+            list_replace1.append(replace1)
+
+            replace2 = FixMessageOrderCancelReplaceRequestAlgo(dma_order).change_parameters(dict(Price=self.price, TimeInForce=3)).add_tag(dict(QtyType=0))
+            list_replace1.append(replace2)
+
+
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check child orders", self.test_id))
         scheduler = sched.scheduler(time.time, time.sleep)
-        scheduler.enterabs(self.start_date.timestamp() + 5, 1, self.fix_verifier_buy.check_fix_message, kwargs=dict(
-            fix_message=dma_order,
-            key_parameters=[self.key_params] * self.waves,
+        scheduler.enterabs(self.end_date.timestamp(), 2, self.fix_verifier_buy.check_fix_message_sequence, kwargs=dict(
+            fix_messages_list=list_new_order_single,
+            key_parameters_list=[self.key_params] * self.waves,
             direction=self.FromQuod,
-            message_name="Buy side NewOrderSingle child order"))
-        scheduler.enterabs(self.start_date.timestamp() + 5, 1, self.fix_verifier_buy.check_fix_message, kwargs=dict(
-            fix_message=er_pending_new,
-            key_parameters=self.key_params,
+            pre_filter=self.pre_fileter_35_D,
+            check_order=True))
+        scheduler.enterabs(self.end_date.timestamp(), 3, self.fix_verifier_buy.check_fix_message_sequence, kwargs=dict(
+            fix_messages_list=list_pending_new,
+            key_parameters_list=[self.key_params] * self.waves,
             direction=self.ToQuod,
-            message_name="Buy side ExecutionReport PendingNew child order"))
-        scheduler.enterabs(self.start_date.timestamp() + 5, 1, self.fix_verifier_buy.check_fix_message, kwargs=dict(
-            fix_message=er_new_dma,
-            key_parameters=self.key_params,
+            pre_filter=self.pre_fileter_35_8_Pending_new,
+            check_order=True))
+        scheduler.enterabs(self.end_date.timestamp(), 4, self.fix_verifier_buy.check_fix_message_sequence, kwargs=dict(
+            fix_messages_list=list_new,
+            key_parameters_list=[self.key_params] * self.waves,
             direction=self.ToQuod,
-            message_name="Buy side ExecutionReport New child order"))
+            pre_filter=self.pre_fileter_35_8_New,
+            check_order=True))
+        scheduler.enterabs(self.end_date.timestamp(), 5, self.fix_verifier_buy.check_fix_message_sequence, kwargs=dict(
+            fix_messages_list=list_replace1,
+            key_parameters_list=[self.key_params] * self.waves * 2,
+            direction=self.FromQuod,
+            pre_filter=self.pre_fileter_35_G,
+            check_order=True))
 
         scheduler.run()
 
@@ -215,19 +252,16 @@ class QAP_T11227(TestCase):
 
         time.sleep(3)
         # region Cancel Algo Order
-        case_id_2 = bca.create_event("Check that algo is Canceled", self.test_id)
+        case_id_2 = bca.create_event("Check that algo is Eliminated", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_2)
         time.sleep(2)
 
-        cancel_request_vwap_order = FixMessageOrderCancelRequest(self.vwap_algo)
-        self.fix_manager_sell.send_message_and_receive_response(cancel_request_vwap_order, case_id_2)
-        self.fix_verifier_sell.check_fix_message(cancel_request_vwap_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
-
-        time.sleep(5)
-
-        # region check cancellation parent VWAP order
-        cancel_vwap_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.vwap_algo, self.gateway_side_sell, self.status_cancel)
-        self.fix_verifier_sell.check_fix_message(cancel_vwap_order, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
+        er_cancel_auction_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.vwap_algo, self.gateway_side_buy, self.status_eliminate)
+        er_cancel_auction_order.change_parameters(dict(Account=self.client, NoStrategyParameters='*', LastQty=0, SettlDate='*', Currency='*',
+                                                       HandlInst='2', NoParty='*', LastPx=0, SecAltIDGrp='*', OrderCapacity='*', ExecRestatementReason='*', Price=self.price,
+                                                       TargetStrategy=1, Instrument='*', LastMkt=self.mic, QtyType=0))
+        er_cancel_auction_order.remove_parameter('ExDestination')
+        self.fix_verifier_sell.check_fix_message(er_cancel_auction_order, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Eliminated')
         # endregion
 
         rule_manager = RuleManager(Simulators.algo)
