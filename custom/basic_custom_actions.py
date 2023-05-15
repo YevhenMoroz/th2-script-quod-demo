@@ -326,7 +326,8 @@ def filter_to_grpc(message_type: str, content: dict, keys=None, ignored_fields=N
     return MessageFilter(messageType=message_type, fields=content, comparison_settings=settings)
 
 
-def filter_to_grpc_fix_standard(message_type: str, content: dict, keys=None, ignored_fields=None) -> MessageFilter:
+def filter_to_grpc_fix_standard(message_type: str, content: dict, keys=None, ignored_fields=None,
+                                ignore_header=True) -> MessageFilter:
     """ Creates grpc wrapper for filter
         Parameters:
             message_type (str): Type of message (NewOrderSingle, ExecutionReport, etc.)
@@ -342,7 +343,9 @@ def filter_to_grpc_fix_standard(message_type: str, content: dict, keys=None, ign
         keys = []
     if ignored_fields is None:
         ignored_fields = []
-    ignored_fields += ['header', 'trailer']
+    if ignore_header:
+        ignored_fields += ['header']
+    ignored_fields += ['trailer']
     settings = ComparisonSettings(ignore_fields=ignored_fields, fail_unexpected=FIELDS_AND_MESSAGES)
     content = deepcopy(content)
     for tag in content:
@@ -429,7 +432,7 @@ def convert_to_request(description: str, connectivity: str, event_id: EventID, m
     )
 
 def convert_to_get_request(description: str, connectivity: str, event_id: EventID, message: Message,
-                       request_type: str, response_type: str) -> SubmitGetMessageRequest:
+                           request_type: str, response_type: str) -> SubmitGetMessageRequest:
     """ Creates grpc request for sending message to the system.
         Parameters:
             description (str): Text for displaying in report.
@@ -644,6 +647,7 @@ def wrap_message(content, message_type=None, session_alias=None, direction=Direc
                 values.append(Value(list_value=wrap_message(content=element)))
         list_value = ListValue(values=values)
         return list_value
+
 
 def wrap_filter(content, message_type=None, key_fields=None):
     if key_fields is None:
