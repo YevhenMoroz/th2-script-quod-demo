@@ -93,7 +93,7 @@ class QAP_T7250(TestCase):
         instr_id = self.data_set.get_instrument_id_by_name("instrument_1")
         self.assign_instrument.set_default([listing_id], instr_id, order_id)
         self.java_api_manager.send_message_and_receive_response(self.assign_instrument)
-        order_notification = self.java_api_manager_2.get_last_message(ORSMessageType.OrdNotification.value).get_parameters()[
+        order_notification = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameters()[
                 JavaApiFields.OrdNotificationBlock.value]
         self.java_api_manager.compare_values({JavaApiFields.InstrID.value: instr_id},
                                              order_notification, 'Verify that user has correct instrument (step 5)')
