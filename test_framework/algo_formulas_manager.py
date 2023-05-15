@@ -748,11 +748,15 @@ class AlgoFormulasManager:
 
     @staticmethod
     def get_child_qty_for_auction_first_child(indicative_volume, percentage, parent_qty, initial_slice_multiplier):
-        return ceil(indicative_volume * percentage / (100 - percentage) * (initial_slice_multiplier / 100))
+        return min(ceil(indicative_volume * percentage / (100 - percentage) * (initial_slice_multiplier / 100)), parent_qty)
 
     @staticmethod
     def get_child_qty_for_auction_historical_volume(historical_volume, percentage, parent_qty):
-        return ceil(historical_volume * percentage / 100)
+        return min(ceil(historical_volume * percentage / 100), parent_qty)
+
+    @staticmethod
+    def get_child_qty_for_expiry_auction_historical_volume(historical_volume, percentage, parent_qty):
+        return min(ceil(historical_volume * 10 * percentage / 10000), parent_qty)
 
     @staticmethod
     def get_bi_lateral_auction_qty(indicative_volume, percentage, tradeable_qty, parent_qty):

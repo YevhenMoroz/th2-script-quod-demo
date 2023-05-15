@@ -52,7 +52,7 @@ class QAP_T7365(TestCase):
         self.cancel_wave_request = OrderListWaveCancelRequest()
         self.remove_orders_from_order_list_request = RemoveOrdersFromOrderListRequest()
         self.instrument_1 = self.data_set.get_java_api_instrument("instrument_1")
-        self.basket_name = 'QAP_T3765'
+        self.basket_name = 'QAP_T7365'
         self.create_order_list_from_existing_orders_request = NewOrderListFromExistingOrders()
         # endregion
 

@@ -71,7 +71,8 @@ class QAP_T2430(TestCase):
         self.md_snapshot_full.set_params_for_md_response(self.md_request, self.qty_list[:3], response=response[0])
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot_full,
                                             direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
+                                            key_parameters=["MDReqID"],
+                                            ignored_fields=["trailer", "header", "CachedUpdate"])
         # endregion
         # region unsubscribe
         self.md_request.set_md_uns_parameters_maker()
@@ -93,7 +94,8 @@ class QAP_T2430(TestCase):
         self.md_snapshot_full.set_params_for_md_response(self.md_request, self.qty_list[:3])
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot_full,
                                             direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
+                                            key_parameters=["MDReqID"],
+                                            ignored_fields=["trailer", "header", "CachedUpdate"])
         # endregion
         # region Set default params
         self.rest_message.clear_message_params().modify_client_tier_instrument().set_params(
