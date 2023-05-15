@@ -41,7 +41,7 @@ class QAP_T7878(TestCase):
         self.price_bid = 30
         self.px_for_incr = 0
         self.side = constants.OrderSide.Sell.value
-        self.text_1 = constants.RejectMessages.no_listing_13.value
+        self.text_1 = constants.RejectMessages.no_listing_10.value
         self.currency = self.data_set.get_currency_by_name("currency_4")
         # endregion
 
