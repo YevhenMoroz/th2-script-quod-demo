@@ -35,6 +35,7 @@ class ORSMessageType(Enum):
     OrderSubmit = 'Order_OrderSubmit'
     FixNewOrderSingle = 'Fix_NewOrderSingle'
     TradeEntryRequest = 'Order_TradeEntryRequest'
+    Fix_TradeEntryRequest = 'Fix_TradeEntryRequest'
     OrderListWaveCreationRequest = 'Order_OrderListWaveCreationRequest'
     UnMatchRequest = 'Order_UnMatchRequest'
     ManualOrderCrossRequest = 'Order_ManualOrderCrossRequest'
