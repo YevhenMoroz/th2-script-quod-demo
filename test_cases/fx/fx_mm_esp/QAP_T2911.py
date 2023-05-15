@@ -10,7 +10,7 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
     FixMessageMarketDataSnapshotFullRefreshBuyFX
-
+from decimal import Decimal
 
 class QAP_T2911(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
@@ -42,24 +42,24 @@ class QAP_T2911(TestCase):
                              "SecurityType": self.sec_type_spot}
         self.md_req_id = f"{self.gbp_usd}:SPO:REG:{self.hsbc}"
 
-        self.bid_px = 1.18150
-        self.ask_px = 1.1825
+        self.bid_px = Decimal(1.18150)
+        self.ask_px = Decimal(1.1825)
         self.new_no_md_entries = [
             {"MDEntryType": "0",
-             "MDEntryPx": self.bid_px,
+             "MDEntryPx": str(self.bid_px),
              "MDEntrySize": 1000000,
              "MDEntryPositionNo": 1,
              'SettlDate': self.settle_date_spot,
              "MDEntryTime": datetime.utcnow().strftime('%Y%m%d')},
             {"MDEntryType": "1",
-             "MDEntryPx": self.ask_px,
+             "MDEntryPx": str(self.ask_px),
              "MDEntrySize": 1000000,
              "MDEntryPositionNo": 1,
              'SettlDate': self.settle_date_spot,
              "MDEntryTime": datetime.utcnow().strftime('%Y%m%d')}]
 
         self.expected_effective_bid_margin = "-4.0"
-        self.expected_effective_ask_margin = "-3.9"
+        self.expected_effective_ask_margin = "-4.0"
         self.bid_test = "bid effective margin"
         self.ask_test = "ask effective margin"
         self.test = "Verify effective margins"
@@ -79,8 +79,8 @@ class QAP_T2911(TestCase):
         self.md_request.set_md_req_parameters_maker().change_parameter("SenderSubID", self.silver). \
             update_repeating_group('NoRelatedSymbols', self.no_related_symbols_spot)
         response: list = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
-        effected_bid_px = float(response[0].get_parameter("NoMDEntries")[0]["MDEntryPx"])
-        effected_ask_px = float(response[0].get_parameter("NoMDEntries")[1]["MDEntryPx"])
+        effected_bid_px = Decimal(response[0].get_parameter("NoMDEntries")[0]["MDEntryPx"])
+        effected_ask_px = Decimal(response[0].get_parameter("NoMDEntries")[1]["MDEntryPx"])
         actual_effective_bid_margin = str(round((self.bid_px - effected_bid_px) * 10000, 1))
         actual_effective_ask_margin = str(round((effected_ask_px - self.ask_px) * 10000, 1))
         # region 3-4

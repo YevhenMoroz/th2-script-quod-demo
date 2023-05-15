@@ -205,12 +205,15 @@
                         </fix_environments>
                     </environments>
                 </component>
-                <component name="Pair_trading" run="False">
+                <component name="Pair_trading" run="True">
                     <data_set>AlgoDataSet</data_set>
                     <environments>
                         <fix_environments>
                             <fix_environment>quod310_columbia_standard</fix_environment>
                         </fix_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod310_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
                     </environments>
                 </component>
                 <component name="Acceptance_list" run="False">
@@ -432,6 +435,32 @@
                     </environments>
             </component>
                 <component name="DMA" run="True">
+                    <data_set>OmsDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod317_ganymede_standard_test</fix_environment>
+                        </fix_environments>
+                        <fe_environments>
+                            <fe_environment>quod317_fe</fe_environment>
+                        </fe_environments>
+                        <java_api_environments>
+                            <java_api_environment>quod317_java_api</java_api_environment>
+                        </java_api_environments>
+                        <rest_environments>
+                            <web_admin_rest_api_environment>quod317_ganymede_web_admin</web_admin_rest_api_environment>
+                        </rest_environments>
+                        <read_log_environments>
+                            <read_log_environment>quod317_read_log</read_log_environment>
+                        </read_log_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod317_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
+                        <data_baase_environments>
+                            <data_base_environment>quod317_data_base</data_base_environment>>
+                        </data_baase_environments>>
+                    </environments>
+                </component>
+                <component name="Gating_Rules" run="True">
                     <data_set>OmsDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -982,6 +1011,7 @@
                     <data_set>WebAdminDataSet</data_set>
                     <environments>
                         <web_admin_environments>
+                            <web_admin_environment>quod310_web_admin_columbia_chrome</web_admin_environment>
                             <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
                             <web_admin_environment>test_site_web_admin_chrome</web_admin_environment>
                         </web_admin_environments>

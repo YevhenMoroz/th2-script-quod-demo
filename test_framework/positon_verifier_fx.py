@@ -23,8 +23,11 @@ class PositionVerifier:
         self.verifier.verify()
         self.verifier = Verifier(self.test_id)
 
-    def check_quote_position(self, report, expected_value):
-        pos_amount_date = report[0].get_parameters()["PositionAmountData"][7]
+    def check_quote_position_default(self, report, trade):
+        qty = trade.get_exec_qty()
+        price = trade.get_exec_price()
+        expected_value = self.calculate_quote_position(qty, price)
+        pos_amount_date = report[0].get_parameters()["PositionAmountData"][29]
         amount = pos_amount_date["PosAmt"]
         self.verifier.set_event_name("Check Quote Position")
         self.verifier.compare_values("Compare Quote Position", expected_value, amount)
@@ -47,4 +50,12 @@ class PositionVerifier:
         self.verifier.compare_values("Compare time", expected_value, transact_time)
         self.verifier.verify()
         self.verifier = Verifier(self.test_id)
+
     # TODO Add new fields to check
+
+    def calculate_quote_position(self, qty, price):
+        quote_pos = float(qty) * float(price)
+        if str(quote_pos).endswith(".0"):
+            return str(quote_pos)[:-2]
+        else:
+            return str(round(quote_pos, 3))

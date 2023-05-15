@@ -441,6 +441,13 @@ class RuleManager:
                                                               price=price
                                                               ))
 
+    def add_NewOrderSingle_ExecutionReport_RejectFX(self, session: str, account: str, ex_destination:str):
+        return self.sim.createTemplateFXOrderReject(
+            request=TemplateFXOrderReject(connection_id=ConnectionID(session_alias=session),
+                                                              account=account,
+                                                              exdestination=ex_destination
+                                                              ))
+
     def add_NewOrderSingle_ExecutionReport_RejectWithReason(self, session: str, account: str, ex_destination: str,
                                                             price: float, reason: int, text: str = "QATestReject",
                                                             delay: int = 0):
