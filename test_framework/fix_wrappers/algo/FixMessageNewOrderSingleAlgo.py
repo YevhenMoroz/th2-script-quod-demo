@@ -13,7 +13,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(parameters)
 
     # set_DMA_params
-    def set_DMA_params(self) -> FixMessageNewOrderSingle:
+    def set_DMA_params(self, needNoParty:bool=True) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": "XPAR_CLIENT2",
             'ClOrdID': '*',
@@ -28,10 +28,12 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "TransactTime": '*',
             'SettlDate': '*',
             'ExDestination': "XPAR",
-            'OrderCapacity': 'A',
-            'NoParty': '*',
-            # 'Origin': '*'
+            'OrderCapacity': 'A'
         }
+        if needNoParty == True:
+            base_parameters['NoParty'] = '*'
+            # 'Origin': '*'
+
         super().change_parameters(base_parameters)
         return self
 

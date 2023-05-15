@@ -163,7 +163,7 @@ class QAP_T4053(TestCase):
         # region Check child DMA order 2
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order 2", self.test_id))
 
-        self.dma_order_2 = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        self.dma_order_2 = FixMessageNewOrderSingleAlgo().set_DMA_params(False)
         self.dma_order_2.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_1, OrderQty=self.qty_child_1, Price=self.price, Instrument='*'))
         self.fix_verifier_buy.check_fix_message(self.dma_order_2, key_parameters=self.key_params_child, message_name='Buy side NewOrderSingle Child DMA order 2')
 

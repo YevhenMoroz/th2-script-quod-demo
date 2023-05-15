@@ -168,7 +168,7 @@ class QAP_T4879(TestCase):
         # region Check child DMA order MD 1
         self.fix_verifier_buy.set_case_id(bca.create_event("Passive Child DMA order 1", self.test_id))
 
-        self.dma_order_2 = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        self.dma_order_2 = FixMessageNewOrderSingleAlgo().set_DMA_params(False)
         self.dma_order_2.change_parameters(dict(OrderQty=self.child_md_qty, Price=self.price, Instrument='*', TimeInForce=self.tif_day))
         self.fix_verifier_buy.check_fix_message(self.dma_order_2, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Passive Child DMA order 1')
 

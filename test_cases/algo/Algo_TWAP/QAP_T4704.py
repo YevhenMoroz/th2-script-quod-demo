@@ -137,7 +137,7 @@ class QAP_T4704(TestCase):
         # endregion
 
         # region child DMA order 1
-        slice1_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        slice1_order = FixMessageNewOrderSingleAlgo().set_DMA_params(False)
         slice1_order.change_parameters(dict(OrderQty=self.slice1_qty, Price=self.price, Instrument='*', TimeInForce=self.tif_day))
 
         pending_slice1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(slice1_order, self.gateway_side_buy, self.status_pending)

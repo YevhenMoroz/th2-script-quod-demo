@@ -141,7 +141,7 @@ class QAP_T8780(TestCase):
         # region child DMA order 1
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order Slice 1", self.test_id))
 
-        self.slice1_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        self.slice1_order = FixMessageNewOrderSingleAlgo().set_DMA_params(False)
         self.slice1_order.change_parameters(dict(OrderQty=self.slice1_qty, Price=self.price, Instrument='*', TimeInForce=self.tif_day))
         self.fix_verifier_buy.check_fix_message(self.slice1_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Slice 1 DMA order')
         
