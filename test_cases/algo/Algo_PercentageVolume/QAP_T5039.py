@@ -39,6 +39,7 @@ class QAP_T5039(TestCase):
         self.qty = 1000
         self.pct = 0.3
         self.aggressivity_neut = constants.Aggressivity.Neutral.value
+        self.int_type = constants.StrategyParameterType.Int.value
         self.price_ask = 1
         self.price = self.price_bid = 1
         self.qty_bid = self.qty_ask = 1_000_000
@@ -47,6 +48,8 @@ class QAP_T5039(TestCase):
         self.tif_day = constants.TimeInForce.Day.value
         self.child_open_qty = AlgoFormulasManager.get_pov_child_qty(self.pct, self.open_qty, self.qty)
         self.child_combined_qty = AlgoFormulasManager.get_pov_child_qty(self.pct,self.open_qty+self.child_open_qty,self.qty)
+        self.book_participation = "false"
+        self.bool_type = constants.StrategyParameterType.Boolean.value
         # endregion
 
         # region Gateway Side
@@ -140,7 +143,8 @@ class QAP_T5039(TestCase):
         self.POV_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.POV_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
         self.POV_order.update_repeating_group('NoStrategyParameters', [dict(StrategyParameterName='PercentageVolume', StrategyParameterType=6, StrategyParameterValue=self.pct)])
-        self.POV_order.add_fields_into_repeating_group('NoStrategyParameters', [{'StrategyParameterName': 'Aggressivity', 'StrategyParameterType': 1, 'StrategyParameterValue': self.aggressivity_neut}])
+        self.POV_order.add_fields_into_repeating_group('NoStrategyParameters', [{'StrategyParameterName': 'Aggressivity', 'StrategyParameterType': self.int_type, 'StrategyParameterValue': self.aggressivity_neut},
+                                                                                {'StrategyParameterName': 'BookParticipation', 'StrategyParameterType': self.bool_type, 'StrategyParameterValue': self.book_participation}])
         self.fix_manager_sell.send_message_and_receive_response(self.POV_order, case_id_1)
         # endregion
 
@@ -197,7 +201,8 @@ class QAP_T5039(TestCase):
         self.POV_order_2.add_ClordId((os.path.basename(__file__)[:-3]))
         self.POV_order_2.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
         self.POV_order_2.update_repeating_group('NoStrategyParameters', [dict(StrategyParameterName='PercentageVolume', StrategyParameterType=6, StrategyParameterValue=self.pct)])
-        self.POV_order_2.add_fields_into_repeating_group('NoStrategyParameters', [{'StrategyParameterName': 'Aggressivity', 'StrategyParameterType': 1, 'StrategyParameterValue': self.aggressivity_neut}])
+        self.POV_order_2.add_fields_into_repeating_group('NoStrategyParameters', [{'StrategyParameterName': 'Aggressivity', 'StrategyParameterType': self.int_type, 'StrategyParameterValue': self.aggressivity_neut},
+                                                                                {'StrategyParameterName': 'BookParticipation', 'StrategyParameterType': self.bool_type, 'StrategyParameterValue': self.book_participation}])
         self.fix_manager_sell.send_message_and_receive_response(self.POV_order_2, case_id_1)
         # endregion
 

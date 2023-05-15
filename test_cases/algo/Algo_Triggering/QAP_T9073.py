@@ -155,7 +155,8 @@ class QAP_T9073(TestCase):
     def run_post_conditions(self):
         # region check eliminate Parent SS
         eliminate_request_Triggering_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.Triggering_order, self.gateway_side_sell, self.status_eliminate)
-        self.fix_verifier_sell.check_fix_message(eliminate_request_Triggering_order, message_name='Sell side ExecReport eliminateled')
+        eliminate_request_Triggering_order.change_parameter('SettlDate', '*')
+        self.fix_verifier_sell.check_fix_message(eliminate_request_Triggering_order, message_name='Sell side ExecReport eliminated')
         # endregion
 
         RuleManager(Simulators.algo).remove_rules(self.rule_list)
