@@ -49,14 +49,14 @@ class JavaApiManager:
                 request=ActJavaSubmitMessageRequest(
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
-                    parent_event_id=self.get_case_id(), response_time=response_time))
+                    parent_event_id=self.get_case_id(), response_time=response_time, filterFields=filter_dict))
         elif message.get_message_type() == ORSMessageType.TradeEntryRequest.value:
             if "OrdID" in message.get_parameter("TradeEntryRequestBlock"):
                 response = self.act.submitTradeEntry(
                     request=ActJavaSubmitMessageRequest(
                         message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                                  message.get_parameters(), self.get_session_alias()),
-                        parent_event_id=self.get_case_id(), response_time=response_time))
+                        parent_event_id=self.get_case_id(), filterFields=filter_dict, response_time=response_time))
             else:
                 response = self.act.submitTradeEntryFX(
                     request=ActJavaSubmitMessageRequest(
@@ -573,8 +573,8 @@ class JavaApiManager:
         self.verifier = Verifier(self.__case_id)
 
     def key_is_absent(self, key: str, actual_values: dict, event_name: str):
-        if key in actual_values:
-            self.verifier.success = False
+        if key not in actual_values:
+            self.verifier.success = True
 
         self.verifier.fields.update(
             {"Is absent:": {"expected": key, "key": False, "type": "field",

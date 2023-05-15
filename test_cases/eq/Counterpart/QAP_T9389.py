@@ -103,7 +103,7 @@ class QAP_T9389(TestCase):
         # region step 5: Fully Filled Child CO order
         self.manual_execute.set_default_trade(child_ord_id, price, half_qty)
         self.java_api_manager.send_message_and_receive_response(self.manual_execute,
-                                                                {order_id: order_id, child_ord_id: child_ord_id})
+                                                                {order_id: order_id, child_ord_id: child_ord_id}, response_time=15_000)
         execution_report_child_order = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value,
                                                                               child_ord_id).get_parameters()[
             JavaApiFields.ExecutionReportBlock.value]

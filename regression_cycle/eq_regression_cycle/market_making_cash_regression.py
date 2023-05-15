@@ -22,7 +22,7 @@ def check_ssh(file):
 
 
 def test_run(parent_id=None, version=None, skip_ssh=False, only_ssh=False):
-    report_id = bca.create_event(f"MarketMakingCash Analysis" if version is None else f"MarketMakingCash Analysis | {version}", parent_id)
+    report_id = bca.create_event(f"MarketMakingCash Analysis" if version is None else f"MarketMakingCash | {version}", parent_id)
     seconds, nanos = timestamps()  # Store case start time
     configuration = ComponentConfiguration("DMA") #MarketMakingCash
     data_set = configuration.data_set
@@ -42,5 +42,5 @@ def test_run(parent_id=None, version=None, skip_ssh=False, only_ssh=False):
 
 
 if __name__ == '__main__':
-    test_run(version="5.1.177.190")
+    test_run()
     Stubs.factory.close()
