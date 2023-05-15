@@ -172,7 +172,8 @@ class JavaApiFields(Enum):
     AccountID = 'AccountID'
     PosGoodTillDate = 'PosGoodTillDate'
     TransStatus = 'TransStatus'
-
+    SecurityID = 'SecurityID'
+    InstrSymbol = 'InstrSymbol'
     LeavesSellQty = 'LeavesSellQty'
     InstrumentBlock = 'InstrumentBlock'
     ExecutionReportBlock = 'ExecutionReportBlock'

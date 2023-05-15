@@ -69,6 +69,12 @@ class OmsJavaApiInstruments(Enum):
         InstrType="Equity",
         SecurityExchange="XEUR"
     )
+    instrument_dummy = dict(
+        InstrSymbol="DUMMY_2",
+        SecurityID="DUMMY_1",
+        SecurityIDSource='ExchSymb',
+        SecurityExchange="DUMMY_EXC"
+    )
 
 
 class OmsInstrumentId(Enum):
