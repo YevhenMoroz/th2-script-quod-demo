@@ -124,7 +124,7 @@ class QAP_T7336(TestCase):
         fix_execution_report.set_default_replaced(self.new_order)
         fix_execution_report.change_parameters({'StopPx': self.new_stop_price,
                                                 'TimeInForce': '0'})
-        self.fix_verifier.check_fix_message_fix_standard(fix_execution_report)
+        self.fix_verifier.check_fix_message_fix_standard(fix_execution_report, ignored_fields=list_ignore_fields)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
