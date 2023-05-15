@@ -11,6 +11,7 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.SessionAlias import SessionAliasFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestRejectFX import FixMessageMarketDataRequestRejectFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
     FixMessageMarketDataSnapshotFullRefreshBuyFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
@@ -41,6 +42,7 @@ class QAP_T8160(TestCase):
         self.fix_verifier = FixVerifier(self.ss_esp_connectivity, self.test_id)
         self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
         self.fix_md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
+        self.md_reject = FixMessageMarketDataRequestRejectFX()
         self.gbp_usd = self.data_set.get_symbol_by_name('symbol_2')
         self.tenor_spot = self.data_set.get_tenor_by_name('tenor_spot')
         self.settle_type = self.data_set.get_settle_type_by_name("spot")
@@ -49,7 +51,7 @@ class QAP_T8160(TestCase):
         self.citi = self.data_set.get_venue_by_name('venue_8')
         self.palladium_1 = self.data_set.get_client_by_name('client_mm_4')
         self.rest_message = RestApiPriceCleansingUnbalancedRatesMessages(data_set=self.data_set)
-        self.rest_manager = RestApiManager(session_alias=self.rest_env)
+        self.rest_manager = RestApiManager(self.rest_env, self.test_id)
         self.rest_message_params = None
         self.instrument = {
             "Symbol": self.gbp_usd,
@@ -129,11 +131,18 @@ class QAP_T8160(TestCase):
         self.md_request.set_md_req_parameters_maker(). \
             change_parameters({"SenderSubID": self.palladium_1}). \
             update_repeating_group("NoRelatedSymbols", self.no_related_symbols)
-        self.fix_manager.send_message_and_receive_response(self.md_request, self.test_id)
-        self.fix_md_snapshot.set_params_for_empty_md_response(self.md_request)
-        self.fix_verifier.check_fix_message(self.fix_md_snapshot)
-        self.md_request.set_md_uns_parameters_maker()
-        self.fix_manager.send_message(self.md_request, "Unsubscribe")
+        fix_response = self.fix_manager.send_message_and_receive_response(self.md_request, self.test_id)[0]
+        try:
+            if fix_response.get_parameters()["Text"]:
+                self.md_reject.set_md_reject_params(self.md_request, text="suspect data").remove_parameter(
+                    "MDReqRejReason")
+                self.fix_verifier.check_fix_message(self.md_reject)
+        except KeyError:
+            self.fix_md_snapshot.set_params_for_empty_md_response(self.md_request)
+            self.fix_verifier.check_fix_message(self.fix_md_snapshot,
+                                                ignored_fields=["header", "trailer", "CachedUpdate"])
+            self.md_request.set_md_uns_parameters_maker()
+            self.fix_manager.send_message(self.md_request, "Unsubscribe")
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
