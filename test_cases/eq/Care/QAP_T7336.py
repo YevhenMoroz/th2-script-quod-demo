@@ -109,6 +109,11 @@ class QAP_T7336(TestCase):
                                           f"cdrequesttype = 'MOD'")[0][0]))
         self.accept_request.set_default(order_id, cd_ord_notif_id, desk, 'M')
         self.java_api_manager.send_message_and_receive_response(self.accept_request)
+        order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+            JavaApiFields.OrdReplyBlock.value]
+        self.java_api_manager.compare_values(
+            {JavaApiFields.StopPrice.value: str(float(self.new_stop_price))}, order_reply,
+            f'Verifying that StopPrice changed (step 3)')
         # endregion
 
         # region step 3: Check 35 = 8(39 = 0) message

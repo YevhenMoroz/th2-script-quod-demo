@@ -172,6 +172,7 @@ class JavaApiFields(Enum):
     AccountID = 'AccountID'
     PosGoodTillDate = 'PosGoodTillDate'
     TransStatus = 'TransStatus'
+
     LeavesSellQty = 'LeavesSellQty'
     InstrumentBlock = 'InstrumentBlock'
     ExecutionReportBlock = 'ExecutionReportBlock'
@@ -226,6 +227,7 @@ class JavaApiFields(Enum):
     ListExecutionPolicy = 'ListExecutionPolicy'
     ListOrderStatus = 'ListOrderStatus'
     NewOrderSingleBlock = 'NewOrderSingleBlock'
+    StopPrice = 'StopPrice'
     PosValidity = 'PosValidity'
     ClientCommissionDataBlock = 'ClientCommissionDataBlock'
     ClientCommission = 'ClientCommission'
