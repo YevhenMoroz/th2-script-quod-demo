@@ -2,7 +2,7 @@ from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.data_sets.fx_data_set.fx_const_enum import FxInstruments, FxVenues, FxClients, FxAccounts, \
     FxClientTiers, FxSymbols, DaysOfWeek, FxCurrencies, FxTenors, FxClientTiersID, FXAutoHedgers, FXAutoHedgersID, \
     FXAlgoPolicies, FXAlgoPoliciesID, FxSecurityTypes, FxSettleTypes, FxSettleDates, FxInstrTypeWA, FxMarketIDs, \
-    FxTenorsJavaApi, FxInstrTypeJavaAPi, FxSettleTypesJavaAPi, FXListings
+    FxTenorsJavaApi, FxInstrTypeJavaAPi, FxSettleTypesJavaAPi, FXListings, InstrIDs
 
 
 class FxDataSet(BaseDataSet):
@@ -32,5 +32,6 @@ class FxDataSet(BaseDataSet):
     fx_istr_type_ja = FxInstrTypeJavaAPi
     market_ids = FxMarketIDs
     listing_id = FXListings
+    instr_id = InstrIDs
 
 

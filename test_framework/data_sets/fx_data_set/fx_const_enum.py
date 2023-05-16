@@ -368,3 +368,7 @@ class FXListings(Enum):
     usd_spo = "1106818783"
 
     # TODO add more listings
+
+
+class InstrIDs(Enum):
+    usd_jpy_spot = "Jbuei4sRIyA1Ttsa8mXiKg"

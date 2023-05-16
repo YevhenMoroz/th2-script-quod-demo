@@ -187,6 +187,7 @@ class ResAPIMessageType(Enum):
     FindAllOrderVelocity = "FindAllOrderVelocityLimit"
     DeleteOrderVelocity = "DeleteOrderVelocityLimit"
     ModifyOrderVelocity = "ModifyOrderVelocityLimit"
+    ManageSecurityBlock = "ManageSecurityBlock"
 
 
 class PKSMessageType(Enum):
