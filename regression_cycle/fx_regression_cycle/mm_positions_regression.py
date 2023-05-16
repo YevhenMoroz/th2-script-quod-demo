@@ -11,6 +11,7 @@ from test_cases.fx.fx_mm_positions.QAP_T11080 import QAP_T11080
 from test_cases.fx.fx_mm_positions.QAP_T11217 import QAP_T11217
 from test_cases.fx.fx_mm_positions.QAP_T11218 import QAP_T11218
 from test_cases.fx.fx_mm_positions.QAP_T11222 import QAP_T11222
+from test_cases.fx.fx_mm_positions.QAP_T11224 import QAP_T11224
 from test_cases.fx.fx_mm_positions.QAP_T2932 import QAP_T2932
 from test_cases.fx.fx_mm_positions.QAP_T2933 import QAP_T2933
 from test_cases.fx.fx_mm_positions.QAP_T2934 import QAP_T2934
@@ -54,6 +55,7 @@ def test_run(parent_id=None, version="5.1.178.192"):
         QAP_T11217(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T11218(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T11222(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T11224(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
 
     except Exception:
