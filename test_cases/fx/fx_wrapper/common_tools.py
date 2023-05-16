@@ -147,9 +147,9 @@ def check_quote_request_id(quote_request):
             print("PostgreSQL connection is closed")
 
 
-def check_quote_status(id_reference, key_parameter="clientquoteid"):
+def check_value_in_db(id_reference=None, key_parameter="clientquoteid", extracting_value="quotestatus", table="quote", query=None):
     """
-    Get QuoteStatus from DB using quote_id from fix request
+    Get value from DB using quote_id from fix request
     """
     connection = None
     cursor = None
@@ -162,14 +162,15 @@ def check_quote_status(id_reference, key_parameter="clientquoteid"):
         # Create a cursor to perform database operations
         cursor = connection.cursor()
         # Print PostgreSQL details
-        try:
-            quote_id = id_reference.get_parameter("QuoteID")
-        except AttributeError:
-            quote_id = id_reference
-        query = f"SELECT quotestatus  FROM quote WHERE {key_parameter} ='{quote_id}'"
+        if not query:
+            try:
+                quote_id = id_reference.get_parameter("QuoteID")
+            except AttributeError:
+                quote_id = id_reference
+            query = f"SELECT {extracting_value}  FROM {table} WHERE {key_parameter} ='{quote_id}'"
         cursor.execute(query)
         response = cursor.fetchone()[0]
-        print(f"Extraction is successful! Quote status is {response}.")
+        print(f"Extraction is successful! {extracting_value} is {response}.")
         return response
     except (Exception, Error) as error:
         print("Error while connecting to PostgreSQL", error)

@@ -2,7 +2,7 @@ import time
 from pathlib import Path
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from test_cases.fx.fx_wrapper.common_tools import check_quote_status, check_quote_request_id
+from test_cases.fx.fx_wrapper.common_tools import check_value_in_db, check_quote_request_id
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
@@ -118,7 +118,7 @@ class QAP_T5995(TestCase):
         self.fix_manager_fh_314.send_message(self.fix_md)
         time.sleep(4)
         req_id = check_quote_request_id(self.quote_request)
-        quote_status = check_quote_status(req_id, self.key_parameter, self.quote_state, "quoterequest")
+        quote_status = check_value_in_db(req_id, self.key_parameter, self.quote_state, "quoterequest")
         self.verifier.set_parent_id(self.test_id)
         self.verifier.set_event_name("Quote Cancel presence check")
         self.verifier.compare_values("QuoteStatusReason", "TER", quote_status)

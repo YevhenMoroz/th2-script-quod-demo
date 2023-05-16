@@ -3,7 +3,7 @@ from pathlib import Path
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from stubs import Stubs
-from test_cases.fx.fx_wrapper.common_tools import check_quote_request_id, extract_freenotes, check_quote_status
+from test_cases.fx.fx_wrapper.common_tools import check_quote_request_id, extract_freenotes, check_value_in_db
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
@@ -106,8 +106,8 @@ class QAP_T10960(TestCase):
         # endregion
         # region Step 3
         quote_req_id = check_quote_request_id(self.quote_request)
-        quote_status = check_quote_status(quote_req_id, "quoterequestid", "unavailablepricestate")
-        reason = check_quote_status(quote_req_id, "quoterequestid", "unavailablepricecause")
+        quote_status = check_value_in_db(quote_req_id, "quoterequestid", "unavailablepricestate")
+        reason = check_value_in_db(quote_req_id, "quoterequestid", "unavailablepricecause")
         self.verifier.set_event_name("check quote status and reason")
         self.verifier.compare_values("quote status", "EOF", quote_status)
         self.verifier.compare_values("quote reason", "CUB", reason)
