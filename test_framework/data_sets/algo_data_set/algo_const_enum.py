@@ -236,8 +236,8 @@ class AlgoFixInstruments(Enum):
 
     instrument_30 = dict(
         Symbol='GB00B03MLX29',
-        SecurityID='5323',
-        SecurityIDSource='8',
+        SecurityID='GB00B03MLX29',
+        SecurityIDSource='4',
         SecurityExchange='XLON',
         SecurityType='CS'
     )
@@ -580,8 +580,8 @@ class AlgoListingId(Enum):
     listing_48 = "1872056"         # BATS for BE0020575115
     listing_49 = "4417383"       # TRQX for BE0020575115
     listing_50 = "982"       # Euronext Paris for FR0000044448
-    listing_51 = "1925020511"       # XETRA for GB00B03MLX29
-    listing_52 = "1925020512"       # LSE for GB00B03MLX29
+    listing_51 = "2425020563"       # XETRA for GB00B03MLX29
+    listing_52 = "422226032"       # CITADEL [XETR] for GB00B03MLX29
     listing_qdl_1 = "9400000036" # QUODLIT1 for QUODTESTQA00 @ Columbia
     listing_qdl_2 = "9400000038" # QUODLIT2 for QUODTESTQA00 @ Columbia
     listing_53 = "100000001"       # QLVENUE1 for QTINST00
@@ -597,6 +597,8 @@ class AlgoListingId(Enum):
     listing_63 = "2325020560"       # Euronext Paris for QUODTESTQA06
     listing_64 = "2325020561"       # CHIX UK for QUODTESTQA06
     listing_65 = "2325020562"       # BATS UK for QUODTESTQA06
+    listing_66 = "422226030"       # CITADEL [XAMS] for GB00B03MLX29
+    listing_67 = "422226029"       # CITADEL [XLON] for GB00B03MLX29
     listing_dp = "890"       # DP for PARIS @ Columbia
     listing_sqi = "1130"       # SQI for PARIS @ Columbia
     listing_org = "1004"       # ORG for PARIS @ Columbia
