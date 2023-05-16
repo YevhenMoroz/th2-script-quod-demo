@@ -153,7 +153,8 @@ class QAP_T7172(TestCase):
         order_update_message = self.java_api_manager.get_last_message(ORSMessageType.OrdUpdate.value)
         post_trade_status = order_update_message.get_parameter("OrdUpdateBlock")["PostTradeStatus"]
 
-        alloc_report_message = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value)
+        alloc_report_message = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                                                      JavaApiFields.BookingAllocInstructionID.value)
         alloc_id = alloc_report_message.get_parameter("AllocationReportBlock")["ClientAllocID"]
         status = alloc_report_message.get_parameter("AllocationReportBlock")["AllocStatus"]
         match_status = alloc_report_message.get_parameter("AllocationReportBlock")["MatchStatus"]
