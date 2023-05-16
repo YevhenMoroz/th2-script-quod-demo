@@ -372,3 +372,5 @@ class FXListings(Enum):
 
 class InstrIDs(Enum):
     usd_jpy_spot = "Jbuei4sRIyA1Ttsa8mXiKg"
+    gbp_myr_spot = "r6Rri_3WSHRtiA3JVZV4yg"
+    eur_jpy_spot = "Twk5nricBHx4gkZ0Jm0wOg"
