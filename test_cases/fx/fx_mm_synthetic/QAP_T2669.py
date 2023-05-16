@@ -4,7 +4,7 @@ from pathlib import Path
 from pkg_resources import resource_filename
 
 from custom.verifier import Verifier
-from test_cases.fx.fx_wrapper.common_tools import check_value_in_db
+from test_cases.fx.fx_wrapper.common_tools import check_value_in_db, execute_db_command
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
@@ -33,6 +33,14 @@ class QAP_T2669(TestCase):
                                     self.ssh_client_env.password, self.ssh_client_env.su_user,
                                     self.ssh_client_env.su_password)
         # endregion
+        self.update_db_1 = f"UPDATE INSTRUMENT SET eurmajorpairinstrid1 = NULL " \
+                           f"WHERE instrtype = 'SPO' AND instrsymbol = 'USD/JPY';"
+        self.update_db_2 = f"UPDATE INSTRUMENT SET eurdirectquotation1 = NULL " \
+                           f"WHERE instrtype = 'SPO' AND instrsymbol = 'USD/JPY';"
+        self.update_db_3 = f"UPDATE INSTRUMENT SET eurdirectquotation2 = NULL " \
+                           f"WHERE instrtype = 'SPO' AND instrsymbol = 'USD/JPY';"
+        self.update_db_4 = f"UPDATE INSTRUMENT SET eurdirectquotation2 = NULL " \
+                           f"WHERE instrtype = 'SPO' AND instrsymbol = 'USD/JPY';"
         self.verifier = Verifier()
         self.expected_value_1 = "KExUjnMCR-wK6DgQBZpg8g"
         self.expected_value_2 = "Y"
@@ -41,6 +49,7 @@ class QAP_T2669(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        execute_db_command(self.update_db_1, self.update_db_2, self.update_db_3, self.update_db_4)
         # region Step 1-2
         self.security_block_message.find_security_block(self.usd_jpy_spot)
         self.msg_params_security_block = self.rest_manager.send_get_request_filtered(self.security_block_message)
