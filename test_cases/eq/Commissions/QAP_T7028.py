@@ -27,7 +27,6 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-@try_except(test_id=Path(__file__).name[:-3])
 class QAP_T7028(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -163,9 +162,10 @@ class QAP_T7028(TestCase):
                                                                    'RootMiscFeesList': fee_list
                                                                })
         responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
-        self.__return_result(responses, ORSMessageType.AllocationReport.value)
+        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                               JavaApiFields.BookingAllocInstructionID.value).get_parameter(
+            JavaApiFields.AllocationReportBlock.value)
         common_fee_amount = str(float(vat_amt) + float(stamp_amount))
-        alloc_report = self.result.get_parameter('AllocationReportBlock')
         total_fee = {'RootCommission': common_fee_amount, 'RootCommCurrency': 'GBP'}
         self.java_api_manager.compare_values(
             {'RootCommissionDataBlock': total_fee}, alloc_report,
@@ -180,7 +180,7 @@ class QAP_T7028(TestCase):
 
         # region check 35=J message
         no_misc_list = {'NoRootMiscFeesList': [
-            { 'RootMiscFeeBasis':'3',
+            {'RootMiscFeeBasis': '3',
              'RootMiscFeeCurr': self.currency,
              'RootMiscFeeType': '22', 'RootMiscFeeRate': '1',
              'RootMiscFeeAmt': vat_amt},
@@ -189,7 +189,7 @@ class QAP_T7028(TestCase):
              'RootMiscFeeAmt': stamp_amount}]}
         ignored_list = ["AvgPx", "Currency", 'tag5120', 'RootSettlCurrAmt', 'RootOrClientCommission',
                         'RootOrClientCommissionCurrency', 'RootCommTypeClCommBasis', "AllocInstructionMiscBlock1",
-                        'RootSettlCurrAmt', 'SettlType', 'Account', 'OrderAvgPx','ExecAllocGrp']
+                        'RootSettlCurrAmt', 'SettlType', 'Account', 'OrderAvgPx', 'ExecAllocGrp']
         allocation_report = FixMessageAllocationInstructionReportOMS()
         allocation_report.set_default_ready_to_book(self.fix_message)
         allocation_report.change_parameters({'NoRootMiscFeesList': no_misc_list})
