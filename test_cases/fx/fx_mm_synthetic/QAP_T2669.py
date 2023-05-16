@@ -42,7 +42,7 @@ class QAP_T2669(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Step 1-2
-        self.security_block_message.find_security_block("Jbuei4sRIyA1Ttsa8mXiKg")
+        self.security_block_message.find_security_block(self.usd_jpy_spot)
         self.msg_params_security_block = self.rest_manager.send_get_request_filtered(self.security_block_message)
         self.msg_params_security_block = self.rest_manager.parse_response_details(self.msg_params_security_block,
                                                                                   {"listingID": "1208842149"})
