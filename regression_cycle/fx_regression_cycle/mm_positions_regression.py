@@ -9,6 +9,8 @@ from test_cases.fx.fx_mm_positions.QAP_T10840 import QAP_T10840
 from test_cases.fx.fx_mm_positions.QAP_T11053 import QAP_T11053
 from test_cases.fx.fx_mm_positions.QAP_T11080 import QAP_T11080
 from test_cases.fx.fx_mm_positions.QAP_T11217 import QAP_T11217
+from test_cases.fx.fx_mm_positions.QAP_T11218 import QAP_T11218
+from test_cases.fx.fx_mm_positions.QAP_T11222 import QAP_T11222
 from test_cases.fx.fx_mm_positions.QAP_T2932 import QAP_T2932
 from test_cases.fx.fx_mm_positions.QAP_T2933 import QAP_T2933
 from test_cases.fx.fx_mm_positions.QAP_T2934 import QAP_T2934
@@ -18,7 +20,7 @@ from test_cases.fx.fx_mm_positions.prepare_position import prepare_position
 from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
-from test_framework.configurations.component_configuration import ComponentConfiguration
+from test_framework.configurations.component_configuration import ComponentConfiguration, ComponentConfigurationFX
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -27,9 +29,10 @@ timeouts = False
 channels = dict()
 
 
-def test_run(parent_id=None, version=None):
-    report_id = bca.create_event(f"FX_MM_Positions" if version is None else f"FX_MM_Positions | {version}", parent_id)
-    configuration = ComponentConfiguration("Position")
+def test_run(parent_id=None, version="5.1.178.192"):
+    # report_id = bca.create_event(f"FX_MM_Positions" if version is None else f"FX_MM_Positions | {version}", parent_id)
+    report_id = bca.create_event(f"Positions_fx| {version}", parent_id)
+    configuration = ComponentConfigurationFX("ESP_MM_309")
     try:
         # prepare_position()
         QAP_T11053(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
@@ -39,7 +42,7 @@ def test_run(parent_id=None, version=None):
         QAP_T2933(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2934(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2935(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-
+        #
         QAP_T9408(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10400(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10411(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
@@ -49,6 +52,8 @@ def test_run(parent_id=None, version=None):
         QAP_T10760(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10840(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T11217(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T11218(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T11222(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
 
     except Exception:
