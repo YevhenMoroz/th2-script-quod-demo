@@ -8,6 +8,7 @@ from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.forex.FixMessageExecutionReportDropCopyFX import FixMessageExecutionReportDropCopyFX
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.fx.FixPositionMaintenanceRequestFX import FixPositionMaintenanceRequestFX
+from test_framework.java_api_wrappers.fx.FixPositionMassCancelRequestFX import FixPositionMassCancelRequestFX
 from test_framework.java_api_wrappers.fx.TradeEntryRequestFX import TradeEntryRequestFX
 
 
@@ -21,7 +22,7 @@ class QAP_T9220(TestCase):
         self.java_api_manager = JavaApiManager(self.java_api_env, self.test_id)
         self.fix_drop_copy_verifier = FixVerifier(self.dc_connectivity, self.test_id)
         self.trade_request = TradeEntryRequestFX()
-        self.maintenance_request_int = FixPositionMaintenanceRequestFX()
+        self.cancel_request = FixPositionMassCancelRequestFX()
         self.ah_exec_report = FixMessageExecutionReportDropCopyFX()
         self.client_ext = self.data_set.get_client_by_name("client_mm_6")
         self.account_ext = self.data_set.get_account_by_name("account_mm_6")
@@ -31,7 +32,7 @@ class QAP_T9220(TestCase):
         self.usd_php = self.data_set.get_symbol_by_name("symbol_ndf_1")
         self.sec_type_spo = self.data_set.get_security_type_by_name("fx_spot")
         self.settle_date_spo = self.data_set.get_settle_date_by_name("spo_ndf_java_api")
-        self.listing_usd_php = self.data_set.get_listing_id_by_name("usd_php_spo")
+        self.instr_type_spo = self.data_set.get_fx_instr_type_ja("fx_spot")
         self.instrument = {
             "SecurityType": self.sec_type_spo,
             "Symbol": self.usd_php
@@ -42,12 +43,8 @@ class QAP_T9220(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Clear position before start
-        self.maintenance_request_int.set_default_params()
-        self.maintenance_request_int.change_account(self.account_int)
-        self.maintenance_request_int.change_client(self.client_int)
-        self.maintenance_request_int.change_instrument(self.usd_php)
-        self.maintenance_request_int.change_settle_date(self.settle_date_spo)
-        self.java_api_manager.send_message(self.maintenance_request_int)
+        self.cancel_request.set_params(self.account_int)
+        self.java_api_manager.send_message(self.cancel_request)
         self.sleep(5)
 
         # endregion
@@ -55,10 +52,11 @@ class QAP_T9220(TestCase):
         # region Step 3
         self.trade_request.set_default_params()
         self.trade_request.remove_fields_from_component("TradeEntryRequestBlock", ["SettlDate"])
-        self.trade_request.update_fields_in_component("TradeEntryRequestBlock", {"AccountGroupID": self.client_ext,
-                                                                                 "ListingID": self.listing_usd_php,
-                                                                                 "ExecQty": self.exec_qty,
-                                                                                 "Currency": self.currency})
+        self.trade_request.update_fields_in_component("TradeEntryRequestBlock",
+                                                      {"ClientAccountGroupID": self.client_ext,
+                                                       "ExecQty": self.exec_qty,
+                                                       "Currency": self.currency})
+        self.trade_request.change_instrument(self.usd_php, self.instr_type_spo)
         self.java_api_manager.send_message_and_receive_response(self.trade_request)
         # endregion
         # region Step 4
@@ -69,5 +67,6 @@ class QAP_T9220(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        self.java_api_manager.send_message(self.maintenance_request_int)
+        self.cancel_request.set_params(self.account_int)
+        self.java_api_manager.send_message(self.cancel_request)
         self.sleep(5)
