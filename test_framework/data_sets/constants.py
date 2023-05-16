@@ -381,6 +381,8 @@ class ExecType(Enum):
 
 class WebAdminURL(Enum):
     saturn_306 = "http://10.0.22.38:3480/adm/saturn/#/auth/login"
+    columbia_310 = "http://10.0.22.38:4780/adm/qakharkiv310NewDesign/#/auth/login"
+    venus_324 = "http://10.0.22.38:9980/adm/qakharkiv324/#/auth/login"
     test_site = ""
 
 

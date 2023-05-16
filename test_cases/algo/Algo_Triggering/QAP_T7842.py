@@ -129,7 +129,7 @@ class QAP_T7842(TestCase):
         self.fix_verifier_sell.check_fix_message(self.Triggering_ord_mod_px, key_parameters=self.key_params, direction=self.ToQuod, message_name='Sell side OCRR')
 
         replaced_Trig_ord_px = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.Triggering_ord_mod_px, self.gateway_side_sell, self.status_cancel_replace)
-        replaced_Trig_ord_px.change_parameter('Price', self.price_mod)
+        replaced_Trig_ord_px.change_parameters(dict(Price=self.price_mod, SettlDate='*'))
         self.fix_verifier_sell.check_fix_message(replaced_Trig_ord_px, key_parameters=self.key_params, message_name='Sell side ExecReport Replaced')
         # endregion
 
@@ -149,7 +149,7 @@ class QAP_T7842(TestCase):
         self.fix_verifier_sell.check_fix_message(self.Triggering_ord_mod_qty, key_parameters=self.key_params, direction=self.ToQuod, message_name='Sell side OCRR')
 
         replaced_Trig_ord_qty = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.Triggering_ord_mod_qty, self.gateway_side_sell, self.status_cancel_replace)
-        replaced_Trig_ord_qty.change_parameter('OrderQty', self.qty_mod)
+        replaced_Trig_ord_qty.change_parameters(dict(OrderQty=self.qty_mod, SettlDate='*'))
         self.fix_verifier_sell.check_fix_message(replaced_Trig_ord_qty, key_parameters=self.key_params, message_name='Sell side ExecReport Replaced')
         # endregion
 
