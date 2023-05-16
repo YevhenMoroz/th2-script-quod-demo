@@ -1,8 +1,5 @@
-from datetime import datetime
-
 from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.data_sets.fx_data_set.fx_data_set import FxDataSet
-from custom import basic_custom_actions as bca
 from test_framework.fix_wrappers.FixMessageRequestForPositions import FixMessageRequestForPositions
 from test_framework.fix_wrappers.FixMessageRequestForPositionsAck import FixMessageRequestForPositionsAck
 
@@ -25,12 +22,6 @@ class FixMessageRequestForPositionsAckFX(FixMessageRequestForPositionsAck):
             "Currency": request.get_parameter("Currency"),
             "Instrument": request.get_parameter("Instrument"),
         }
-        # "NoParty": [{
-        #     "PartyID": "CLIENT1_1",
-        #     "PartyIDSource": "POS",
-        #     "PartyRole": "D",
-        #
-        # }]
         super().change_parameters(base_parameters)
         return self
 
@@ -44,15 +35,7 @@ class FixMessageRequestForPositionsAckFX(FixMessageRequestForPositionsAck):
             "PosReqResult": "2",
             "PosReqStatus": "0",
             "Account": request.get_parameter("Account"),
-            "Currency": request.get_parameter("Currency"),
-            "Instrument": request.get_parameter("Instrument"),
         }
-        # "NoParty": [{
-        #     "PartyID": "CLIENT1_1",
-        #     "PartyIDSource": "POS",
-        #     "PartyRole": "D",
-        #
-        # }]
         super().change_parameters(base_parameters)
         return self
 
