@@ -70,8 +70,12 @@ class QAP_T7026(TestCase):
                                                    desk=self.environment.get_list_fe_environment()[0].desk_ids[0],
                                                    role=SubmitRequestConst.USER_ROLE_1.value)
         self.submit_request.update_fields_in_component("NewOrderSingleBlock", {"SettlCurrency": "GBp",
-                "InstrID": self.data_set.get_instrument_id_by_name("instrument_3"), 'AccountGroupID': self.client,
-                'ListingList': {'ListingBlock': [{'ListingID': self.data_set.get_listing_id_by_name("listing_2")}]}})
+                                                                               "InstrID": self.data_set.get_instrument_id_by_name(
+                                                                                   "instrument_3"),
+                                                                               'AccountGroupID': self.client,
+                                                                               'ListingList': {'ListingBlock': [{
+                                                                                                                    'ListingID': self.data_set.get_listing_id_by_name(
+                                                                                                                        "listing_2")}]}})
         self.java_api_manager.send_message_and_receive_response(self.submit_request)
         order_id = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameter(
             JavaApiFields.OrderNotificationBlock.value)["OrdID"]
@@ -128,7 +132,8 @@ class QAP_T7026(TestCase):
                                                      "InstrID": self.data_set.get_instrument_id_by_name(
                                                          "instrument_3")})
         self.java_api_manager.send_message_and_receive_response(self.alloc_instr)
-        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                                              JavaApiFields.BookingAllocInstructionID.value).get_parameters()[
             JavaApiFields.AllocationReportBlock.value]
         self.java_api_manager.compare_values(expected_result_comm,
                                              alloc_report["ClientCommissionList"]["ClientCommissionBlock"][0],
