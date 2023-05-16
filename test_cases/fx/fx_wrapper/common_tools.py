@@ -2,6 +2,7 @@ import math
 import random
 import re
 import time
+from copy import deepcopy
 from datetime import datetime, timedelta
 from random import randint
 import psycopg2
@@ -425,6 +426,19 @@ def read_median_file():
         list_of_values.append(line)
     stdin.close()
     return str(list_of_values[-1])
+
+
+def add_band_tenor_lvl(tenors, tenor_name='SPO', qty='1.5E7'):
+    for tenor in tenors['clientTierInstrSymbolTenor']:
+        if tenor['tenor'] == tenor_name:
+            bands_amount = len(tenor['clientTierInstrSymbolTenorQty'])
+            new_qty_index = bands_amount + 1
+            new_qty = deepcopy(tenor['clientTierInstrSymbolTenorQty'][0])
+            new_qty.update(
+                {'upperQty': qty, 'indiceUpperQty': new_qty_index, 'parentIndiceUpperQty': new_qty_index})
+            tenor['clientTierInstrSymbolTenorQty'].append(new_qty)
+            break
+    return tenors
 
 
 hash_green = 'iVBORw0KGgoAAAANSUhEUgAAAG4AAAAXCAIAAABlFO2lAAACK0lEQVR4Xu2X3UoCQRSAfa0Kooh+vSjUvOnPi5LoRiyJ3KKMAmm7iOyiH9QMsqtojVLb7nwEH2HfoDeos+N6GmdGC5rZCubjCMuZOQt+nJmdCbxrJBGAX0nzY7RKaWiVvcjdXqYezMVqJmrvRG0jVs1sWGbu7oqdR9AqxRRvrlOWGbLT4VeDiYhtrFfMwk2RKdEqBYDH1adDXiId8ecDxqZWKQD6kXfHR9I6oqu0ShbYH4XrGiN4tja8Eg3V0xF7+7R8gYXqVDacd+St+ciPOg0m59It7x/wneH10R77h8f7Bscmj+PhzsZUqrJt0LX6y4K+D3yvPXG2MXOfEnoc3VxsZRaqe1joi0qv19yM47yRNDNKcG1jnjw0vRGqq73JZIxvdgnM2jstjyOJuYHJ4HQ52c0jiW0s9EPlYxP10Y3qPXa2LK2ynadm4LD7TjUq4fwIjkK19NBSBMS1bHbxaMCuioVKVSKohO5Eqvs+jQjzvZOSibUXeKi25dmcmBJ6hJiv72KhUpXMXxWK+HMqN6iTENoUeoRIVnz+7Agy+Nxe/eycryY3qN1CKqflywhZ47RNoUeIk/I5Fv66ytYzbgO9VXp7JJnscO+XBtwLO5S9iI+ZiUqWrlKnUi1MM8sFboRwL+Td0bH8tJ8v/eeLIzalotWNgE04fsN9hpcYJv2YLxWYkn+m0mfgXghC4RwO50c498D3OmFl6f2RRquUhlYpDa1SGp5KjRQ+AOYYurVt0An0AAAAAElFTkSuQmCC'
