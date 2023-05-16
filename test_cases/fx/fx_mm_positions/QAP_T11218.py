@@ -47,20 +47,20 @@ class QAP_T11218(TestCase):
         # region Step 1
         self.trade_request.set_default_params()
         self.trade_request.update_fields_in_component("TradeEntryRequestBlock",
-                                                          {"ClientAccountGroupID": self.client})
+                                                      {"ClientAccountGroupID": self.client})
         self.trade_request.change_instrument(self.gbp_cad, self.instr_type_spo)
         response_gbp_cad = self.java_api_manager.send_message_and_receive_response(self.trade_request)
 
         exec_id_gbp_cad = self.trade_request.get_exec_id(response_gbp_cad)
         self.trade_request.set_default_params()
         self.trade_request.update_fields_in_component("TradeEntryRequestBlock",
-                                                          {"ClientAccountGroupID": self.client})
+                                                      {"ClientAccountGroupID": self.client})
         self.trade_request.change_instrument(self.eur_gbp, self.instr_type_spo)
         response_eur_gbp = self.java_api_manager.send_message_and_receive_response(self.trade_request)
         exec_id_eur_gbp = self.trade_request.get_exec_id(response_eur_gbp)
-        #     # endregion
-        #
-        #     # region Step 3
+        # endregion
+
+        # region Step 3
         self.request_for_position.set_params_for_date(self.settle_date_wk1)
         self.request_for_position.change_parameter("Account", self.client)
         self.fix_manager.send_message_and_receive_response(self.request_for_position, self.test_id)
