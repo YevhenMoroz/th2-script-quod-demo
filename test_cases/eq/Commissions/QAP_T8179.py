@@ -156,7 +156,8 @@ class QAP_T8179(TestCase):
             JavaApiFields.CommissionRate.value: str(rate),
             JavaApiFields.CommissionBasis.value: AllocationInstructionConst.COMM_AND_FEE_BASIS_PCT.value
         }
-        client_commission = actually_result[JavaApiFields.ClientCommissionList.value][JavaApiFields.ClientCommissionBlock.value][0]
+        client_commission = \
+        actually_result[JavaApiFields.ClientCommissionList.value][JavaApiFields.ClientCommissionBlock.value][0]
         self.java_api_manager.compare_values(expected_commission, client_commission, 'check results of step 2')
         # endregion
 
@@ -175,7 +176,9 @@ class QAP_T8179(TestCase):
             self.java_api_manager.get_last_message(ORSMessageType.ComputeBookingFeesCommissionsReply.value). \
                 get_parameters()[JavaApiFields.ComputeBookingFeesCommissionsReplyBlock.value][
                 JavaApiFields.ClientCommissionList.value]
-        self.java_api_manager.compare_values(expected_commission, client_commission[JavaApiFields.ClientCommissionBlock.value][0], 'Check results of step 3')
+        self.java_api_manager.compare_values(expected_commission,
+                                             client_commission[JavaApiFields.ClientCommissionBlock.value][0],
+                                             'Check results of step 3')
         # endregion
 
         # region step 4
@@ -199,10 +202,13 @@ class QAP_T8179(TestCase):
         responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction_message)
         print_message('Create Block', responses)
         # endregion
-        allocation_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[JavaApiFields.AllocationReportBlock.value]
+        allocation_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                                                   JavaApiFields.BookingAllocInstructionID.value).get_parameters()[
+            JavaApiFields.AllocationReportBlock.value]
         alloc_id = allocation_report[JavaApiFields.ClientAllocID.value]
         self.java_api_manager.compare_values(expected_commission,
-                                             allocation_report[JavaApiFields.ClientCommissionList.value][JavaApiFields.ClientCommissionBlock.value][0],
+                                             allocation_report[JavaApiFields.ClientCommissionList.value][
+                                                 JavaApiFields.ClientCommissionBlock.value][0],
                                              'Check results of step 4')
 
         # region approve and allocate block
@@ -218,8 +224,13 @@ class QAP_T8179(TestCase):
         })
         responses = self.java_api_manager.send_message_and_receive_response(self.confirmation_request)
         print_message('Allocate Block ', responses)
-        confirmation_report = self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[JavaApiFields.ConfirmationReportBlock.value]
-        self.java_api_manager.compare_values(expected_commission, confirmation_report[JavaApiFields.ClientCommissionList.value][JavaApiFields.ClientCommissionBlock.value][0], 'check expected result from step 5')
+        confirmation_report = \
+        self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[
+            JavaApiFields.ConfirmationReportBlock.value]
+        self.java_api_manager.compare_values(expected_commission,
+                                             confirmation_report[JavaApiFields.ClientCommissionList.value][
+                                                 JavaApiFields.ClientCommissionBlock.value][0],
+                                             'check expected result from step 5')
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

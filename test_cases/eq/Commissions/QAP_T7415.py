@@ -154,7 +154,8 @@ class QAP_T7415(TestCase):
         responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
         class_name.print_message("BOOK", responses)
 
-        alloc_report_message = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value)
+        alloc_report_message = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                                                      JavaApiFields.BookingAllocInstructionID.value)
         alloc_id = alloc_report_message.get_parameter("AllocationReportBlock")["ClientAllocID"]
         client_comm = alloc_report_message.get_parameter("AllocationReportBlock")["ClientCommissionDataBlock"][
             "ClientCommission"
