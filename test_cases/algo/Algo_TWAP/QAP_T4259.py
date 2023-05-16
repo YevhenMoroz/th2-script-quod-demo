@@ -45,11 +45,12 @@ class QAP_T4259(TestCase):
         # endregion
         
         # region children parameters
-        self.waves = 4
+        self.waves_calc = 4
         self.slice1_qty = AlgoFormulasManager.get_next_twap_slice(self.qty, self.waves)
         self.slice2_qty = AlgoFormulasManager.get_next_twap_slice(self.qty, self.waves-1)
         self.slice3_qty = AlgoFormulasManager.get_next_twap_slice(self.qty, self.waves-2)
         self.slice4_qty = AlgoFormulasManager.get_next_twap_slice(self.qty, self.waves-3)
+        # endregion
 
         # region Gateway Side
         self.gateway_side_buy = GatewaySide.Buy

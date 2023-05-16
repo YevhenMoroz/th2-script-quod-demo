@@ -156,6 +156,7 @@ class QAP_T9143(TestCase):
         self.fix_verifier_buy.set_case_id(case_id_3)
 
         eliminate_Triggering_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.Triggering_order, self.gateway_side_sell, self.status_eliminate)
+        eliminate_Triggering_order.change_parameter('SettlDate', '*')
         self.fix_verifier_sell.check_fix_message(eliminate_Triggering_order, key_parameters=self.key_params_cl,  message_name='Sell side ExecReport eliminated')
         # endregion
 

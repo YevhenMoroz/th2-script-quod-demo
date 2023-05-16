@@ -1,7 +1,7 @@
 <regression>
     <target_server_win></target_server_win>
-    <name>Regression 191v</name>
-    <version>5.1.178.191</version>
+    <name>Regression 192v</name>
+    <version>5.1.178.192</version>
     <product_lines>
         <product_line name="algo" run="False">
             <components>
@@ -981,9 +981,16 @@
                     <data_set>WebAdminDataSet</data_set>
                     <environments>
                         <web_admin_environments>
-                            <web_admin_environment>quod310_web_admin_columbia_chrome</web_admin_environment>
                             <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
                             <web_admin_environment>test_site_web_admin_chrome</web_admin_environment>
+                        </web_admin_environments>
+                    </environments>
+                </component>
+                <component name="WA_PALGO" run="True">
+                    <data_set>WebAdminDataSet</data_set>
+                    <environments>
+                        <web_admin_environments>
+                            <web_admin_environment>quod324_web_admin_venus_chrome</web_admin_environment>
                         </web_admin_environments>
                     </environments>
                 </component>

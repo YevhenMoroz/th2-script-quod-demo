@@ -41,7 +41,7 @@ class QAP_T7903(TestCase):
         self.side = constants.OrderSide.Sell.value
         self.algopolicy = constants.ClientAlgoPolicy.qa_sorping_13.value
         self.currency = self.data_set.get_currency_by_name("currency_4")
-        self.text = constants.RejectMessages.no_listing_11.value
+        self.text = constants.RejectMessages.no_listing_9.value
         # endregion
 
         # region Gateway Side

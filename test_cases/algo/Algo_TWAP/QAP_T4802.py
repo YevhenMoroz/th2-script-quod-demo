@@ -2,6 +2,7 @@ import os
 import time
 from datetime import datetime, timedelta
 from pathlib import Path
+import math
 
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
@@ -15,7 +16,6 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
-from test_framework.algo_formulas_manager import AlgoFormulasManager
 from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
 
 class QAP_T4802(TestCase):
@@ -47,7 +47,7 @@ class QAP_T4802(TestCase):
         self.tif_day = constants.TimeInForce.Day.value
         self.waves = 3
         self.child_price = self.price
-        self.slice1_qty = AlgoFormulasManager.get_next_twap_slice(self.qty, self.waves)
+        self.slice1_qty = math.ceil(self.qty/self.waves)
         # endregion
 
         # region Gateway Side
