@@ -127,12 +127,14 @@ class QAP_T8659(TestCase):
                                                                 "InstrID": self.data_set.get_instrument_id_by_name(
                                                                     "instrument_3"), 'Currency': self.cur,
                                                                 JavaApiFields.ClientCommissionList.value:
-                                                                    {JavaApiFields.ClientCommissionBlock.value: cl_comm},
+                                                                    {
+                                                                        JavaApiFields.ClientCommissionBlock.value: cl_comm},
                                                                 "Qty": self.qty})
         self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
 
         # region step 3 - Check commission
-        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameter(
+        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                                              JavaApiFields.BookingAllocInstructionID.value).get_parameter(
             JavaApiFields.AllocationReportBlock.value)
         com_type_list = [self.comm_type_research, self.comm_type_local]
         self.__check_comm_amount_type(alloc_report, 'Book')
