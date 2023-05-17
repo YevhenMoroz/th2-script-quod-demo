@@ -162,7 +162,7 @@ class QAP_T8178(TestCase):
             JavaApiFields.CommissionBasis.value: AllocationInstructionConst.COMM_AND_FEE_BASIS_PCT.value
         }
         client_commission = \
-        actually_result[JavaApiFields.ClientCommissionList.value][JavaApiFields.ClientCommissionBlock.value][0]
+            actually_result[JavaApiFields.ClientCommissionList.value][JavaApiFields.ClientCommissionBlock.value][0]
         self.java_api_manager.compare_values(expected_commission, client_commission, 'check results of step 2')
         # endregion
 
@@ -208,8 +208,9 @@ class QAP_T8178(TestCase):
         print_message('Create Block', responses)
         # endregion
         allocation_report = \
-        self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
-            JavaApiFields.AllocationReportBlock.value]
+            self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                                   JavaApiFields.BookingAllocInstructionID.value).get_parameters()[
+                JavaApiFields.AllocationReportBlock.value]
         alloc_id = allocation_report[JavaApiFields.ClientAllocID.value]
         self.java_api_manager.compare_values(expected_commission,
                                              allocation_report[JavaApiFields.ClientCommissionList.value][
