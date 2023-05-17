@@ -216,7 +216,8 @@ class QAP_T7023(TestCase):
         responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
         print_message('Create Block', responses)
         allocation_report = \
-            self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+            self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                                   JavaApiFields.BookingAllocInstructionID.value).get_parameters()[
                 JavaApiFields.AllocationReportBlock.value]
         alloc_id = allocation_report[JavaApiFields.ClientAllocID.value]
         order_update = self.java_api_manager.get_last_message(ORSMessageType.OrdUpdate.value).get_parameters()[
@@ -292,7 +293,8 @@ class QAP_T7023(TestCase):
                                  'AllocQty', 'ConfirmType', 'ConfirmID',
                                  'AllocID', 'NetMoney', 'MatchStatus',
                                  'ConfirmStatus', 'AllocInstructionMiscBlock1',
-                                 'CpctyConfGrp', 'ReportedPx','OrderAvgPx', 'tag11245', 'GatingRuleName', 'GatingRuleCondName']
+                                 'CpctyConfGrp', 'ReportedPx', 'OrderAvgPx', 'tag11245', 'GatingRuleName',
+                                 'GatingRuleCondName']
         params = {'ConfirmTransType': "0",
                   'AllocAccount': self.client_acc1,
                   'NoOrders': [{
@@ -371,6 +373,6 @@ class QAP_T7023(TestCase):
                 if self.response[i].get_parameters()[j] == parameter[j]:
                     return self.response[i].get_parameters()
 
-    @try_except(test_id=Path(__file__).name[:-3])
-    def run_post_conditions(self):
-        self.rest_commission_sender.clear_fees()
+    # @try_except(test_id=Path(__file__).name[:-3])
+    # def run_post_conditions(self):
+    #     self.rest_commission_sender.clear_fees()
