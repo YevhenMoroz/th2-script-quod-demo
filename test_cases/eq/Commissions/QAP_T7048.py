@@ -126,8 +126,9 @@ class QAP_T7048(TestCase):
         # endregion
 
         # region check block valuese
-        self.__return_result(responses, ORSMessageType.AllocationReport.value)
-        alloc_report = self.result.get_parameter('AllocationReportBlock')
+        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                                              JavaApiFields.BookingAllocInstructionID.value).get_parameter(
+            JavaApiFields.AllocationReportBlock.value)
         alloc_inst_id = alloc_report['ClientAllocID']
         # endregion
 
@@ -158,8 +159,9 @@ class QAP_T7048(TestCase):
                                                                    'RootMiscFeesList': fee_list
                                                                })
         responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
-        self.__return_result(responses, ORSMessageType.AllocationReport.value)
-        alloc_report = self.result.get_parameter('AllocationReportBlock')
+        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                               JavaApiFields.BookingAllocInstructionID.value).get_parameter(
+            JavaApiFields.AllocationReportBlock.value)
         self.java_api_manager.compare_values({'RootMiscFeeRate':
                                                   fee_list['RootMiscFeesBlock'][0]['RootMiscFeeRate']},
                                              {'RootMiscFeeRate':
