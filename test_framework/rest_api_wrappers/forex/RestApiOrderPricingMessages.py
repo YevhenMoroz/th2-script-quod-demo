@@ -19,6 +19,10 @@ class RestApiOrderPricingMessages(RestApiMessages):
         self.message_type = ResAPIMessageType.CreateOrderPricing.value
         return self
 
+    def modify_order_pricing(self):
+        self.message_type = ResAPIMessageType.ModifyOrderPricing.value
+        return self
+
     def find_all_order_pricing(self):
         self.clear_message_params()
         self.message_type = ResAPIMessageType.FindAllOrderPricing.value

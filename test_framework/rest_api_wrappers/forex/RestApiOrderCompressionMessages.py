@@ -24,6 +24,10 @@ class RestApiOrderCompressionMessages(RestApiMessages):
         self.message_type = ResAPIMessageType.FindAllOrderCompression.value
         return self
 
+    def modify_order_compression(self):
+        self.message_type = ResAPIMessageType.ModifyOrderCompression.value
+        return self
+
     def delete_order_compression(self):
         self.message_type = ResAPIMessageType.DeleteOrderCompression.value
         return self
