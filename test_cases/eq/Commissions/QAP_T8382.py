@@ -180,7 +180,7 @@ class QAP_T8382(TestCase):
         class_name.print_message("BOOK", responses)
 
         alloc_report_reply = self.java_api_manager.get_last_message(
-            ORSMessageType.AllocationReport.value
+            ORSMessageType.AllocationReport.value, JavaApiFields.BookingAllocInstructionID.value
         ).get_parameters()[JavaApiFields.AllocationReportBlock.value]
         alloc_id = alloc_report_reply["ClientAllocID"]
         self.java_api_manager.compare_values(
