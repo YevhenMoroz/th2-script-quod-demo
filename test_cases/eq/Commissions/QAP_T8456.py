@@ -96,7 +96,8 @@ class QAP_T8456(TestCase):
         self.rest_commission_sender.set_modify_fees_message(fee_type=agent_fee_type, comm_profile=commission_profile,
                                                             fee=fee)
         self.rest_commission_sender.change_message_params(
-            {'commExecScope': all_exec_exec_scope, 'instrType': instr_type, "venueID": venue_id})
+            {'commExecScope': all_exec_exec_scope, 'instrType': instr_type, 'accountGroupID': self.client,
+             'miscFeeCategory': 'LOC'})
         self.rest_commission_sender.send_post_request()
         # endregion
 
@@ -221,7 +222,8 @@ class QAP_T8456(TestCase):
         responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
         print_message("Allocation Instruction", responses)
         allocation_report = \
-            self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+            self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                                   JavaApiFields.BookingAllocInstructionID.value).get_parameters()[
                 JavaApiFields.AllocationReportBlock.value]
         self.java_api_manager.key_is_absent(JavaApiFields.RootMiscFeesList.value, allocation_report,
                                             'Check that Block doesn`t has Agent Fees')
@@ -297,7 +299,8 @@ class QAP_T8456(TestCase):
                                   'OrdType', 'tag5120', 'LastMkt', 'OrderCapacity',
                                   'QtyType', 'ExecBroker', 'Price', 'VenueType',
                                   'Instrument', 'NoParty', 'ExDestination', 'GrossTradeAmt',
-                                  'AllocInstructionMiscBlock2', 'CommissionData', 'GatingRuleName', 'GatingRuleCondName']
+                                  'AllocInstructionMiscBlock2', 'CommissionData', 'GatingRuleName',
+                                  'GatingRuleCondName']
         fix_execution_report = FixMessageExecutionReportOMS(self.data_set, params_of_execution_report_message)
         self.fix_verifier.check_fix_message_fix_standard(fix_execution_report, ignored_fields=list_of_ignored_fields)
 
