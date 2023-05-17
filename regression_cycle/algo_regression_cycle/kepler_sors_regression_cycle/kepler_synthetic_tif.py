@@ -1,4 +1,6 @@
 import logging
+import time
+
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_cases.algo.Algo_Kepler.Algo_Synthetic_TIF.QAP_T4208 import QAP_T4208
@@ -23,6 +25,7 @@ def test_run(parent_id=None, version=None):
         # region Synthetic TIF
         configuration = ComponentConfiguration("Sorping")
         QAP_T4188(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        time.sleep(10)
         QAP_T4207(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4208(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4747(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
