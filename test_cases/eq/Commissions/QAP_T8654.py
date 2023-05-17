@@ -94,7 +94,7 @@ class QAP_T8654(TestCase):
         self.trade_entry_request.update_fields_in_component('TradeEntryRequestBlock', {'LastMkt': self.mic})
         self.java_api_manager.send_message_and_receive_response(self.trade_entry_request)
         exec_report = self.java_api_manager.get_first_message(ORSMessageType.ExecutionReport.value,
-                                                             ExecutionReportConst.ExecType_TRD.value).get_parameter(
+                                                              ExecutionReportConst.ExecType_TRD.value).get_parameter(
             JavaApiFields.ExecutionReportBlock.value)
         exec_id = exec_report[JavaApiFields.ExecID.value]
 
@@ -133,12 +133,14 @@ class QAP_T8654(TestCase):
                                                                 "InstrID": self.data_set.get_instrument_id_by_name(
                                                                     "instrument_3"), 'Currency': self.cur,
                                                                 JavaApiFields.ClientCommissionList.value:
-                                                                    {JavaApiFields.ClientCommissionBlock.value: cl_comm},
+                                                                    {
+                                                                        JavaApiFields.ClientCommissionBlock.value: cl_comm},
                                                                 "Qty": self.qty})
         self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
 
         # region step 3 - Check commission
-        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameter(
+        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                                              JavaApiFields.BookingAllocInstructionID.value).get_parameter(
             JavaApiFields.AllocationReportBlock.value)
         com_type_list = [self.comm_type_unspecified, self.comm_type_broker, self.comm_type_acceptance]
         self.__check_comm_amount_type(alloc_report, 'Book')
