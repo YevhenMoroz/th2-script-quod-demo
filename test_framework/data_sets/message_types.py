@@ -219,6 +219,7 @@ class QSMessageType(Enum):
     ListingQuotingNotification = "Order_ListingQuotingNotification"
     StopQuotingRequest = "Order_StopQuotingRequest"
     QuoteManagementReply = "Order_QuoteManagementReply"
+    ExecutePricedOrderRequest = "Order_ExecutePricedOrderRequest"
 
 
 class ReadLogMessageType(Enum):
