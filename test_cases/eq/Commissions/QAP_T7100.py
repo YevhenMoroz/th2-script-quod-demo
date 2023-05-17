@@ -80,7 +80,8 @@ class QAP_T7100(TestCase):
                                                      "InstrID": self.instr_id, "AvgPx": self.price,
                                                      "GrossTradeAmt": '2000'})
         self.java_api_manager.send_message_and_receive_response(self.alloc_instr)
-        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()
+        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                                              JavaApiFields.BookingAllocInstructionID.value).get_parameters()
         self.java_api_manager.compare_values(
             {JavaApiFields.AllocationReportBlock.value: JavaApiFields.ClientCommissionList.value}, alloc_report,
             "Check commission isn't present in the block", VerificationMethod.NOT_CONTAINS)
