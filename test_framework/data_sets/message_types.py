@@ -188,6 +188,12 @@ class ResAPIMessageType(Enum):
     DeleteOrderVelocity = "DeleteOrderVelocityLimit"
     ModifyOrderVelocity = "ModifyOrderVelocityLimit"
     ManageSecurityBlock = "ManageSecurityBlock"
+    CreateOrderPricing = "CreateOrderPricing"
+    DeleteOrderPricing = "DeleteOrderPricing"
+    CreateOrderCompression = "CreateOrderCompression"
+    DeleteOrderCompression = "DeleteOrderCompression"
+    FindAllOrderPricing = "FindAllOrderPricing"
+    FindAllOrderCompression = "FindAllOrderCompression"
 
 
 class PKSMessageType(Enum):
