@@ -16,7 +16,7 @@ from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
 
 
-class QAP_T9073(TestCase):
+class QAP_T9075(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -32,12 +32,13 @@ class QAP_T9073(TestCase):
         # endregion
 
         # region order parameters
-        self.price = 20
-        self.qty = 1000
-        self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
-        self.price_ltp = self.price_ask = 22
-        self.price_bid = 20
-        self.qty_ltp = self.qty_bid = self.qty_ask = 1_000
+        self.side = constants.OrderSide.Sell.value
+        self.price = 22
+        self.qty = self.ltq = 1000
+        self.price_ask = 24
+        self.ltp = 23
+        self.price_bid = 22
+        self.qty_bid = self.qty_ask = 1_000
         # endregion
 
         # region Gateway Side
@@ -48,8 +49,7 @@ class QAP_T9073(TestCase):
         # region Status
         self.status_pending = Status.Pending
         self.status_new = Status.New
-        self.status_cancel = Status.Cancel
-        self.status_eliminate = Status.Eliminate
+        self.status_fill = Status.Fill
         # endregion
 
         # region instrument
@@ -59,12 +59,13 @@ class QAP_T9073(TestCase):
         # region Trigger params
         self.trigger_instrument = self.data_set.get_fix_instrument_by_name("instrument_39")
         self.trigger_type = constants.TriggerType.PriceMovement.value
-        self.trig_px_direct = constants.TriggerPriceDirection.PriceGoesDown.value
-        self.trigger_px = 22
-        self.trig_px_type = constants.TriggerPriceType.LastTrade.value
+        self.trig_px_direct = constants.TriggerPriceDirection.PriceGoesUp.value
+        self.trigger_px = 23
+        self.trig_px_type = constants.TriggerPriceType.BestBidOrLastTrade.value
         self.trig_symbol = self.trigger_instrument['Symbol']
         self.trig_security_id = self.trigger_instrument['SecurityID']
         self.trig_security_id_source = self.trigger_instrument['SecurityIDSource']
+        # endregion
 
         # region Direction
         self.FromQuod = DirectionEnum.FromQuod
@@ -89,9 +90,10 @@ class QAP_T9073(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
-        nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, False, 0, self.price)
-
-        self.rule_list = [nos_ioc_rule]
+        nos_dma_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price)
+        trade_rule = rule_manager.add_NewOrdSingleExecutionReportTrade(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price, self.qty, 0)
+        
+        self.rule_list = [nos_dma_rule, trade_rule]
         # endregion
         
         # region Send_MarkerData
@@ -108,7 +110,7 @@ class QAP_T9073(TestCase):
 
         self.Triggering_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Triggering_params()
         self.Triggering_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.Triggering_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, TimeInForce=self.tif_ioc))
+        self.Triggering_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, Side=self.side))
         self.Triggering_order.update_fields_in_component('TriggeringInstruction', dict(TriggerSymbol=self.trig_symbol, TriggerSecurityID=self.trig_security_id, TriggerSecurityIDSource=self.trig_security_id_source,
                                                                                         TriggerPriceType=self.trig_px_type, TriggerPriceDirection=self.trig_px_direct, TriggerPrice=self.trigger_px))
         self.fix_manager_sell.send_message_and_receive_response(self.Triggering_order, case_id_1)
@@ -121,15 +123,14 @@ class QAP_T9073(TestCase):
         self.fix_verifier_sell.check_fix_message(pending_Triggering_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew')
 
         new_Triggering_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.Triggering_order, self.gateway_side_sell, self.status_new)
-        
         self.fix_verifier_sell.check_fix_message(new_Triggering_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
 
-        # region Send_LTP
-        self.fix_manager_feed_handler.set_case_id(bca.create_event("Send LTP", self.test_id))
-        market_data_incr_refr_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
-        market_data_incr_refr_par.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.price_ltp, MDEntrySize=self.qty_ltp)
-        self.fix_manager_feed_handler.send_message(market_data_incr_refr_par)
+        # region Send_LastTrade
+        self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
+        market_data_incr_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
+        market_data_incr_par.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.ltp, MDEntrySize=self.ltq)
+        self.fix_manager_feed_handler.send_message(market_data_incr_par)
         # endregion
 
         time.sleep(3)
@@ -138,7 +139,7 @@ class QAP_T9073(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order", self.test_id))
 
         self.dma_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        self.dma_order.change_parameters(dict(OrderQty=self.qty, Price=self.price, Instrument='*', TimeInForce=self.tif_ioc))
+        self.dma_order.change_parameters(dict(OrderQty=self.qty, Price=self.price, Instrument='*', Side=self.side))
         self.fix_verifier_buy.check_fix_message(self.dma_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Child DMA')
 
         self.pending_dma_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_pending)
@@ -147,16 +148,15 @@ class QAP_T9073(TestCase):
         self.new_dma_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message(self.new_dma_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA')
 
-        self.eliminate_dma_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_eliminate)
-        self.fix_verifier_buy.check_fix_message(self.eliminate_dma_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport Eliminate Child DMA')
+        self.fill_dma_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_fill)
+        self.fix_verifier_buy.check_fix_message(self.fill_dma_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport Fill Child DMA')
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        # region check eliminate Parent SS
-        eliminate_request_Triggering_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.Triggering_order, self.gateway_side_sell, self.status_eliminate)
-        eliminate_request_Triggering_order.change_parameter('SettlDate', '*')
-        self.fix_verifier_sell.check_fix_message(eliminate_request_Triggering_order, message_name='Sell side ExecReport eliminated')
+        # region ER Fill parent Triggering order
+        ER_fill_parent = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.Triggering_order, self.gateway_side_sell, self.status_fill)
+        self.fix_verifier_sell.check_fix_message(ER_fill_parent, message_name='Sell side ExecReport Filled')
         # endregion
 
         RuleManager(Simulators.algo).remove_rules(self.rule_list)

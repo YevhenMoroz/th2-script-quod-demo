@@ -64,11 +64,10 @@ class QAP_T7892(TestCase):
         # endregion
 
         # region venue param
-        self.ex_destination_xlon = self.data_set.get_mic_by_name("mic_3")
+        self.ex_destination_cceu = self.data_set.get_mic_by_name("mic_23")
         self.client = self.data_set.get_client_by_name("client_4")
         self.account = self.data_set.get_account_by_name("account_9")
-        self.listing_id_xetr = self.data_set.get_listing_id_by_name("listing_51")
-        self.listing_id_xlon = self.data_set.get_listing_id_by_name("listing_52")
+        self.listing_id_cceu = self.data_set.get_listing_id_by_name("listing_52")
         # endregion
 
         # region Key parameters
@@ -84,23 +83,20 @@ class QAP_T7892(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_xlon, self.price)
-        ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_xlon, True)
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_cceu, self.price)
+        ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_cceu, True)
         self.rule_list = [nos_rule, ocr_rule]
         # endregion
 
         # region Send_MarkerData
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
-        market_data_snap_shot_xlon = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_xlon, self.fix_env1.feed_handler)
-        market_data_snap_shot_xlon.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_for_md)
-        market_data_snap_shot_xlon.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_for_md)
-        self.fix_manager_feed_handler.send_message(market_data_snap_shot_xlon)
+        market_data_snap_shot_cceu = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_cceu, self.fix_env1.feed_handler)
+        market_data_snap_shot_cceu.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_for_md)
+        market_data_snap_shot_cceu.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_for_md)
+        self.fix_manager_feed_handler.send_message(market_data_snap_shot_cceu)
 
-        market_data_snap_shot_xetr = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_xetr, self.fix_env1.feed_handler)
-        market_data_snap_shot_xetr.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_for_md)
-        market_data_snap_shot_xetr.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_for_md)
-        self.fix_manager_feed_handler.send_message(market_data_snap_shot_xetr)
         time.sleep(3)
+
         # endregion
 
         # region Send NewOrderSingle (35=D) for SORPING order
@@ -129,15 +125,15 @@ class QAP_T7892(TestCase):
         # region Check child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order", self.test_id))
 
-        self.dma_xlon_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_Kepler_params()
-        self.dma_xlon_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_xlon, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, Side=self.side, Currency=self.currency))
-        self.fix_verifier_buy.check_fix_message_kepler(self.dma_xlon_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
+        self.dma_cceu_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_Kepler_params()
+        self.dma_cceu_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_cceu, OrderQty=self.qty, Price=self.price, Instrument='*', Side=self.side, Currency=self.currency))
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_cceu_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
-        er_pending_new_dma_xlon_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_xlon_order, self.gateway_side_buy, self.status_pending)
-        self.fix_verifier_buy.check_fix_message_kepler(er_pending_new_dma_xlon_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 1 order')
+        er_pending_new_dma_cceu_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_cceu_order, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message_kepler(er_pending_new_dma_cceu_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 1 order')
 
-        er_new_dma_xlon_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_xlon_order, self.gateway_side_buy, self.status_new)
-        self.fix_verifier_buy.check_fix_message_kepler(er_new_dma_xlon_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 1 order')
+        er_new_dma_cceu_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_cceu_order, self.gateway_side_buy, self.status_new)
+        self.fix_verifier_buy.check_fix_message_kepler(er_new_dma_cceu_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 1 order')
         # endregion
 
         time.sleep(10)
@@ -153,8 +149,8 @@ class QAP_T7892(TestCase):
         self.fix_verifier_sell.check_fix_message(cancel_request_SORPING_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
 
         # region check cancel first dma child order
-        er_cancel_dma_xlon_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_xlon_order, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message_kepler(er_cancel_dma_xlon_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel child DMA 1 order")
+        er_cancel_dma_cceu_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_cceu_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message_kepler(er_cancel_dma_cceu_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport Cancel child DMA 1 order")
         # endregion
 
         er_cancel_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_cancel)
