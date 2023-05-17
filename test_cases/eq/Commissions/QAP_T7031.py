@@ -6,7 +6,7 @@ from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
-from test_framework.java_api_wrappers.java_api_constants import SubmitRequestConst, OrderReplyConst, JavaApiFields,\
+from test_framework.java_api_wrappers.java_api_constants import SubmitRequestConst, OrderReplyConst, JavaApiFields, \
     AllocTransTypes, AllocTypes
 from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS import AllocationInstructionOMS
 from test_framework.java_api_wrappers.oms.ors_messges.ComputeBookingFeesCommissionsRequestOMS import \
@@ -57,7 +57,7 @@ class QAP_T7031(TestCase):
                                     self.ssh_client_env.password, self.ssh_client_env.su_user,
                                     self.ssh_client_env.su_password)
         self.order_submit = OrderSubmitOMS(self.data_set)
-        self.java_api_connectivity=self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
         self.trade_entry_request = TradeEntryOMS(self.data_set)
         self.compute_booking_fee_commission_request = ComputeBookingFeesCommissionsRequestOMS(self.data_set)
@@ -73,10 +73,10 @@ class QAP_T7031(TestCase):
         self.rest_commission_sender.clear_commissions()
         self.rest_commission_sender.clear_fees()
         self.rest_commission_sender.set_modify_client_commission_message(
-            comm_profile=self.data_set.get_comm_profile_by_name('per_u_qty'))
+            comm_profile=self.data_set.get_comm_profile_by_name('bas_qty'))
         self.rest_commission_sender.send_post_request()
         agent_fee_type = self.data_set.get_misc_fee_type_by_name('value_added_tax')
-        commission_profile = self.data_set.get_comm_profile_by_name('client_commission_percentage')
+        commission_profile = self.data_set.get_comm_profile_by_name('bas_qty')
         fee = self.data_set.get_fee_by_name('fee_vat')
         instr_type = self.data_set.get_instr_type('equity')
         venue_id = self.data_set.get_venue_id('eurex')
@@ -176,14 +176,15 @@ class QAP_T7031(TestCase):
                                                                        })
         responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction_message)
         print_message('Create Block', responses)
-        actual_result = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()
+        actual_result = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                                               JavaApiFields.BookingAllocInstructionID.value).get_parameters()
         alloc_id = actual_result[JavaApiFields.AllocationReportBlock.value][JavaApiFields.ClientAllocID.value]
         block_id = actual_result[JavaApiFields.AllocationReportBlock.value][JavaApiFields.AllocReportID.value]
         self.java_api_manager.compare_values(
             {JavaApiFields.PostTradeStatus.value: OrderReplyConst.PostTradeStatus_BKD.value},
             {JavaApiFields.PostTradeStatus.value:
                  self.java_api_manager.get_last_message(ORSMessageType.OrdUpdate.value).
-                     get_parameters()[JavaApiFields.OrdUpdateBlock.value][JavaApiFields.PostTradeStatus.value]},
+                 get_parameters()[JavaApiFields.OrdUpdateBlock.value][JavaApiFields.PostTradeStatus.value]},
             'Comparing value after Allocation Instruction (step 2)')
         # endregion
 
