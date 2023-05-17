@@ -86,7 +86,8 @@ class QAP_T7308(TestCase):
         self.java_api_manager.compare_values(expected_result, exec_reply, "Compare TransExecStatus")
         self.complete_message.set_default_complete(order_id)
         self.java_api_manager.send_message_and_receive_response(self.complete_message)
-        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                                              JavaApiFields.BookingAllocInstructionID.value).get_parameters()[
             JavaApiFields.AllocationReportBlock.value
         ]
         alloc_id = alloc_report["AllocInstructionID"]
