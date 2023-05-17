@@ -155,7 +155,7 @@ class QAP_T10663(TestCase):
         self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
 
         # region step 3 - Check commission
-        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameter(
+        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value, JavaApiFields.BookingAllocInstructionID.value).get_parameter(
             JavaApiFields.AllocationReportBlock.value)
         alloc_report_comm = alloc_report[JavaApiFields.ClientCommissionList.value][
             JavaApiFields.ClientCommissionBlock.value][0]
