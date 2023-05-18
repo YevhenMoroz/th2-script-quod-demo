@@ -446,6 +446,7 @@ class AlgoAccounts(Enum):
     account_25 = "QDV1_CLIENT2"
     account_26 = "QDV2_CLIENT2"
     account_27 = "QDV3_CLIENT2"
+    account_28 = "CLIENT2"
 
 
 class AlgoWashbookAccounts(Enum):

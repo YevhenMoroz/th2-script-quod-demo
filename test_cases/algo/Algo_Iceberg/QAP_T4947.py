@@ -14,7 +14,7 @@ from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 
 
-class QAP_T8712(TestCase):
+class QAP_T4947(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -108,11 +108,11 @@ class QAP_T8712(TestCase):
         # region Check Sell side
         self.fix_verifier_sell.check_fix_message(self.iceberg_order, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
-        pending_iceberg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.iceberg_order, self.gateway_side_sell, self.status_pending)
-        self.fix_verifier_sell.check_fix_message(pending_iceberg_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew')
+        self.pending_iceberg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.iceberg_order, self.gateway_side_sell, self.status_pending)
+        self.fix_verifier_sell.check_fix_message(self.pending_iceberg_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew')
 
-        new_iceberg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.iceberg_order, self.gateway_side_sell, self.status_new)
-        self.fix_verifier_sell.check_fix_message(new_iceberg_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
+        self.new_iceberg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.iceberg_order, self.gateway_side_sell, self.status_new)
+        self.fix_verifier_sell.check_fix_message(self.new_iceberg_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
 
         # region Check child DMA order 1
@@ -125,24 +125,7 @@ class QAP_T8712(TestCase):
         er_reject_dma_1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy, self.status_reject)
         self.fix_verifier_buy.check_fix_message(er_reject_dma_1_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport Reject Child DMA 1 order')
 
-        time.sleep(56)
-
-        self.fix_verifier_buy.check_fix_message_sequence([er_reject_dma_1_order_params], [self.key_params], self.ToQuod, "Check that only 1 child was generated and the algo is paused")
-
-        time.sleep(5)
-        # endregion
-
-        # region Check child DMA order 2
-        self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order 2", self.test_id))
-
-        self.dma_2_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        self.dma_2_order.change_parameters(dict(OrderQty=self.display_qty, Price=self.price, Instrument='*'))
-        self.fix_verifier_buy.check_fix_message(self.dma_2_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Child DMA 2 order')
-
-        er_reject_dma_2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_order, self.gateway_side_buy, self.status_reject)
-        self.fix_verifier_buy.check_fix_message(er_reject_dma_2_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport Reject Child DMA 2 order')
-
-        self.fix_verifier_buy.check_fix_message_sequence([er_reject_dma_1_order_params, er_reject_dma_2_order_params], [self.key_params, self.key_params], self.ToQuod, "Check that only 2nd child was generated")
+        time.sleep(3)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -152,6 +135,9 @@ class QAP_T8712(TestCase):
         self.fix_verifier_sell.set_case_id(case_id_3)
         eliminate_iceberg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.iceberg_order, self.gateway_side_sell, self.status_eliminate)
         self.fix_verifier_sell.check_fix_message(eliminate_iceberg_order_params, key_parameters=self.key_params, message_name='Sell side ExecReport eliminate')
+
+        self.fix_verifier_sell.check_fix_message_sequence([self.pending_iceberg_order_params, self.new_iceberg_order_params, eliminate_iceberg_order_params],
+                                                          [self.key_params_cl, self.key_params_cl, self.key_params_cl], self.FromQuod, "Check that Algo didn't generate OCR after the reject")
         # endregion
 
         rule_manager = RuleManager(Simulators.algo)

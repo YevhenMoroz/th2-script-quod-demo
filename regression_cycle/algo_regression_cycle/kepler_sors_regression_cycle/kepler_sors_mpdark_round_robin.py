@@ -33,6 +33,7 @@ from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10543 import QAP_T10543
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10544 import QAP_T10544
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10546 import QAP_T10546
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10547 import QAP_T10547
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10572 import QAP_T10572
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10623 import QAP_T10623
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10624 import QAP_T10624
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10625 import QAP_T10625
