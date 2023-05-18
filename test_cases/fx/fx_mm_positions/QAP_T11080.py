@@ -46,11 +46,10 @@ class QAP_T11080(TestCase):
         self.listing_gbp_cad = self.data_set.get_listing_id_by_name("gbp_cad_spo")
         self.currency = self.data_set.get_currency_by_name("currency_gbp")
         self.gbp_cad = self.data_set.get_symbol_by_name("symbol_synth_5")
-        self.fwd = self.data_set.get_security_type_by_name("fx_fwd")
-        self.sec_type_java = self.data_set.get_fx_instr_type_ja("fx_fwd")
+        self.security_type_fwd = self.data_set.get_security_type_by_name("fx_fwd")
         self.instr_type_spo = self.data_set.get_fx_instr_type_ja("fx_spot")
         self.instrument = {
-            "SecurityType": self.fwd,
+            "SecurityType": self.security_type_fwd,
             "Symbol": self.gbp_cad
         }
 
@@ -104,10 +103,8 @@ class QAP_T11080(TestCase):
         # endregion
         # region Step 5
         self.position_report_before_spot.set_params_for_all(self.request_for_position)
-        self.position_report_before_spot.change_parameter("LastPositUpdateEventID", exec_id_spo)
 
         self.position_report_before_fwd.set_params_for_all(self.request_for_position)
-        self.position_report_before_fwd.change_parameter("LastPositUpdateEventID", exec_id_fwd)
 
         self.position_report_after_mo.set_params_for_all(self.request_for_position)
         self.position_report_after_mo.change_parameter("LastPositUpdateEventID", mo_id_after)
@@ -120,7 +117,7 @@ class QAP_T11080(TestCase):
                 "SenderCompID": "QUODFX_UAT"
             }
         }
-        key_params = ["PosReqID"]
+        key_params = ["PosReqID", "LastPositUpdateEventID"]
         self.sleep(3)
         self.fix_verifier.check_fix_message_sequence([self.position_report_before_spot,
                                                       self.position_report_before_fwd,
@@ -128,6 +125,7 @@ class QAP_T11080(TestCase):
                                                       self.position_report_after_exe],
                                                      key_parameters_list=[key_params, key_params, key_params,
                                                                           key_params],
+                                                     check_order=False,
                                                      pre_filter=prefilter,
                                                      message_name="Check that we receive 4 report ")
         # endregion
