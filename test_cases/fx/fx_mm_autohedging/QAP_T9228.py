@@ -4,17 +4,12 @@ from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.environments.full_environment import FullEnvironment
-from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.forex.FixMessageExecutionReportDropCopyFX import FixMessageExecutionReportDropCopyFX
 from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleTakerDC import FixMessageNewOrderSingleTakerDC
-from test_framework.fix_wrappers.forex.FixMessagePositionReportFX import FixMessagePositionReportFX
-from test_framework.fix_wrappers.forex.FixMessageRequestForPositionsFX import FixMessageRequestForPositionsFX
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
-from test_framework.java_api_wrappers.fx.FixPositionMaintenanceRequestFX import FixPositionMaintenanceRequestFX
 from test_framework.java_api_wrappers.fx.HeldOrderAckRequestFX import HeldOrderAckRequestFX
 from test_framework.java_api_wrappers.fx.TradeEntryRequestFX import TradeEntryRequestFX
-from test_framework.positon_verifier_fx import PositionVerifier
 from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
 from test_framework.rest_api_wrappers.forex.RestApiAutoHedgerMessages import RestApiAutoHedgerMessages
 
@@ -44,7 +39,7 @@ class QAP_T9228(TestCase):
         self.eur_gbp = self.data_set.get_symbol_by_name("symbol_3")
         self.sec_type_spo = self.data_set.get_security_type_by_name("fx_spot")
         self.settle_date_spo = self.data_set.get_settle_date_by_name("spot")
-        self.listing_eur_gbp = self.data_set.get_listing_id_by_name("eur_gbp_spo")
+        self.instr_type_spo = self.data_set.get_fx_instr_type_ja("fx_spot")
         self.instrument = {
             "SecurityType": self.sec_type_spo,
             "Symbol": self.eur_gbp
@@ -73,9 +68,10 @@ class QAP_T9228(TestCase):
         # region Step 2
         self.trade_request.set_default_params()
         self.trade_request.remove_fields_from_component("TradeEntryRequestBlock", ["SettlDate"])
-        self.trade_request.update_fields_in_component("TradeEntryRequestBlock", {"AccountGroupID": self.client_ext,
-                                                                                 "ListingID": self.listing_eur_gbp,
-                                                                                 "ExecQty": self.exec_qty})
+        self.trade_request.update_fields_in_component("TradeEntryRequestBlock",
+                                                      {"ClientAccountGroupID": self.client_ext,
+                                                       "ExecQty": self.exec_qty})
+        self.trade_request.change_instrument(self.eur_gbp, self.instr_type_spo)
         response: list = self.java_api_manager.send_message_and_receive_response(self.trade_request)
         ah_order_id = self.trade_request.get_ord_id_from_held(response)
 
@@ -103,9 +99,10 @@ class QAP_T9228(TestCase):
         # region Step 5
         self.trade_request.set_default_params()
         self.trade_request.remove_fields_from_component("TradeEntryRequestBlock", ["SettlDate"])
-        self.trade_request.update_fields_in_component("TradeEntryRequestBlock", {"AccountGroupID": self.client_ext,
-                                                                                 "ListingID": self.listing_eur_gbp,
-                                                                                 "ExecQty": self.exec_qty})
+        self.trade_request.update_fields_in_component("TradeEntryRequestBlock",
+                                                      {"ClientAccountGroupID": self.client_ext,
+                                                       "ExecQty": self.exec_qty})
+        self.trade_request.change_instrument(self.eur_gbp, self.instr_type_spo)
         response: list = self.java_api_manager.send_message_and_receive_response(self.trade_request)
         ah_order_id = self.trade_request.get_ord_id_from_held(response)
 
@@ -116,18 +113,9 @@ class QAP_T9228(TestCase):
         self.sleep(1)
         self.ah_order.set_default_sor_from_trade(self.trade_request)
         self.ah_order.change_parameters({"Account": self.client_int, "ClOrdID": ah_order_id})
-        prefilter = {
-            "header": {
-                "MsgType": ("D", "EQUAL"),
-                "TargetCompID": "QUOD8",
-                "SenderCompID": "QUODFX_UAT"
-            }
-        }
-        key_params = ["Misc0"]
-        self.fix_drop_copy_verifier.check_fix_message_sequence([self.ah_order, ],
-                                                               key_parameters_list=[key_params],
-                                                               pre_filter=prefilter,
-                                                               message_name="Check that we create AH order")
+        key_params = ["Misc0", "Account"]
+        self.fix_drop_copy_verifier.check_fix_message(self.ah_order, key_parameters=key_params,
+                                                      message_name="Check that we create AH order")
 
         # endregion
 
