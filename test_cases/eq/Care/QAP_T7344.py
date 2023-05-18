@@ -110,7 +110,7 @@ class QAP_T7344(TestCase):
                              status='FAILED')
         # endregion
 
-        # region step 4-5: Modify last execution
+        # region step 4-5: Modify first execution
         modify_qty_of_exec = '100'
         self.manual_execute.set_default_replace_execution(ord_id, exec_id, price, modify_qty_of_exec)
         self.java_api_manager.send_message_and_receive_response(self.manual_execute)
