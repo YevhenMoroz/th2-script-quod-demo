@@ -1,10 +1,7 @@
-<<<<<<< HEAD
 from datetime import datetime
-=======
 import logging
 from datetime import datetime
 from posixpath import expanduser
->>>>>>> rublyov_schema
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import message_to_grpc, convert_to_request
 from stubs import Stubs

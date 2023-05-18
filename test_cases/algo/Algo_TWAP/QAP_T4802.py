@@ -2,6 +2,7 @@ import os
 import time
 from datetime import datetime, timedelta
 from pathlib import Path
+import math
 
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
@@ -15,7 +16,6 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
-from test_framework.algo_formulas_manager import AlgoFormulasManager
 from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
 
 class QAP_T4802(TestCase):
@@ -47,7 +47,7 @@ class QAP_T4802(TestCase):
         self.tif_day = constants.TimeInForce.Day.value
         self.waves = 3
         self.child_price = self.price
-        self.slice1_qty = AlgoFormulasManager.get_next_twap_slice(self.qty, self.waves)
+        self.slice1_qty = math.ceil(self.qty/self.waves)
         # endregion
 
         # region Gateway Side
@@ -134,7 +134,7 @@ class QAP_T4802(TestCase):
         self.fix_verifier_sell.check_fix_message(pending_twap_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew')
 
         new_twap_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_order, self.gateway_side_sell, self.status_new)
-        new_twap_order_params.change_parameter('NoParty', '*')
+        
         self.fix_verifier_sell.check_fix_message(new_twap_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
         
@@ -150,7 +150,7 @@ class QAP_T4802(TestCase):
         self.fix_verifier_sell.check_fix_message(self.TWAP_mod_order_mkt, direction=self.ToQuod, message_name='Sell side OCRR')
 
         OCRR_TWAP_params_mkt = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.TWAP_mod_order_mkt, self.gateway_side_sell, self.status_cancel_replace)
-        OCRR_TWAP_params_mkt.change_parameters(dict(NoParty='*', OrigClOrdID='*'))
+        OCRR_TWAP_params_mkt.change_parameters(dict(OrigClOrdID='*'))
         self.fix_verifier_sell.check_fix_message(OCRR_TWAP_params_mkt, key_parameters=self.key_params_cl, message_name='Sell side ExecReport Replaced')
         # endregion
         
@@ -166,7 +166,7 @@ class QAP_T4802(TestCase):
         self.fix_verifier_sell.check_fix_message(self.TWAP_mod_order_lmt, direction=self.ToQuod, message_name='Sell side OCRR')
 
         OCRR_TWAP_params_lmt = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.TWAP_mod_order_lmt, self.gateway_side_sell, self.status_cancel_replace)
-        OCRR_TWAP_params_lmt.change_parameters(dict(NoParty='*', OrigClOrdID='*'))
+        OCRR_TWAP_params_lmt.change_parameters(dict(OrigClOrdID='*'))
         self.fix_verifier_sell.check_fix_message(OCRR_TWAP_params_lmt, key_parameters=self.key_params_cl, message_name='Sell side ExecReport Replaced')
         # endregion
 
@@ -204,7 +204,7 @@ class QAP_T4802(TestCase):
 
         # region check cancellation parent TWAP order
         cancel_twap_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_order, self.gateway_side_sell, self.status_cancel)
-        cancel_twap_order.change_parameters(dict(NoParty='*', SettlType='B'))
+        cancel_twap_order.change_parameters(dict(SettlType='B'))
         self.fix_verifier_sell.check_fix_message(cancel_twap_order, key_parameters=self.key_params_cl,  message_name='Sell side ExecReport Canceled')
         # endregion
 
