@@ -115,7 +115,7 @@ class QAP_T6981(TestCase):
             'OrdQty': self.qty,
             'Price': self.price,
         })
-        responses = self.java_api_manager.send_message_and_receive_response(self.submit_request, response_time=10000)
+        responses = self.java_api_manager.send_message_and_receive_response(self.submit_request)
         print_message("Create CO order", responses)
         order_id = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameter(
             JavaApiFields.OrderNotificationBlock.value)["OrdID"]
@@ -208,7 +208,8 @@ class QAP_T6981(TestCase):
                                                      "InstrID": self.data_set.get_instrument_id_by_name(
                                                          "instrument_3")})
         self.java_api_manager.send_message_and_receive_response(self.alloc_instr)
-        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameter(
+        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                                              JavaApiFields.BookingAllocInstructionID.value).get_parameter(
             JavaApiFields.AllocationReportBlock.value)
         self.java_api_manager.compare_values(expected_per_trans,
                                              {"ExpectedFee": str(
