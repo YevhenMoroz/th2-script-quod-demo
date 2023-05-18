@@ -53,8 +53,8 @@ class QAP_T3663(TestCase):
         # region precondition:
         self.db_manager.execute_query(
             f"UPDATE institution SET posflatteningtime='{(tm(datetime.utcnow().isoformat()) + bd(n=2)).date().strftime('%Y-%m-%dT%H:%M:%S')}' WHERE institutionname ='QUOD FINANCIAL 1'")
-        self.ssh_client.send_command('qrestart all')
-        time.sleep(140)
+        self.ssh_client.send_command('qrestart QUOD.ORS QUOD.RDS, QUOD.ESBUYTH2TEST')
+        time.sleep(100)
         # endregion
         # region Step 1 : Create DMA order
         route_params = {'RouteBlock': [{'RouteID': self.data_set.get_route_id_by_name("route_1")}]}
