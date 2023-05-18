@@ -63,7 +63,7 @@ class QAP_T11326(TestCase):
         self.price = 130
 
         self.qty_would_child = self.qty
-        self.price_child = self.trigger_price
+        self.price_would_child = self.trigger_price
 
         self.percentage_volume = 10
 
@@ -203,7 +203,7 @@ class QAP_T11326(TestCase):
         self.fix_verifier_buy.set_case_id(self.case_id_2)
 
         would_pov_ioc_child = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()
-        would_pov_ioc_child.change_parameters(dict(OrderQty=self.qty_would_child, Price=self.price_child, Account=self.account, Instrument='*', ExDestination=self.ex_destination_1, TimeInForce=self.tif_ioc))
+        would_pov_ioc_child.change_parameters(dict(OrderQty=self.qty_would_child, Price=self.price_would_child, Account=self.account, Instrument='*', ExDestination=self.ex_destination_1, TimeInForce=self.tif_ioc))
 
         pending_would_pov_ioc_child_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(would_pov_ioc_child, self.gateway_side_buy, self.status_pending)
 
