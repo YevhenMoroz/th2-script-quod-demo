@@ -103,8 +103,10 @@ class QAP_T11080(TestCase):
         # endregion
         # region Step 5
         self.position_report_before_spot.set_params_for_all(self.request_for_position)
+        self.position_report_before_spot.change_parameter("LastPositUpdateEventID", exec_id_spo)
 
         self.position_report_before_fwd.set_params_for_all(self.request_for_position)
+        self.position_report_before_fwd.change_parameter("LastPositUpdateEventID", exec_id_fwd)
 
         self.position_report_after_mo.set_params_for_all(self.request_for_position)
         self.position_report_after_mo.change_parameter("LastPositUpdateEventID", mo_id_after)
