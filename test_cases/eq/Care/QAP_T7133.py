@@ -87,8 +87,9 @@ class QAP_T7133(TestCase):
             JavaApiFields.OnBehalfOfSubID.value: 'ON_BEHALF_OF_SUB_ID'
         }})
         self.fix_manager.send_message_and_receive_response_fix_standard(self.new_order)
-        execution_report_last = self.fix_manager.get_last_message('ExecutionReport').get_parameters()
-        order_id = execution_report_last['OrderID']
+        time.sleep(2)
+        cl_ord_id = self.new_order.get_parameters()['ClOrdID']
+        order_id = self.db_manager.execute_query(f"SELECT ordid FROM ordr WHERE clordid = '{cl_ord_id}'")[0][0]
         cd_ord_notif_id = str(int(
             self.db_manager.execute_query(f"SELECT cdordnotifid FROM cdordnotif WHERE transid = '{order_id}'")[
                 0][0]))
