@@ -494,6 +494,7 @@ class FreeNotesReject(Enum):
     AuctionOrderEliminatedCoreOrderRejected = "auction order Eliminated - core order Rejected"
     CouldNotRetrieveAverageVolumeDistribution = "could not retrieve average volume distribution"
     NoRemainingVenueToCheck = 'no remaining venue to check (Stale Data)'
+    ReachedMaximumNumberOfUnsuccessfulAtLastAttempts = 'reached maximum number of unsuccessful at-last attempts'
 
 
 class TradingPhases(Enum):
