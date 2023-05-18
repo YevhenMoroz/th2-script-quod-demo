@@ -47,6 +47,9 @@
                         <fix_environments>
                             <fix_environment>quod310_columbia_standard</fix_environment>
                         </fix_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod310_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
                     </environments>
                 </component>
                 <component name="Multilisted" run="True">
@@ -991,6 +994,9 @@
                     <environments>
                         <web_admin_environments>
                             <web_admin_environment>quod324_web_admin_venus_chrome</web_admin_environment>
+                        </web_admin_environments>
+                        <web_admin_environments>
+                            <web_admin_environment>quod310_web_admin_columbia_chrome</web_admin_environment>
                         </web_admin_environments>
                     </environments>
                 </component>

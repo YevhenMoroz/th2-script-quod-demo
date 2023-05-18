@@ -19,6 +19,10 @@ from test_cases.algo.Algo_Triggering.QAP_T9083 import QAP_T9083
 from test_cases.algo.Algo_Triggering.QAP_T9143 import QAP_T9143
 from test_cases.algo.Algo_Triggering.QAP_T9161 import QAP_T9161
 from test_cases.algo.Algo_Triggering.QAP_T7842 import QAP_T7842
+from test_cases.algo.Algo_Triggering.QAP_T9025 import QAP_T9025
+from test_cases.algo.Algo_Triggering.QAP_T9026 import QAP_T9026
+from test_cases.algo.Algo_Triggering.QAP_T9075 import QAP_T9075
+from test_cases.algo.Algo_Triggering.QAP_T9076 import QAP_T9076
 
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
@@ -53,6 +57,10 @@ def test_run(parent_id=None, version=None, mode=None):
         QAP_T9143(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T9161(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T7842(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T9025(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T9026(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T9075(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T9076(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
         end_time = time.monotonic()
         print(f'Algo_Triggering EndTime is {datetime.utcnow()}, duration is {timedelta(seconds=end_time-start_time)}')
