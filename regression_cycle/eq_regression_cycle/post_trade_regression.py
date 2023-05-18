@@ -1,6 +1,7 @@
 import importlib
 import logging
 import os
+import time
 from datetime import datetime
 
 from get_project_root import root_path
@@ -21,7 +22,7 @@ def check_ssh(file):
 
 
 def test_run(parent_id=None, version=None, skip_ssh=False, only_ssh=False):
-    report_id = bca.create_event(f"PostTrade Analysis" if version is None else f"PostTrade | {version}",
+    report_id = bca.create_event(f"PostTrade Analysis" if version is None else f"PostTrade Analysis | {version}",
                                  parent_id)
     seconds, nanos = timestamps()  # Store case start time
     configuration = ComponentConfiguration("PostTrade")
@@ -34,6 +35,7 @@ def test_run(parent_id=None, version=None, skip_ssh=False, only_ssh=False):
 
             if (skip_ssh and not ssh_test) or (only_ssh and ssh_test) or (not skip_ssh and not only_ssh):
                 class_(report_id, None, data_set, configuration.environment).execute()
+                time.sleep(5)
 
     except Exception:
         logging.error("Error execution", exc_info=True)
@@ -42,5 +44,5 @@ def test_run(parent_id=None, version=None, skip_ssh=False, only_ssh=False):
 
 
 if __name__ == '__main__':
-    test_run()
+    test_run(version="5.1.178.192.RC", only_ssh=False)
     Stubs.factory.close()

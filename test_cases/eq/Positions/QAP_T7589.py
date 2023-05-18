@@ -65,7 +65,7 @@ class QAP_T7589(TestCase):
         trans_id = self.ja_manager.get_last_message(ORSMessageType.PositionTransferReport.value).get_parameters()[
             "PositionTransferReportBlock"]["PositionTransferID"]
         posit_qty = \
-            self.ja_manager.get_last_message(PKSMessageType.PositionReport.value, "PositQty").get_parameters()[
+            self.ja_manager.get_last_message_by_multiple_filter(PKSMessageType.PositionReport.value, [JavaApiFields.PositQty.value, self.source_acc]).get_parameters()[
                 JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
                 JavaApiFields.PositionBlock.value][0]["PositQty"]
         # endregion

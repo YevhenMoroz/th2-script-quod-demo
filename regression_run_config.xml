@@ -1,7 +1,7 @@
 <regression>
     <target_server_win></target_server_win>
     <name>Regression 192v</name>
-    <version>5.1.178.192</version>
+    <version>5.1.179.192</version>
     <product_lines>
         <product_line name="algo" run="False">
             <components>
@@ -438,6 +438,32 @@
                     </environments>
             </component>
                 <component name="DMA" run="True">
+                    <data_set>OmsDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod317_ganymede_standard_test</fix_environment>
+                        </fix_environments>
+                        <fe_environments>
+                            <fe_environment>quod317_fe</fe_environment>
+                        </fe_environments>
+                        <java_api_environments>
+                            <java_api_environment>quod317_java_api</java_api_environment>
+                        </java_api_environments>
+                        <rest_environments>
+                            <web_admin_rest_api_environment>quod317_ganymede_web_admin</web_admin_rest_api_environment>
+                        </rest_environments>
+                        <read_log_environments>
+                            <read_log_environment>quod317_read_log</read_log_environment>
+                        </read_log_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod317_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
+                        <data_baase_environments>
+                            <data_base_environment>quod317_data_base</data_base_environment>>
+                        </data_baase_environments>>
+                    </environments>
+                </component>
+                <component name="Gating_Rules" run="True">
                     <data_set>OmsDataSet</data_set>
                     <environments>
                         <fix_environments>
@@ -978,6 +1004,10 @@
                             <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
                             <web_admin_environment>test_site_web_admin_chrome</web_admin_environment>
                         </web_admin_environments>
+                        <data_base_environments>
+                            <data_base_environment>quod306_data_base</data_base_environment>>
+                            <data_base_environment>quod320_data_base</data_base_environment>>
+                        </data_base_environments>>
                     </environments>
                 </component>
                 <component name="WA_Order_Management" run="True">

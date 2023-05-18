@@ -140,6 +140,7 @@ class ORSMessageType(Enum):
     MatchCptyMOBlocksReply = 'Order_MatchCptyMOBlocksReply'
     MatchCptyMOBlocksRequest = 'Order_MatchCptyMOBlocksRequest'
     FixAllocationInstructionAck = 'Fix_AllocationInstructionAck'
+    AssignInstrumentRequest = 'Order_AssignInstrumentRequest'
 
 
 class TradingRestApiMessageType(Enum):
@@ -196,7 +197,10 @@ class PKSMessageType(Enum):
     FixPositionReport = "Fix_PositionReport"
     FixPositionMaintenanceRequest = "Fix_PositionMaintenanceRequest"
     PositionReport = "Order_PositionReport"
+    RetailPositionConversionRequest = "Order_RetailPositionConversionRequest"
     RequestForPositionsAck = "Order_RequestForPositionsAck"
+    RequestForOverdueRetailPositions = 'Order_RequestForOverdueRetailPositions'
+    RequestForOverdueRetailPositionsAck = 'Order_RequestForOverdueRetailPositionsAck'
 
 
 class QSMessageType(Enum):
@@ -231,6 +235,7 @@ class CSMessageType(Enum):
     CDOrdAssign = 'Order_CDOrdAssign'
     CDAssignReply = 'Order_CDAssignReply'
     UnMatchRequest = 'Internal_UnMatchRequest'
+    OrdTransferNotification = 'Order_OrdTransferNotification'
 
 
 class MDAMessageType(Enum):

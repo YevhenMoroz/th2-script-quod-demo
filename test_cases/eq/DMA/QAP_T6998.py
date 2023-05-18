@@ -9,8 +9,6 @@ from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.db_wrapper.db_manager import DBManager
 from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, OrderReplyConst, \
@@ -18,10 +16,6 @@ from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, O
 from test_framework.java_api_wrappers.oms.es_messages.ExecutionReportOMS import ExecutionReportOMS
 from test_framework.java_api_wrappers.oms.es_messages.OrdReportOMS import OrdReportOMS
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
-from test_framework.java_api_wrappers.ors_messages.PositionTransferCancelRequest import PositionTransferCancelRequest
-from test_framework.java_api_wrappers.ors_messages.UnMatchRequest import UnMatchRequest
-from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
-from test_framework.rest_api_wrappers.oms.RestApiWashBookRuleMessages import RestApiWashBookRuleMessages
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
 
 logger = logging.getLogger(__name__)

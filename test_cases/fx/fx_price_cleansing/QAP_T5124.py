@@ -1,6 +1,8 @@
 import time
 from datetime import datetime
 from pathlib import Path
+from random import randint
+
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
@@ -44,7 +46,7 @@ class QAP_T5124(TestCase):
         self.venue_target = self.data_set.get_venue_by_name('venue_2')
         self.venue_reference = self.data_set.get_venue_by_name('venue_1')
         self.rest_message = RestApiPriceCleansingDeviationMessages(data_set=self.data_set)
-        self.rest_manager = RestApiManager(session_alias=self.rest_env)
+        self.rest_manager = RestApiManager(self.rest_env, self.test_id)
         self.rest_message_params = None
         self.instrument = {
             "Symbol": self.symbol,
@@ -61,12 +63,12 @@ class QAP_T5124(TestCase):
         }]
         self.md_id_reference = f"{self.symbol}:{self.instr_type_wa}:REG:{self.venue_reference}"
         self.md_id_target = f"{self.symbol}:{self.instr_type_wa}:REG:{self.venue_target}"
-        self.md_req_id = ''
+        self.md_req_id = f"{self.symbol}:{self.instr_type_wa}:REG:{self.venue_target}" + "_" + str(randint(100, 9999))
         self.md_entries_reference = []
         self.md_entries_target = [
             {
                 "MDEntryType": "0",
-                "MDEntryPx": round(1.18148, 5),
+                "MDEntryPx": round(1.17148, 5),
                 "MDEntrySize": 1000000,
                 "MDQuoteType": 1,
                 "MDEntryPositionNo": 1,
@@ -76,7 +78,7 @@ class QAP_T5124(TestCase):
             },
             {
                 "MDEntryType": "1",
-                "MDEntryPx": round(1.18168, 5),
+                "MDEntryPx": round(1.17168, 5),
                 "MDEntrySize": 1000000,
                 "MDQuoteType": 1,
                 "MDEntryPositionNo": 1,
@@ -115,13 +117,7 @@ class QAP_T5124(TestCase):
                                    self.fx_fh_connectivity,
                                    'FX')
         self.fix_manager_gtw.send_message(self.fix_md, f"Send MD {self.md_id_target}")
-        time.sleep(3)
-
-        self.fix_md.change_parameter("MDReqID", self.md_id_target)
-        self.fix_md.update_MDReqID(self.fix_md.get_parameter("MDReqID"),
-                                   self.fx_fh_connectivity,
-                                   'FX')
-        self.md_req_id = self.fix_md.get_parameter("MDReqID")
+        time.sleep(6)
 
         self.md_request.set_md_req_parameters_taker(). \
             change_parameters({'MDReqID': self.md_req_id}). \
@@ -159,3 +155,4 @@ class QAP_T5124(TestCase):
         self.md_request.set_md_uns_parameters_maker(). \
             change_parameters({'MDReqID': self.md_req_id})
         self.fix_manager_marketdata_th2.send_message(self.md_request)
+        self.sleep(4)

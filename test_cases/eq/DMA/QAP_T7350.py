@@ -61,7 +61,7 @@ class QAP_T7350(TestCase):
         self.ssh_client.put_file(self.remote_path, "temp.xml")
         # end_of_part
         self.ssh_client.send_command("qrestart all")
-        time.sleep(200)
+        time.sleep(140)
         # end_of_part
 
         # endregion:
@@ -90,6 +90,6 @@ class QAP_T7350(TestCase):
         self.ssh_client.put_file(self.remote_path, self.local_path)
         os.remove("temp.xml")
         self.ssh_client.send_command("qrestart all")
-        time.sleep(200)
+        time.sleep(140)
         self.db_manager.close_connection()
         self.ssh_client.close()

@@ -26,7 +26,7 @@ class FixMessageExecutionReportDropCopyFX(FixMessageExecutionReport):
             OrderQty=trade_request.get_exec_qty(),
             SettlCurrency="*",
             OrdType="1",
-            Side="*",
+            Side="1" if request["Side"] == "B" else "2",
             SettlType=self.get_data_set().get_settle_type_by_name("spot"),
             TimeInForce="*",
             SpotSettlDate=self.get_data_set().get_settle_date_by_name("spot"),
