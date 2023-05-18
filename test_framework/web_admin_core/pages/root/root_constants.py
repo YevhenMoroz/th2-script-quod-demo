@@ -8,6 +8,7 @@ class RootConstants:
     ENTITLEMENTS_ITEM_XPATH = "//a[@title='Entitlements']"
     SYSTEM_COMMANDS_ITEM_XPATH = "//a[@title='System Commands']"
     SYSTEM_COMPONENTS_ITEM_XPATH = '//a[@title="System Components"]'
+    INTERFACE_PREFERENCES_XPATH = '//a[@title="Interface Preferences"]'
 
     SITE_TOGGLE_CSS_SELECTOR = "a[title='Site']"
     SITE_TAB_XPATH = '//*[@title="Site"]'

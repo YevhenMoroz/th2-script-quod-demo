@@ -1,6 +1,8 @@
 class ClientsConstants:
     CLIENTS_PAGE_TITLE_XPATH = '//span[@class="entity-title left"][normalize-space()="Clients"]'
     WIZARD_PAGE_TITLE_XPATH = '//*[@class="breadcrumbs entity-title"]'
+    WIZARD_HEADER_LINK = '//div[@class="breadcrumbs entity-title"]//span[normalize-space()="Clients"]'
+
 
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@nbtooltip = 'Download PDF']//*[@data-name='download']"
@@ -28,7 +30,7 @@ class ClientsConstants:
     DISPLAYED_CLIENT_XPATH = "//*[text()='{}']"
     FOOTER_WARNING_XPATH = '//nb-card-footer//nb-alert[@outline="danger"]'
     DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span | //nb-option'
-
+    CHECKBOX_DROP_DOWN_MENU = '//p-multiselectitem//li[@style="display: block;"]//span[@id]'
 
     # main page
     MAIN_PAGE_GLOBAL_FILTER_XPATH = '//*[@class="left ng-star-inserted"]//input'

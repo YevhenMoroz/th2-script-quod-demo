@@ -10,7 +10,7 @@ class CsvReader:
         if self.csv_content:
             self.csv_content = list()
 
-        with open(self.path_to_file, 'r') as file:
+        with open(self.path_to_file, 'r', encoding='utf-8-sig') as file:
             csv_file = csv.DictReader(file)
 
             for row in csv_file:

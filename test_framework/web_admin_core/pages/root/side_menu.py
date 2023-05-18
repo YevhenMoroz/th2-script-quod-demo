@@ -30,6 +30,8 @@ from test_framework.web_admin_core.pages.general.system_commands.system_commands
     SystemCommandsConstants
 from test_framework.web_admin_core.pages.general.system_components.constants import Constants as \
     SystemComponentsConstants
+from test_framework.web_admin_core.pages.general.interface_preferences.constants import Constants as \
+    InterfacePreferencesConstants
 from test_framework.web_admin_core.pages.general.entitlements.constants import \
     EntitlementsConstants
 from test_framework.web_admin_core.pages.general.settings.settings_constants import SettingsConstants
@@ -199,6 +201,11 @@ class SideMenu(CommonPage):
         self.open_page(RootConstants.SYSTEM_COMPONENTS_ITEM_XPATH, RootConstants.GENERAL_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(SystemComponentsConstants.MainPage.PAGE_TITLE)
+
+    def open_interface_preferences_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+        self.open_page(RootConstants.INTERFACE_PREFERENCES_XPATH, RootConstants.GENERAL_TOGGLE_CSS_SELECTOR,
+                       container_expected_state)
+        self.check_is_page_opened(InterfacePreferencesConstants.MainPage.PAGE_TITLE)
 
     def open_entitlements_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.ENTITLEMENTS_ITEM_XPATH, RootConstants.GENERAL_TOGGLE_CSS_SELECTOR,

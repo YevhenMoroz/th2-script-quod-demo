@@ -2,6 +2,7 @@ import time
 import traceback
 from datetime import timedelta
 
+from test_cases.web_admin.web_admin_test_cases.general.QAP_T3253 import QAP_T3253
 from test_cases.web_admin.web_admin_test_cases.general.QAP_T3254 import QAP_T3254
 from test_cases.web_admin.web_admin_test_cases.general.QAP_T3255 import QAP_T3255
 from test_cases.web_admin.web_admin_test_cases.general.QAP_T3351 import QAP_T3351
@@ -26,6 +27,8 @@ from test_cases.web_admin.web_admin_test_cases.general.QAP_T3921 import QAP_T392
 from test_cases.web_admin.web_admin_test_cases.general.QAP_T4017 import QAP_T4017
 from test_cases.web_admin.web_admin_test_cases.general.QAP_T4018 import QAP_T4018
 from test_cases.web_admin.web_admin_test_cases.general.QAP_T7866 import QAP_T7866
+from test_cases.web_admin.web_admin_test_cases.general.QAP_T8840 import QAP_T8840
+from test_cases.web_admin.web_admin_test_cases.general.QAP_T8935 import QAP_T8935
 from test_cases.web_admin.web_admin_test_cases.general.QAP_T9446 import QAP_T9446
 from test_cases.web_admin.web_admin_test_cases.general.QAP_T10424 import QAP_T10424
 from test_cases.web_admin.web_admin_test_cases.general.QAP_T10643 import QAP_T10643
@@ -49,6 +52,8 @@ class RunGeneral:
                 configuration.environment.get_list_web_admin_environment()[0].site_url)
             start_time = time.monotonic()
 
+            QAP_T3253(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
             QAP_T3254(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3255(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
@@ -96,6 +101,11 @@ class RunGeneral:
             QAP_T4018(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T7866(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment).run()
+            #Waiting resolving PEQ-11597
+            # QAP_T8840(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+            #           environment=configuration.environment).run()
+            QAP_T8935(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T9446(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()

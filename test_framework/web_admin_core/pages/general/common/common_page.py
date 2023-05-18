@@ -197,3 +197,6 @@ class CommonPage(CP):
             i += 1
             time.sleep(0.25)
         return True if True in result else False
+
+    def is_confirmation_pop_displayed(self):
+        return self.is_element_present(CommonConstants.CONFIRM_POP_UP)
