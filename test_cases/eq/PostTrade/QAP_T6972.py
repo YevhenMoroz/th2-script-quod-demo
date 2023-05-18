@@ -154,7 +154,7 @@ class QAP_T6972(TestCase):
         self.unmatching_request.set_default_unmatch_and_transfer(self.position_account)
         self.java_api_manager.send_message_and_receive_response(self.unmatching_request)
         execution_report = \
-            self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
+            self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value, exec_id).get_parameters()[
                 JavaApiFields.ExecutionReportBlock.value]
         self.java_api_manager.compare_values({JavaApiFields.ExecType.value: ExecutionReportConst.ExecType_CAN.value},
                                              execution_report, 'Check expected and actually result from step 4')

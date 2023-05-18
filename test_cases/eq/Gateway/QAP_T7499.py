@@ -70,7 +70,9 @@ class QAP_T7499(TestCase):
                                                        {'OrdCapacity': SubmitRequestConst.OrdCapacity_Agency.value,
                                                         'OrdQty': self.qty,
                                                         'AccountGroupID': self.client,
-                                                        'Price': self.price}
+                                                        'Price': self.price,
+                                                        'ListingList': {'ListingBlock': [{'ListingID': self.data_set.get_listing_id_by_name("listing_3")}]},
+                                                        'InstrID': self.data_set.get_instrument_id_by_name("instrument_2")}
                                                        )
 
         self.submit_request.remove_fields_from_component('NewOrderSingleBlock', ['SettlCurrency'])
@@ -121,7 +123,8 @@ class QAP_T7499(TestCase):
                                                                {
                                                                    'GrossTradeAmt': settl_currency_amt,
                                                                    'AvgPx': self.price,
-                                                                   'Qty': self.qty
+                                                                   'Qty': self.qty,
+                                                                   'InstrID': self.data_set.get_instrument_id_by_name("instrument_2")
                                                                })
         responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
         class_name.print_message('BOOK', responses)
@@ -147,6 +150,7 @@ class QAP_T7499(TestCase):
             "AllocAccountID": sec_acc_1,
             'AllocQty': self.qty,
             'AvgPx': self.price,
+            'InstrID': self.data_set.get_instrument_id_by_name("instrument_2")
         })
         responses = self.java_api_manager.send_message_and_receive_response(self.confirmation_request)
         class_name.print_message(f'CONFIRMATION FOR {sec_acc_1}', responses)
@@ -164,15 +168,12 @@ class QAP_T7499(TestCase):
 
         # endregion
 
-        # region step 9 check 35=8 (39=2 and 39=0) message
+        # region step 9 check 35=8 (39=2 and 39=0) message and tag 107=SecurityDesc
         instrument_dict = {'Instrument': self.data_set.get_fix_instrument_by_name('instrument_1')}
-        change_parameters = {
-            'ClOrdID': cl_ord_id
-        }
-        instrument_dict.update({})
+        change_parameters = {'ClOrdID': cl_ord_id}
         change_parameters.update(instrument_dict)
         list_of_ignored_fields = ['NoParty', 'Quantity', 'tag5120', 'TransactTime',
-                                  'AllocTransType', 'ReportedPx', 'Side', 'AvgPx',
+                                  'ReportedPx', 'Side', 'AvgPx',
                                   'QuodTradeQualifier', 'BookID', 'SettlDate',
                                   'AllocID', 'Currency', 'NetMoney',
                                   'TradeDate', 'RootSettlCurrAmt', 'BookingType', 'GrossTradeAmt',
@@ -180,8 +181,9 @@ class QAP_T7499(TestCase):
                                   'Symbol', 'SecurityID', 'ExDestination', 'VenueType',
                                   'Price', 'ExecBroker', 'QtyType', 'OrderCapacity', 'LastMkt', 'OrdType',
                                   'LastPx', 'CumQty', 'LeavesQty', 'HandlInst', 'PositionEffect', 'TimeInForce',
-                                  'OrderID', 'LastQty', 'ExecID', 'OrderQtyData', 'Account', 'OrderAvgPx', 'Instrument',
-                                  'GatingRuleName', 'GatingRuleCondName'
+                                  'OrderID', 'LastQty', 'ExecID', 'OrderQtyData', 'Account', 'OrderAvgPx',
+                                  'GatingRuleName', 'GatingRuleCondName', 'SecurityType', 'SecurityIDSource',
+                                  'SecurityExchange'
                                   ]
         execution_report = FixMessageExecutionReportOMS(self.data_set, change_parameters)
         execution_report.change_parameters({'ExecType': 'F', "OrdStatus": "2"})
@@ -190,43 +192,44 @@ class QAP_T7499(TestCase):
         self.fix_verifier.check_fix_message_fix_standard(execution_report, ignored_fields=list_of_ignored_fields)
         # endregion
 
-        # region check 35=J messages {626=5} (step 9)
+        # region check 35=J messages {626=5} (step 9) and tag 107=SecurityDesc
         change_parameters.clear()
-        change_parameters.update({'NoOrders': [{
-            'ClOrdID': cl_ord_id,
-            'OrderID': '*',
-        }]})
+        change_parameters.update({
+            'NoOrders': [
+                {'ClOrdID': cl_ord_id, 'OrderID': '*', 'OrderAvgPx': '*'}
+            ],
+            'AllocTransType': '0',
+            'AllocType': '5',
+        })
         change_parameters.update(instrument_dict)
-        list_of_ignored_fields.extend(['IndividualAllocID', 'AllocNetPrice', 'AllocPrice', 'Instrument'])
-        change_parameters['AllocType'] = 5
+        list_of_ignored_fields.extend(['IndividualAllocID', 'AllocNetPrice', 'AllocPrice', 'ExecAllocGrp'])
         allocation_report = FixMessageAllocationInstructionReportOMS(change_parameters)
         self.fix_verifier.check_fix_message_fix_standard(allocation_report,
-                                                         key_parameters=['ClOrdID', 'AllocType'],
+                                                         key_parameters=['ClOrdID', 'AllocType', 'AllocTransType', 'NoOrders'],
                                                          ignored_fields=list_of_ignored_fields)
         # endregion
 
-        # region step 9 (check 35= AK message)
+        # region step 9 (check 35= AK message) and tag 107=SecurityDesc
         list_of_ignored_fields.extend(['ConfirmID', 'MatchStatus', 'ConfirmStatus',
-                                       'CpctyConfGrp', 'ConfirmTransType', 'ConfirmType', 'ExecType', 'OrdStatus',
-                                       'AllocType', 'tag11245'])
+                                       'CpctyConfGrp', 'ConfirmType', 'ExecType', 'OrdStatus',
+                                       'tag11245', 'AllocInstructionMiscBlock2'])
 
-        change_parameters['AllocAccount'] = sec_acc_1
-        change_parameters['AllocQty'] = self.qty
         confirmation_report = FixMessageConfirmationReportOMS(self.data_set, change_parameters)
+        confirmation_report.remove_parameters(['AllocTransType', 'AllocType'])
+        confirmation_report.change_parameters({'ConfirmTransType': '0', 'AllocAccount': sec_acc_1, 'AllocQty': self.qty})
         self.fix_verifier.check_fix_message_fix_standard(confirmation_report,
-                                                         ['AllocAccount', 'NoOrders'],
+                                                         ['AllocAccount', 'NoOrders', 'ConfirmTransType'],
                                                          ignored_fields=list_of_ignored_fields)
         # endregion
 
-        # region step 9 check 35=J(626=2 message)
-        list_of_ignored_fields.remove('AllocType')
+        # region step 9 check 35=J(626=2 message) and tag 107=SecurityDesc
         no_alloc_list = [{
-            'AllocAccount': change_parameters['AllocAccount'],
-            'AllocQty': change_parameters['AllocQty'],
+            'AllocAccount': sec_acc_1,
+            'AllocQty': self.qty,
         }]
         allocation_report.change_parameters({'AllocType': 2, 'NoAllocs': no_alloc_list})
         self.fix_verifier.check_fix_message_fix_standard(allocation_report,
-                                                         key_parameters=['NoOrders', 'AllocType'],
+                                                         key_parameters=['NoOrders', 'AllocType', 'AllocTransType'],
                                                          ignored_fields=list_of_ignored_fields)
         # endregion
 
