@@ -102,7 +102,7 @@ class QAP_T7344(TestCase):
                 self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
                     JavaApiFields.ExecutionReportBlock.value]
             self.java_api_manager.compare_values(
-                {JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_PFL.value},
+                {JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_FIL.value},
                 execution_report, 'Verify that order Filled (step 3)')
         except Exception as e:
             tb = e.__traceback__
