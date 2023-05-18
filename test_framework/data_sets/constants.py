@@ -493,6 +493,7 @@ class FreeNotesReject(Enum):
     CouldNotDetermineLimitPriceFromPrimary = "could not determine Limit price from Primary"
     AuctionOrderEliminatedCoreOrderRejected = "auction order Eliminated - core order Rejected"
     CouldNotRetrieveAverageVolumeDistribution = "could not retrieve average volume distribution"
+    NoRemainingVenueToCheck = 'no remaining venue to check (Stale Data)'
 
 
 class TradingPhases(Enum):
