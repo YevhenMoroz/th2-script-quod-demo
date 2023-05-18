@@ -5,11 +5,12 @@ from pathlib import Path
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
-from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
+from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, OrdStatus
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
 from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import FixMessageMarketDataSnapshotFullRefreshAlgo
 from test_framework.fix_wrappers.algo.FixMessageOrderCancelRequestAlgo import FixMessageOrderCancelRequest
+from test_framework.fix_wrappers.algo.FixMessageOrderCancelReplaceRequestAlgo import FixMessageOrderCancelReplaceRequestAlgo
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
@@ -17,7 +18,7 @@ from test_framework.data_sets import constants
 from test_framework.algo_formulas_manager import AlgoFormulasManager
 
 
-class QAP_T4895(TestCase):
+class QAP_T4898(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -33,17 +34,20 @@ class QAP_T4895(TestCase):
         # endregion
 
         # region order parameters
+        self.tick_size = 0.005
         self.qty = 200
         self.price_ask = 11
-        self.price_bid_1 = 10
-        self.price_bid_2 = 10.5
+        self.price_bid = 10
         self.price = 11
         self.qty_bid = self.qty_ask = 1_000
-        self.child_price_1 = AlgoFormulasManager.calc_mid_price(self.price_ask, self.price_bid_1)
-        self.child_price_2 = AlgoFormulasManager.calc_mid_price(self.price_ask, self.price_bid_2)
         self.peg_px_type = constants.PegPriceType.MidPricePeg.value
-        self.peg_offset_type = constants.PegOffsetType.Price.value
-        self.peg_offset_val = 0
+        self.peg_offset_type_init = constants.PegOffsetType.Ticks.value
+        self.peg_offset_type_mod = constants.PegOffsetType.Price.value
+        self.peg_offset_val_init = -1
+        self.peg_offset_val_mod = -0.1
+        self.mid_price = AlgoFormulasManager.calc_mid_price(self.price_ask, self.price_bid)
+        self.child_price_init = self.mid_price + (self.peg_offset_val_init * self.tick_size)
+        self.child_price_mod = self.mid_price + self.peg_offset_val_mod
         # endregion
 
         # region Gateway Side
@@ -85,7 +89,7 @@ class QAP_T4895(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
-        nos_dma_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.child_price_1)
+        nos_dma_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.child_price_init)
         ocrr_rule = rule_manager.add_OrderCancelReplaceRequest(self.fix_env1.buy_side, self.account, self.ex_destination_1, True)
         ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_1, True)
 
@@ -95,7 +99,7 @@ class QAP_T4895(TestCase):
         # region Send_MarkerData
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
         market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
-        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid_1, MDEntrySize=self.qty_bid)
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid)
         market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
         # endregion
@@ -107,7 +111,7 @@ class QAP_T4895(TestCase):
         self.Pegged_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Pegged_params()
         self.Pegged_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.Pegged_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
-        self.Pegged_order.update_fields_in_component('PegInstructions', dict(PegOffsetValue=self.peg_offset_val, PegOffsetType=self.peg_offset_type, PegPriceType=self.peg_px_type))
+        self.Pegged_order.update_fields_in_component('PegInstructions', dict(PegOffsetValue=self.peg_offset_val_init, PegOffsetType=self.peg_offset_type_init, PegPriceType=self.peg_px_type))
         self.fix_manager_sell.send_message_and_receive_response(self.Pegged_order, case_id_1)
         # endregion
 
@@ -128,33 +132,40 @@ class QAP_T4895(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order", self.test_id))
 
         self.dma_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        self.dma_order.change_parameters(dict(OrderQty=self.qty, Price=self.child_price_1, Instrument='*'))
+        self.dma_order.change_parameters(dict(OrderQty=self.qty, Price=self.child_price_init, Instrument='*'))
         self.fix_verifier_buy.check_fix_message(self.dma_order, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Child DMA ')
 
         self.pending_dma_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_pending)
         self.fix_verifier_buy.check_fix_message(self.pending_dma_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA ')
 
-        self.new_dma_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_pending)
+        self.new_dma_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message(self.new_dma_order_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA ')
         # endregion
 
-        # region Send_MarkerData 2
-        self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
-        market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
-        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid_2, MDEntrySize=self.qty_bid)
-        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
-        self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
-        # endregion
+        time.sleep(2)
+
+        # region Send OCRR (35=G) for Pegged order
+        case_id_1 = bca.create_event("Modify Pegged Order", self.test_id)
+        self.fix_verifier_sell.set_case_id(case_id_1)
+
+        self.Pegged_order_replace_params = FixMessageOrderCancelReplaceRequestAlgo(self.Pegged_order)
+        self.Pegged_order_replace_params.update_fields_in_component('PegInstructions', dict(PegOffsetValue=self.peg_offset_val_mod, PegOffsetType=self.peg_offset_type_mod))
+        self.fix_manager_sell.send_message_and_receive_response(self.Pegged_order_replace_params, case_id_1)
 
         time.sleep(2)
 
+        er_replaced_peg_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.Pegged_order_replace_params, self.gateway_side_sell, self.status_cancel_replace)
+        er_replaced_peg_order_params.change_parameter('PegInstructions', '*')
+        self.fix_verifier_sell.check_fix_message(er_replaced_peg_order_params, key_parameters=self.key_params, message_name='Sell Side ExecReport Replace Request')
+        # endregion
+
+        time.sleep(2)
+        
         # region Check that child has new Price
         er_replaced_dma_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_cancel_replace)
-        er_replaced_dma_order.change_parameters(dict(Price=self.child_price_2))
+        er_replaced_dma_order.change_parameters(dict(Price=self.child_price_mod))
         self.fix_verifier_buy.check_fix_message(er_replaced_dma_order, key_parameters=self.key_params_cl, direction=self.ToQuod, message_name='Buy side ExecReport Replaced DMA child')
         # endregion
-
-        time.sleep(2)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
@@ -171,6 +182,7 @@ class QAP_T4895(TestCase):
 
         # region check cancellation parent Peg order
         cancel_peg_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.Pegged_order, self.gateway_side_sell, self.status_cancel)
+        cancel_peg_order.change_parameters(dict(SettlType='*', PegInstructions='*'))
         self.fix_verifier_sell.check_fix_message(cancel_peg_order, key_parameters=self.key_params_cl,  message_name='Sell side ExecReport Canceled')
         # endregion
 

@@ -836,3 +836,7 @@ class AlgoFormulasManager:
             raise ValueError(f"Calculated qty = {sum_return_list}, parent qty = {parent_qty}. Please check formula.")
 
         return return_list
+
+    @staticmethod
+    def calc_mid_price(price_1, price_2):
+        return (price_1 + price_2)/2
