@@ -1,4 +1,5 @@
 import logging
+import time
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
@@ -86,6 +87,7 @@ class QAP_T7344(TestCase):
         # endregion
 
         # region step 2-3: Split CO order and trade it
+        new_order_single = trade_rule = None
         try:
             venue_client = self.data_set.get_venue_client_names_by_name('client_1_venue_1')
             mic = self.data_set.get_mic_by_name('mic_1')
@@ -108,6 +110,10 @@ class QAP_T7344(TestCase):
             tb = e.__traceback__
             bca.create_event(f"TEST FAILED  {e.with_traceback(tb)}", self.test_id,
                              status='FAILED')
+        finally:
+            time.sleep(1)
+            self.rule_manager.remove_rule(new_order_single)
+            self.rule_manager.remove_rule(trade_rule)
         # endregion
 
         # region step 4-5: Modify first execution
