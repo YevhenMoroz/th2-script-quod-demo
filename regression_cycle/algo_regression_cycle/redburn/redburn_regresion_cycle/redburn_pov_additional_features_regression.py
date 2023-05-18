@@ -16,6 +16,7 @@ from test_cases.algo.Algo_PercentageVolume.QAP_T4660 import QAP_T4660
 from test_cases.algo.Algo_PercentageVolume.QAP_T4661 import QAP_T4661
 from test_cases.algo.Algo_PercentageVolume.QAP_T4662 import QAP_T4662
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T10939 import QAP_T10939
+from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T11326 import QAP_T11326
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T4604 import QAP_T4604
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T4636 import QAP_T4636
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T4637 import QAP_T4637
@@ -57,6 +58,7 @@ def test_run(parent_id=None, version=None):
         QAP_T8718(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8728(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10939(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T11326(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
         # region SSH
         config_file = "client_sats.xml"
