@@ -154,7 +154,7 @@ class QAP_T5049(TestCase):
         case_id_2 = bca.create_event("Child DMA orders 1 & 2", self.test_id)
         self.fix_verifier_buy.set_case_id(case_id_2)
         
-        self.dma_order_1 = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        self.dma_order_1 = FixMessageNewOrderSingleAlgo().set_DMA_params(False)
         self.dma_order_1.change_parameters(dict(OrderQty=self.child_1_qty, Price=self.price, Instrument='*', TimeInForce=self.tif_day))
 
         self.pending_dma_order_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order_1, self.gateway_side_buy, self.status_pending)
@@ -162,7 +162,7 @@ class QAP_T5049(TestCase):
         self.new_dma_order_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order_1, self.gateway_side_buy, self.status_new)
 
         # region Check child DMA order 2
-        self.dma_order_2 = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        self.dma_order_2 = FixMessageNewOrderSingleAlgo().set_DMA_params(False)
         self.dma_order_2.change_parameters(dict(OrderQty=self.child_1_qty, Price=self.price, Instrument='*', TimeInForce=self.tif_day))
 
         self.pending_dma_order_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order_2, self.gateway_side_buy, self.status_pending)

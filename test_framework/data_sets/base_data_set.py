@@ -72,6 +72,7 @@ class BaseDataSet:
     gating_rule_ids = None
     counterpart_java_api_for_es = None
     fix_leg_instruments = None
+    charges_type = None
     # region fields added by Web Admin team
     user = None
     password = None
@@ -948,6 +949,11 @@ class BaseDataSet:
         if hasattr(self.counterpart_java_api_for_es, name):
             return getattr(self.counterpart_java_api_for_es, name).value
         return ValueError(f"{self.counterpart_java_api_for_es} not found!")
+
+    def get_charges_type(self, name: str):
+        if hasattr(self.charges_type, name):
+            return getattr(self.charges_type, name).value
+        return ValueError(f"{self.charges_type} not found!")
 
     def get_fix_leg_instrument_by_name(self, name: str):
         if hasattr(self.fix_leg_instruments, name):

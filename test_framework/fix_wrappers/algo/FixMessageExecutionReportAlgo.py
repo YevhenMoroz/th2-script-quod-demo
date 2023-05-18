@@ -310,7 +310,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(Price = new_order_single.get_parameter("Price"))
         if 'DisplayInstruction' in new_order_single.get_parameters():
             temp.update(DisplayInstruction=new_order_single.get_parameter('DisplayInstruction'))
-        if new_order_single.get_parameter('TargetStrategy') not in ['1008', '1011', '1010', '1020', '1013']:
+        if new_order_single.get_parameter('TargetStrategy') not in ['1008', '1011', '1010', '1020', '1013', '1004']:
             temp.update(LastMkt=new_order_single.get_parameter('ExDestination'))
         if new_order_single.is_parameter_exist("IClOrdIdTO"):
             temp.update(IClOrdIdTO=new_order_single.get_parameter("IClOrdIdTO"))
@@ -337,7 +337,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             temp.update(IClOrdIdCO=new_order_single.get_parameter('IClOrdIdCO'))
         if new_order_single.get_parameter('TargetStrategy') not in ['1008', '1020', '1004', '1011']:
             temp.update(Text='*')
-        if new_order_single.get_parameter('TargetStrategy') in ('1008', '1020', '1011'):
+        if new_order_single.get_parameter('TargetStrategy') in ('1008', '1020', '1011', '1004'):
             if new_order_single.is_parameter_exist('MinQty'):
                 temp.update(
                     LastExecutionPolicy='*',
@@ -1217,7 +1217,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         temp.update({
             "AlgoCst04": "invited",
             "ExecType": "D",
-            "AlgoCst03": "VenueQuoteID_O04r2TeUXbzb",
+            "AlgoCst03": "*",
             "ExecRestatementReason": "1",
             "QuoteType": "1",
             "LastMkt": er_rfq_new.get_parameter("ExDestination"),

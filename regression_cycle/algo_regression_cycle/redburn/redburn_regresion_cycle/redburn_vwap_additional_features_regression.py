@@ -2,6 +2,7 @@ import logging
 import time
 from custom import basic_custom_actions as bca
 from stubs import Stubs
+from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T11325 import QAP_T11325
 from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T4592 import QAP_T4592
 from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T4593 import QAP_T4593
 from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T4594 import QAP_T4594
@@ -99,6 +100,8 @@ def test_run(parent_id=None, version=None):
         ssh_client.close()
         # endregion
         # endregion
+
+        QAP_T11325(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
         # QAP_T4331.execute(report_id)
         # QAP_T4334.execute(report_id)

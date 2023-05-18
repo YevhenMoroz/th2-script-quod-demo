@@ -30,6 +30,7 @@ class QAP_T11088(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.strategy_type = self.data_set.get_strategy_type("strategy_type_1")
+        self.strategy_name = self.data_set.get_default_execution_strategy("default_execution_strategy_1")
         self.general_subwizard_values = ['0', 'Ticks', 'MAN', '0', 'Ticks', 'MAN']
         self.lit_general_subwizard_values = ['Y', 'N', '0', 'Default', 'Default', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'Neutral', '0', '1', 'N', 'N', 'N', 'Default', 'N', 'Y', 'Y']
         self.lit_aggressive_subwizard_values = ['0', 'N', 'Y', 'N', 'N', '0', 'A', '0', 'P', '0', '10', 'N', 'N']
@@ -52,6 +53,7 @@ class QAP_T11088(CommonTestCase):
 
             main_page = ExecutionStrategiesPage(self.web_driver_container)
             main_page.set_strategy_type_at_filter_field(self.strategy_type)
+            main_page.set_name_at_filter_field(self.strategy_name)
             time.sleep(2)
             main_page.click_on_more_actions()
             main_page.click_on_edit_at_more_actions()

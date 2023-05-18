@@ -1,223 +1,87 @@
-import logging
-import os
-from datetime import datetime
 from pathlib import Path
+from custom import basic_custom_actions as bca
+from custom.verifier import Verifier
+from test_cases.fx.fx_wrapper.common_tools import random_qty, check_quote_request_id, check_quote_status
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.forex.FixMessageExecutionReportPrevQuotedFX import \
+    FixMessageExecutionReportPrevQuotedFX
+from test_framework.fix_wrappers.forex.FixMessageNewOrderSinglePrevQuotedFX import FixMessageNewOrderSinglePrevQuotedFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.fx.OrderQuoteFX import OrderQuoteFX
+from test_framework.java_api_wrappers.fx.QuoteRequestActionRequestFX import QuoteRequestActionRequestFX
 
-from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
-from custom.tenor_settlement_date import get_expire_time
-from custom.verifier import Verifier as Ver, Verifier, VerificationMethod
-from test_cases.fx.default_params_fx import text_messages
-from stubs import Stubs
-from win_gui_modules.dealer_intervention_wrappers import (BaseTableDataRequest, ModificationRequest,
-                                                          ExtractionDetailsRequest, RFQExtractionDetailsRequest)
-from win_gui_modules.order_book_wrappers import ExtractionDetail
-from win_gui_modules.utils import get_base_request, call
-from win_gui_modules.wrappers import set_base
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-timeouts = True
-
-
-def execute(report_id, case_params, session_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-    act = Stubs.fix_act
-    verifier = Stubs.verifier
-    set_base(session_id, case_id)
-    base_request = get_base_request(session_id, case_id)
-    seconds, nanos = bca.timestamps()  # Store case start time
-    service = Stubs.win_act_dealer_intervention_service
-    ttl = 180
-    print(tsd.spo())
-    reusable_params = {
-        'Account': case_params['Account'],
-        'Side': 1,
-        'Instrument': {
-            'Symbol': 'EUR/USD',
-            'SecurityType': 'FXSPOT',
-            'Product': '4',
-        },
-        'SettlDate': tsd.spo(),
-        'SettlType': '0',
-        'OrderQty': '25000000'
-    }
-
-    try:
-
-        # region send rfq
-        rfq_params = {
-            'QuoteReqID': bca.client_orderid(9),
-            'NoRelatedSymbols': [{
-                **reusable_params,
-                'Currency': 'EUR',
-                'QuoteType': '1',
-                'Account': reusable_params['Account'],
-                'OrderQty': reusable_params['OrderQty'],
-                'OrdType': 'D',
-                'ExpireTime': get_expire_time(ttl),
-                'TransactTime': (datetime.utcnow().isoformat())}]
+class QAP_T2931(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.ss_connectivity = self.environment.get_list_fix_environment()[0].sell_side_rfq
+        self.java_api_env = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
+        self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
+        self.java_api_manager = JavaApiManager(self.java_api_env, self.test_id)
+        self.account = self.data_set.get_client_by_name("client_mm_3")
+        self.symbol = self.data_set.get_symbol_by_name("symbol_2")
+        self.security_type_spot = self.data_set.get_security_type_by_name("fx_spot")
+        self.currency = self.data_set.get_currency_by_name("currency_gbp")
+        self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
+        self.action_request = QuoteRequestActionRequestFX()
+        self.quote = FixMessageQuoteFX()
+        self.java_quote = OrderQuoteFX()
+        self.instrument_spot = {
+            "Symbol": self.symbol,
+            "SecurityType": self.security_type_spot
         }
-        logger.debug("Send new order with ClOrdID = {}".format(rfq_params['QuoteReqID']))
+        self.qty = random_qty(5, 6, 8)
 
-        send_rfq = act.sendMessage(
-            bca.convert_to_request(
-                text_messages['sendQR'],
-                case_params['TraderConnectivity'],
-                case_id,
-                bca.message_to_grpc('QuoteRequest', rfq_params, case_params['TraderConnectivity'])
-            ))
+        self.quote_response = None
+        self.verifier = Verifier(self.test_id)
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Step 1
+        self.quote_request.set_rfq_params()
+        self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
+                                                           Currency=self.currency, Instrument=self.instrument_spot,
+                                                           OrderQty=self.qty, Side="2")
+        response = self.fix_manager_gtw.send_quote_to_dealer_and_receive_response(self.quote_request, self.test_id)
+        self.quote.set_params_for_dealer(self.quote_request)
+        self.sleep(2)
+        req_id = check_quote_request_id(self.quote_request)
         # endregion
-
-        # region  prepare fe
-
-        # region Extract RFQ ID
-        base_data = BaseTableDataRequest(base=base_request)
-        base_data.set_filter_dict({"Status": "New"})
-        base_data.set_row_number(1)
-
-        extraction_request = ExtractionDetailsRequest(base_data)
-        extraction_request.set_extraction_id("ExtractionId")
-        extraction_request.add_extraction_details([ExtractionDetail("dealerIntervention.Id", "Id")])
-
-        rfq_id = call(service.getUnassignedRFQDetails, extraction_request.build())
-        # clear filter for next tests
-        base_data = BaseTableDataRequest(base=base_request)
-        base_data.set_filter_dict({"Status": ""})
-        call(service.getUnassignedRFQDetails, extraction_request.build())
+        # region Step 2
+        self.sleep(2)
+        self.action_request.set_default_params(req_id).set_action_assign()
+        self.java_api_manager.send_message(self.action_request)
+        self.sleep(2)
+        self.action_request.set_action_estimate()
+        estimation_reply = self.java_api_manager.send_message_and_receive_response(self.action_request)
+        self.java_quote.set_params_for_quote(self.quote_request, estimation_reply[0])
+        self.java_api_manager.send_message(self.java_quote)
+        self.java_quote.get_parameters()["QuoteBlock"]["BidPx"] = "3"
+        self.java_api_manager.send_message(self.java_quote)
+        self.quote_response = next(response)
+        quote_from_di = self.fix_manager_gtw.parse_response(self.quote_response)[0]
+        self.quote.remove_parameters(["OrigMDArrivalTime", "OrigMDTime", "OrigClientVenueID"])
+        self.fix_verifier.check_fix_message(fix_message=self.quote)
+        quote_req_id = check_quote_request_id(self.quote_request)
+        bid_px = check_quote_status(quote_req_id, "quoterequestid", "bidpx")
+        self.verifier.set_event_name("Check modified bid (Java Quote message)")
+        self.verifier.compare_values("BidPx", "3.000000000", str(bid_px))
+        self.verifier.verify()
         # endregion
-
-        # region Assign to me rfq
-        base_data = BaseTableDataRequest(base=base_request)
-        base_data.set_row_number(1)
-
-        call(service.assignToMe, base_data.build())
+        # region Step 3
+        new_order_single = FixMessageNewOrderSinglePrevQuotedFX().set_default_for_dealer(self.quote_request,
+                                                                                         quote_from_di)
+        self.fix_manager_gtw.send_message_and_receive_response(new_order_single)
+        execution_report = FixMessageExecutionReportPrevQuotedFX().set_params_from_new_order_single(new_order_single)
+        self.fix_verifier.check_fix_message(execution_report, )
         # endregion
-
-        # region  estimate
-        base_data = BaseTableDataRequest(base=base_request)
-        call(service.estimate, base_data.build())
-        # endregion
-
-        # region Extracting ask pips
-        extraction_request = RFQExtractionDetailsRequest(base=base_request)
-        extraction_request.set_extraction_id("ExtractionId")
-        extraction_request.extract_quote_ttl("rfqDetails.quoteTTL")
-        extraction_request.extract_ask_price_pips("rfqDetails.askPricePips")
-        extraction_request.extract_ask_price_large("rfqDetails.askPriceLarge")
-
-        response = call(service.getRFQDetails, extraction_request.build())
-        pips1 = response["rfqDetails.askPricePips"]
-        large = response["rfqDetails.askPriceLarge"]
-        price = large + pips1
-        print(price)
-
-        # endregion
-
-        # region  send quote
-        modify_request = ModificationRequest(base=base_request)
-        modify_request.send()
-        call(service.modifyAssignedRFQ, modify_request.build())
-        # #endregion
-
-        # region Check Quote in Assigned Grid
-        base_data = BaseTableDataRequest(base=base_request)
-        base_data.set_row_number(1)
-        base_data.set_filter_dict({"Id": rfq_id['dealerIntervention.Id']})
-
-        extraction_request = ExtractionDetailsRequest(base_data)
-        extraction_request.set_extraction_id("ExtractionId")
-        extraction_request.add_extraction_details([ExtractionDetail("dealerIntervention.Status", "Status"),
-                                                   ExtractionDetail("dealerIntervention.QuoteStatus", "QuoteStatus")])
-
-        response = call(service.getAssignedRFQDetails, extraction_request.build())
-        print(response)
-        ver = Ver(case_id)
-        ver.set_event_name("Check Assigned Grid")
-        ver.compare_values('Status', "New", response["dealerIntervention.Status"])
-        ver.compare_values('QuoteStatus', "Accepted", response["dealerIntervention.QuoteStatus"])
-        ver.verify()
-        # endregion
-
-        # region Catch Quote message 35=S with new old prices
-        quote_params = {
-            'QuoteReqID': rfq_params['QuoteReqID'],
-            'QuoteMsgID': '*',
-            'OfferPx': '*',
-            'BidPx': '0',
-            'BidSpotRate': '0',
-            'OfferSize': reusable_params['OrderQty'],
-            'BidSize': reusable_params['OrderQty'],
-            'QuoteID': '*',
-            'OfferSpotRate': price,
-            'ValidUntilTime': '*',
-            'Currency': 'EUR',
-            'Instrument': reusable_params['Instrument'],
-        }
-
-        verifier.submitCheckRule(
-            bca.create_check_rule(
-                text_messages['recQ'],
-                bca.filter_to_grpc('Quote', quote_params, ['QuoteReqID']),
-                send_rfq.checkpoint_id,
-                case_params['TraderConnectivity'],
-                case_id
-            )
-        )
-        # endregion
-
-        # region Modify and ReSend Quote
-        modify_request = ModificationRequest(base=base_request)
-        modify_request.increase_ask()
-        checkpoint_response1 = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(case_id))
-        checkpoint_id1 = checkpoint_response1.checkpoint
-        modify_request.send()
-        call(service.modifyAssignedRFQ, modify_request.build())
-        # endregion
-
-        # region Extracting ask pips
-        extraction_request = RFQExtractionDetailsRequest(base=base_request)
-        extraction_request.set_extraction_id("ExtractionId")
-        extraction_request.extract_quote_ttl("rfqDetails.quoteTTL")
-        extraction_request.extract_ask_price_pips("rfqDetails.askPricePips")
-        extraction_request.extract_ask_price_large("rfqDetails.askPriceLarge")
-
-        response = call(service.getRFQDetails, extraction_request.build())
-        pips2 = response["rfqDetails.askPricePips"]
-        large2 = response["rfqDetails.askPriceLarge"]
-        price2 = large2 + pips2
-        print(price2)
-        # endregion
-
-        # region Catch Quote message 35=S with new prices
-        quote_params["OfferSpotRate"] = price2
-        verifier.submitCheckRule(
-            bca.create_check_rule(
-                text_messages['recQ'],
-                bca.filter_to_grpc('Quote', quote_params, ['QuoteReqID']),
-                checkpoint_id1,
-                case_params['TraderConnectivity'],
-                case_id
-            )
-        )
-        # endregion
-
-        # region check of pips
-        verifier = Verifier(case_id)
-        verifier.set_event_name("Check pips")
-        verifier.compare_values('Pips',
-                                pips1,
-                                pips2,
-                                VerificationMethod.NOT_EQUALS)
-        verifier.verify()
-        # endregion
-
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-    finally:
-        try:
-            call(service.closeWindow, base_request)
-        except Exception:
-            logging.error("Error execution", exc_info=True)
-    logger.info("Case {} was executed in {} sec.".format(
-        case_name, str(round(datetime.now().timestamp() - seconds))))

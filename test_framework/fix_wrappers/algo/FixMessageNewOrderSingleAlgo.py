@@ -13,7 +13,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(parameters)
 
     # set_DMA_params
-    def set_DMA_params(self) -> FixMessageNewOrderSingle:
+    def set_DMA_params(self, needNoParty:bool=True) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": "XPAR_CLIENT2",
             'ClOrdID': '*',
@@ -28,10 +28,12 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "TransactTime": '*',
             'SettlDate': '*',
             'ExDestination': "XPAR",
-            'OrderCapacity': 'A',
-            'NoParty': '*',
-            # 'Origin': '*'
+            'OrderCapacity': 'A'
         }
+        if needNoParty == True:
+            base_parameters['NoParty'] = '*'
+            # 'Origin': '*'
+
         super().change_parameters(base_parameters)
         return self
 
@@ -484,7 +486,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'QuodFlatParameters': {
                 'WouldInAuction': '0',
                 'ExcludePricePoint2': '1',
-                'AtLast': '0'
+                'AtLast': '1'
             }
         }
         super().change_parameters(base_parameters)
@@ -921,7 +923,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ShortCode': '17536',
             'AlgoCst01': 'firm-up',
-            'AlgoCst03': 'VenueQuoteID_O04r2TeUXbzb',
+            'AlgoCst03': '*',
             'QuoteID': '*',
             'ChildOrderID': '*',
             'misc5': '*'
@@ -1162,7 +1164,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'TimeInForce': "0",
             'OrderCapacity': 'A',
             'TargetStrategy': '1011',
-            'ClientAlgoPolicyID': 'QA_Auto_SORPING_1',
+            'ClientAlgoPolicyID': 'QA_Auto_SORPING_3',
             'IClOrdIdAO': 'OD_5fgfDXg-00',
             'ShortCode': '17536',
             "DisplayInstruction": {
@@ -1580,6 +1582,31 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'TargetStrategy': '1009',
             'PegInstructions': {
                 'PegOffsetValue': '1',
+                'PegPriceType': '1',
+                'PegOffsetType': '0',
+            }
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_Multilisting_with_Peg_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            'Account': self.get_data_set().get_account_by_name('account_28'),
+            'ClOrdID': basic_custom_actions.client_orderid(9),
+            'HandlInst': '2',
+            'Side': '1',
+            'OrderQty': '500000',
+            'TimeInForce': '0',
+            'OrdType': '2',
+            'TransactTime': datetime.utcnow().isoformat(),
+            "OrderCapacity": "A",
+            "Price": "30",
+            "Currency": self.get_data_set().get_currency_by_name('currency_1'),
+            'Instrument': self.get_data_set().get_fix_instrument_by_name("instrument_36"),
+            'TargetStrategy': '1008',
+            'ClientAlgoPolicyID': 'QA_Auto_SORPING_Spray_1',
+            'PegInstructions': {
+                'PegOffsetValue': '0',
                 'PegPriceType': '1',
                 'PegOffsetType': '0',
             }

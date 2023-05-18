@@ -101,7 +101,7 @@ class QAP_T11194(TestCase):
         resident_time = 150
         count_of_pools = 19
         temp_allotted_time = resident_time / count_of_pools / 1000
-        self.allotted_time = round(temp_allotted_time, 7)
+        self.allotted_time = round(temp_allotted_time, 8)
         # endregion
 
         self.pre_filter = self.data_set.get_pre_filter("pre_filer_equal_D")
@@ -179,40 +179,40 @@ class QAP_T11194(TestCase):
 
         time.sleep(5)
 
-        # region Check child DMA order on venue BATDS DARKPOOL UK
+        # region Check child DMA order on venue BATS DARKPOOL UK
         self.fix_verifier_buy.set_case_id(bca.create_event("Dark child DMA orders", self.test_id))
 
-        self.dma_chixdelta_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
-        self.dma_chixdelta_order.change_parameters(dict(Account=self.account_batsdark_kepler, ExDestination=self.ex_destination_batsdark, OrderQty=self.qty, Instrument=self.instrument))
-        self.fix_verifier_buy.check_fix_message_kepler(self.dma_chixdelta_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
+        self.dma_batsdark_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
+        self.dma_batsdark_order.change_parameters(dict(Account=self.account_batsdark_kepler, ExDestination=self.ex_destination_batsdark, OrderQty=self.qty, Instrument=self.instrument))
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_batsdark_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
-        er_pending_new_dma_chixdelta_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_chixdelta_order, self.gateway_side_buy, self.status_pending)
-        self.fix_verifier_buy.check_fix_message_kepler(er_pending_new_dma_chixdelta_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 1 order')
+        er_pending_new_dma_batsdark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_batsdark_order, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message_kepler(er_pending_new_dma_batsdark_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 1 order')
 
-        er_new_dma_chixdelta_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_chixdelta_order, self.gateway_side_buy, self.status_new)
-        self.fix_verifier_buy.check_fix_message_kepler(er_new_dma_chixdelta_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 1 order')
+        er_new_dma_batsdark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_batsdark_order, self.gateway_side_buy, self.status_new)
+        self.fix_verifier_buy.check_fix_message_kepler(er_new_dma_batsdark_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 1 order')
         # endregion
 
         time.sleep(7)
 
         # region Check that the 1st child expires
-        order_cancel_request_dma_chixdelta_order = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child_kepler(self.dma_chixdelta_order)
-        self.fix_verifier_buy.check_fix_message_kepler(order_cancel_request_dma_chixdelta_order, key_parameters=self.key_params_OCR_child, message_name='Buy side OrderCancelRequest Child DMA 1 order')
+        order_cancel_request_dma_batsdark_order = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child_kepler(self.dma_batsdark_order)
+        self.fix_verifier_buy.check_fix_message_kepler(order_cancel_request_dma_batsdark_order, key_parameters=self.key_params_OCR_child, message_name='Buy side OrderCancelRequest Child DMA 1 order')
 
-        er_cancel_dma_chixdelta_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_chixdelta_order, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message_kepler(er_cancel_dma_chixdelta_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Cancel Child DMA 1 order')
+        er_cancel_dma_batsdark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_batsdark_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message_kepler(er_cancel_dma_batsdark_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Cancel Child DMA 1 order')
         # endregion
 
         # region Check child DMA order on venue BATS PERIODIC UK
-        self.dma_batsdark_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
-        self.dma_batsdark_order.change_parameters(dict(Account=self.account_kepler, ExDestination=self.ex_destination_batsperiodic, OrderQty=self.qty, Instrument=self.instrument))
-        self.fix_verifier_buy.check_fix_message_kepler(self.dma_batsdark_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 2 order')
+        self.dma_batsperiodic_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
+        self.dma_batsperiodic_order.change_parameters(dict(Account=self.account_kepler, ExDestination=self.ex_destination_batsperiodic, OrderQty=self.qty, Instrument=self.instrument))
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_batsperiodic_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 2 order')
 
-        er_pending_new_dma_batsdark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_batsdark_order, self.gateway_side_buy, self.status_pending)
-        self.fix_verifier_buy.check_fix_message_kepler(er_pending_new_dma_batsdark_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 2 order')
+        er_pending_new_dma_batsperiodic_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_batsperiodic_order, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message_kepler(er_pending_new_dma_batsperiodic_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 2 order')
 
-        er_new_dma_batsdark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_batsdark_order, self.gateway_side_buy, self.status_new)
-        self.fix_verifier_buy.check_fix_message_kepler(er_new_dma_batsdark_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 2 order')
+        er_new_dma_batsperiodic_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_batsperiodic_order, self.gateway_side_buy, self.status_new)
+        self.fix_verifier_buy.check_fix_message_kepler(er_new_dma_batsperiodic_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 2 order')
         # endregion
 
         # region Check Read log
@@ -226,11 +226,11 @@ class QAP_T11194(TestCase):
         # endregion
 
         # region Check that the 2nd child expires
-        order_cancel_request_dma_batsdark_order = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child_kepler(self.dma_batsdark_order)
-        self.fix_verifier_buy.check_fix_message_kepler(order_cancel_request_dma_batsdark_order, key_parameters=self.key_params_OCR_child, message_name='Buy side OrderCancelRequest Child DMA 2 order')
+        order_cancel_request_dma_batsperiodic_order = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child_kepler(self.dma_batsperiodic_order)
+        self.fix_verifier_buy.check_fix_message_kepler(order_cancel_request_dma_batsperiodic_order, key_parameters=self.key_params_OCR_child, message_name='Buy side OrderCancelRequest Child DMA 2 order')
 
-        er_cancel_dma_batsdark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_batsdark_order, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message_kepler(er_cancel_dma_batsdark_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Cancel Child DMA 2 order')
+        er_cancel_dma_batsperiodic_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_batsperiodic_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message_kepler(er_cancel_dma_batsperiodic_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Cancel Child DMA 2 order')
         # endregion
 
         # region Check child DMA order on venue CBOE DARKPOOL EU
@@ -253,9 +253,324 @@ class QAP_T11194(TestCase):
         self.fix_verifier_buy.check_fix_message_kepler(er_cancel_dma_cboeeudark_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Cancel Child DMA 3 order')
         # endregion
 
-        # region Check those are no child orders on the venue which were discarded
-        self.fix_verifier_buy.set_case_id(bca.create_event("Check those are no child orders on the venue which were discarded", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([self.dma_chixdelta_order, self.dma_batsdark_order, self.dma_cboeeudark_order], [self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child], self.FromQuod, pre_filter=self.pre_filter)
+        # region Check child DMA order on venue CBOE PERIODIC EU
+        self.dma_cboeeuperiodic_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
+        self.dma_cboeeuperiodic_order.change_parameters(dict(Account=self.account_kepler, ExDestination=self.ex_destination_cboeeuperiodic, OrderQty=self.qty, Instrument=self.instrument))
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_cboeeuperiodic_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 4 order')
+
+        er_pending_new_dma_cboeeuperiodic_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_cboeeuperiodic_order, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message_kepler(er_pending_new_dma_cboeeuperiodic_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 4 order')
+
+        er_new_dma_cboeeuperiodic_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_cboeeuperiodic_order, self.gateway_side_buy, self.status_new)
+        self.fix_verifier_buy.check_fix_message_kepler(er_new_dma_cboeeuperiodic_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 4 order')
+        # endregion
+
+        # region Check that the 4th child expires
+        order_cancel_request_dma_cboeeuperiodic_order = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child_kepler(self.dma_cboeeuperiodic_order)
+        self.fix_verifier_buy.check_fix_message_kepler(order_cancel_request_dma_cboeeuperiodic_order, key_parameters=self.key_params_OCR_child, message_name='Buy side OrderCancelRequest Child DMA 4 order')
+
+        er_cancel_dma_cboeeuperiodic_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_cboeeuperiodic_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message_kepler(er_cancel_dma_cboeeuperiodic_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Cancel Child DMA 4 order')
+        # endregion
+
+        # region Check child DMA order on venue UBS PERIODIC
+        self.dma_ubsperiodic_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
+        self.dma_ubsperiodic_order.change_parameters(dict(Account=self.account_kepler, ExDestination=self.ex_destination_ubsperiodic, OrderQty=self.qty, Instrument=self.instrument))
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_ubsperiodic_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 5 order')
+
+        er_pending_new_dma_ubsperiodic_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_ubsperiodic_order, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message_kepler(er_pending_new_dma_ubsperiodic_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 5 order')
+
+        er_new_dma_ubsperiodic_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_ubsperiodic_order, self.gateway_side_buy, self.status_new)
+        self.fix_verifier_buy.check_fix_message_kepler(er_new_dma_ubsperiodic_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 5 order')
+        # endregion
+
+        # region Check that the 5th child expires
+        order_cancel_request_dma_ubsperiodic_order = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child_kepler(self.dma_ubsperiodic_order)
+        self.fix_verifier_buy.check_fix_message_kepler(order_cancel_request_dma_ubsperiodic_order, key_parameters=self.key_params_OCR_child, message_name='Buy side OrderCancelRequest Child DMA 5 order')
+
+        er_cancel_dma_ubsperiodic_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_ubsperiodic_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message_kepler(er_cancel_dma_ubsperiodic_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Cancel Child DMA 5 order')
+        # endregion
+
+        # region Check child DMA order on venue Helsinki Dark
+        self.dma_helsinkidark_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
+        self.dma_helsinkidark_order.change_parameters(dict(Account=self.account_kepler, ExDestination=self.ex_destination_helsinkidark, OrderQty=self.qty, Instrument=self.instrument))
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_helsinkidark_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 6 order')
+
+        er_pending_new_dma_helsinkidark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_helsinkidark_order, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message_kepler(er_pending_new_dma_helsinkidark_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 6 order')
+
+        er_new_dma_helsinkidark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_helsinkidark_order, self.gateway_side_buy, self.status_new)
+        self.fix_verifier_buy.check_fix_message_kepler(er_new_dma_helsinkidark_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 6 order')
+        # endregion
+
+        # region Check that the 6th child expires
+        order_cancel_request_dma_helsinkidark_order = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child_kepler(self.dma_helsinkidark_order)
+        self.fix_verifier_buy.check_fix_message_kepler(order_cancel_request_dma_helsinkidark_order, key_parameters=self.key_params_OCR_child, message_name='Buy side OrderCancelRequest Child DMA 6 order')
+
+        er_cancel_dma_helsinkidark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_helsinkidark_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message_kepler(er_cancel_dma_helsinkidark_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Cancel Child DMA 6 order')
+        # endregion
+
+        # region Check child DMA order on venue Helsinki PA
+        self.dma_helsinkipa_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
+        self.dma_helsinkipa_order.change_parameters(dict(Account=self.account_kepler, ExDestination=self.ex_destination_helsinkipa, OrderQty=self.qty, Instrument=self.instrument))
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_helsinkipa_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 7 order')
+
+        er_pending_new_dma_helsinkipa_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_helsinkipa_order, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message_kepler(er_pending_new_dma_helsinkipa_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 7 order')
+
+        er_new_dma_helsinkipa_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_helsinkipa_order, self.gateway_side_buy, self.status_new)
+        self.fix_verifier_buy.check_fix_message_kepler(er_new_dma_helsinkipa_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 7 order')
+        # endregion
+
+        # region Check that the 7th child expires
+        order_cancel_request_dma_helsinkipa_order = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child_kepler(self.dma_helsinkipa_order)
+        self.fix_verifier_buy.check_fix_message_kepler(order_cancel_request_dma_helsinkipa_order, key_parameters=self.key_params_OCR_child, message_name='Buy side OrderCancelRequest Child DMA 7 order')
+
+        er_cancel_dma_helsinkipa_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_helsinkipa_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message_kepler(er_cancel_dma_helsinkipa_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Cancel Child DMA 7 order')
+        # endregion
+
+        # region Check child DMA order on venue Stockholm Dark
+        self.dma_stockholmdark_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
+        self.dma_stockholmdark_order.change_parameters(dict(Account=self.account_kepler, ExDestination=self.ex_destination_stockholmdark, OrderQty=self.qty, Instrument=self.instrument))
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_stockholmdark_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 8 order')
+
+        er_pending_new_dma_stockholmdark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_stockholmdark_order, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message_kepler(er_pending_new_dma_stockholmdark_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 8 order')
+
+        er_new_dma_stockholmdark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_stockholmdark_order, self.gateway_side_buy, self.status_new)
+        self.fix_verifier_buy.check_fix_message_kepler(er_new_dma_stockholmdark_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 8 order')
+        # endregion
+
+        # region Check that the 8th child expires
+        order_cancel_request_dma_stockholmdark_order = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child_kepler(self.dma_stockholmdark_order)
+        self.fix_verifier_buy.check_fix_message_kepler(order_cancel_request_dma_stockholmdark_order, key_parameters=self.key_params_OCR_child, message_name='Buy side OrderCancelRequest Child DMA 8 order')
+
+        er_cancel_dma_stockholmdark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_stockholmdark_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message_kepler(er_cancel_dma_stockholmdark_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Cancel Child DMA 8 order')
+        # endregion
+
+        # region Check child DMA order on venue Stockholm PA
+        self.dma_stockholmpa_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
+        self.dma_stockholmpa_order.change_parameters(dict(Account=self.account_kepler, ExDestination=self.ex_destination_stockholmpa, OrderQty=self.qty, Instrument=self.instrument))
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_stockholmpa_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 9 order')
+
+        er_pending_new_dma_stockholmpa_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_stockholmpa_order, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message_kepler(er_pending_new_dma_stockholmpa_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 9 order')
+
+        er_new_dma_stockholmpa_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_stockholmpa_order, self.gateway_side_buy, self.status_new)
+        self.fix_verifier_buy.check_fix_message_kepler(er_new_dma_stockholmpa_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 9 order')
+        # endregion
+
+        # region Check that the 9th child expires
+        order_cancel_request_dma_stockholmpa_order = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child_kepler(self.dma_stockholmpa_order)
+        self.fix_verifier_buy.check_fix_message_kepler(order_cancel_request_dma_stockholmpa_order, key_parameters=self.key_params_OCR_child, message_name='Buy side OrderCancelRequest Child DMA 9 order')
+
+        er_cancel_dma_stockholmpa_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_stockholmpa_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message_kepler(er_cancel_dma_stockholmpa_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Cancel Child DMA 9 order')
+        # endregion
+
+        # region Check child DMA order on venue ITG
+        self.dma_itg_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
+        self.dma_itg_order.change_parameters(dict(Account=self.account_kepler, ExDestination=self.ex_destination_itg, OrderQty=self.qty, Instrument=self.instrument))
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_itg_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 10 order')
+
+        er_pending_new_dma_itg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_itg_order, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message_kepler(er_pending_new_dma_itg_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 10 order')
+
+        er_new_dma_itg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_itg_order, self.gateway_side_buy, self.status_new)
+        self.fix_verifier_buy.check_fix_message_kepler(er_new_dma_itg_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 10 order')
+        # endregion
+
+        # region Check that the 10th child expires
+        order_cancel_request_dma_itg_order = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child_kepler(self.dma_itg_order)
+        self.fix_verifier_buy.check_fix_message_kepler(order_cancel_request_dma_itg_order, key_parameters=self.key_params_OCR_child, message_name='Buy side OrderCancelRequest Child DMA 10 order')
+
+        er_cancel_dma_itg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_itg_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message_kepler(er_cancel_dma_itg_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Cancel Child DMA 10 order')
+        # endregion
+
+        # region Check child DMA order on venue ITGIPA
+        self.dma_itgipa_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
+        self.dma_itgipa_order.change_parameters(dict(Account=self.account_kepler, ExDestination=self.ex_destination_itg, OrderQty=self.qty, Instrument=self.instrument))
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_itgipa_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 11 order')
+
+        er_pending_new_dma_itgipa_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_itgipa_order, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message_kepler(er_pending_new_dma_itgipa_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 11 order')
+
+        er_new_dma_itgipa_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_itgipa_order, self.gateway_side_buy, self.status_new)
+        self.fix_verifier_buy.check_fix_message_kepler(er_new_dma_itgipa_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 11 order')
+        # endregion
+
+        # region Check that the 11th child expires
+        order_cancel_request_dma_itgipa_order = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child_kepler(self.dma_itgipa_order)
+        self.fix_verifier_buy.check_fix_message_kepler(order_cancel_request_dma_itgipa_order, key_parameters=self.key_params_OCR_child, message_name='Buy side OrderCancelRequest Child DMA 11 order')
+
+        er_cancel_dma_itgipa_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_itgipa_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message_kepler(er_cancel_dma_itgipa_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Cancel Child DMA 11 order')
+        # endregion
+
+        # region Check child DMA order on venue TQDARKEU
+        self.dma_tqdarkeu_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
+        self.dma_tqdarkeu_order.change_parameters(dict(Account=self.account_kepler, ExDestination=self.ex_destination_tqdarkeu, OrderQty=self.qty, Instrument=self.instrument))
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_tqdarkeu_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 12 order')
+
+        er_pending_new_dma_tqdarkeu_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_tqdarkeu_order, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message_kepler(er_pending_new_dma_tqdarkeu_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 12 order')
+
+        er_new_dma_tqdarkeu_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_tqdarkeu_order, self.gateway_side_buy, self.status_new)
+        self.fix_verifier_buy.check_fix_message_kepler(er_new_dma_tqdarkeu_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 12 order')
+        # endregion
+
+        # region Check that the 12th child expires
+        order_cancel_request_dma_tqdarkeu_order = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child_kepler(self.dma_tqdarkeu_order)
+        self.fix_verifier_buy.check_fix_message_kepler(order_cancel_request_dma_tqdarkeu_order, key_parameters=self.key_params_OCR_child, message_name='Buy side OrderCancelRequest Child DMA 12 order')
+
+        er_cancel_dma_tqdarkeu_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_tqdarkeu_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message_kepler(er_cancel_dma_tqdarkeu_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Cancel Child DMA 12 order')
+        # endregion
+
+        # region Check child DMA order on venue TQLITAUCTION EU
+        self.dma_tqlitauctioneu_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
+        self.dma_tqlitauctioneu_order.change_parameters(dict(Account=self.account_kepler, ExDestination=self.ex_destination_tqlitaquctioneu, OrderQty=self.qty, Instrument=self.instrument))
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_tqlitauctioneu_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 13 order')
+
+        er_pending_new_dma_tqlitauctioneu_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_tqlitauctioneu_order, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message_kepler(er_pending_new_dma_tqlitauctioneu_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 13 order')
+
+        er_new_dma_tqlitauctioneu_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_tqlitauctioneu_order, self.gateway_side_buy, self.status_new)
+        self.fix_verifier_buy.check_fix_message_kepler(er_new_dma_tqlitauctioneu_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 13 order')
+        # endregion
+
+        # region Check that the 13th child expires
+        order_cancel_request_dma_tqlitauctioneu_order = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child_kepler(self.dma_tqlitauctioneu_order)
+        self.fix_verifier_buy.check_fix_message_kepler(order_cancel_request_dma_tqlitauctioneu_order, key_parameters=self.key_params_OCR_child, message_name='Buy side OrderCancelRequest Child DMA 13 order')
+
+        er_cancel_dma_tqlitauctioneu_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_tqlitauctioneu_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message_kepler(er_cancel_dma_tqlitauctioneu_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Cancel Child DMA 13 order')
+        # endregion
+
+        # region Check child DMA order on venue Copenhagen Dark
+        self.dma_copenhagendark_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
+        self.dma_copenhagendark_order.change_parameters(dict(Account=self.account_kepler, ExDestination=self.ex_destination_copenhagendark, OrderQty=self.qty, Instrument=self.instrument))
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_copenhagendark_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 14 order')
+
+        er_pending_new_dma_copenhagendark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_copenhagendark_order, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message_kepler(er_pending_new_dma_copenhagendark_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 14 order')
+
+        er_new_dma_copenhagendark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_copenhagendark_order, self.gateway_side_buy, self.status_new)
+        self.fix_verifier_buy.check_fix_message_kepler(er_new_dma_copenhagendark_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 14 order')
+        # endregion
+
+        # region Check that the 14th child expires
+        order_cancel_request_dma_copenhagendark_order = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child_kepler(self.dma_copenhagendark_order)
+        self.fix_verifier_buy.check_fix_message_kepler(order_cancel_request_dma_copenhagendark_order, key_parameters=self.key_params_OCR_child, message_name='Buy side OrderCancelRequest Child DMA 14 order')
+
+        er_cancel_dma_copenhagendark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_copenhagendark_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message_kepler(er_cancel_dma_copenhagendark_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Cancel Child DMA 14 order')
+        # endregion
+
+        # region Check child DMA order on venue Copenhagen PA
+        self.dma_copenhagenpa_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
+        self.dma_copenhagenpa_order.change_parameters(dict(Account=self.account_kepler, ExDestination=self.ex_destination_copenhagenpa, OrderQty=self.qty, Instrument=self.instrument))
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_copenhagenpa_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 15 order')
+
+        er_pending_new_dma_copenhagenpa_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_copenhagenpa_order, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message_kepler(er_pending_new_dma_copenhagenpa_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 15 order')
+
+        er_new_dma_copenhagenpa_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_copenhagenpa_order, self.gateway_side_buy, self.status_new)
+        self.fix_verifier_buy.check_fix_message_kepler(er_new_dma_copenhagenpa_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 15 order')
+        # endregion
+
+        # region Check that the 15th child expires
+        order_cancel_request_dma_copenhagenpa_order = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child_kepler(self.dma_copenhagenpa_order)
+        self.fix_verifier_buy.check_fix_message_kepler(order_cancel_request_dma_copenhagenpa_order, key_parameters=self.key_params_OCR_child, message_name='Buy side OrderCancelRequest Child DMA 15 order')
+
+        er_cancel_dma_copenhagenpa_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_copenhagenpa_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message_kepler(er_cancel_dma_copenhagenpa_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Cancel Child DMA 15 order')
+        # endregion
+
+        # region Check child DMA order on venue LIQUIDNET
+        self.dma_liquidnet_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
+        self.dma_liquidnet_order.change_parameters(dict(Account=self.account_kepler, ExDestination=self.ex_destination_liquidnet, OrderQty=self.qty, Instrument=self.instrument))
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_liquidnet_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 16 order')
+
+        er_pending_new_dma_liquidnet_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_liquidnet_order, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message_kepler(er_pending_new_dma_liquidnet_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 16 order')
+
+        er_new_dma_liquidnet_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_liquidnet_order, self.gateway_side_buy, self.status_new)
+        self.fix_verifier_buy.check_fix_message_kepler(er_new_dma_liquidnet_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 16 order')
+        # endregion
+
+        # region Check that the 16th child expires
+        order_cancel_request_dma_liquidnet_order = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child_kepler(self.dma_liquidnet_order)
+        self.fix_verifier_buy.check_fix_message_kepler(order_cancel_request_dma_liquidnet_order, key_parameters=self.key_params_OCR_child, message_name='Buy side OrderCancelRequest Child DMA 16 order')
+
+        er_cancel_dma_liquidnet_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_liquidnet_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message_kepler(er_cancel_dma_liquidnet_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Cancel Child DMA 16 order')
+        # endregion
+
+        # region Check child DMA order on venue LIQUIDNET EU
+        self.dma_liquidneteu_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
+        self.dma_liquidneteu_order.change_parameters(dict(Account=self.account_kepler, ExDestination=self.ex_destination_liquidneteu, OrderQty=self.qty, Instrument=self.instrument))
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_liquidneteu_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 17 order')
+
+        er_pending_new_dma_liquidneteu_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_liquidneteu_order, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message_kepler(er_pending_new_dma_liquidneteu_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 17 order')
+
+        er_new_dma_liquidneteu_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_liquidneteu_order, self.gateway_side_buy, self.status_new)
+        self.fix_verifier_buy.check_fix_message_kepler(er_new_dma_liquidneteu_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 17 order')
+        # endregion
+
+        # region Check that the 17th child expires
+        order_cancel_request_dma_liquidneteu_order = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child_kepler(self.dma_liquidneteu_order)
+        self.fix_verifier_buy.check_fix_message_kepler(order_cancel_request_dma_liquidneteu_order, key_parameters=self.key_params_OCR_child, message_name='Buy side OrderCancelRequest Child DMA 17 order')
+
+        er_cancel_dma_liquidneteu_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_liquidneteu_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message_kepler(er_cancel_dma_liquidneteu_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Cancel Child DMA 17 order')
+        # endregion
+
+        # region Check child DMA order on venue SIGMAX EU
+        self.dma_sigmaxeu_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
+        self.dma_sigmaxeu_order.change_parameters(dict(Account=self.account_kepler, ExDestination=self.ex_destination_sigmaxeu, OrderQty=self.qty, Instrument=self.instrument))
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_sigmaxeu_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 18 order')
+
+        er_pending_new_dma_sigmaxeu_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_sigmaxeu_order, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message_kepler(er_pending_new_dma_sigmaxeu_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 18 order')
+
+        er_new_dma_sigmaxeu_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_sigmaxeu_order, self.gateway_side_buy, self.status_new)
+        self.fix_verifier_buy.check_fix_message_kepler(er_new_dma_sigmaxeu_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 18 order')
+        # endregion
+
+        # region Check that the 18th child expires
+        order_cancel_request_dma_sigmaxeu_order = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child_kepler(self.dma_sigmaxeu_order)
+        self.fix_verifier_buy.check_fix_message_kepler(order_cancel_request_dma_sigmaxeu_order, key_parameters=self.key_params_OCR_child, message_name='Buy side OrderCancelRequest Child DMA 18 order')
+
+        er_cancel_dma_sigmaxeu_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_sigmaxeu_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message_kepler(er_cancel_dma_sigmaxeu_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Cancel Child DMA 18 order')
+        # endregion
+
+        # region Check child DMA order on venue SIGMAX PA EU
+        self.dma_sigmaxpaeu_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
+        self.dma_sigmaxpaeu_order.change_parameters(dict(Account=self.account_kepler, ExDestination=self.ex_destination_sigmaxpaeu, OrderQty=self.qty, Instrument=self.instrument))
+        self.fix_verifier_buy.check_fix_message_kepler(self.dma_sigmaxpaeu_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 19 order')
+
+        er_pending_new_dma_sigmaxpaeu_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_sigmaxpaeu_order, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message_kepler(er_pending_new_dma_sigmaxpaeu_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew Child DMA 19 order')
+
+        er_new_dma_sigmaxpaeu_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_sigmaxpaeu_order, self.gateway_side_buy, self.status_new)
+        self.fix_verifier_buy.check_fix_message_kepler(er_new_dma_sigmaxpaeu_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 19 order')
+        # endregion
+
+        # region Check that the 19th child expires
+        order_cancel_request_dma_sigmaxpaeu_order = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child_kepler(self.dma_sigmaxpaeu_order)
+        self.fix_verifier_buy.check_fix_message_kepler(order_cancel_request_dma_sigmaxpaeu_order, key_parameters=self.key_params_OCR_child, message_name='Buy side OrderCancelRequest Child DMA 19 order')
+
+        er_cancel_dma_sigmaxpaeu_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_sigmaxpaeu_order, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message_kepler(er_cancel_dma_sigmaxpaeu_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Cancel Child DMA 19 order')
         # endregion
 
         # region Check that parent order eliminated

@@ -3,6 +3,7 @@ import traceback
 from datetime import timedelta
 
 from test_framework.configurations.component_configuration import ComponentConfiguration
+from test_framework.db_wrapper.db_manager import DBManager
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from custom import basic_custom_actions as bca
 
@@ -14,6 +15,7 @@ from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3356 import 
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3357 import QAP_T3357
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3407 import QAP_T3407
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3411 import QAP_T3411
+from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3466 import QAP_T3466
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3490 import QAP_T3490
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3499 import QAP_T3499
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T3518 import QAP_T3518
@@ -86,6 +88,7 @@ from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T8508 import 
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T8813 import QAP_T8813
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T8926 import QAP_T8926
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T9090 import QAP_T9090
+from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T9436 import QAP_T9436
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T10609 import QAP_T10609
 from test_cases.web_admin.web_admin_test_cases.client_accounts.QAP_T10617 import QAP_T10617
 
@@ -94,6 +97,7 @@ class RunClientsAccounts:
     def __init__(self, root_report_id):
         self.second_lvl_id = bca.create_event("WA_Client_Accounts", root_report_id)
         self.web_driver_container = None
+        self.db_manager = None
 
     def execute(self):
         try:
@@ -101,6 +105,8 @@ class RunClientsAccounts:
             self.web_driver_container = WebDriverContainer(
                 configuration.environment.get_list_web_admin_environment()[0].web_browser,
                 configuration.environment.get_list_web_admin_environment()[0].site_url)
+            self.db_manager = DBManager(configuration.environment.get_list_data_base_environment()[0])
+
             start_time = time.monotonic()
 
             QAP_T3252(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
@@ -119,6 +125,8 @@ class RunClientsAccounts:
                       environment=configuration.environment).run()
             QAP_T3411(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
+            QAP_T3466(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment, db_manager=self.db_manager).run()
             QAP_T3490(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3499(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
@@ -263,6 +271,8 @@ class RunClientsAccounts:
                       environment=configuration.environment).run()
             QAP_T9090(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
+            QAP_T9436(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment, db_manager=self.db_manager).run()
             QAP_T10609(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                        environment=configuration.environment).run()
             QAP_T10617(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,

@@ -1,6 +1,7 @@
 import logging
 from custom import basic_custom_actions as bca
 from stubs import Stubs
+from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T11327 import QAP_T11327
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T4225 import QAP_T4225
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T8728 import QAP_T8728
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T8791 import QAP_T8791
@@ -30,6 +31,7 @@ def test_run(parent_id=None, version=None):
     try:
         configuration = ComponentConfigurationAlgo("Participation")
         # QAP_T8728(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T11327(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4225(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4350(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4351(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()

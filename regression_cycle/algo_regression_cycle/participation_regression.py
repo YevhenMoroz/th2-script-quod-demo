@@ -39,6 +39,8 @@ from test_cases.algo.Algo_PercentageVolume.QAP_T9093 import QAP_T9093
 from test_cases.algo.Algo_PercentageVolume.QAP_T9084 import QAP_T9084
 from test_cases.algo.Algo_PercentageVolume.QAP_T4260 import QAP_T4260
 from test_cases.algo.Algo_PercentageVolume.QAP_T4261 import QAP_T4261
+from test_cases.algo.Algo_PercentageVolume.QAP_T10836 import QAP_T10836
+from test_cases.algo.Algo_PercentageVolume.QAP_T10931 import QAP_T10931
 
 from test_framework.configurations.component_configuration import ComponentConfiguration
 
@@ -96,6 +98,8 @@ def test_run(parent_id= None, version = None, mode = None):
         QAP_T9094(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T9093(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T9084(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10836(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10931(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         if __name__ == '__main__':
             # tests with config change
             QAP_T5088(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()

@@ -3,6 +3,7 @@ from xml.etree import ElementTree
 import time
 from datetime import timedelta
 
+from rule_management import RuleManager, Simulators
 from test_framework.ssh_wrappers.ssh_client import SshClient
 from win_gui_modules.utils import set_session_id
 import logging
@@ -73,8 +74,10 @@ def test_run(parent_id=None, version=None):
     # session_id = set_session_id(pc_name) # grpc._channel._InactiveRpcError: <_InactiveRpcError of RPC that terminated
 
     try:
+        rule_manager = RuleManager(Simulators.algo)
+        rule_manager.remove_rules_by_alias("fix-bs-310-columbia")
         start_time = time.monotonic()
-        print(f'Algo_PairTrading StartTime is {datetime.utcnow()}')
+        print(f'Algo_AcceptanceList StartTime is {datetime.utcnow()}')
         configuration = ComponentConfiguration("Acceptance_list")
         # TWAP
         QAP_T4886(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
@@ -154,7 +157,7 @@ def test_run(parent_id=None, version=None):
         # QAP_T4948.execute(report_id, session_id) # session ID error (line 44)
 
         end_time = time.monotonic()
-        print(f'Algo_PairTrading EndTime is {datetime.utcnow()}, duration is {timedelta(seconds=end_time-start_time)}')
+        print(f'Algo_AcceptanceList EndTime is {datetime.utcnow()}, duration is {timedelta(seconds=end_time-start_time)}')
     except Exception:
         logging.error("Error execution", exc_info=True)
 

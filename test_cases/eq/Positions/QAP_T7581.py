@@ -111,8 +111,8 @@ class QAP_T7581(TestCase):
         decreased_qty = str(float(self.qty_of_second_order) - float(new_qty))
         posit_qty_before = result_of_position_for_security_account[JavaApiFields.PositQty.value]
         posit_qty_after = security_account_posit_request[JavaApiFields.PositQty.value]
-        self.ja_manager.compare_values({'DecreasingQty': decreased_qty},
-                                       {'DecreasingQty': str(float(posit_qty_after) - float(posit_qty_before))},
+        self.ja_manager.compare_values({'IncreasingQty': decreased_qty},
+                                       {'IncreasingQty': str(float(posit_qty_after) - float(posit_qty_before))},
                                        f'Verifying that {JavaApiFields.PositQty.value} increased by 30 for {self.source_acc} (step 5)')
 
         # endregion
