@@ -1,8 +1,13 @@
 import logging
 import time
 from pathlib import Path
+import xml.etree.ElementTree as ET
+
+from pkg_resources import resource_filename
+
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
+from custom.verifier import VerificationMethod
 from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
@@ -142,10 +147,11 @@ class QAP_T8456(TestCase):
         responses = self.java_api_manager.send_message_and_receive_response(self.trade_entry)
         print_message('Trade CO order (Step 2)', responses)
         execution_report = \
-            self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
+            self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()
+        execution_report_block = execution_report[
                 JavaApiFields.ExecutionReportBlock.value]
-        exec_id = execution_report[JavaApiFields.ExecID.value]
-        actually_exec_sts = execution_report[JavaApiFields.TransExecStatus.value]
+        exec_id = execution_report_block[JavaApiFields.ExecID.value]
+        actually_exec_sts = execution_report_block[JavaApiFields.TransExecStatus.value]
         self.java_api_manager.compare_values(
             {JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_FIL.value},
             {JavaApiFields.TransExecStatus.value: actually_exec_sts},
@@ -153,20 +159,9 @@ class QAP_T8456(TestCase):
         # endregion
 
         # region check that execution has  Agent Fee (step 3)
-        misc_fee_rate = '5'
-        execution_report[JavaApiFields.MiscFeesList.value][JavaApiFields.MiscFeesBlock.value][0][
-            JavaApiFields.MiscFeeAmt.value] = str(round(float(
-            execution_report[JavaApiFields.MiscFeesList.value][JavaApiFields.MiscFeesBlock.value][0][
-                JavaApiFields.MiscFeeAmt.value]), 4))
-        misc_fee_amount = float(misc_fee_rate) * float(self.qty) * float(self.price) / 10000
         self.java_api_manager.compare_values(
-            {JavaApiFields.MiscFeeType.value: AllocationInstructionConst.COMM_AND_FEES_TYPE_AGE.value,
-             JavaApiFields.MiscFeeBasis.value: AllocationInstructionConst.COMM_AND_FEES_BASIS_P.value,
-             JavaApiFields.MiscFeeCurr.value: self.currency_post_trade,
-             JavaApiFields.MiscFeeRate.value: str(float(misc_fee_rate)),
-             JavaApiFields.MiscFeeAmt.value: str(misc_fee_amount)
-             }, execution_report[JavaApiFields.MiscFeesList.value][JavaApiFields.MiscFeesBlock.value][0],
-            'Check that Agent fee presents in Execution Report (step 3)')
+            {JavaApiFields.ExecutionReportBlock.value: JavaApiFields.MiscFeesList.value}, execution_report,
+            'Check that Agent fee is not present in Execution Report (step 3)', VerificationMethod.NOT_CONTAINS)
         # endregion
 
         # region complete CO order step 4
@@ -287,10 +282,7 @@ class QAP_T8456(TestCase):
             "ExecType": "F",
             "OrdStatus": "2",
             "ClOrdID": cl_ord_id,
-            'NoMiscFees': [
-                {'MiscFeeAmt': str(round(misc_fee_amount, 4)),
-                 'MiscFeeCurr': self.currency_post_trade,
-                 'MiscFeeType': '12'}]
+            'NoMiscFees': '#'
         }
         list_of_ignored_fields = ['Account', 'ExecID', 'OrderQtyData', 'LastQty', 'OrderID',
                                   'TransactTime', 'Side', 'AvgPx', 'QuodTradeQualifier', 'BookID',
