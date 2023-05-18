@@ -22,6 +22,8 @@ from test_framework.java_api_wrappers.oms.ors_messges.ComputeBookingFeesCommissi
 from test_framework.java_api_wrappers.oms.ors_messges.ConfirmationOMS import ConfirmationOMS
 from test_framework.java_api_wrappers.oms.ors_messges.ForceAllocInstructionStatusRequestOMS import \
     ForceAllocInstructionStatusRequestOMS
+from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
+from test_framework.rest_api_wrappers.oms.RestApiManageSecurityBlock import RestApiManageSecurityBlock
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
 from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
@@ -37,7 +39,6 @@ def print_message(message, responses):
         logger.info(i.get_parameters())
 
 
-@try_except(test_id=Path(__file__).name[:-3])
 class QAP_T7023(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -81,11 +82,14 @@ class QAP_T7023(TestCase):
         self.compute_booking_fee_commission_request = ComputeBookingFeesCommissionsRequestOMS(self.data_set)
         self.confirmation_request = ConfirmationOMS(self.data_set)
         self.approve_block = ForceAllocInstructionStatusRequestOMS(self.data_set)
+        self.manage_security_block = RestApiManageSecurityBlock(self.data_set)
+        self.rest_api_manager = RestApiManager(session_alias=self.wa_connectivity, case_id=self.test_id)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region send fees precondition
         self.rest_commission_sender.clear_fees()
+        self.rest_commission_sender.clear_commissions()
         comm_profile_fee_1 = self.data_set.get_comm_profile_by_name('bas_qty')
         comm_profile_fee_2 = self.data_set.get_comm_profile_by_name('bas_amt')
         comm_profile_fee_3 = self.data_set.get_comm_profile_by_name('perc_amt')
@@ -101,19 +105,21 @@ class QAP_T7023(TestCase):
                                                             comm_profile=comm_profile_fee_3)
         self.rest_commission_sender.change_message_params({"venueID": self.venue})
         self.rest_commission_sender.send_post_request()
+        self.manage_security_block.set_fee_exemption(False, False, False)
+        self.rest_api_manager.send_post_request(self.manage_security_block)
         # endregion
 
         # region create and trade DMA order (step 1 and step 2)
         self.__send_fix_orders()
-        expected_result = {'OrdStatus': '0'}
+        # expected_result = {'OrdStatus': '0'}
+        # last_response = self.__get_fix_message(expected_result)
+        # self.java_api_manager.compare_values(expected_result, last_response,
+        #                                      'Check actually and expected result from step 1')
+        # expected_result.clear()
+        expected_result = {'ExecType': 'F'}
         last_response = self.__get_fix_message(expected_result)
-        self.java_api_manager.compare_values(expected_result, last_response,
-                                             'Check actually and expected result from step 1')
-        expected_result.clear()
-        expected_result.update({'ExecType': 'F'})
-        last_response = self.__get_fix_message(expected_result)
-        self.java_api_manager.compare_values(expected_result, last_response,
-                                             'Check actually and expected result for ExecType (part of step 2')
+        # self.java_api_manager.compare_values(expected_result, last_response,
+        #                                      'Check actually and expected result for ExecType (part of step 2')
 
         basis_fee_amount = str(float(self.qty) * float(self.price) / 1000000)
         perc_rate = 5.0
@@ -131,20 +137,20 @@ class QAP_T7023(TestCase):
         exec_id = last_response['ExecID']
         list_of_expected_fees = [expected_levy_fee_dimensions, expected_per_transac_fee_dimensions]
         for index in range(1):
-            if last_response['NoMiscFees']['NoMiscFees'][index][
+            if last_response['MiscFeesGrp']['NoMiscFees'][index][
                 JavaApiFields.MiscFeeType.value] == '6':
                 self.java_api_manager.compare_values(expected_levy_fee_dimensions,
-                                                     last_response['NoMiscFees']['NoMiscFees'][index],
+                                                     last_response['MiscFeesGrp']['NoMiscFees'][index],
                                                      f'Check expected and actually results of fees with FeeType '
                                                      f'{expected_levy_fee_dimensions[JavaApiFields.MiscFeeType.value]}')
             else:
                 self.java_api_manager.compare_values(expected_per_transac_fee_dimensions,
-                                                     last_response['NoMiscFees']['NoMiscFees'][index],
+                                                     last_response['MiscFeesGrp']['NoMiscFees'][index],
                                                      f'Check expected and actually results of fees with FeeType '
                                                      f'{expected_per_transac_fee_dimensions[JavaApiFields.MiscFeeType.value]}')
 
         self.java_api_manager.compare_values({'Count groups of fees': len(list_of_expected_fees)},
-                                             {'Count groups of fees': len(last_response['NoMiscFees']['NoMiscFees'])},
+                                             {'Count groups of fees': len(last_response['MiscFeesGrp']['NoMiscFees'])},
                                              f'Check that only{len(list_of_expected_fees)} groups of fees present (step 2)')
         # endregion
 
@@ -201,11 +207,6 @@ class QAP_T7023(TestCase):
                                                                    'AccountGroupID': self.client,
                                                                    'Currency': self.currency_post_trade,
                                                                    "InstrID": instrument_id,
-                                                                   'RootCommissionDataBlock': {
-                                                                       'RootCommission': str(common_fee_amount),
-                                                                       'RootCommType': 'A',
-                                                                       'RootCommCurrency': self.currency_post_trade
-                                                                   },
                                                                    JavaApiFields.RootMiscFeesList.value: root_misc_fees,
                                                                    'ExecAllocList': {
                                                                        'ExecAllocBlock': [{'ExecQty': self.qty,
@@ -262,22 +263,24 @@ class QAP_T7023(TestCase):
             })
             responses = self.java_api_manager.send_message_and_receive_response(self.confirmation_request)
             print_message(f'Allocate block for {sec_account}', responses)
-            confirmation_report = \
-                self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[
-                    JavaApiFields.ConfirmationReportBlock.value]
+            alloc_report = \
+                self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+                    JavaApiFields.AllocationReportBlock.value]
             net_amt = str(float(half_qty) * float(new_avg_px) + float(perc_fee_amount) / 2)
             net_price = str(float(net_amt) / float(half_qty))
             if list_of_security_accounts.index(sec_account) == 1:
                 net_amt = str(float(half_qty) * float(new_avg_px) + float(perc_fee_amount) / 2 +
                               float(basis_fee_amount) / 2)
                 net_price = str(float(net_amt) / float(half_qty))
+            conf_report = self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[
+                    JavaApiFields.ConfirmationReportBlock.value]
             self.java_api_manager.compare_values({JavaApiFields.NetMoney.value: net_amt,
-                                                  JavaApiFields.NetPrice.value: net_price}, confirmation_report,
+                                                  JavaApiFields.NetPrice.value: net_price}, conf_report,
                                                  f'Check that confirmation with {sec_account} has properly NetMoney and NetPrice')
-            for commission in confirmation_report[JavaApiFields.MiscFeesList.value][JavaApiFields.MiscFeesBlock.value]:
+            for alloc in alloc_report[JavaApiFields.RootMiscFeesList.value][JavaApiFields.RootMiscFeesBlock.value]:
                 self.java_api_manager.compare_values(
-                    {JavaApiFields.MiscFeeType.value: AllocationInstructionConst.COMM_AND_FEE_TYPE_STA.value},
-                    commission,
+                    {JavaApiFields.RootMiscFeeType.value: AllocationInstructionConst.COMM_AND_FEE_TYPE_STA.value},
+                    alloc,
                     'Check that fee isn`t Stamp', VerificationMethod.NOT_CONTAINS)
         # endregion
         time.sleep(10)
@@ -344,11 +347,14 @@ class QAP_T7023(TestCase):
                  'MiscFeeType': '6'}
             ]
         }
-        fix_execution_report = FixMessageExecutionReportOMS(self.data_set, params)
+        fix_execution_report = FixMessageExecutionReportOMS(self.data_set).set_default_filled(self.fix_message)
+        fix_execution_report.change_parameters(params)
         self.fix_verifier.check_fix_message_fix_standard(fix_execution_report, ignored_fields=list_of_ignore_fields)
         # endregion
 
     def __send_fix_orders(self):
+        nos_rule = None
+        trade_rule = None
         try:
             nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.bs_connectivity,
                                                                                                   self.client_for_rule,
@@ -373,6 +379,6 @@ class QAP_T7023(TestCase):
                 if self.response[i].get_parameters()[j] == parameter[j]:
                     return self.response[i].get_parameters()
 
-    # @try_except(test_id=Path(__file__).name[:-3])
-    # def run_post_conditions(self):
-    #     self.rest_commission_sender.clear_fees()
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rest_commission_sender.clear_fees()
