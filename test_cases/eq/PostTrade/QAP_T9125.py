@@ -24,7 +24,7 @@ logger.setLevel(logging.INFO)
 seconds, nanos = timestamps()  # Test case start time
 
 
-class QAP_T9126(TestCase):
+class QAP_T9125(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
@@ -89,7 +89,7 @@ class QAP_T9126(TestCase):
              'CommissionBasis': 'Absolute',
              'CommissionCurrency': "EUR",
              'CommissionRate': '1'},
-            {'CommissionAmountType': 'ClearingBroker',
+            {'CommissionAmountType': 'LocalCommission',
              'CommissionAmount': '1',
              'CommissionBasis': 'Absolute',
              'CommissionCurrency': "EUR",
@@ -128,18 +128,18 @@ class QAP_T9126(TestCase):
         alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
             JavaApiFields.AllocationReportBlock.value]
         alloc_report_comm = alloc_report['ClientCommissionList']['ClientCommissionBlock']
-        if alloc_report_comm[0]['CommissionAmountType'] == "CLB":
+        if alloc_report_comm[0]['CommissionAmountType'] == "LOC":
             alloc_report_comm[0], alloc_report_comm[1] = alloc_report_comm[1], alloc_report_comm[0]
         self.java_api_manager.compare_values({'CommissionAmountType': "BRK"}, alloc_report_comm[0],
                                              "Check allocation comm 1(step 2)")
-        self.java_api_manager.compare_values({'CommissionAmountType': "CLB"}, alloc_report_comm[1],
+        self.java_api_manager.compare_values({'CommissionAmountType': "LOC"}, alloc_report_comm[1],
                                              "Check allocation comm 2(step 2)")
         conf_report_comm = conf_report['ClientCommissionList']['ClientCommissionBlock']
-        if conf_report_comm[0]['CommissionAmountType'] == "CLB":
+        if conf_report_comm[0]['CommissionAmountType'] == "LOC":
             conf_report_comm[0], conf_report_comm[1] = conf_report_comm[1], conf_report_comm[0]
         self.java_api_manager.compare_values({'CommissionAmountType': "BRK"}, conf_report_comm[0],
                                              "Check confirmation comm 1(step 3)")
-        self.java_api_manager.compare_values({'CommissionAmountType': "CLB"}, conf_report_comm[1],
+        self.java_api_manager.compare_values({'CommissionAmountType': "LOC"}, conf_report_comm[1],
                                              "Check confirmation comm 2(step 3)")
 
     @try_except(test_id=Path(__file__).name[:-3])
