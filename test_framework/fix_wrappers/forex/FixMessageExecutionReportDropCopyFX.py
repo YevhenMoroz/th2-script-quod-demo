@@ -50,6 +50,8 @@ class FixMessageExecutionReportDropCopyFX(FixMessageExecutionReport):
             LeavesQty=0,
             GrossTradeAmt="*",
             ExDestination="*",
+            GatingRuleCondName="*",
+            GatingRuleName="*",
             QtyType=0,
             Instrument="*",
             SecondaryExecID="*",
@@ -57,9 +59,8 @@ class FixMessageExecutionReportDropCopyFX(FixMessageExecutionReport):
         )
         super().change_parameters(temp)
 
-        if response is not None:
-            if "Account" in response.get_parameters():
-                self.add_tag({"Account": "*"})
+        if response is not None and "Account" in response.get_parameters():
+            self.add_tag({"Account": "*"})
         return self
 
     def set_params_from_trade_mo(self, trade_request, response=None):
@@ -99,12 +100,11 @@ class FixMessageExecutionReportDropCopyFX(FixMessageExecutionReport):
         )
         super().change_parameters(temp)
 
-        if response is not None:
-            if "Account" in response.get_parameters():
-                self.add_tag({"Account": "*"})
+        if response is not None and "Account" in response.get_parameters():
+            self.add_tag({"Account": "*"})
         return self
-    
-    def set_params_from_trade_new(self,trade_request, response=None):
+
+    def set_params_from_trade_new(self, trade_request, response=None):
         request = trade_request.get_parameters()["TradeEntryRequestBlock"]
         temp = dict(
             ClOrdID="*",
@@ -136,7 +136,6 @@ class FixMessageExecutionReportDropCopyFX(FixMessageExecutionReport):
         )
         super().change_parameters(temp)
 
-        if response is not None:
-            if "Account" in response.get_parameters():
-                self.add_tag({"Account": "*"})
+        if response is not None and "Account" in response.get_parameters():
+            self.add_tag({"Account": "*"})
         return self
