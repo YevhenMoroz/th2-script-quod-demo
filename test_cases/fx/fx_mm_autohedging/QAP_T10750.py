@@ -9,9 +9,11 @@ from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.forex.FixMessageExecutionReportDropCopyFX import FixMessageExecutionReportDropCopyFX
 from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleTakerDC import FixMessageNewOrderSingleTakerDC
 from test_framework.fix_wrappers.forex.FixMessagePositionReportFX import FixMessagePositionReportFX
+from test_framework.fix_wrappers.forex.FixMessageRequestForPositionsAckFX import FixMessageRequestForPositionsAckFX
 from test_framework.fix_wrappers.forex.FixMessageRequestForPositionsFX import FixMessageRequestForPositionsFX
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.fx.FixPositionMaintenanceRequestFX import FixPositionMaintenanceRequestFX
+from test_framework.java_api_wrappers.fx.FixPositionMassCancelRequestFX import FixPositionMassCancelRequestFX
 from test_framework.java_api_wrappers.fx.HeldOrderAckRequestFX import HeldOrderAckRequestFX
 from test_framework.java_api_wrappers.fx.TradeEntryRequestFX import TradeEntryRequestFX
 from test_framework.positon_verifier_fx import PositionVerifier
@@ -30,9 +32,6 @@ class QAP_T10750(TestCase):
         self.rest_api_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
         self.java_api_manager = JavaApiManager(self.java_api_env, self.test_id)
         self.rest_api_manager = RestApiManager(self.rest_api_connectivity, self.test_id)
-        self.maintenance_request_ext = FixPositionMaintenanceRequestFX()
-        self.maintenance_request_int = FixPositionMaintenanceRequestFX()
-        self.maintenance_request_backup = FixPositionMaintenanceRequestFX()
         self.fix_manager = FixManager(self.pks_connectivity, self.test_id)
         self.fix_pos_verifier = FixVerifier(self.pks_connectivity, self.test_id)
         self.fix_drop_copy_verifier = FixVerifier(self.dc_connectivity, self.test_id)
@@ -41,6 +40,8 @@ class QAP_T10750(TestCase):
         self.request_for_position_ext = FixMessageRequestForPositionsFX()
         self.request_for_position_int = FixMessageRequestForPositionsFX()
         self.request_for_position_backup = FixMessageRequestForPositionsFX()
+        self.cancel_request = FixPositionMassCancelRequestFX()
+        self.pos_report_none = FixMessageRequestForPositionsAckFX()
         self.position_report_ext = FixMessagePositionReportFX()
         self.position_report_int = FixMessagePositionReportFX()
         self.position_report_backup = FixMessagePositionReportFX()
@@ -61,6 +62,7 @@ class QAP_T10750(TestCase):
         self.sec_type_fwd = self.data_set.get_security_type_by_name("fx_fwd")
         self.settle_date_wk1 = self.data_set.get_settle_date_by_name("wk1")
         self.listing_eur_gbp = self.data_set.get_listing_id_by_name("eur_gbp_wk1")
+        self.instr_type_fwd = self.data_set.get_fx_instr_type_ja("fx_fwd")
         self.instrument = {
             "SecurityType": self.sec_type_fwd,
             "Symbol": self.eur_gbp
@@ -76,35 +78,24 @@ class QAP_T10750(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Clear position before start and check that they equal to 0
-        self.maintenance_request_ext.set_params_for_fwd()
-        self.maintenance_request_ext.change_account(self.account_ext)
-        self.maintenance_request_ext.change_client(self.client_ext)
-        self.maintenance_request_ext.change_instrument(self.eur_gbp)
-        self.java_api_manager.send_message(self.maintenance_request_ext)
+        self.cancel_request.set_params(self.account_ext)
+        self.java_api_manager.send_message(self.cancel_request)
         self.sleep(5)
-        self.maintenance_request_int.set_params_for_fwd()
-        self.maintenance_request_int.change_account(self.account_int)
-        self.maintenance_request_int.change_client(self.client_int)
-        self.maintenance_request_int.change_instrument(self.eur_gbp)
-        self.java_api_manager.send_message(self.maintenance_request_int)
+        self.cancel_request.set_params(self.account_int)
+        self.java_api_manager.send_message(self.cancel_request)
         self.sleep(5)
-        self.maintenance_request_backup.set_params_for_fwd()
-        self.maintenance_request_backup.change_account(self.account_backup)
-        self.maintenance_request_backup.change_client(self.client_back_up)
-        self.maintenance_request_backup.change_instrument(self.eur_gbp)
-        self.java_api_manager.send_message(self.maintenance_request_backup)
+        self.cancel_request.set_params(self.account_backup)
+        self.java_api_manager.send_message(self.cancel_request)
         self.sleep(5)
         # reqeust for external client
         self.request_for_position_ext.set_params_for_fwd()
         self.request_for_position_ext.change_parameters({"Instrument": self.instrument, "Currency": self.currency,
                                                          "Account": self.client_ext})
-        external_report: list = self.fix_manager.send_message_and_receive_response(self.request_for_position_ext,
-                                                                                   self.test_id)
-        self.position_report_ext.set_params_from_reqeust(self.request_for_position_ext)
+        self.fix_manager.send_message_and_receive_response(self.request_for_position_ext, self.test_id)
+        self.pos_report_none.set_params_from_reqeust(self.request_for_position_ext)
         self.position_report_ext.change_parameter("LastPositEventType", "11")
-        self.fix_pos_verifier.check_fix_message(self.position_report_ext,
+        self.fix_pos_verifier.check_fix_message(self.pos_report_none,
                                                 message_name=f"Check position for {self.client_ext} before start")
-        self.position_verifier.check_base_position(external_report, "0", text=f"Check base for {self.client_ext}")
         self.sleep(1)
         self.request_for_position_ext.set_unsubscribe()
         self.fix_manager.send_message(self.request_for_position_ext)
@@ -113,13 +104,11 @@ class QAP_T10750(TestCase):
         self.request_for_position_int.set_params_for_fwd()
         self.request_for_position_int.change_parameters({"Instrument": self.instrument, "Currency": self.currency,
                                                          "Account": self.client_int})
-        internal_report: list = self.fix_manager.send_message_and_receive_response(self.request_for_position_int,
-                                                                                   self.test_id)
-        self.position_report_int.set_params_from_reqeust(self.request_for_position_int)
+        self.fix_manager.send_message_and_receive_response(self.request_for_position_int, self.test_id)
+        self.pos_report_none.set_params_from_reqeust(self.request_for_position_int)
         self.position_report_int.change_parameter("LastPositEventType", "11")
-        self.fix_pos_verifier.check_fix_message(self.position_report_int,
+        self.fix_pos_verifier.check_fix_message(self.pos_report_none,
                                                 message_name=f"Check position for {self.client_int} before start")
-        self.position_verifier.check_base_position(internal_report, "0", text=f"Check base for {self.client_int}")
         self.request_for_position_int.set_unsubscribe()
         self.fix_manager.send_message(self.request_for_position_int)
         self.sleep(1)
@@ -127,13 +116,11 @@ class QAP_T10750(TestCase):
         self.request_for_position_backup.set_params_for_fwd()
         self.request_for_position_backup.change_parameters({"Instrument": self.instrument, "Currency": self.currency,
                                                             "Account": self.client_back_up})
-        backup_report: list = self.fix_manager.send_message_and_receive_response(self.request_for_position_backup,
-                                                                                 self.test_id)
-        self.position_report_backup.set_params_from_reqeust(self.request_for_position_backup)
+        self.fix_manager.send_message_and_receive_response(self.request_for_position_backup, self.test_id)
+        self.pos_report_none.set_params_from_reqeust(self.request_for_position_backup)
         self.position_report_backup.change_parameter("LastPositEventType", "11")
-        self.fix_pos_verifier.check_fix_message(self.position_report_backup,
+        self.fix_pos_verifier.check_fix_message(self.pos_report_none,
                                                 message_name=f"Check position for {self.client_back_up} before start")
-        self.position_verifier.check_base_position(backup_report, "0", text=f"Check base for {self.client_back_up}")
         self.request_for_position_backup.set_unsubscribe()
         self.fix_manager.send_message(self.request_for_position_backup)
         self.sleep(1)
@@ -154,8 +141,9 @@ class QAP_T10750(TestCase):
         # region Step 3
         self.trade_request.set_default_params()
         self.trade_request.remove_fields_from_component("TradeEntryRequestBlock", ["SettlDate"])
-        self.trade_request.update_fields_in_component("TradeEntryRequestBlock", {"AccountGroupID": self.client_ext,
-                                                                                 "ListingID": self.listing_eur_gbp})
+        self.trade_request.update_fields_in_component("TradeEntryRequestBlock", {"ClientAccountGroupID": self.client_ext})
+        # TODO Wait for PFX-6531
+        self.trade_request.change_instrument(self.eur_gbp, self.instr_type_fwd)
         response: list = self.java_api_manager.send_message_and_receive_response(self.trade_request)
         ah_order_id = self.trade_request.get_ord_id_from_held(response)
 
@@ -187,8 +175,7 @@ class QAP_T10750(TestCase):
                                                                                    self.test_id)
         self.sleep(1)
         self.position_report_int.set_params_from_reqeust(self.request_for_position_int)
-        # TODO need to set correct value for LastPositEventType
-        self.position_report_int.change_parameter("LastPositEventType", "*")
+        self.position_report_int.change_parameter("LastPositEventType", "12")
         self.fix_pos_verifier.check_fix_message(self.position_report_int,
                                                 message_name=f"Check position for {self.client_int} after")
         self.position_verifier.check_base_position(internal_report, self.expected_qty_int,
@@ -203,8 +190,7 @@ class QAP_T10750(TestCase):
         backup_report: list = self.fix_manager.send_message_and_receive_response(self.request_for_position_backup,
                                                                                  self.test_id)
         self.position_report_backup.set_params_from_reqeust(self.request_for_position_backup)
-        # TODO need to set correct value for LastPositEventType
-        self.position_report_backup.change_parameter("LastPositEventType", "*")
+        self.position_report_backup.change_parameter("LastPositEventType", "12")
         self.position_report_backup.change_parameter("SettlDate", self.settle_date_wk1)
         self.fix_pos_verifier.check_fix_message(self.position_report_backup,
                                                 message_name=f"Check that date correctly transferred")
