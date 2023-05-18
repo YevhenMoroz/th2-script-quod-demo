@@ -133,7 +133,7 @@ class QAP_T4685(TestCase):
         # endregion
 
         # region EndDate for TradingPhases
-        now = datetime.now() + timedelta(minutes=1) - timedelta(seconds=datetime.utcnow().second, microseconds=datetime.utcnow().microsecond)
+        now = datetime.utcnow() + timedelta(minutes=1) - timedelta(seconds=datetime.utcnow().second, microseconds=datetime.utcnow().microsecond)
         end_date_open = now + timedelta(minutes=5)
         # endregion
 
