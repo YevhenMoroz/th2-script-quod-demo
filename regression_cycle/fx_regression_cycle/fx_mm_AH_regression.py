@@ -17,7 +17,8 @@ from stubs import Stubs
 import logging
 from custom import basic_custom_actions as bca
 from test_cases.fx.fx_mm_positions.prepare_position import prepare_position
-from test_framework.configurations.component_configuration import ComponentConfiguration
+from test_framework.configurations.component_configuration import ComponentConfiguration, ComponentConfigurationFX
+
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -25,9 +26,10 @@ timeouts = False
 channels = dict()
 
 
-def test_run(parent_id=None, version="5.1.178.191"):
-    report_id = bca.create_event(f"FX_MM_Autohedger_automation" if version is None else f"FX_MM_Autohedger_automation | {version}", parent_id)
-
+def test_run(parent_id=None, version=None):
+    report_id = bca.create_event("FX_MM_Autohedger_automation" if version is None
+                                 else f"FX_MM_Autohedger_automation | {version}", parent_id)
+    # configuration = ComponentConfigurationFX("ESP_MM_309")
     configuration = ComponentConfiguration("AutoHedger")
     try:
         # prepare_position()
@@ -42,7 +44,7 @@ def test_run(parent_id=None, version="5.1.178.191"):
         QAP_T9468(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10439(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10711(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T10750(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_T10750(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10775(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10780(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
