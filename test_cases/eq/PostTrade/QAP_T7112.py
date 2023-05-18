@@ -25,7 +25,7 @@ logger.setLevel(logging.INFO)
 seconds, nanos = timestamps()  # Test case start time
 
 
-class QAP_T7546(TestCase):
+class QAP_T7112(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
@@ -72,11 +72,12 @@ class QAP_T7546(TestCase):
             trade_rule = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.bs_connectivity,
                                                                                             self.venue_client_names,
                                                                                             self.mic,
-                                                                                            float(self.price),
+                                                                                            0.0769,
                                                                                             int(self.qty), 0)
             self.fix_message.set_default_dma_limit()
             self.fix_message.change_parameters(
-                {'OrderQtyData': {'OrderQty': self.qty}, 'Price': self.price, 'Account': self.client})
+                {'OrderQtyData': {'OrderQty': self.qty}, 'Price': self.price, 'Account': self.client,
+                 'Currency': 'JPY'})
             response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
             # get Client Order ID and Order ID
             order_id = response[0].get_parameters()['OrderID']
@@ -92,7 +93,7 @@ class QAP_T7546(TestCase):
         instrument_id = self.data_set.get_instrument_id_by_name('instrument_2')
         self.allocation_instruction.update_fields_in_component('AllocationInstructionBlock',
                                                                {"InstrID": instrument_id, "AccountGroupID": self.client,
-                                                                "BrokerClCommProfileID": "1",
+                                                                "BrokerClCommProfileID": "1", "Currency": "JPY",
                                                                 "SettlementModelID": "2", "SettlLocationID": "1",
                                                                 'ExecAllocList': {
                                                                     'ExecAllocBlock': [{'ExecQty': self.qty,
@@ -118,8 +119,9 @@ class QAP_T7546(TestCase):
              JavaApiFields.ConfirmationService.value: AllocationReportConst.ConfirmationService_EXT.value},
             allocation_report, 'Checking that block matched (step 2)')
         conf_report = \
-        self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value, self.account).get_parameters()[
-            JavaApiFields.ConfirmationReportBlock.value]
+            self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value,
+                                                   self.account).get_parameters()[
+                JavaApiFields.ConfirmationReportBlock.value]
         self.java_api_manager.compare_values({"ClientMatchingID": self.account, "AllocAccountID": self.account,
                                               "AllocInstructionID": alloc_id}, conf_report,
                                              "Check confirmation (step 3-5)")
@@ -128,4 +130,5 @@ class QAP_T7546(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.rest_commission_sender.clear_commissions()
+        time.sleep(5)
         self.ctm_rule_manager.remove_rules([self.log_rule, self.del_rule, self.ans_rule])
