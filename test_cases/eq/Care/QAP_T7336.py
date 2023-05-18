@@ -43,7 +43,7 @@ class QAP_T7336(TestCase):
         self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
         self.new_order = FixMessageNewOrderSingleOMS(self.data_set)
         self.order_modification_request = FixMessageOrderCancelReplaceRequestOMS(self.data_set)
-        self.client = self.data_set.get_client_by_name("client_2")
+        self.client = self.data_set.get_client_by_name("client_2_ext_id")
         self.accept_request = CDOrdAckBatchRequest()
         self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
         self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
@@ -67,8 +67,8 @@ class QAP_T7336(TestCase):
         # endregion
 
         # region precondition: create CO order via FIX
-        desk = self.environment.get_list_fe_environment()[0].desk_ids[0]
-        self.new_order.set_default_care_limit(account='client_2')
+        desk = self.environment.get_list_fe_environment()[0].desk_ids[1]
+        self.new_order.set_default_care_limit(account='client_2_ext_id')
         cl_ord_id = self.new_order.get_parameters()['ClOrdID']
         self.new_order.change_parameters({
             "TimeInForce": '6',
@@ -78,7 +78,7 @@ class QAP_T7336(TestCase):
             'ExpireDate': str((tm(datetime.utcnow().isoformat()) + timedelta(days=1)).date().strftime('%Y%m%d'))
         })
         self.fix_manager.send_message_fix_standard(self.new_order)
-        time.sleep(1)
+        time.sleep(3)
         order_id = self.db_manager.execute_query(f"SELECT ordid FROM ordr WHERE clordid = '{cl_ord_id}'")[
             0][0]
         cd_ord_notif_id = str(int(
@@ -100,7 +100,7 @@ class QAP_T7336(TestCase):
             "StopPx": self.new_stop_price
         })
         self.fix_manager.send_message(self.order_modification_request)
-        time.sleep(1)
+        time.sleep(3)
         # endregion
 
         # region step 2: Accept modification for CO order
