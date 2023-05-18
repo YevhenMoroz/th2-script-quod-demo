@@ -25,7 +25,7 @@ logger.setLevel(logging.INFO)
 seconds, nanos = timestamps()  # Test case start time
 
 
-class QAP_T7550(TestCase):
+class QAP_T9126(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
@@ -50,6 +50,7 @@ class QAP_T7550(TestCase):
         self.comm_profile = self.data_set.get_comm_profile_by_name("abs_amt")
         self.venue = self.data_set.get_venue_by_name("venue_1")
         self.pset = self.data_set.get_pset('pset_by_id_1')
+        self.comm = self.data_set.get_commission_by_name("commission2")
         self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
         self.approve_message = ForceAllocInstructionStatusRequestOMS(self.data_set)
@@ -57,15 +58,11 @@ class QAP_T7550(TestCase):
         self.log_rule = self.ctm_rule_manager.add_login_rule()
         self.del_rule = self.ctm_rule_manager.add_delete_rule()
         self.ans_rule = self.ctm_rule_manager.add_autoresponder_with_2_acc(self.account, self.account2)
+        time.sleep(30)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        self.rest_commission_sender.clear_commissions()
-        self.rest_commission_sender.set_modify_client_commission_message(
-            comm_profile=self.comm_profile).change_message_params(
-            {'venueID': self.venue, 'accountGroupID': self.client}).send_post_request()
-        time.sleep(30)  # needs for CTM GTW
         # region Create DMA order via FIX
         try:
             trade_rule = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.bs_connectivity,
@@ -89,14 +86,26 @@ class QAP_T7550(TestCase):
         # region step 1
         self.allocation_instruction.set_default_book(order_id)
         instrument_id = self.data_set.get_instrument_id_by_name('instrument_2')
+        comm_block = {'ClientCommissionBlock': [
+            {'CommissionAmountType': 'Broker',
+             'CommissionAmount': '1',
+             'CommissionBasis': 'Absolute',
+             'CommissionCurrency': "EUR",
+             'CommissionRate': '1'},
+            {'CommissionAmountType': 'ClearingBroker',
+             'CommissionAmount': '1',
+             'CommissionBasis': 'Absolute',
+             'CommissionCurrency': "EUR",
+             'CommissionRate': '1'}
+        ]}
         self.allocation_instruction.update_fields_in_component('AllocationInstructionBlock',
                                                                {"InstrID": instrument_id, "AccountGroupID": self.client,
-                                                                "BrokerClCommProfileID": "1",
                                                                 "SettlementModelID": "2", "SettlLocationID": "1",
                                                                 'ExecAllocList': {
                                                                     'ExecAllocBlock': [{'ExecQty': self.qty,
                                                                                         'ExecID': exec_id,
                                                                                         'ExecPrice': self.price}]},
+                                                                'ClientCommissionList': comm_block
                                                                 })
         self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
         allocation_report = \
@@ -116,16 +125,26 @@ class QAP_T7550(TestCase):
              JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_MAT.value,
              JavaApiFields.ConfirmationService.value: AllocationReportConst.ConfirmationService_EXT.value},
             allocation_report, 'Checking that block matched (step 2)')
-        conf_report = \
-            self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value,
-                                                   self.account).get_parameters()[
-                JavaApiFields.ConfirmationReportBlock.value]
-        self.java_api_manager.compare_values({"ClientMatchingID": self.account, "AllocAccountID": self.account,
-                                              "AllocInstructionID": alloc_id}, conf_report,
-                                             "Check confirmation (step 3-5)")
-        # endregion
+        conf_report = self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value,
+                                                             self.account).get_parameters()[
+            JavaApiFields.ConfirmationReportBlock.value]
+        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+            JavaApiFields.AllocationReportBlock.value]
+        alloc_report_comm = alloc_report['ClientCommissionList']['ClientCommissionBlock']
+        if alloc_report_comm[0]['CommissionAmountType'] == "CLB":
+            alloc_report_comm[0], alloc_report_comm[1] = alloc_report_comm[1], alloc_report_comm[0]
+        self.java_api_manager.compare_values({'CommissionAmountType': "BRK"}, alloc_report_comm[0],
+                                             "Check allocation comm 1(step 2)")
+        self.java_api_manager.compare_values({'CommissionAmountType': "CLB"}, alloc_report_comm[1],
+                                             "Check allocation comm 2(step 2)")
+        conf_report_comm = conf_report['ClientCommissionList']['ClientCommissionBlock']
+        if conf_report_comm[0]['CommissionAmountType'] == "CLB":
+            conf_report_comm[0], conf_report_comm[1] = conf_report_comm[1], conf_report_comm[0]
+        self.java_api_manager.compare_values({'CommissionAmountType': "BRK"}, conf_report_comm[0],
+                                             "Check confirmation comm 1(step 3)")
+        self.java_api_manager.compare_values({'CommissionAmountType': "CLB"}, conf_report_comm[1],
+                                             "Check confirmation comm 2(step 3)")
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        self.rest_commission_sender.clear_commissions()
         self.ctm_rule_manager.remove_rules([self.log_rule, self.del_rule, self.ans_rule])

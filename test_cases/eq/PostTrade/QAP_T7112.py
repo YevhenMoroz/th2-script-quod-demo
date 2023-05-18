@@ -130,5 +130,4 @@ class QAP_T7112(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.rest_commission_sender.clear_commissions()
-        time.sleep(5)
         self.ctm_rule_manager.remove_rules([self.log_rule, self.del_rule, self.ans_rule])
