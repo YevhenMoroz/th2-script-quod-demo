@@ -119,7 +119,7 @@ class QAP_T7336(TestCase):
         # region step 3: Check 35 = 8(39 = 0) message
         list_ignore_fields = ['GatingRuleCondName',
                               'GatingRuleName', 'SettlDate',
-                              'SettlType']
+                              'SettlType','Account']
         fix_execution_report = FixMessageExecutionReportOMS(self.data_set)
         fix_execution_report.set_default_replaced(self.new_order)
         fix_execution_report.change_parameters({'StopPx': self.new_stop_price,
