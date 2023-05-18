@@ -57,7 +57,7 @@ class QAP_T4685(TestCase):
         self.min_participation = 5
 
         self.twap_child_order_qty = '%^(36[8-9]|526)$'
-        self.price_child = 29.99
+        self.price_child = 29.995
 
         self.market_volume_1 = 10_000
         self.market_volume_2 = 5_000
@@ -67,19 +67,13 @@ class QAP_T4685(TestCase):
         self.check_order_sequence = False
         # endregion
 
-        # # region Venue params
-        # self.instrument = self.data_set.get_fix_instrument_by_name("instrument_1")
-        # self.ex_destination_1 = self.data_set.get_mic_by_name("mic_1")
-        # self.client = self.data_set.get_client_by_name("client_2")
-        # self.account = self.data_set.get_account_by_name('account_2')
-        # self.listing_id = self.data_set.get_listing_id_by_name("listing_36")
-        # # endregion
-
-        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_21")
+        # region Venue params
+        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_1")
+        self.ex_destination_1 = self.data_set.get_mic_by_name("mic_1")
         self.client = self.data_set.get_client_by_name("client_2")
-        self.account = self.data_set.get_account_by_name("account_18")
-        self.ex_destination_1 = self.data_set.get_mic_by_name("mic_31")
-        self.listing_id = self.data_set.get_listing_id_by_name("listing_37")
+        self.account = self.data_set.get_account_by_name('account_2')
+        self.listing_id = self.data_set.get_listing_id_by_name("listing_36")
+        # endregion
 
         # Key parameters
         self.key_params_cl = self.data_set.get_verifier_key_parameters_by_name('verifier_key_parameters_1')
@@ -116,8 +110,7 @@ class QAP_T4685(TestCase):
         self.pre_fileter_35_8_Eliminate = self.data_set.get_pre_filter('pre_filer_equal_ER_eliminate')
         # endregion
 
-        # self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile1")
-        self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile2")
+        self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile1")
         self.rule_list = []
 
         self.rest_api_manager = RestApiAlgoManager(session_alias=self.restapi_env1.session_alias_wa, case_id=self.test_id)
@@ -126,11 +119,11 @@ class QAP_T4685(TestCase):
     def run_pre_conditions_and_steps(self):
         # region rules
         rule_manager = RuleManager(Simulators.algo)
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportTradeOnFullQty(self.fix_env1.buy_side, self.account, self.ex_destination_1)
-        # nos_rule = rule_manager.add_NewOrdSingleExecutionReportAll(self.fix_env1.buy_side, self.account, self.ex_destination_1)
+        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price_child)
+        nos_trade_rule = rule_manager.add_NewOrdSingleExecutionReportTradeOnFullQty(self.fix_env1.buy_side, self.account, self.ex_destination_1)
         ocrr_rule = rule_manager.add_OrderCancelReplaceRequest_ExecutionReport(self.fix_env1.buy_side, False)
         ocr_rule = rule_manager.add_OCR(self.fix_env1.buy_side)
-        self.rule_list = [nos_rule, ocrr_rule, ocr_rule]
+        self.rule_list = [nos_rule, nos_trade_rule, ocrr_rule, ocr_rule]
         # endregion
 
         # region Start/EndDate for algo
@@ -140,24 +133,18 @@ class QAP_T4685(TestCase):
         # endregion
 
         # region EndDate for TradingPhases
-        now = datetime.now()
+        now = datetime.now() + timedelta(minutes=1) - timedelta(seconds=datetime.utcnow().second, microseconds=datetime.utcnow().microsecond)
         end_date_open = now + timedelta(minutes=5)
         # endregion
 
         # region Update Trading Phase
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify trading phase profile", self.test_id))
-        trading_phases = AFM.get_timestamps_for_current_phase(TradingPhases.Open)
-        trading_phases = AFM.update_endtime_for_trading_phase_by_phase_name(trading_phases, TradingPhases.Open, end_date_open)
+        trading_phase_manager = TradingPhaseManager()
+        trading_phase_manager.build_timestamps_for_trading_phase_sequence(TradingPhases.Open)
+        trading_phase_manager.update_endtime_for_trading_phase_by_phase_name(TradingPhases.Open, end_date_open)
+        trading_phases = trading_phase_manager.get_trading_phase_list()
         self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
-        # endregion
-
-        # # region Update Trading Phase
-        # self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify trading phase profile", self.test_id))
-        # trading_phase_manager = TradingPhaseManager()
-        # trading_phase_manager.build_timestamps_for_trading_phase_sequence(TradingPhases.Open)
-        # trading_phases = trading_phase_manager.get_trading_phase_list()
-        # self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
-        # # end region
+        # end region
 
         # region Send_MarkerData
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
@@ -192,21 +179,20 @@ class QAP_T4685(TestCase):
         self.twap_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.ex_destination_1))
         self.twap_order.update_fields_in_component('QuodFlatParameters', dict(Waves=self.waves, StartDate2=start_date, EndDate2=end_date, MinParticipation=self.min_participation))
 
-        # self.fix_manager_sell.send_message_and_receive_response(self.twap_order, self.case_id_1)
-        scheduler.enterabs(initial_order, 1, self.fix_manager_sell.send_message_and_receive_response, kwargs=dict(fix_message=self.twap_order))
+        scheduler.enterabs(initial_order, 1, self.fix_manager_sell.send_message_and_receive_response, kwargs=dict(fix_message=self.twap_order, message_name='Sell Side Send Algo order'))
 
         time.sleep(2)
         # endregion
 
-        # # region Check Sell side
-        # self.fix_verifier_sell.check_fix_message(self.twap_order, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
-        #
-        # pending_twap_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_order, self.gateway_side_sell, self.status_pending)
-        # self.fix_verifier_sell.check_fix_message(pending_twap_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew')
-        #
-        # new_twap_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_order, self.gateway_side_sell, self.status_new)
-        # self.fix_verifier_sell.check_fix_message(new_twap_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
-        # # endregion
+        # region Check Sell side
+        scheduler.enterabs(initial_order + 3, 2, self.fix_verifier_sell.check_fix_message, kwargs=dict(fix_message=self.twap_order, direction=self.ToQuod, message_name='Sell side NewOrderSingle'))
+
+        pending_twap_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_order, self.gateway_side_sell, self.status_pending)
+        scheduler.enterabs(initial_order + 3, 3, self.fix_verifier_sell.check_fix_message, kwargs=dict(fix_message=pending_twap_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew'))
+
+        new_twap_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_order, self.gateway_side_sell, self.status_new)
+        scheduler.enterabs(initial_order + 3, 4, self.fix_verifier_sell.check_fix_message, kwargs=dict(fix_message=new_twap_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New'))
+        # endregion
 
         # region Send Trade before 1st slice
         self.case_id_2 = bca.create_event("TWAP child order", self.test_id)
@@ -257,7 +243,7 @@ class QAP_T4685(TestCase):
         # endregion
 
         self.fix_verifier_buy.set_case_id(bca.create_event("Check Auction algo child order Buy Side NewOrderSingle, Pending New, New and Fill", self.case_id_2))
-        scheduler.enterabs(end_time_minus_5_sec, 3, self.fix_verifier_buy.check_fix_message_sequence, kwargs=dict(fix_messages_list=[fill_twap_dma_child_order_params, fill_twap_dma_child_order_params, fill_twap_dma_child_order_params, fill_twap_dma_child_order_params, fill_twap_dma_child_order_params], key_parameters_list=[self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], direction=self.ToQuod, pre_filter=self.pre_fileter_35_8_Fill, check_order=self.check_order_sequence))
+        scheduler.enterabs(end_time_minus_5_sec, 4, self.fix_verifier_buy.check_fix_message_sequence, kwargs=dict(fix_messages_list=[fill_twap_dma_child_order_params, fill_twap_dma_child_order_params, fill_twap_dma_child_order_params, fill_twap_dma_child_order_params, fill_twap_dma_child_order_params], key_parameters_list=[self.key_params, self.key_params, self.key_params, self.key_params, self.key_params], direction=self.ToQuod, pre_filter=self.pre_fileter_35_8_Fill, check_order=self.check_order_sequence))
         # endregion
 
         # region Change phase from OPN to PCL
