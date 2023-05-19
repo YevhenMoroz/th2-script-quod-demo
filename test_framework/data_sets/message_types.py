@@ -42,6 +42,7 @@ class ORSMessageType(Enum):
     OrderModificationRequest = 'Order_OrderModificationRequest'
     OrderCancelRequest = 'Order_OrderCancelRequest'
     OrdReply = 'Order_OrdReply'
+    HeldOrderNotif = 'Order_HeldOrderNotif'
     OrdNotification = 'Order_OrdNotification'
     ExecutionReport = 'Order_ExecutionReport'
     DFDManagementBatch = 'Order_DFDManagementBatch'
