@@ -87,14 +87,13 @@ class QAP_T11224(TestCase):
                 "SenderCompID": "QUODFX_UAT"
             }
         }
-        key_params = ["PosReqID"]
+        key_params = ["PosReqID", "LastPositUpdateEventID"]
 
         self.cancel_request.set_params(self.account)
         self.java_api_manager.send_message(self.cancel_request)
         self.sleep(5)
         self.trade_request.set_default_params()
-        self.trade_request.update_fields_in_component("TradeEntryRequestBlock",
-                                                      {"ClientAccountGroupID": self.client})
+        self.trade_request.update_fields_in_component("TradeEntryRequestBlock", {"ClientAccountGroupID": self.client})
         self.trade_request.change_instrument(self.eur_gbp, self.instr_type_spo)
         response = self.java_api_manager.send_message_and_receive_response(self.trade_request)
         ordr_id = self.trade_request.get_mo_id(response)
