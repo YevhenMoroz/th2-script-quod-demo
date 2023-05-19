@@ -21,6 +21,7 @@ def test_run(parent_id=None, version=None):
     try:
         # region MP Dark (RoundRobin)
         configuration = ComponentConfiguration("Mp_dark")
+        # The tolerance for the DarkPool algo will change from 1 to 3 in the QAP-T10298 from the 'kepler_mpdark_dark_phase_change_configs.py' and revert in the QP-T10592
         QAP_T10572(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10573(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10591(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()

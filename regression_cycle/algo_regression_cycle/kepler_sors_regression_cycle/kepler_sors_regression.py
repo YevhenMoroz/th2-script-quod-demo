@@ -3,6 +3,7 @@ from xml.etree import ElementTree
 from regression_cycle.algo_regression_cycle.kepler_sors_regression_cycle import kepler_sors_iceberg_regression, kepler_sors_sorping_regression, kepler_sors_synthminqty_regression, kepler_sors_mpdark_dark_phase_regression, kepler_sors_mpdark_LIS_dark_phase_regression, \
     kepler_sors_mpdark_other_regression, kepler_sors_multiple_emulation_regression, kepler_iceberg_check_party_info, kepler_iceberg_multiday_phase, kepler_custom_tags, kepler_synthetic_tif, kepler_sors_multilisting, kepler_iceberg_modify, \
     kepler_instrument_identification, kepler_mic_identification, kepler_sors_mpdark_round_robin
+from regression_cycle.algo_regression_cycle.kepler_sors_regression_cycle.kepler_change_configs_tests import kepler_mpdark_dark_phase_change_configs, kepler_mpdark_round_robin_change_configs, kepler_sorping_change_configs
 from stubs import Stubs, ROOT_DIR
 import logging
 from custom import basic_custom_actions as bca
@@ -56,6 +57,16 @@ def test_run():
         kepler_sors_mpdark_round_robin.test_run(parent_id=report_id, version=version)
         # if eval(root.find(".//component[@name='Mp_dark']").attrib["run"]):
         kepler_sors_mpdark_LIS_dark_phase_regression.test_run(parent_id=report_id, version=version)
+
+        # region Change config tests
+        # The separate files, because the one config changes for the tests from the different cycles (for the less tim duration)
+        # region Change the tolerance for DarkPool from 1 to 3
+        # if eval(root.find(".//component[@name='Mp_dark']").attrib["run"]):
+        kepler_mpdark_dark_phase_change_configs.test_run(parent_id=report_id, version=version)
+        # if eval(root.find(".//component[@name='Mp_dark']").attrib["run"]):
+        kepler_mpdark_round_robin_change_configs.test_run(parent_id=report_id, version=version)
+        # endregion
+        # endregion
 
     except Exception:
         logging.error("Error execution", exc_info=True)
