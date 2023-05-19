@@ -11,6 +11,8 @@ from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T10421 import QAP_T10421
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T10428 import QAP_T10428
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T10912 import QAP_T10912
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T10913 import QAP_T10913
+from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T10948 import QAP_T10948
+from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T10950 import QAP_T10950
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T10981 import QAP_T10981
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T10989 import QAP_T10989
 from test_cases.algo.Algo_Kepler.Algo_SORPING.QAP_T10990 import QAP_T10990

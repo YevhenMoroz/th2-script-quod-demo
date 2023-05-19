@@ -104,8 +104,6 @@ class QAP_T10948(TestCase):
         self.xpath = ".//mktData/closingTime"
         self.new_config_value = self.closing_time
         self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
-        self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user, self.ssh_client_env.password, self.ssh_client_env.su_user, self.ssh_client_env.su_password)
-        self.default_config_value = self.ssh_client.get_and_update_file(self.config_file, {self.xpath: self.new_config_value})
         # endregion
 
         self.rule_list = []
@@ -113,6 +111,9 @@ class QAP_T10948(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region precondition: Prepare SATS configuration
+        self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user, self.ssh_client_env.password, self.ssh_client_env.su_user, self.ssh_client_env.su_password)
+        self.default_config_value = self.ssh_client.get_and_update_file(self.config_file, {self.xpath: self.new_config_value})
+
         self.ssh_client.send_command("qrestart SORS")
         time.sleep(180)
         # endregion
@@ -270,6 +271,11 @@ class QAP_T10948(TestCase):
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl8)
         # endregion
 
+        time.sleep(3)
+
+        rule_manager = RuleManager(Simulators.algo)
+        rule_manager.remove_rules(self.rule_list)
+
         # region config reset
         self.ssh_client.get_and_update_file(self.config_file, {self.xpath: self.default_config_value})
         self.ssh_client.send_command("qrestart SORS")
@@ -277,5 +283,4 @@ class QAP_T10948(TestCase):
         self.ssh_client.close()
         # endregion
 
-        rule_manager = RuleManager(Simulators.algo)
-        rule_manager.remove_rules(self.rule_list)
+

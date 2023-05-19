@@ -47,14 +47,14 @@ class QAP_T11233(TestCase):
         self.qty = 1_000_000
         self.indicative_volume = 0
         self.percentage_volume = 10
-        self.price = 30
-        self.price2 = AFM.calc_ticks_offset_minus(self.price, 1, 0.005)
+        self.price = 130
+        self.price2 = 30
         
         self.price_ask = 40
         self.qty_ask = 1_000_000
 
         self.price_bid = 30
-        self.qty_bid = 1_000_000
+        self.qty_bid = 100_000
 
         self.pov_qty_child = AFM.get_pov_child_qty(self.percentage_volume, self.qty_bid, self.qty)
 
@@ -103,7 +103,7 @@ class QAP_T11233(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.mic, self.price)
+        nos_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.mic, False, 0, self.price)
         nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.mic, self.price2)
         ocr_rule = rule_manager.add_OCR(self.fix_env1.buy_side)
         ocrr_rule = rule_manager.add_OrderCancelReplaceRequest(self.fix_env1.buy_side, self.account, self.mic)
