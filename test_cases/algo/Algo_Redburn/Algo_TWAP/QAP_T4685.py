@@ -179,7 +179,7 @@ class QAP_T4685(TestCase):
         self.twap_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.ex_destination_1))
         self.twap_order.update_fields_in_component('QuodFlatParameters', dict(Waves=self.waves, StartDate2=start_date, EndDate2=end_date, MinParticipation=self.min_participation))
 
-        scheduler.enterabs(initial_order, 1, self.fix_manager_sell.send_message_and_receive_response, kwargs=dict(fix_message=self.twap_order, message_name='Sell Side Send Algo order'))
+        scheduler.enterabs(initial_order, 1, self.fix_manager_sell.send_message_and_receive_response, kwargs=dict(fix_message=self.twap_order))
 
         time.sleep(2)
         # endregion
