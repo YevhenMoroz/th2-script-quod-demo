@@ -139,8 +139,6 @@ class QAP_T10709(TestCase):
                 f"SELECT execactive,execunmatchedqty,execprice,exectype FROM execution  WHERE execid='{exec_id_second}'")[0]
         first_exec = \
             self.db_manager.execute_query(f"SELECT execactive, execunmatchedqty FROM execution WHERE execid='{exec_id}'")[0]
-        print(second_exec)
-        print(first_exec)
         self.java_api_manager.compare_values({JavaApiFields.UnmatchedQty.value: '0.0',
                                               JavaApiFields.ExecPrice.value: new_price,
                                               JavaApiFields.ExecType.value: OrderReplyConst.ExecType_COR.value},
