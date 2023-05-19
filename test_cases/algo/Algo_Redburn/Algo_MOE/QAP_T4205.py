@@ -114,7 +114,7 @@ class QAP_T4205(TestCase):
         # region insert data into mongoDB
         curve = AMM.get_straight_curve_for_mongo(trading_phases, volume=self.historical_volume, price=self.historical_price)
         self.db_manager.insert_many_to_mongodb_with_drop(curve, f"Q{self.listing_id}")
-        bca.create_event("Data in mongo inserted", self.test_id)
+        bca.create_event(f"Collection Q{self.listing_id} is inserted", self.test_id, body=''.join([f"{volume['LastTradedTime']} - {volume['LastTradedQty']}, phase - {volume['LastAuctionPhase']}\n" for volume in curve]))
         # endregion
 
         # region Send MarketDate

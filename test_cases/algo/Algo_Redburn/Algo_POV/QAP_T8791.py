@@ -6,7 +6,7 @@ from pathlib import Path
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
-from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, TradingPhases
+from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, TradingPhases, FreeNotesReject
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
 from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import FixMessageMarketDataSnapshotFullRefreshAlgo
@@ -69,6 +69,7 @@ class QAP_T8791(TestCase):
         self.aggressive_pov_qty_10_trqx = 223
 
         self.check_order_sequence = False
+        self.free_notes = FreeNotesReject.NoRemainingVenueToCheck.value
         # endregion
 
         # region Gateway Side
@@ -740,13 +741,9 @@ class QAP_T8791(TestCase):
 
         # region Check eliminated Algo Order
         #time.sleep(15)
-        case_id_3 = bca.create_event("Cancel parent Algo Order", self.test_id)
+        case_id_3 = bca.create_event("Eliminate parent Algo Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_3)
         # endregion
-
-        cancel_request_pov_order = FixMessageOrderCancelRequest(self.pov_order)
-        self.fix_manager_sell.send_message_and_receive_response(cancel_request_pov_order, case_id_3)
-        self.fix_verifier_sell.check_fix_message(cancel_request_pov_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
 
         time.sleep(3)
 
@@ -759,7 +756,8 @@ class QAP_T8791(TestCase):
         # endregion
 
         # region check cancellation parent POV order
-        cancel_pov_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.pov_order, self.gateway_side_sell, self.status_cancel)
+        cancel_pov_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.pov_order, self.gateway_side_sell, self.status_eliminated)
+        cancel_pov_order.change_parameters(dict(Text=self.free_notes))
         cancel_pov_order.remove_parameter('SecAltIDGrp')
-        self.fix_verifier_sell.check_fix_message(cancel_pov_order, key_parameters=self.key_params_cl, message_name='Sell side ExecReport Cancel')
+        self.fix_verifier_sell.check_fix_message(cancel_pov_order, key_parameters=self.key_params_cl, message_name='Sell side ExecReport Eliminate')
         # endregion
