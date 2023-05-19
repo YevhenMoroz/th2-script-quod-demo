@@ -276,10 +276,11 @@ class QAP_T10948(TestCase):
         rule_manager.remove_rules(self.rule_list)
 
         # region config reset
-        self.ssh_client.get_and_update_file(self.config_file, {self.xpath: self.default_config_value})
-        self.ssh_client.send_command("qrestart SORS")
-        time.sleep(180)
-        self.ssh_client.close()
+        # Will be reverted in the QAP-T10950, uncomment the below block for manually only this one test execution
+        # self.ssh_client.get_and_update_file(self.config_file, {self.xpath: self.default_config_value})
+        # self.ssh_client.send_command("qrestart SORS")
+        # time.sleep(180)
+        # self.ssh_client.close()
         # endregion
 
 
