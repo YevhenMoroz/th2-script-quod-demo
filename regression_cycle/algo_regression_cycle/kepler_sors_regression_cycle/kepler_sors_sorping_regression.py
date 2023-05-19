@@ -314,11 +314,6 @@ def test_run(parent_id=None, version=None):
         QAP_T10990(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         time.sleep(3)
         QAP_T10991(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-
-        # region Config changes
-        QAP_T10948(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T10950(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        # endregion
         # endregion
 
     except Exception:

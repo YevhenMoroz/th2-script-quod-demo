@@ -66,6 +66,9 @@ def test_run():
         # if eval(root.find(".//component[@name='Mp_dark']").attrib["run"]):
         kepler_mpdark_round_robin_change_configs.test_run(parent_id=report_id, version=version)
         # endregion
+        # region Change the ClosingTime
+        # if eval(root.find(".//component[@name='Sorping']").attrib["run"]):
+        kepler_sorping_change_configs.test_run(parent_id=report_id, version=version)
         # endregion
 
     except Exception:
