@@ -91,12 +91,13 @@ class QAP_T10572(TestCase):
         # endregion
 
         # region SSH
-        self.config_file = "client_sats.xml"
-        self.xpath = ".//DarkPool/tolerance"
-        self.new_config_value = "3"
-        self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
-        self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user, self.ssh_client_env.password, self.ssh_client_env.su_user, self.ssh_client_env.su_password)
-        self.default_config_value = self.ssh_client.get_and_update_file(self.config_file, {self.xpath: self.new_config_value})
+        # The config will be changed in the QAP-T10298 and will be reverted in the QAP-T10592, uncomment the below block and the block 'Prepare SATS configuration' for the manual execution only this one test
+        # self.config_file = "client_sats.xml"
+        # self.xpath = ".//DarkPool/tolerance"
+        # self.new_config_value = "3"
+        # self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
+        # self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user, self.ssh_client_env.password, self.ssh_client_env.su_user, self.ssh_client_env.su_password)
+        # self.default_config_value = self.ssh_client.get_and_update_file(self.config_file, {self.xpath: self.new_config_value})
         # endregion
 
         self.pre_filter_1 = self.data_set.get_pre_filter("pre_filer_equal_D")
@@ -106,8 +107,8 @@ class QAP_T10572(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region precondition: Prepare SATS configuration
-        self.ssh_client.send_command("qrestart SORS")
-        time.sleep(180)
+        # self.ssh_client.send_command("qrestart SORS")
+        # time.sleep(180)
         # endregion
 
         # region Rule creation
