@@ -136,6 +136,10 @@ class RuleManager:
         return self.sim.createQuodDefMDRRule2(
             request=TemplateQuodDefMDRRule(connection_id=ConnectionID(session_alias=session)))
 
+    def add_SecurityStatusRule(self, session: str):
+        return self.sim.createSecurityStatusRule(
+            request=TemplateQuodDefMDRRule(connection_id=ConnectionID(session_alias=session)))
+
     def add_NewOrdSingleExecutionReportTrade(self, session: str, account: str, venue: str, price: float,
                                              traded_qty: int,
                                              delay: int):
