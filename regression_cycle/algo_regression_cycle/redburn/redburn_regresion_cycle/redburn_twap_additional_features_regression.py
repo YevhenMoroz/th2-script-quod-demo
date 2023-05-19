@@ -96,7 +96,7 @@ def test_run(parent_id=None, version=None):
         QAP_T4702(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         
         # region config reset
-        default_config_value = ssh_client.get_and_update_file(config_file, {xpath: new_config_value})
+        ssh_client.get_and_update_file(config_file, {xpath: default_config_value})
         ssh_client.send_command("qrestart SATS")
         time.sleep(35)
         ssh_client.close()
