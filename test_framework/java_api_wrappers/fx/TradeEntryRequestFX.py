@@ -134,13 +134,19 @@ class TradeEntryRequestFX(JavaApiMessage):
         return response[-1].get_parameters()["ExecutionReportBlock"]["OrdID"]
 
     def get_ord_id_from_held(self, response) -> str:
-        return response[-2].get_parameters()["HeldOrderNotifBlock"]["OrdID"]
+        for msg in response:
+            if msg.get_message_type() == ORSMessageType.HeldOrderNotif.value:
+                return msg.get_parameters()["HeldOrderNotifBlock"]["OrdID"]
 
     def get_internal_exec_id(self, response) -> str:
         return response[0].get_parameters()["ExecutionReportBlock"]["ExecID"]
 
     def get_termination_time(self, response) -> str:
-        return response[1].get_parameters()["ExecutionReportBlock"]["CreationTime"]
+        for msg in response:
+            if msg.get_message_type() == ORSMessageType.ExecutionReport.value:
+                if msg.get_parameters()["ExecutionReportBlock"]["AccountGroupID"] == self.get_client():
+                    if msg.get_parameters()["ExecutionReportBlock"]["ExecID"].endswith("1"):
+                        return msg.get_parameters()["ExecutionReportBlock"]["CreationTime"]
 
     def get_venue_exec_id(self):
         return self.get_parameters()["TradeEntryRequestBlock"]["VenueExecID"]
