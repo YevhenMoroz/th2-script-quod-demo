@@ -62,6 +62,7 @@ class OrderReplyConst(Enum):
     ExecType_PCA = 'PCA'
     ExecType_PMO = 'PMO'
     ExecType_CXL = 'CXL'
+    ExecType_COR = 'COR'
 
 
 class ExecutionPolicyConst(Enum):
@@ -165,6 +166,7 @@ class JavaApiFields(Enum):
     RetailPositList = 'RetailPositList'
     RetailPositBlock = 'RetailPositBlock'
     PositionType = 'PositionType'
+    TransactTime = 'TransactTime'
     ErrorMsg = "ErrorMsg"
     OrdModify = 'OrdModify'
     OrdModifyID = 'OrdModifyID'
@@ -222,6 +224,7 @@ class JavaApiFields(Enum):
     CashAccountID = 'CashAccountID'
     OrdStatus = 'OrdStatus'
     ExecType = 'ExecType'
+    VenueExecRefID = 'VenueExecRefID'
     NewOrderListReplyBlock = 'NewOrderListReplyBlock'
     OrderListID = 'OrderListID'
     OrderListName = 'OrderListName'
