@@ -840,3 +840,10 @@ class AlgoFormulasManager:
     @staticmethod
     def calc_mid_price(price_1, price_2):
         return (price_1 + price_2)/2
+
+    @staticmethod
+    def get_avaible_qty_with_save_for_close_percent(parent_qty: int, save_for_close_percent: float):
+        if (save_for_close_percent > 0 and save_for_close_percent < 1):
+            return math.ceil(parent_qty * 100) / (save_for_close_percent * 100)
+        else:
+            return (parent_qty - math.ceil(parent_qty / 100 * save_for_close_percent))

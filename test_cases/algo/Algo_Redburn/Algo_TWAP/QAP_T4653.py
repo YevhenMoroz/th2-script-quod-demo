@@ -200,7 +200,7 @@ class QAP_T4653(TestCase):
         cancel_request_twap_order = FixMessageOrderCancelRequest(self.twap_order)
 
         self.fix_manager_sell.send_message_and_receive_response(cancel_request_twap_order, self.case_id_cancel)
-        self.fix_verifier_sell.check_fix_message(cancel_request_twap_order, direction=ToQuod, message_name='Sell side Cancel Request')
+        self.fix_verifier_sell.check_fix_message(cancel_request_twap_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
 
         time.sleep(3)
         rule_manager = RuleManager(Simulators.algo)
