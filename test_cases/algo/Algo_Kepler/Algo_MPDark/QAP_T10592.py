@@ -200,6 +200,11 @@ class QAP_T10592(TestCase):
         self.fix_verifier_sell.check_fix_message(er_cancel_MPDark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
 
+        time.sleep(3)
+
+        rule_manager = RuleManager(Simulators.algo)
+        rule_manager.remove_rules(self.rule_list)
+
         # region config reset
         self.ssh_client.get_and_update_file(self.config_file, {self.xpath: self.default_config_value})
         self.ssh_client.send_command("qrestart SORS")
@@ -207,6 +212,5 @@ class QAP_T10592(TestCase):
         self.ssh_client.close()
         # endregion
         
-        rule_manager = RuleManager(Simulators.algo)
-        rule_manager.remove_rules(self.rule_list)
+
 

@@ -202,6 +202,9 @@ class QAP_T10573(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
+        rule_manager = RuleManager(Simulators.algo)
+        rule_manager.remove_rules(self.rule_list)
+
         # region config reset
         self.ssh_client.get_and_update_file(self.config_file, {self.xpath: self.default_config_value})
         self.ssh_client.send_command("qrestart SORS")
@@ -209,6 +212,4 @@ class QAP_T10573(TestCase):
         self.ssh_client.close()
         # endregion
 
-        rule_manager = RuleManager(Simulators.algo)
-        rule_manager.remove_rules(self.rule_list)
 
