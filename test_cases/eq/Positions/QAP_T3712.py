@@ -63,8 +63,8 @@ class QAP_T3712(TestCase):
             f"UPDATE institution SET posflatteningtime='{(tm(datetime.datetime.utcnow().isoformat()) + bd(n=8)).date().strftime('%Y-%m-%dT%H:%M:%S')}' WHERE institutionname ='QUOD FINANCIAL 1'")
         self.db_manager.execute_query(
             f"DELETE FROM retailposit WHERE instrid = '{self.instrument_id}' AND accountid = '{self.account}'")
-        self.ssh_client.send_command('qrestart all')
-        time.sleep(200)
+        self.ssh_client.send_command('qrestart QUOD.ORS QUOD.ESBUYTH2TEST QUOD.PKS')
+        time.sleep(120)
         # endregion
         # region Step 1: Create DMA orders
         pos_validity_list = [PositionValidities.PosValidity_ITD.value, PositionValidities.PosValidity_TP1.value,
@@ -179,3 +179,10 @@ class QAP_T3712(TestCase):
         finally:
             time.sleep(1)
             self.rule_manager.remove_rule(nos_rule)
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.db_manager.execute_query(
+            f"DELETE FROM retailposit WHERE instrid = '{self.instrument_id}' AND accountid = '{self.account}'")
+        self.ssh_client.send_command('qrestart QUOD.ORS QUOD.ESBUYTH2TEST QUOD.PKS')
+        time.sleep(120)
