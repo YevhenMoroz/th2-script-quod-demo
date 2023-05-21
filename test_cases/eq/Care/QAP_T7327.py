@@ -190,7 +190,7 @@ class QAP_T7327(TestCase):
 
         # region step 11-12: Check that ClientInbox is empty
         result = self.db_manager.execute_query(
-            f"SELECT count(*) FROM cdordnotif WHERE recipientuserid='{self.environment.get_list_fe_environment()[0].user_2} AND trans_id IN ('{child_co_order_id}','{order_id}')")
+            f"SELECT count(*) FROM cdordnotif WHERE recipientuserid='{self.environment.get_list_fe_environment()[0].user_2}' AND transid IN ('{child_co_order_id}','{order_id}')")
         self.java_api_manager.compare_values({'Count': '0.0'},
                                              {'Count': str(float(result[0][0]))},
                                              'Verify that second user does not have any cdOrdNotification messages (step 12)')
