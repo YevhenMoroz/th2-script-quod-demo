@@ -86,6 +86,7 @@ class OmsInstrumentId(Enum):
     instrument_6 = "HNUAw6jnU8PDj2cvSkJlYg"  # Leg instrument
     instrument_7 = "4o_6NqkKiqQpmUhKO4xUEw"  # MultiListed instrument
     instrument_8 = 'KojIbEE6b0HgK4VBgy8F9w'  # MFD instrument
+    instrument_9 = 'OqYEQbjef05OTF0ken9_qw'
 
 
 class OmsListingId(Enum):
@@ -98,6 +99,7 @@ class OmsListingId(Enum):
     listing_7 = "1233"  # one listing of MultiListed instrument
     listing_8 = "3346"  # one listing of MultiListed instrument
     listing_9 = "10100000077"  # listing for MFD instrument
+    listing_10 = '905'
 
 
 class OmsVenues(Enum):
