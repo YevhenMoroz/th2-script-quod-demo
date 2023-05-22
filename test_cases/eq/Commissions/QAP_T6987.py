@@ -38,9 +38,9 @@ class QAP_T6987(TestCase):
         self.java_api_connectivity = self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.bs_connectivity = self.fix_env.buy_side
         self.dc_connectivity = self.fix_env.drop_copy
-        self.client = self.data_set.get_client_by_name("client_pt_2")
-        self.client_acc = self.data_set.get_account_by_name('client_pt_2_acc_1')
-        self.client_for_rule = self.data_set.get_venue_client_names_by_name("client_pt_2_venue_1")
+        self.client = self.data_set.get_client_by_name("client_counterpart_1")
+        self.client_acc = self.data_set.get_account_by_name('client_counterpart_1_acc_1')
+        self.client_for_rule = self.data_set.get_venue_client_names_by_name("client_counterpart_1_venue_1")
         self.mic = self.data_set.get_mic_by_name("mic_1")
         self.cur = self.data_set.get_currency_by_name('currency_1')
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
@@ -70,7 +70,7 @@ class QAP_T6987(TestCase):
         self.ssh_client.put_file(self.remote_path, "temp.xml")
         self.ssh_client.send_command('~/quod/script/site_scripts/change_book_agent_misc_fee_type_on_N')
         self.ssh_client.send_command("qrestart QUOD.ORS QUOD.CS QUOD.ESBUYTH2TEST")
-        time.sleep(80)
+        time.sleep(120)
         # endregion
 
         # region send fee
@@ -99,14 +99,20 @@ class QAP_T6987(TestCase):
                     {'AllocAccountID': self.client_acc,
                      'AllocQty': self.qty}]}}})
         nos_rule = None
-        trade_rule = None
+        trade_rule1 = None
+        trade_rule2 = None
         try:
             nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(
                 self.bs_connectivity,
                 self.client_for_rule,
                 self.mic,
                 int(self.price))
-            trade_rule = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.bs_connectivity,
+            trade_rule1 = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.bs_connectivity,
+                                                                                            self.client_for_rule,
+                                                                                            self.mic,
+                                                                                            int(self.price),
+                                                                                            int(int(self.qty) / 2), 2)
+            trade_rule2 = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.bs_connectivity,
                                                                                             self.client_for_rule,
                                                                                             self.mic,
                                                                                             int(self.price),
@@ -115,15 +121,16 @@ class QAP_T6987(TestCase):
         finally:
             time.sleep(2)
             self.rule_manager.remove_rule(nos_rule)
-            self.rule_manager.remove_rule(trade_rule)
+            self.rule_manager.remove_rule(trade_rule1)
+            self.rule_manager.remove_rule(trade_rule2)
         # endregion
 
         # region check calculated execution (step 3)
         fee_list = {JavaApiFields.MiscFeeType.value: ExecutionReportConst.MiscFeeType_AGE.value,
-                    JavaApiFields.MiscFeeAmt.value: '10.0',
+                    JavaApiFields.MiscFeeAmt.value: '5.0',
                     JavaApiFields.MiscFeeCurr.value: self.cur,
                     JavaApiFields.MiscFeeBasis.value: ExecutionReportConst.MiscFeeBasis_A.value,
-                    JavaApiFields.MiscFeeRate.value: '10.0'}
+                    JavaApiFields.MiscFeeRate.value: '5.0'}
         calc_exec_report = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value,
                                                                   ExecutionReportConst.ExecType_CAL.value).get_parameter(
             JavaApiFields.ExecutionReportBlock.value)
@@ -141,7 +148,7 @@ class QAP_T6987(TestCase):
                         'SettlCurrency', 'SettlDate', 'Currency', 'TimeInForce', 'PositionEffect', 'HandlInst',
                         'NoParty', 'CumQty', 'OrdType', 'LeavesQty',
                         'LastPx', 'LastPx', 'tag5120', 'OrderCapacity', 'QtyType', 'Price', 'ExecBroker',
-                        'TargetStrategy', 'Instrument', 'ExDestination', 'GrossTradeAmt', 'CommissionData']
+                        'TargetStrategy', 'Instrument', 'ExDestination', 'GrossTradeAmt', 'CommissionData', 'SecondaryOrderID']
         params = {"Account": self.client, "ExecType": "B",
                   "OrdStatus": "B", "ClOrdID": cl_ord_id, 'OrderID': ord_id,
                   'NoMiscFees': {'NoMiscFees': [{'MiscFeeAmt': '10', 'MiscFeeCurr': self.cur, 'MiscFeeType': '12'}]}}
@@ -169,7 +176,7 @@ class QAP_T6987(TestCase):
             {JavaApiFields.ConfirmationReportBlock.value: JavaApiFields.RootMiscFeesList.value},
             conf_report, 'Check Agent fee is absent in the Confirmation report (step 6)',
             VerificationMethod.NOT_CONTAINS)
-        conf_block = alloc_report[JavaApiFields.ConfirmationReportBlock.value]
+        conf_block = conf_report[JavaApiFields.ConfirmationReportBlock.value]
         self.java_api_manager.compare_values(
             {JavaApiFields.ConfirmStatus.value: ConfirmationReportConst.ConfirmStatus_AFF.value,
              JavaApiFields.MatchStatus.value: ConfirmationReportConst.MatchStatus_MAT.value},
@@ -183,8 +190,8 @@ class QAP_T6987(TestCase):
                               'AllocTransType',
                               'ReportedPx', 'RootSettlCurrAmt', 'GrossTradeAmt', 'NoAllocs', 'Instrument']
         params = {'NoOrders': [{
-            'ClOrdID': cl_ord_id,
-            'OrderID': '*',
+            'ClOrdID': "*",
+            'OrderID':ord_id,
             'OrderAvgPx': self.price,
         }], 'Account': self.client, 'BookingType': '0', 'AllocType': '5', 'NoRootMiscFeesList': '#'}
         alloc_instr_report = FixMessageAllocationInstructionReportOMS(params)
@@ -208,8 +215,8 @@ class QAP_T6987(TestCase):
                              'Instrument', 'GrossTradeAmt', 'ConfirmID']
         params = {'ConfirmTransType': "0",
                   'NoOrders': [{
-                      'ClOrdID': cl_ord_id,
-                      'OrderID': '*',
+                      'ClOrdID': '*',
+                      'OrderID': ord_id,
                       'OrderAvgPx': self.price,
                   }], 'AllocAccount': self.client_acc, 'ConfirmType': '2',
                   'ConfirmStatus': '1', 'NoMiscFees': '#'}
@@ -223,6 +230,6 @@ class QAP_T6987(TestCase):
         self.ssh_client.put_file(self.remote_path, self.local_path)
         self.ssh_client.send_command('~/quod/script/site_scripts/change_book_agent_misc_fee_type_on_N')
         self.ssh_client.send_command("qrestart QUOD.ORS QUOD.CS QUOD.ESBUYTH2TEST")
-        time.sleep(80)
+        time.sleep(120)
         os.remove("temp.xml")
         self.ssh_client.close()
