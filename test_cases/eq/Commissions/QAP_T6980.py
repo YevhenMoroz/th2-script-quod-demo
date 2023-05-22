@@ -94,7 +94,7 @@ class QAP_T6980(TestCase):
         self.submit_request.set_default_dma_limit(True)
         self.submit_request.update_fields_in_component("NewOrderSingleBlock", {
             "InstrID": self.data_set.get_instrument_id_by_name("instrument_3"), 'AccountGroupID': self.client,
-            'ListingList': {'ListingBlock': [{'ListingID': self.data_set.get_listing_id_by_name("listing_2")}]} })
+            'ListingList': {'ListingBlock': [{'ListingID': self.data_set.get_listing_id_by_name("listing_2")}]}})
 
         try:
             nos_rule = self.rule_manager. \
@@ -147,7 +147,8 @@ class QAP_T6980(TestCase):
                                                      "InstrID": self.data_set.get_instrument_id_by_name(
                                                          "instrument_3")})
         self.java_api_manager.send_message_and_receive_response(self.alloc_instr)
-        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                                              JavaApiFields.BookingAllocInstructionID.value).get_parameters()[
             JavaApiFields.AllocationReportBlock.value]
         self.java_api_manager.compare_values(expected_levy,
                                              {"ExpectedFee": str(

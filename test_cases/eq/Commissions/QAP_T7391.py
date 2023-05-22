@@ -70,8 +70,9 @@ class QAP_T7391(TestCase):
         self.__step_precondition()
         tuple_orders_indicators: tuple = self.__step_first(instrument_id)
         exec_id = self.__step_second(tuple_orders_indicators[0])
-        tuple_for_allocation = self.__step_third(tuple_orders_indicators[1], tuple_orders_indicators[0], exec_id, new_avg_px,
-                                     commission_rate, commission_rate, instrument_id)
+        tuple_for_allocation = self.__step_third(tuple_orders_indicators[1], tuple_orders_indicators[0], exec_id,
+                                                 new_avg_px,
+                                                 commission_rate, commission_rate, instrument_id)
         self.__step_fourth(tuple_for_allocation[0], new_avg_px, instrument_id, tuple_for_allocation[1])
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -83,7 +84,7 @@ class QAP_T7391(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __step_first(self, instrument_id):
         self.order_submit.set_default_dma_limit()
-        self.order_submit.remove_fields_from_component('NewOrderSingleBlock',['SettlCurrency'])
+        self.order_submit.remove_fields_from_component('NewOrderSingleBlock', ['SettlCurrency'])
         self.order_submit.update_fields_in_component('NewOrderSingleBlock', {
             'ListingList': {'ListingBlock': [{'ListingID': self.data_set.get_listing_id_by_name("listing_2")}]},
             'InstrID': instrument_id,
@@ -192,7 +193,8 @@ class QAP_T7391(TestCase):
         responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
         print_message("Allocation Instruction", responses)
         allocation_report = \
-            self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+            self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                                   JavaApiFields.BookingAllocInstructionID.value).get_parameters()[
                 JavaApiFields.AllocationReportBlock.value]
         alloc_id = allocation_report[JavaApiFields.ClientAllocID.value]
         commission_actually = \
@@ -215,8 +217,11 @@ class QAP_T7391(TestCase):
         })
         responses = self.java_api_manager.send_message_and_receive_response(self.confirmation_request)
         print_message('Confirmation', responses)
-        confirmation_report = self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[JavaApiFields.ConfirmationReportBlock.value]
-        actual_commission = confirmation_report[JavaApiFields.ClientCommissionList.value][JavaApiFields.ClientCommissionBlock.value][0]
+        confirmation_report = \
+        self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[
+            JavaApiFields.ConfirmationReportBlock.value]
+        actual_commission = \
+        confirmation_report[JavaApiFields.ClientCommissionList.value][JavaApiFields.ClientCommissionBlock.value][0]
         self.java_api_manager.compare_values(commission_expected, actual_commission, 'Check commission from step 4')
 
     @try_except(test_id=Path(__file__).name[:-3])
