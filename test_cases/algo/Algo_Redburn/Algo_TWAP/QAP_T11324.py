@@ -179,7 +179,7 @@ class QAP_T11324(TestCase):
         self.fix_verifier_sell.check_fix_message(new_twap_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
         
-        time.sleep(75)
+        time.sleep(85)
         
         # region Check TWAP child
         # region Check Would child orders in sequence

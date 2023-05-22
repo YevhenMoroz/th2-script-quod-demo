@@ -59,7 +59,7 @@ class QAP_T4595(TestCase):
         self.price = 30
         self.price_child = 25.005
         self.waves = 3
-        self.qty_child = 15
+        self.qty_child = 11
         self.aggressivity = constants.Aggressivity.Neutral.value
         # endregion
 
@@ -143,7 +143,7 @@ class QAP_T4595(TestCase):
         # region insert data into mongoDB
         curve = AMM.get_straight_curve_for_mongo(trading_phases, volume=self.historical_volume)
         self.db_manager.insert_many_to_mongodb_with_drop(curve, f"Q{self.listing_id}")
-        bca.create_event("Data in mongo inserted", self.test_id)
+        bca.create_event(f"Collection Q{self.listing_id} is inserted", self.test_id, body=''.join([f"{volume['LastTradedTime']} - {volume['LastTradedQty']}, phase - {volume['LastAuctionPhase']}\n" for volume in curve]))
         # endregion
 
         # region Send_MarkerData

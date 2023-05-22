@@ -29,7 +29,7 @@ from test_framework.formulas_and_calculation.trading_phase_manager import Tradin
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
 
 
-class QAP_T11355(TestCase):
+class QAP_T11373(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -116,8 +116,7 @@ class QAP_T11355(TestCase):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
         nos = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.mic, self.child_price)
-        # ocrr1 = rule_manager.add_OrderCancelReplaceRequest(self.fix_env1.buy_side, self.account, self.mic, True, 0)
-        ocrr2 = rule_manager.add_OrderCancelReplaceRequest_ExecutionReport(self.fix_env1.buy_side, False)
+        ocrr2 = rule_manager.add_OrderCancelReplaceRequest_ExecutionReport(self.fix_env1.buy_side, False, 2000)
         ocr = rule_manager.add_OCR(self.fix_env1.buy_side)
         self.rule_list = [nos, ocrr2, ocr]
         # endregion
@@ -132,7 +131,7 @@ class QAP_T11355(TestCase):
 
         # region insert data into mongoDB
         curve = AMM.get_straight_curve_for_mongo(trading_phases, volume=self.historical_volume)
-        self.db_manager.insert_many_to_mongodb_with_drop(curve ,f"Q{self.listing_id}")
+        self.db_manager.insert_many_to_mongodb_with_drop(curve, f"Q{self.listing_id}")
         bca.create_event(f"Collection Q{self.listing_id} is inserted", self.test_id, body=''.join([f"{volume['LastTradedTime']} - {volume['LastTradedQty']}, phase - {volume['LastAuctionPhase']}\n" for volume in curve]))
         # endregion
 
@@ -180,6 +179,7 @@ class QAP_T11355(TestCase):
 
         # region check sell side
         self.vwap_child = AFM.get_vwap_childs(curve, self.start_date, self.end_date, self.qty)
+        self.vwap_child_updated = AFM.get_vwap_childs(curve, self.start_date + timedelta(minutes=2), self.end_date, self.qty - self.vwap_child[0])
 
         dma_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_RB_params()
         dma_order.change_parameters(dict(Account=self.account, ExDestination=self.mic, OrderQty=self.vwap_child[0], Price=self.child_price, Instrument=self.instrument))
@@ -187,6 +187,9 @@ class QAP_T11355(TestCase):
 
         dma_order2 = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_RB_params()
         dma_order2.change_parameters(dict(Account=self.account, ExDestination=self.mic, OrderQty=self.vwap_child[1], Price=self.child_price, Instrument=self.instrument))
+
+        dma_order3 = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_RB_params()
+        dma_order3.change_parameters(dict(Account=self.account, ExDestination=self.mic, OrderQty=self.vwap_child_updated[1], Price=self.child_price, Instrument=self.instrument))
 
         er_pending_new = FixMessageExecutionReportAlgo().set_params_from_new_order_single(dma_order, self.gateway_side_buy, self.status_pending)
 
@@ -228,6 +231,11 @@ class QAP_T11355(TestCase):
             key_parameters=self.key_params,
             direction=self.FromQuod,
             message_name="Buy side NewOrderSingle child order №2"))
+        scheduler.enterabs(self.start_date.timestamp() + 130, 1, self.fix_verifier_buy.check_fix_message, kwargs=dict(
+            fix_message=dma_order3,
+            key_parameters=self.key_params,
+            direction=self.FromQuod,
+            message_name="Buy side NewOrderSingle child order №3"))
 
         scheduler.run()
 
