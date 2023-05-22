@@ -34,11 +34,11 @@ class AccountsWizard(CommonPage):
         time.sleep(1)
         return self.get_all_items_from_drop_down(AccountsConstants.DROP_DOWN_MENU_XPATH)
 
-    def set_description(self, value: str):
-        self.set_text_by_xpath(AccountsConstants.WIZARD_DESCRIPTION_INPUT_XPATH, value)
+    def set_name(self, value: str):
+        self.set_text_by_xpath(AccountsConstants.WIZARD_NAME_INPUT_XPATH, value)
 
-    def get_description(self):
-        return self.get_text_by_xpath(AccountsConstants.WIZARD_DESCRIPTION_INPUT_XPATH)
+    def get_name(self):
+        return self.get_text_by_xpath(AccountsConstants.WIZARD_NAME_INPUT_XPATH)
 
     def set_position_source(self, value: str):
         self.set_combobox_value(AccountsConstants.WIZARD_POSITION_SOURCE_COMBOBOX_XPATH, value)
@@ -156,3 +156,15 @@ class AccountsWizard(CommonPage):
 
     def is_unable_to_unassign_cash_account_warning_displayed(self):
         return self.is_element_present(AccountsConstants.UNABLE_UNASSIGN_CASH_ACCOUNT_MESSAGE)
+
+    def click_on_close_button(self):
+        self.find_by_xpath(AccountsConstants.CLOSE_WIZARD_BUTTON).click()
+
+    def click_on_cancel_button(self):
+        self.find_by_xpath(AccountsConstants.CANCEL_BUTTON).click()
+
+    def click_on_no_button(self):
+        self.find_by_xpath(AccountsConstants.NO_BUTTON).click()
+
+    def click_on_ok_button(self):
+        self.find_by_xpath(AccountsConstants.OK_BUTTON).click()

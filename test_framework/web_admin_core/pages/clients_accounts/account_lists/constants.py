@@ -3,6 +3,7 @@ class Constants:
         PAGE_TITLE = '//span[@class="entity-title left"][normalize-space()="Account Lists"]'
         REFRESH_PAGE_BUTTON = '//*[@data-name="refresh"]'
         DOWNLOAD_PDF_BUTTON = '//nb-icon[@icon="download-outline"]//*[@data-name="download"]'
+        DOWNLOAD_CSV_BUTTON = '//nb-card-header//*[@data-name="download"]'
         OK_BUTTON = '//*[normalize-space()="Ok" or normalize-space()="OK"]'
         CANCEL_BUTTON = '//*[normalize-space()="Cancel"]'
         MORE_ACTIONS_BUTTON = '//*[@data-name = "more-vertical"]'

@@ -70,7 +70,7 @@ class QAP_T3671(CommonTestCase):
             values_tab.set_id(self.id)
             values_tab.set_ext_id_client(self.ext_id_client)
             values_tab.set_client(self.client)
-            values_tab.set_description(self.description)
+            values_tab.set_name(self.description)
             values_tab.set_position_source(self.position_source)
             values_tab.set_client_id_source(self.client_id_source)
             values_tab.toggle_trade_confirm_eligibility()

@@ -59,3 +59,9 @@ class ClientListsPage(CommonPage):
 
     def is_client_list_found(self, value):
         return self.is_element_present(ClientListsConstants.DISPLAYED_CLIENT_LIST_XPATH.format(value))
+
+    def click_on_download_csv_button_and_get_content(self):
+        self.clear_download_directory()
+        self.find_by_xpath(ClientListsConstants.DOWNLOAD_CSV_BUTTON).click()
+        time.sleep(1)
+        return self.get_csv_context()

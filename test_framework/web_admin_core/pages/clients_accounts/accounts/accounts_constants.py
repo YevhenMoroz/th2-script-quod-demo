@@ -1,5 +1,6 @@
 class AccountsConstants:
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"
+    DOWNLOAD_CSV_BUTTON_XPATH = '//nb-card-header//*[@data-name="download"]'
     ACCOUNTS_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][normalize-space()='Accounts']"
     NEW_BUTTON_XPATH = '//*[normalize-space()="Accounts"]//..//*[normalize-space()="New"]'
     MAIN_PAGE_CLEARING_ACCOUNT_TYPE ='//*[@col-id="clearingAccountType"]//*[@class="ag-group-value"]'
@@ -13,6 +14,10 @@ class AccountsConstants:
     MULTISELECT_DROP_DOWN = '//*[@id="textCash Accounts"]'
     MULTISELECT_FORM_LOOK_UP = '//input[@role="textbox"]'
     UNABLE_UNASSIGN_CASH_ACCOUNT_MESSAGE = '//*[@class="overlapping-warning"]'
+    CLOSE_WIZARD_BUTTON = '//nb-card-header//*[@data-name="close"]'
+    CANCEL_BUTTON = '//button[normalize-space()="Cancel"]'
+    NO_BUTTON = '//button[normalize-space()="No"]'
+    OK_BUTTON = '//button[normalize-space()="OK"]'
 
     MAIN_PAGE_CLIENT_MATCHING_ID_XPATH = '(//*[@col-id="clientMatchingID"])[2]//*[@class="ag-group-value"]'
 
@@ -20,7 +25,7 @@ class AccountsConstants:
     WIZARD_ID_EDITOR_XPATH = '//*[@class="breadcrumbs entity-title"]'
     WIZARD_EXT_ID_CLIENT_INPUT_XPATH = "//input[@id='clientAccountID']"
     WIZARD_CLIENT_COMBOBOX_XPATH = "//input[@id='accountGroup']"
-    WIZARD_DESCRIPTION_INPUT_XPATH = "//input[@id='accountDesc']"
+    WIZARD_NAME_INPUT_XPATH = "//input[@id='accountDesc']"
     WIZARD_POSITION_SOURCE_COMBOBOX_XPATH = "//input[@id='positionSource']"
     WIZARD_CASH_ACCOUNTS_XPATH = '//*[@id="Cash Accounts"]'
     WIZARD_CLEARING_ACCOUNT_TYPE_COMBOBOX_XPATH = "//input[@id='clearingAccountType']"
