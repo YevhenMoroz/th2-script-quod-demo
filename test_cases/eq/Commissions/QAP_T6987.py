@@ -151,7 +151,7 @@ class QAP_T6987(TestCase):
                         'TargetStrategy', 'Instrument', 'ExDestination', 'GrossTradeAmt', 'CommissionData', 'SecondaryOrderID']
         params = {"Account": self.client, "ExecType": "B",
                   "OrdStatus": "B", "ClOrdID": cl_ord_id, 'OrderID': ord_id,
-                  'NoMiscFees': {'NoMiscFees': [{'MiscFeeAmt': '10', 'MiscFeeCurr': self.cur, 'MiscFeeType': '12'}]}}
+                  'NoMiscFees': {'NoMiscFees': [{'MiscFeeAmt': '5', 'MiscFeeCurr': self.cur, 'MiscFeeType': '12'}]}}
         fix_execution_report = FixMessageExecutionReportOMS(self.data_set, params)
         self.fix_verifier.check_fix_message_fix_standard(fix_execution_report, ignored_fields=ignored_list)
         # endregion
