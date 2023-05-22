@@ -41,7 +41,7 @@ class QAP_T2443(TestCase):
                                            tenor=self.tenor_tom_java, instr_type=self.instr_type_fwd)
         self.quote_request.update_far_leg(settle_type=self.settle_type_1w_java,
                                           tenor=self.tenor_1w_java)
-        self.java_api_manager.send_message_and_receive_response(self.quote_request, response_time=25000)
+        self.java_api_manager.send_message_and_receive_response(self.quote_request)
         # region Step 3
         received_notes = \
             self.java_api_manager.get_last_message("Order_QuoteRequestNotif").get_parameter("QuoteRequestNotifBlock")[
@@ -63,7 +63,7 @@ class QAP_T2443(TestCase):
                                            tenor=self.tenor_tom_java, instr_type=self.instr_type_fwd)
         self.quote_request.update_far_leg(settle_type=self.settle_type_spot_java,
                                           tenor=self.tenor_spot_java, instr_type=self.instr_type_spot)
-        self.java_api_manager.send_message_and_receive_response(self.quote_request, response_time=25000)
+        self.java_api_manager.send_message_and_receive_response(self.quote_request)
         # region Step 3
         received_notes = \
             self.java_api_manager.get_last_message("Order_QuoteRequestNotif").get_parameter("QuoteRequestNotifBlock")[

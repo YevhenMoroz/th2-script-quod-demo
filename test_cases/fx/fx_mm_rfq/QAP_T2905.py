@@ -1,6 +1,6 @@
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from test_cases.fx.fx_wrapper.common_tools import random_qty, check_quote_request_id, check_quote_status
+from test_cases.fx.fx_wrapper.common_tools import random_qty, check_quote_request_id, check_value_in_db
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
@@ -67,7 +67,7 @@ class QAP_T2905(TestCase):
         self.fix_verifier.check_fix_message(fix_message=self.quote)
         self.action_request.set_action_reject()
         self.java_api_manager.send_message(self.action_request)
-        quote_status = check_quote_status(req_id, self.db_column)
+        quote_status = check_value_in_db(req_id, self.db_column)
         self.verifier.set_parent_id(self.test_id)
         self.verifier.set_event_name("Check quote status")
         self.verifier.compare_values("Quote removed from Market", quote_status, "REM")

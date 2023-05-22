@@ -62,6 +62,7 @@ class BaseDataSet:
     scenario = None
     strategy = None
     market_ids = None
+    instr_id = None
     contra_firm = None
     all_venue_sec_account_names_of_acc = None
     venue_list = None
@@ -481,6 +482,10 @@ class BaseDataSet:
             return getattr(self.market_ids, name).value
         raise ValueError(f"{self.market_ids} not found!")
 
+    def get_instr_id_by_name(self, name: str):
+        if hasattr(self.instr_id, name):
+            return getattr(self.instr_id, name).value
+        raise ValueError(f"{self.instr_id} not found!")
     # endregion
 
     def get_lookup_by_name(self, name: str):

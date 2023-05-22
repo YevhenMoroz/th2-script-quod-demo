@@ -189,6 +189,15 @@ class ResAPIMessageType(Enum):
     FindAllOrderVelocity = "FindAllOrderVelocityLimit"
     DeleteOrderVelocity = "DeleteOrderVelocityLimit"
     ModifyOrderVelocity = "ModifyOrderVelocityLimit"
+    ManageSecurityBlock = "ManageSecurityBlock"
+    CreateOrderPricing = "CreateOrderPricing"
+    ModifyOrderPricing = "ModifyOrderPricing"
+    DeleteOrderPricing = "DeleteOrderPricing"
+    CreateOrderCompression = "CreateOrderCompression"
+    ModifyOrderCompression = "ModifyOrderCompression"
+    DeleteOrderCompression = "DeleteOrderCompression"
+    FindAllOrderPricing = "FindAllOrderPricing"
+    FindAllOrderCompression = "FindAllOrderCompression"
 
 
 class PKSMessageType(Enum):
@@ -215,6 +224,7 @@ class QSMessageType(Enum):
     ListingQuotingNotification = "Order_ListingQuotingNotification"
     StopQuotingRequest = "Order_StopQuotingRequest"
     QuoteManagementReply = "Order_QuoteManagementReply"
+    ExecutePricedOrderRequest = "Order_ExecutePricedOrderRequest"
 
 
 class ReadLogMessageType(Enum):
