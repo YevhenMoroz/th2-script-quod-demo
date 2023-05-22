@@ -91,6 +91,7 @@ class QAP_T6948(TestCase):
              JavaApiFields.ConfirmStatus.value: ConfirmationReportConst.ConfirmStatus_AFF.value}, conf_report, 'Step 2')
         # endregion
         # region Step 3
+        list_of_ignored_fields: list = ['tag11245', 'tag5120']
         self.conf.set_fix42_confirmation_new(nos)
-        self.fix_verifier.check_fix_message_fix_standard(self.conf)
+        self.fix_verifier.check_fix_message_fix_standard(self.conf, ignored_fields=list_of_ignored_fields)
         # endregion

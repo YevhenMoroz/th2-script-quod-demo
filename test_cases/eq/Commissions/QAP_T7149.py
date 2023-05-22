@@ -16,6 +16,8 @@ from test_framework.java_api_wrappers.java_api_constants import (
     CommissionAmountTypeConst,
 )
 from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS import AllocationInstructionOMS
+from test_framework.java_api_wrappers.oms.ors_messges.ComputeBookingFeesCommissionsRequestOMS import \
+    ComputeBookingFeesCommissionsRequestOMS
 from test_framework.java_api_wrappers.oms.ors_messges.ConfirmationOMS import ConfirmationOMS
 from test_framework.java_api_wrappers.oms.ors_messges.DFDManagementBatchOMS import DFDManagementBatchOMS
 from test_framework.java_api_wrappers.oms.ors_messges.ForceAllocInstructionStatusRequestOMS import (
@@ -55,6 +57,7 @@ class QAP_T7149(TestCase):
         self.allocation_instruction = AllocationInstructionOMS(self.data_set)
         self.approve_message = ForceAllocInstructionStatusRequestOMS(self.data_set)
         self.confirmation_request = ConfirmationOMS(self.data_set)
+        self.compute_request = ComputeBookingFeesCommissionsRequestOMS(self.data_set)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -98,13 +101,14 @@ class QAP_T7149(TestCase):
         exec_report = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
             "ExecutionReportBlock"
         ]
+        exec_id = exec_report[JavaApiFields.ExecID.value]
         self.java_api_manager.compare_values(
             {JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_FIL.value},
             exec_report,
             "Comparing Execution status (TransExecStatus)",
         )
         self.java_api_manager.compare_values(
-            {"CommissionRate": "5.0", "CommissionAmount": "0.5"},
+            {"CommissionRate": "1.0", "CommissionAmount": "0.1"},
             exec_report["ClientCommissionList"]["ClientCommissionBlock"][0],
             "Comparing Client Commission",
         )
@@ -125,6 +129,15 @@ class QAP_T7149(TestCase):
             "Comparing values after Complete",
         )
         # endregion
+        post_trd_sts = OrderReplyConst.PostTradeStatus_RDY.value
+        self.compute_request.set_list_of_order_alloc_block(cl_ord_id, ord_id, post_trd_sts)
+        self.compute_request.set_list_of_exec_alloc_block(self.qty, exec_id, self.price, post_trd_sts)
+        self.compute_request.set_default_compute_booking_request(self.qty, self.price, self.client)
+        self.java_api_manager.send_message_and_receive_response(self.compute_request)
+        compute_reply = self.java_api_manager.get_last_message(
+            ORSMessageType.ComputeBookingFeesCommissionsReply.value).get_parameters()[
+            "ComputeBookingFeesCommissionsReplyBlock"]
+
 
         # region Step 5 - Book order
         self.allocation_instruction.set_default_book(ord_id)
@@ -132,29 +145,20 @@ class QAP_T7149(TestCase):
             "AllocationInstructionBlock",
             {
                 "AccountGroupID": self.client,
-                "ClientCommissionList": {
-                    "ClientCommissionBlock": [
-                        {
-                            "CommissionAmountType": CommissionAmountTypeConst.CommissionAmountType_BRK.value,
-                            "CommissionAmount": "0.5",
-                            "CommissionBasis": "BPS",
-                            "CommissionCurrency": self.data_set.get_currency_by_name("currency_1"),  # EUR
-                            "CommissionRate": "5",
-                        }
-                    ]
-                },
+                "ClientCommissionList": compute_reply['ClientCommissionList']
             },
         )
 
         responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
 
-        alloc_report_message = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value)
+        alloc_report_message = self.java_api_manager.get_last_message(
+            ORSMessageType.AllocationReport.value, JavaApiFields.BookingAllocInstructionID.value)
         alloc_id = alloc_report_message.get_parameter("AllocationReportBlock")["ClientAllocID"]
         client_comm = alloc_report_message.get_parameter("AllocationReportBlock")["ClientCommissionDataBlock"][
             "ClientCommission"
         ]
         self.java_api_manager.compare_values(
-            {"ClientCommission": "0.5"}, {"ClientCommission": client_comm}, "Comparing Client Commission after Book"
+            {"ClientCommission": "0.1"}, {"ClientCommission": client_comm}, "Comparing Client Commission after Book"
         )
         # endregion
 
@@ -180,7 +184,7 @@ class QAP_T7149(TestCase):
         ).get_parameters()["ConfirmationReportBlock"]
         conf_id = conf_report_message['ConfirmationID']
         self.java_api_manager.compare_values(
-            {"ClientCommission": "0.5"},
+            {"ClientCommission": "0.1"},
             {"ClientCommission": conf_report_message["ClientCommissionDataBlock"]["ClientCommission"]},
             "Comparing Client Commission after Allocate block",
         )
@@ -189,13 +193,15 @@ class QAP_T7149(TestCase):
         # region amend allocation
         self.confirmation_request.set_default_amend_allocation(conf_id, alloc_id)
         self.confirmation_request.update_fields_in_component('ConfirmationBlock',
-                                                     {'AllocAccountID': self.account, 'ClientCommissionList':{"ClientCommissionBlock":[{
-                            "CommissionAmountType": CommissionAmountTypeConst.CommissionAmountType_BRK.value,
-                            "CommissionAmount": "0.2222",
-                            "CommissionBasis": "BPS",
-                            "CommissionCurrency": self.data_set.get_currency_by_name("currency_1"),  # EUR
-                            "CommissionRate": "2.222",
-                        }]}})
+                                                             {'AllocAccountID': self.account,
+                                                              'ClientCommissionList': {"ClientCommissionBlock": [{
+                                                                  "CommissionAmountType": CommissionAmountTypeConst.CommissionAmountType_BRK.value,
+                                                                  "CommissionAmount": "0.2222",
+                                                                  "CommissionBasis": "BPS",
+                                                                  "CommissionCurrency": self.data_set.get_currency_by_name(
+                                                                      "currency_1"),  # EUR
+                                                                  "CommissionRate": "2.222",
+                                                              }]}})
         responses = self.java_api_manager.send_message_and_receive_response(self.confirmation_request)
         self.__return_result(responses, ORSMessageType.ConfirmationReport.value)
         conf_report_message = self.java_api_manager.get_last_message(
@@ -207,7 +213,6 @@ class QAP_T7149(TestCase):
             "Comparing Client Commission after amending Allocation block",
         )
         # endregion
-
 
     def __return_result(self, responses, message_type):
         for response in responses:

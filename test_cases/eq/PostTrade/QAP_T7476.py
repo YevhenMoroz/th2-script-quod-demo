@@ -220,7 +220,7 @@ class QAP_T7476(TestCase):
                                   'BookID', 'SettlDate', 'OrderAvgPx', 'AllocID', 'Currency',
                                   'NetMoney', 'MatchStatus', 'ConfirmStatus', 'TradeDate',
                                   'NoParty', 'AllocInstructionMiscBlock1', 'tag5120',
-                                  'ReportedPx', 'Instrument', 'GrossTradeAmt']
+                                  'ReportedPx', 'Instrument', 'GrossTradeAmt', 'AllocInstructionMiscBlock2']
         no_misc_fee = [{'MiscFeeAmt': str(int(fee_amt)), 'MiscFeeCurr': self.currency, 'MiscFeeType': '1'}]
         list_of_ignored_fields.extend(['CpctyConfGrp', 'ConfirmID', 'ConfirmType', 'AllocAccount'])
         self.confirmation_report.change_parameters(

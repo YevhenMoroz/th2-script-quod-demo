@@ -2,7 +2,9 @@ import logging
 
 from custom.basic_custom_actions import create_event
 from rule_management import RuleManager, Simulators
+from pathlib import Path
 from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
@@ -25,7 +27,7 @@ def print_message(message, responses):
 
 
 class QAP_T7511(TestCase):
-
+    @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
         self.fix_env = self.environment.get_list_fix_environment()[0]
@@ -50,6 +52,7 @@ class QAP_T7511(TestCase):
         self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
         self.execution_report = ExecutionReportOMS(self.data_set)
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         abs_amt_usd = self.data_set.get_comm_profile_by_name("abs_amt_usd")
         self.rest_commission_sender.clear_commissions()

@@ -48,7 +48,8 @@ class QAP_T9336(TestCase):
         instr_type = self.data_set.get_instr_type('mutual_fund')
         fee_type = self.data_set.get_misc_fee_type_by_name('regulatory')
         self.rest_commission_sender.set_modify_fees_message(comm_profile=self.perc_amt, fee_type=fee_type)
-        self.rest_commission_sender.change_message_params({'instrType': instr_type, "venueID": self.data_set.get_venue_by_name("venue_1")})
+        self.rest_commission_sender.change_message_params(
+            {'instrType': instr_type, "venueID": self.data_set.get_venue_by_name("venue_1")})
         self.rest_commission_sender.send_post_request()
         self.rest_commission_sender.set_modify_client_commission_message(client=self.client, comm_profile=self.bas_amt)
         self.rest_commission_sender.send_post_request()
@@ -60,32 +61,43 @@ class QAP_T9336(TestCase):
         listing_id = self.data_set.get_listing_id_by_name('listing_9')
         instrument_id = self.data_set.get_instrument_id_by_name('instrument_8')
         self.submit_request.update_fields_in_component(JavaApiFields.NewOrderSingleBlock.value, {
-            JavaApiFields.ListingList.value: {JavaApiFields.ListingBlock.value: [{JavaApiFields.ListingID.value: listing_id}]},
+            JavaApiFields.ListingList.value: {
+                JavaApiFields.ListingBlock.value: [{JavaApiFields.ListingID.value: listing_id}]},
             JavaApiFields.InstrID.value: instrument_id,
             JavaApiFields.AccountGroupID.value: self.client
         })
         qty = self.submit_request.get_parameters()[JavaApiFields.NewOrderSingleBlock.value][JavaApiFields.OrdQty.value]
         price = self.submit_request.get_parameters()[JavaApiFields.NewOrderSingleBlock.value][JavaApiFields.Price.value]
         fee_rate = '5.0'
-        fee_amount = str(float(qty) * float(price)/100 * float(fee_rate))
+        fee_amount = str(float(qty) * float(price) / 100 * float(fee_rate))
         commission_rate = '1.0'
-        commission_amount = str(float(qty) * float(price)/10000)
+        commission_amount = str(float(qty) * float(price) / 10000)
         expected_result_client_commission = {JavaApiFields.CommissionAmount.value: commission_amount,
                                              JavaApiFields.CommissionAmountType.value: AllocationInstructionConst.CommissionAmountType_BRK.value,
-                                             JavaApiFields.CommissionBasis.value:AllocationInstructionConst.COMM_AND_FEE_BASIS_BPS.value,
+                                             JavaApiFields.CommissionBasis.value: AllocationInstructionConst.COMM_AND_FEE_BASIS_BPS.value,
                                              JavaApiFields.CommissionRate.value: commission_rate}
         expected_result_fees = {JavaApiFields.MiscFeeAmt.value: fee_amount,
                                 JavaApiFields.MiscFeeBasis.value: AllocationInstructionConst.COMM_AND_FEES_BASIS_P.value,
                                 JavaApiFields.MiscFeeRate.value: fee_rate}
         try:
-            new_order_single = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.bs_connectivity, self.venue_client, self.mic, float(price))
-            trade_rule = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.bs_connectivity, self.venue_client, self.mic, float(price), int(qty), 0)
+            new_order_single = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(
+                self.bs_connectivity, self.venue_client, self.mic, float(price))
+            trade_rule = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.bs_connectivity,
+                                                                                            self.venue_client, self.mic,
+                                                                                            float(price), int(qty), 0)
             self.java_api_manager.send_message_and_receive_response(self.submit_request, response_time=15_000)
-            order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value, OrderReplyConst.TransStatus_OPN.value).get_parameters()[JavaApiFields.OrdReplyBlock.value]
-            self.java_api_manager.compare_values({JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value},
-                                                 order_reply, 'Verify that order created (step 1)')
-            execution_report = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value, ExecutionReportConst.ExecType_TRD.value).get_parameters()[JavaApiFields.ExecutionReportBlock.value]
-            self.java_api_manager.compare_values(expected_result_client_commission, execution_report[JavaApiFields.ClientCommissionList.value][JavaApiFields.ClientCommissionBlock.value][0],
+            order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value,
+                                                                 OrderReplyConst.TransStatus_TER.value).get_parameters()[
+                JavaApiFields.OrdReplyBlock.value]
+            self.java_api_manager.compare_values(
+                {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value},
+                order_reply, 'Verify that order created (step 1)')
+            execution_report = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value,
+                                                                      ExecutionReportConst.ExecType_TRD.value).get_parameters()[
+                JavaApiFields.ExecutionReportBlock.value]
+            self.java_api_manager.compare_values(expected_result_client_commission,
+                                                 execution_report[JavaApiFields.ClientCommissionList.value][
+                                                     JavaApiFields.ClientCommissionBlock.value][0],
                                                  'Verify that Client commission was calculated (step 2)')
             self.java_api_manager.compare_values(expected_result_fees,
                                                  execution_report[JavaApiFields.MiscFeesList.value][

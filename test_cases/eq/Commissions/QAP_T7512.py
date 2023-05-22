@@ -114,8 +114,9 @@ class QAP_T7512(TestCase):
         # endregion
 
         # region check block values
-        self.__return_result(responses, ORSMessageType.AllocationReport.value)
-        alloc_report = self.result.get_parameter('AllocationReportBlock')
+        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                                              JavaApiFields.BookingAllocInstructionID.value).get_parameter(
+            'AllocationReportBlock')
         alloc_inst_id = alloc_report['ClientAllocID']
         self.java_api_manager.compare_values({'NetPrice': '21.0'},
                                              alloc_report,
@@ -148,8 +149,10 @@ class QAP_T7512(TestCase):
         # endregion
 
         # region check block values
-        self.__return_result(responses, ORSMessageType.AllocationReport.value)
-        alloc_report = self.result.get_parameter('AllocationReportBlock')
+
+        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                                              JavaApiFields.BookingAllocInstructionID.value).get_parameter(
+            'AllocationReportBlock')
         self.java_api_manager.compare_values({'NetMoney': "20.0"}, alloc_report,
                                              "Check fees in the Alloc Report")
         # endregion

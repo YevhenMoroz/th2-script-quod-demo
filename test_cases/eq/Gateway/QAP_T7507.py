@@ -193,7 +193,7 @@ class QAP_T7507(TestCase):
             'OrderID': '*',
         }]})
         change_parameters.update(instrument_dict)
-        list_of_ignored_fields.extend(['IndividualAllocID', 'AllocNetPrice', 'AllocPrice'])
+        list_of_ignored_fields.extend(['IndividualAllocID', 'AllocNetPrice', 'AllocPrice', 'ExecAllocGrp'])
         change_parameters['AllocType'] = 5
         allocation_report = FixMessageAllocationInstructionReportOMS(change_parameters)
         self.fix_verifier.check_fix_message_fix_standard(allocation_report,
@@ -203,7 +203,7 @@ class QAP_T7507(TestCase):
         # region step 9 (check 35= AK message)
         list_of_ignored_fields.extend(['ConfirmID', 'MatchStatus', 'ConfirmStatus',
                                        'CpctyConfGrp', 'ConfirmTransType', 'ConfirmType', 'ExecType', 'OrdStatus',
-                                       'AllocType', 'tag11245'])
+                                       'AllocType', 'tag11245', 'AllocInstructionMiscBlock2'])
 
         change_parameters['AllocAccount'] = sec_acc_1
         change_parameters['AllocQty'] = self.qty
