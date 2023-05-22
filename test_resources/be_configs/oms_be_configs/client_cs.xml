@@ -19,6 +19,7 @@ Copyright Quod Financial
         <autoAcknowledge>false</autoAcknowledge>
         <fixAutoAckNewOrderEvenIfRecipientNotConnected>true</fixAutoAckNewOrderEvenIfRecipientNotConnected>
         <forwardRecipientRejectToHeadDisable>true</forwardRecipientRejectToHeadDisable>
+        <dummyAveragePriceBag>true</dummyAveragePriceBag>
 
     </cs>
 </quod>

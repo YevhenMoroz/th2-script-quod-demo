@@ -137,7 +137,6 @@ class QAP_T8739(TestCase):
         self.fix_verifier_sell.check_fix_message(pending_POV_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew')
 
         new_POV_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.POV_order, self.gateway_side_sell, self.status_new)
-        new_POV_order_params.change_parameter('NoParty', '*')
         self.fix_verifier_sell.check_fix_message(new_POV_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
 
@@ -145,7 +144,7 @@ class QAP_T8739(TestCase):
         
         # region Check child DMA order 1
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order", self.test_id))
-        self.dma_order_1 = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        self.dma_order_1 = FixMessageNewOrderSingleAlgo().set_DMA_params(False)
         self.dma_order_1.change_parameters(dict(OrderQty=self.child_1_qty_init, Price=self.price, Instrument='*'))
 
         self.fix_verifier_buy.check_fix_message(self.dma_order_1, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Child DMA 1')
@@ -172,7 +171,7 @@ class QAP_T8739(TestCase):
         # region Check child DMA order 1 modify
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order 1 modify", self.test_id))
         self.dma_order_1_replace_params = FixMessageOrderCancelReplaceRequestAlgo(self.dma_order_1)
-        self.dma_order_1_replace_params.change_parameters(dict(OrderQty=self.child_1_qty_mod, Price=self.price, Instrument='*', NoParty='*'))
+        self.dma_order_1_replace_params.change_parameters(dict(OrderQty=self.child_1_qty_mod, Price=self.price, Instrument='*'))
 
         self.fix_verifier_buy.check_fix_message(self.dma_order_1_replace_params, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Child DMA 1 Modify')
 
@@ -193,7 +192,7 @@ class QAP_T8739(TestCase):
         self.fix_verifier_sell.check_fix_message(self.POV_mod_order, direction=self.ToQuod, message_name='Sell side OCRR')
 
         OCRR_POV_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.POV_mod_order, self.gateway_side_sell, self.status_cancel_replace)
-        OCRR_POV_params.change_parameters(dict(NoParty='*', OrigClOrdID='*'))
+        OCRR_POV_params.change_parameters(dict(OrigClOrdID='*'))
         self.fix_verifier_sell.check_fix_message(OCRR_POV_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport Replaced')
         # endregion
         
@@ -201,7 +200,7 @@ class QAP_T8739(TestCase):
         
         # region Check cancel child DMA order 1
         cancel_request_dma_order_1_params = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child(self.dma_order_1)
-        cancel_request_dma_order_1_params.change_parameters(dict(NoParty='*', OrderQty=self.child_1_qty_mod)).remove_parameter('ChildOrderID')
+        cancel_request_dma_order_1_params.change_parameters(dict(OrderQty=self.child_1_qty_mod)).remove_parameter('ChildOrderID')
         self.fix_verifier_buy.check_fix_message(cancel_request_dma_order_1_params, key_parameters=self.key_params, direction=self.FromQuod, message_name='Buy side Cancel Request DMA 1')
 
         cancel_dma_order_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order_1, self.gateway_side_buy, self.status_cancel)
@@ -239,13 +238,13 @@ class QAP_T8739(TestCase):
 
         # region check cancellation parent POV order
         cancel_pov_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.POV_order, self.gateway_side_sell, self.status_cancel)
-        cancel_pov_order.change_parameters({'NoParty': '*', 'OrderQty': self.qty_mod, 'OrigClOrdID': '*', 'SettlType': 'B'})
+        cancel_pov_order.change_parameters({'OrderQty': self.qty_mod, 'OrigClOrdID': '*', 'SettlType': 'B'})
         self.fix_verifier_sell.check_fix_message(cancel_pov_order, key_parameters=self.key_params_cl,  message_name='Sell side ExecReport Canceled')
         # endregion
 
         # region check cancellation DMA order 2
         cancel_request_dma_order_2_params = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child(self.dma_order_2)
-        cancel_request_dma_order_2_params.change_parameters(dict(NoParty='*', OrderQty=self.child_2_qty)).remove_parameter('ChildOrderID')
+        cancel_request_dma_order_2_params.change_parameters(dict(OrderQty=self.child_2_qty)).remove_parameter('ChildOrderID')
         self.fix_verifier_buy.check_fix_message(cancel_request_dma_order_2_params, key_parameters=self.key_params, direction=self.FromQuod, message_name='Buy side Cancel Request DMA 2')
 
         cancel_dma_order_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order_2, self.gateway_side_buy, self.status_cancel)

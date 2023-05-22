@@ -139,7 +139,6 @@ class QAP_T9034(TestCase):
         list_of_needed_counterparts = [self.data_set.get_party_role('party_role_contra_firm'),
                                        self.data_set.get_party_role('party_role_executing_firm')]
         actually_results = True
-        print(value)
         for counterpart in list_of_needed_counterparts:
             if value.find(f'PartyRole={counterpart}') == -1:
                 actually_results = False

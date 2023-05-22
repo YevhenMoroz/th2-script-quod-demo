@@ -135,7 +135,7 @@ class QAP_T5091(TestCase):
         self.fix_verifier_sell.check_fix_message(pending_twap_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew')
 
         new_twap_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_order, self.gateway_side_sell, self.status_new)
-        new_twap_order_params.change_parameter('NoParty', '*')
+        
         self.fix_verifier_sell.check_fix_message(new_twap_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
         
@@ -166,7 +166,6 @@ class QAP_T5091(TestCase):
         self.fix_verifier_sell.check_fix_message(self.twap_order_replace_params, direction=self.ToQuod, message_name='Sell side OrderCancelReplaceRequest')
 
         replaced_twap_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.twap_order_replace_params, self.gateway_side_sell, self.status_cancel_replace)
-        replaced_twap_order_params.change_parameter('NoParty', '*')
         self.fix_verifier_sell.check_fix_message(replaced_twap_order_params, key_parameters=self.key_params_cl, message_name='Sell Side ExecReport Replace Request')
         # endregion
 
@@ -203,7 +202,7 @@ class QAP_T5091(TestCase):
 
         # region check eliminate parent TWAP order
         cancel_twap_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_order, self.gateway_side_sell, self.status_cancel)
-        cancel_twap_order.change_parameters(dict(NoParty='*', OrderQty=self.qty_mod, SettlType='*'))
+        cancel_twap_order.change_parameters(dict(OrderQty=self.qty_mod, SettlType='*'))
         self.fix_verifier_sell.check_fix_message(cancel_twap_order, key_parameters=self.key_params_cl,  message_name='Sell side ExecReport Cancelled')
         # endregion
         

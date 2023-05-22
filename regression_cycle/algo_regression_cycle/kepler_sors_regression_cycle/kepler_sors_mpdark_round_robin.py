@@ -33,6 +33,7 @@ from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10543 import QAP_T10543
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10544 import QAP_T10544
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10546 import QAP_T10546
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10547 import QAP_T10547
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10572 import QAP_T10572
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10623 import QAP_T10623
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10624 import QAP_T10624
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T10625 import QAP_T10625
@@ -59,6 +60,8 @@ from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T11066 import QAP_T11066
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T11068 import QAP_T11068
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T11069 import QAP_T11069
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T11070 import QAP_T11070
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T11190 import QAP_T11190
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T11194 import QAP_T11194
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T9292 import QAP_T9292
 from test_framework.configurations.component_configuration import ComponentConfiguration
 
@@ -133,6 +136,8 @@ def test_run(parent_id=None, version=None):
         QAP_T11068(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T11069(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T11070(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T11190(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T11194(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
     except Exception:

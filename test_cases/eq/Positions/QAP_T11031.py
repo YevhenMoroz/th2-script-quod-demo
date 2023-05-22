@@ -2,6 +2,7 @@ import logging
 import os
 import time
 import xml.etree.ElementTree as ET
+from copy import deepcopy
 from pathlib import Path
 
 from pkg_resources import resource_filename
@@ -111,7 +112,6 @@ class QAP_T11031(TestCase):
 
         # region step 4: Book CO order
         new_price = '20'
-        self.allocation_instruction = AllocationInstructionOMS(self.data_set)
         self.allocation_instruction.set_default_book(order_id)
         self.allocation_instruction.update_fields_in_component(JavaApiFields.AllocationInstructionBlock.value, {
             JavaApiFields.Qty.value: qty,
@@ -149,13 +149,21 @@ class QAP_T11031(TestCase):
                                                                                self.washbook_acc]).get_parameters()[
             JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
             JavaApiFields.PositionBlock.value][0]
-        self.ja_manager.compare_values({JavaApiFields.DailyRealizedGrossPL.value: str(float(qty) * float(price))},
+        daily_gross_pl = str(float(qty) * float(price))
+        self.ja_manager.compare_values({JavaApiFields.DailyRealizedGrossPL.value: daily_gross_pl},
                                        position_report,
                                        f'Verify that {JavaApiFields.TodayRealizedPL.value} was calculated properly (step 8-9)')
         # endregion
 
         # region step 10: Check Fix_PositionReport
-        # TODO
+        daily_gross_pl = daily_gross_pl[0:4]
+        value = self._get_logs_from_pks()
+        actually_results = True
+        if value.find(f"PosAmtType=DailyRealizedGrossPL PosAmt={daily_gross_pl}") == -1:
+            actually_results = False
+        self.ja_manager.compare_values({'DailyRealizedGrossPL_Is_Present': True},
+                                             {'DailyRealizedGrossPL_Is_Present': actually_results},
+                                             'Verify that DailyRealizedGrossPL  is present (step 10)')
         # endregion
 
     def _extract_cum_values_for_acc(self, acc):
@@ -177,3 +185,16 @@ class QAP_T11031(TestCase):
         time.sleep(120)
         os.remove("temp.xml")
         self.ssh_client.close()
+
+    def _get_logs_from_pks(self):
+        self.ssh_client.send_command('cdl')
+        self.ssh_client.send_command('egrep "fix PositionReport.*.EquityWashBook" QUOD.PKS.log > logs.txt')
+        self.ssh_client.send_command("sed -n '$'p logs.txt > logs2.txt")
+        self.ssh_client.get_file('/Logs/quod317/logs2.txt', './logs.txt')
+        file = open('./logs.txt')
+        values = []
+        for row in file:
+            values.append(deepcopy(row))
+        file.close()
+        os.remove('./logs.txt')
+        return values[0]

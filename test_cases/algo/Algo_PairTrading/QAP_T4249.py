@@ -95,6 +95,7 @@ class QAP_T4249(TestCase):
         self.fix_verifier_sell.check_fix_message(pending_PairTrad_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew')
 
         new_PairTrad_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.PairTrad_order, self.gateway_side_sell, self.status_new)
+        
         self.fix_verifier_sell.check_fix_message(new_PairTrad_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
 
@@ -105,7 +106,8 @@ class QAP_T4249(TestCase):
         self.fix_verifier_sell.set_case_id(case_id_1)
 
         self.PairTrad_order_mod = FixMessageOrderCancelReplaceRequestAlgo(self.PairTrad_order)
-        self.PairTrad_order_mod.update_repeating_group('NoStrategyParameters', [dict(StrategyParameterName='SpreadDeviationNumber', StrategyParameterType=self.float_type, StrategyParameterValue=self.spread_devi_val_mod)])
+        self.PairTrad_order_mod.update_repeating_group('NoStrategyParameters', [dict(StrategyParameterName='SpreadDeviationNumber', StrategyParameterType=self.float_type, StrategyParameterValue=self.spread_devi_val_mod)])\
+
         self.fix_manager_sell.send_message_and_receive_response(self.PairTrad_order_mod, case_id_1)
         
         er_replaced_PairTrad_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.PairTrad_order_mod, self.gateway_side_sell, self.status_cancel_replace)
@@ -124,5 +126,6 @@ class QAP_T4249(TestCase):
         self.fix_verifier_sell.check_fix_message(cancel_request_PairTrad_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
 
         cancel_PairTrad_order = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.PairTrad_order_mod, self.gateway_side_sell, self.status_cancel)
+        
         self.fix_verifier_sell.check_fix_message(cancel_PairTrad_order, key_parameters=self.key_params_cl,  message_name='Sell side ExecReport Canceled')
         # endregion

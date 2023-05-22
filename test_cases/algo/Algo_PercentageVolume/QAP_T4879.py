@@ -129,7 +129,6 @@ class QAP_T4879(TestCase):
         self.fix_verifier_sell.check_fix_message(pending_POV_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew')
 
         new_POV_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.POV_order, self.gateway_side_sell, self.status_new)
-        new_POV_order_params.change_parameter('NoParty', '*')
         self.fix_verifier_sell.check_fix_message(new_POV_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
 
@@ -169,7 +168,7 @@ class QAP_T4879(TestCase):
         # region Check child DMA order MD 1
         self.fix_verifier_buy.set_case_id(bca.create_event("Passive Child DMA order 1", self.test_id))
 
-        self.dma_order_2 = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        self.dma_order_2 = FixMessageNewOrderSingleAlgo().set_DMA_params(False)
         self.dma_order_2.change_parameters(dict(OrderQty=self.child_md_qty, Price=self.price, Instrument='*', TimeInForce=self.tif_day))
         self.fix_verifier_buy.check_fix_message(self.dma_order_2, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Passive Child DMA order 1')
 
@@ -192,7 +191,7 @@ class QAP_T4879(TestCase):
 
         # region Check OCRR for Passive child
         self.replace_dma_params = FixMessageOrderCancelReplaceRequestAlgo(self.dma_order_2)
-        self.replace_dma_params.change_parameters(dict(OrderQty=self.child_md_qty_mod, NoParty='*'))
+        self.replace_dma_params.change_parameters(dict(OrderQty=self.child_md_qty_mod))
         self.fix_verifier_buy.check_fix_message(self.replace_dma_params, key_parameters=self.key_params, message_name='Buy side OCRR Passive Child DMA order 1')
 
         er_replace_dma_1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order_2, self.gateway_side_buy, self.status_cancel_replace)
@@ -248,7 +247,6 @@ class QAP_T4879(TestCase):
 
         # region check cancellation parent POV order
         cancel_pov_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.POV_order, self.gateway_side_sell, self.status_cancel)
-        cancel_pov_order.change_parameters({'NoParty': '*'})
         self.fix_verifier_sell.check_fix_message(cancel_pov_order, key_parameters=self.key_params_cl,  message_name='Sell side ExecReport Canceled')
         # endregion
 
