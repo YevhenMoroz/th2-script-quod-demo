@@ -175,7 +175,7 @@ class QAP_T11327(TestCase):
         while self.counter < 5:
             self.fix_manager_feed_handler.send_message(fix_message=self.incremental_refresh)
             self.counter += 1
-            time.sleep(1)
+            time.sleep(2)
         # endregion    
         
         time.sleep(3)
