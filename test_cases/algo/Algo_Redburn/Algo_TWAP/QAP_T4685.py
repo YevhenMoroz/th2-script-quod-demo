@@ -17,7 +17,7 @@ from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlg
     FixMessageMarketDataSnapshotFullRefreshAlgo
 from test_framework.core.test_case import TestCase
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, TradingPhases, Reference, OrderType, TimeInForce
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
 from test_framework.formulas_and_calculation.trading_phase_manager import TradingPhaseManager, TimeSlot
 
@@ -127,21 +127,20 @@ class QAP_T4685(TestCase):
         # endregion
 
         # region Start/EndDate for algo
-        utcnow = datetime.utcnow() + timedelta(minutes=1) - timedelta(seconds=datetime.utcnow().second, microseconds=datetime.utcnow().microsecond)
-        end_date = (utcnow + timedelta(minutes=5)).strftime("%Y%m%d-%H:%M:%S")
-        start_date = utcnow.strftime("%Y%m%d-%H:%M:%S")
+        self.start_date = datetime.utcnow().replace(tzinfo=timezone.utc)
+        self.start_date = self.start_date - timedelta(seconds=self.start_date.second, microseconds=self.start_date.microsecond) + timedelta(minutes=1)
+        self.end_date = (self.start_date + timedelta(minutes=5))
         # endregion
 
-        # region EndDate for TradingPhases
-        now = datetime.utcnow() + timedelta(minutes=1) - timedelta(seconds=datetime.utcnow().second, microseconds=datetime.utcnow().microsecond)
-        end_date_open = now + timedelta(minutes=5)
+        # region Start/End Date algo parameters
+        start_date_algo = self.start_date.strftime("%Y%m%d-%H:%M:%S")
+        end_date_algo = self.end_date.strftime("%Y%m%d-%H:%M:%S")
         # endregion
 
         # region Update Trading Phase
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify trading phase profile", self.test_id))
         trading_phase_manager = TradingPhaseManager()
         trading_phase_manager.build_timestamps_for_trading_phase_sequence(TradingPhases.Open)
-        trading_phase_manager.update_endtime_for_trading_phase_by_phase_name(TradingPhases.Open, end_date_open)
         trading_phases = trading_phase_manager.get_trading_phase_list()
         self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
         # end region
@@ -162,13 +161,15 @@ class QAP_T4685(TestCase):
         # endregion
 
         scheduler = sched.scheduler(time.time, time.sleep)
-        initial_order = AFM.get_timestamp_from_list(phases=trading_phases, phase=TradingPhases.Open, start_time=False) - 300
-        first_slice_20_seconds = AFM.get_timestamp_from_list(phases=trading_phases, phase=TradingPhases.Open, start_time=False) - 280
-        second_slice_20_seconds = AFM.get_timestamp_from_list(phases=trading_phases, phase=TradingPhases.Open, start_time=False) - 230
-        third_slice_20_seconds = AFM.get_timestamp_from_list(phases=trading_phases, phase=TradingPhases.Open, start_time=False) - 170
-        fouth_slice_20_seconds = AFM.get_timestamp_from_list(phases=trading_phases, phase=TradingPhases.Open, start_time=False) - 110
-        end_time_minus_5_sec = AFM.get_timestamp_from_list(phases=trading_phases, phase=TradingPhases.Open, start_time=False) - 5
-        end_time = AFM.get_timestamp_from_list(phases=trading_phases, phase=TradingPhases.Open, start_time=False)
+        initial_order = self.end_date.timestamp() - 300
+        first_slice_20_seconds = self.end_date.timestamp() - 280
+        second_slice_20_seconds = self.end_date.timestamp() - 230
+        third_slice_20_seconds = self.end_date.timestamp() - 170
+        fouth_slice_20_seconds = self.end_date.timestamp() - 110
+        end_time_minus_5_sec = self.end_date.timestamp() - 5
+        end_time = self.end_date.timestamp()
+
+        print(initial_order)
 
         # region Send NewOrderSingle (35=D)
         self.case_id_1 = bca.create_event("Create TWAP Algo Order", self.test_id)
@@ -177,7 +178,7 @@ class QAP_T4685(TestCase):
         self.twap_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_TWAP_Redburn_params()
         self.twap_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.twap_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.ex_destination_1))
-        self.twap_order.update_fields_in_component('QuodFlatParameters', dict(Waves=self.waves, StartDate2=start_date, EndDate2=end_date, MinParticipation=self.min_participation))
+        self.twap_order.update_fields_in_component('QuodFlatParameters', dict(Waves=self.waves, StartDate2=start_date_algo, EndDate2=end_date_algo, MinParticipation=self.min_participation))
 
         scheduler.enterabs(initial_order, 1, self.fix_manager_sell.send_message_and_receive_response, kwargs=dict(fix_message=self.twap_order))
 
