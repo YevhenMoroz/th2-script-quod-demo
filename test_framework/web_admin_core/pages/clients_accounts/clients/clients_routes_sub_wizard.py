@@ -25,8 +25,12 @@ class ClientsRoutesSubWizard(CommonPage):
     def set_route(self, value):
         self.set_combobox_value(ClientsConstants.ROUTES_TAB_ROUTE_XPATH, value)
 
+    # for future: get_route_in_edit_mode
     def get_route(self):
         return self.get_text_by_xpath(ClientsConstants.ROUTES_TAB_ROUTE_XPATH)
+
+    def get_route_in_table(self):
+        return self.find_by_xpath(ClientsConstants.ROUTES_TAB_ROUTE_TABLE).text
 
     def set_route_filter(self, value):
         self.set_text_by_xpath(ClientsConstants.ROUTES_TAB_ROUTE_FILTER_XPATH, value)

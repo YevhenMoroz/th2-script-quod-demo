@@ -113,11 +113,10 @@ class ClientsConstants:
     MANAGEMENTS_TAB_MIDDLE_OFFICE_DESK_XPATH = '//*[@id="middleOfficeDesk"]'
 
     # Policies tab
-
+    POLICIES_TAB_DEFAULT_EXECUTION_STRATEGY_TYPE_XPATH = '//*[@id="defaultAlgoType"]'
     POLICIES_TAB_DEFAULT_EXECUTION_STRATEGY_XPATH = '//*[@id="defaultAlgoPolicy"]'
-    POLICIES_TAB_DEFAULT_SOR_EXECUTION_STRATEGY_XPATH = '//*[@id="defaultSORAlgoPolicy"]'
+    POLICIES_TAB_DEFAULT_CHILD_EXECUTION_STRATEGY_XPATH = '//*[@id="defaultSORAlgoPolicy"]'
     POLICIES_TAB_DEFAULT_ROUTING_INSTRUCTION_XPATH = '//*[@id="defaultRoutingInstruction"]'
-    POLICIES_TAB_DEFAULT_ALGO_TYPE_XPATH = '//*[@id="defaultAlgoType"]'
     POLICIES_TAB_CUSTOM_VALIDATION_RULES_XPATH = '//*[@id="validParamGroup"]'
     POLICIES_TAB_MANAGE_CUSTOM_VALIDATION_RULES_XPATH = '//*[@class="col-sm"]'
     POLICIES_TAB_LIST_OF_DEFAULT_STRATEGIES_XPATH = "//*[@class='empty-option font-italic nb-transition ng-star-inserted']//*[text()='Default']"
@@ -162,6 +161,7 @@ class ClientsConstants:
     INSTR_TYPES_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Instr Types "]/parent::nb-accordion-item//*[@data-name="trash-2"]'
 
     INSTR_TYPES_TAB_INSTR_TYPE_XPATH = '(//*[normalize-space()="Instr Types"]//..//nb-select)[1]'
+    INSTR_TYPES_TAB_INSTR_TYPE_TABLE_XPATH = '(//*[normalize-space()="Instr Types"]//..//p-celleditor//span)[1]'
     INSTR_TYPES_TAB_INSTR_TYPE_FILTER_XPATH = '//*[@class="instrType ng2-smart-th ng-star-inserted"]//input'
     INSTR_TYPES_TAB_POS_KEEPING_MODE_XPATH = '(//*[normalize-space()="Instr Types"]//..//nb-select)[2]'
     INSTR_TYPES_TAB_POS_KEEPING_MODE_FILTER_XPATH = '//*[@class="ng2-smart-th posKeepingMode ng-star-inserted"]//input'
@@ -174,6 +174,7 @@ class ClientsConstants:
     VENUES_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Venues "]/parent::nb-accordion-item//*[@data-name="trash-2"]'
 
     VENUES_TAB_VENUE_XPATH = '//*[@placeholder="Venue *"]'
+    VENUES_TAB_VENUE_TABLE = '(//*[normalize-space()="Venues"]//..//p-celleditor//span)[1]'
     VENUES_TAB_VENUE_FILTER_XPATH = '(//nb-accordion-item-header[normalize-space()="Venues"]//..//thead//input)[1]'
     VENUES_TAB_VENUE_CLIENT_NAME_XPATH = '//*[@placeholder="Venue Client Name *"]'
     VENUES_TAB_VENUE_CLIENT_NAME_FILTER_XPATH = '(//nb-accordion-item-header[normalize-space()="Venues"]//..//thead//input)[2]'
@@ -202,6 +203,7 @@ class ClientsConstants:
     ROUTES_TAB_DELETE_BUTTON_XPATH = '//*[text()=" Routes "]/parent::nb-accordion-item//*[@data-name="trash-2"]'
 
     ROUTES_TAB_ROUTE_XPATH = '//*[@placeholder="Route *"]'
+    ROUTES_TAB_ROUTE_TABLE = '(//*[normalize-space()="Routes"]//..//p-celleditor//span)[1]'
     ROUTES_TAB_ROUTE_FILTER_XPATH = '(//*[text()=" Routes "]//parent::nb-accordion-item//*[@placeholder="Filter"])[1]'
     ROUTES_TAB_ROUTE_CLIENT_NAME_XPATH = '//*[@placeholder="Route Client Name *"]'
     ROUTES_TAB_ROUTE_CLIENT_NAME_FILTER_XPATH = '(//*[text()=" Routes "]//parent::nb-accordion-item//*[@placeholder="Filter"])[2]'
@@ -218,6 +220,7 @@ class ClientsConstants:
     TRADE_CONFIRM_TRADE_CONFIRM_PREFERENCE_XPATH = '//*[@id="tradeConfirmPreference"]'
     TRADE_CONFIRM_NET_GROSS_IND_TYPE_XPATH = '//*[@id="netGrossIndType"]'
     TRADE_CONFIRM_EMAIL_ADDRESS_XPATH = '//*[@placeholder="Email Address *"]'
+    TRADE_CONFIRM_EMAIL_ADDRESS_TABLE = '(//*[normalize-space()="Trade Confirm"]//..//p-celleditor//span)[1]'
     TRADE_CONFIRM_EMAIL_ADDRESS_FILTER_XPATH = '//*[@class="emailAddress ng2-smart-th ng-star-inserted"]//input'
     TRADE_CONFIRM_RECIPIENT_TYPES_XPATH = '//*[normalize-space()="Recipient Types"]//ancestor::p-table//nb-select'
     TRADE_CONFIRM_RECIPIENT_TYPES_FILTER_XPATH = '//*[@class="emailAddress ng2-smart-th ng-star-inserted"]//input'
