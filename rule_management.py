@@ -414,10 +414,11 @@ class RuleManager:
                                                           avgPrice=avgPrice
                                                           ))
 
-    def add_OrderCancelReplaceRequest_ExecutionReport(self, session: str, trade: bool):
+    def add_OrderCancelReplaceRequest_ExecutionReport(self, session: str, trade: bool, delay: int = 0):
         return self.sim.createOrderCancelReplaceExecutionReport(
             request=TemplateOrderCancelReplaceExecutionReport(connection_id=ConnectionID(session_alias=session),
-                                                              trade=trade
+                                                              trade=trade,
+                                                              delay=delay
                                                               ))
 
     def add_OrderCancelReplaceRequest(self, session: str, account: str, exdestination: str, modify=True, delay=0):
