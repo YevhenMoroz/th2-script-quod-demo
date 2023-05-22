@@ -86,7 +86,6 @@ class QAP_T10909(TestCase):
             execution_report_child = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value,
                                                                             f"'ExecutionPolicy': '{ExecutionPolicyConst.DMA.value}'").get_parameters()[
                 JavaApiFields.ExecutionReportBlock.value]
-            print(execution_report_child)
             self.java_api_manager.compare_values(
                 {JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_FIL.value},
                 execution_report_child, 'Verify that DMA order is filled (step 3)')
