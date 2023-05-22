@@ -55,18 +55,14 @@ class QAP_T9215(TestCase):
         self.price_bid = 30
         self.qty_bid = 1_000_000
 
-        self.slice_qty = AFM.get_all_twap_slices(1000000, 6)
-        self.slice_1_qty = AFM.get_next_twap_slice(self.qty, 6)
-        self.slice_2_qty = AFM.get_next_twap_slice(self.qty, 5)
-        self.slice_3_qty = AFM.get_next_twap_slice(self.qty, 4)
-        self.slice_4_qty = AFM.get_next_twap_slice(self.qty, 3)
-        self.slice_5_qty = AFM.get_next_twap_slice(self.qty, 2)
+        self.slice_qty = AFM.get_all_twap_slices(self.qty, 6)
         self.auction_child_qty = self.qty
 
         self.passive_phase_price = self.price_bid - 0.005
         self.neutral_phase_price = int((self.price_bid + self.price_ask) / 2)
 
         self.tif_atc = TimeInForce.AtTheClose.value
+        self.tif_ioc = TimeInForce.ImmediateOrCancel.value
         # endregion
 
         # region Gateway Side
@@ -124,8 +120,8 @@ class QAP_T9215(TestCase):
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_xpar, self.passive_phase_price)
         nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_xpar, self.price)
         ocrr_rule = rule_manager.add_OrderCancelReplaceRequest_ExecutionReport(self.fix_env1.buy_side, False)
-        cancel_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.client, self.ex_destination_xpar, True)
-        self.rule_list = [nos_rule, nos_rule2, ocrr_rule,  cancel_rule]
+        ocr_rule = rule_manager.add_OCR(self.fix_env1.buy_side)
+        self.rule_list = [nos_rule, nos_rule2, ocrr_rule, ocr_rule]
         # endregion
 
         self.send_algo = datetime.utcnow().replace(tzinfo=timezone.utc)
@@ -223,7 +219,7 @@ class QAP_T9215(TestCase):
         # region Check the 2nd replacing of the 1st TWAP slice
         self.fix_verifier_buy.set_case_id(bca.create_event("1st TWAP slice goes to the aggressive phase", self.test_id))
 
-        twap_slice_1_order.change_parameters(dict(Price=self.price))
+        twap_slice_1_order.change_parameters(dict(Price=self.price, TimeInForce=self.tif_ioc))
 
         er_replaced_twap_slice_1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_slice_1_order, self.gateway_side_buy, self.status_cancel_replace)
         self.fix_verifier_buy.check_fix_message(er_replaced_twap_slice_1_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side 2nd ExecReport Replaced TWAP slice 1 order')
@@ -247,7 +243,7 @@ class QAP_T9215(TestCase):
         er_replaced_twap_slice_2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_slice_2_order, self.gateway_side_buy, self.status_cancel_replace)
         self.fix_verifier_buy.check_fix_message(er_replaced_twap_slice_2_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side 1st ExecReport Replaced TWAP slice 2 order')
 
-        twap_slice_2_order.change_parameters(dict(Price=self.price))
+        twap_slice_2_order.change_parameters(dict(Price=self.price, TimeInForce=self.tif_ioc))
 
         er_replaced_twap_slice_2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_slice_2_order, self.gateway_side_buy, self.status_cancel_replace)
         self.fix_verifier_buy.check_fix_message(er_replaced_twap_slice_2_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side 2nd ExecReport Replaced TWAP slice 2 order')
@@ -271,7 +267,7 @@ class QAP_T9215(TestCase):
         er_replaced_twap_slice_3_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_slice_3_order, self.gateway_side_buy, self.status_cancel_replace)
         self.fix_verifier_buy.check_fix_message(er_replaced_twap_slice_3_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side 1st ExecReport Replaced TWAP slice 3 order')
 
-        twap_slice_3_order.change_parameters(dict(Price=self.price))
+        twap_slice_3_order.change_parameters(dict(Price=self.price, TimeInForce=self.tif_ioc))
 
         er_replaced_twap_slice_3_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_slice_3_order, self.gateway_side_buy, self.status_cancel_replace)
         self.fix_verifier_buy.check_fix_message(er_replaced_twap_slice_3_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side 2nd ExecReport Replaced TWAP slice 3 order')
@@ -295,7 +291,7 @@ class QAP_T9215(TestCase):
         er_replaced_twap_slice_4_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_slice_4_order, self.gateway_side_buy, self.status_cancel_replace)
         self.fix_verifier_buy.check_fix_message(er_replaced_twap_slice_4_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side 1st ExecReport Replaced TWAP slice 4 order')
 
-        twap_slice_4_order.change_parameters(dict(Price=self.price))
+        twap_slice_4_order.change_parameters(dict(Price=self.price, TimeInForce=self.tif_ioc))
 
         er_replaced_twap_slice_4_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_slice_4_order, self.gateway_side_buy, self.status_cancel_replace)
         self.fix_verifier_buy.check_fix_message(er_replaced_twap_slice_4_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side 2nd ExecReport Replaced TWAP slice 4 order')
@@ -319,7 +315,7 @@ class QAP_T9215(TestCase):
         er_replaced_twap_slice_5_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_slice_5_order, self.gateway_side_buy, self.status_cancel_replace)
         self.fix_verifier_buy.check_fix_message(er_replaced_twap_slice_5_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side 1st ExecReport Replaced TWAP slice 5 order')
 
-        twap_slice_5_order.change_parameters(dict(Price=self.price))
+        twap_slice_5_order.change_parameters(dict(Price=self.price, TimeInForce=self.tif_ioc))
 
         er_replaced_twap_slice_5_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_slice_5_order, self.gateway_side_buy, self.status_cancel_replace)
         self.fix_verifier_buy.check_fix_message(er_replaced_twap_slice_5_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side 2nd ExecReport Replaced TWAP slice 5 order')
