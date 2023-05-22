@@ -712,7 +712,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             ClOrdID='*',
             OrdType=new_order_single.get_parameter('OrdType'),
             OrderQty=new_order_single.get_parameter("OrderQty"),
-            Text='order replaced',
+            Text='*',
             Side=new_order_single.get_parameter("Side"),
             TimeInForce=new_order_single.get_parameter("TimeInForce"),
             Price=new_order_single.get_parameter('Price'),
