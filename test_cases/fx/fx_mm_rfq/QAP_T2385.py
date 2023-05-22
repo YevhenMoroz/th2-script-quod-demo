@@ -71,7 +71,7 @@ class QAP_T2385(TestCase):
         # region Step 4
         self.modify_instrument.update_value_in_component("clientTierInstrSymbolTenor", "allowQuoteRequests", "true")
         self.rest_manager.send_post_request(self.modify_instrument)
-        self.sleep(5)
+        self.sleep(10)
         # endregion
         # region Step 5
         self.quote_request.set_rfq_params()

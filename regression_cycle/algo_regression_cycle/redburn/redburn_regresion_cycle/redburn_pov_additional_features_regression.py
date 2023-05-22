@@ -2,8 +2,19 @@ import logging
 import time
 from custom import basic_custom_actions as bca
 from stubs import Stubs
-from test_cases.algo.Algo_Redburn.Algo_POV import QAP_T4333, QAP_T4330
-from test_cases.algo.Algo_PercentageVolume import QAP_T4573, QAP_T4574, QAP_T4580, QAP_T4599, QAP_T4629, QAP_T4631, QAP_T4648, QAP_T4659, QAP_T4660, QAP_T4556, QAP_T4661, QAP_T4565, QAP_T4662, QAP_T4566, QAP_T4567, QAP_T4568, QAP_T4569
+from test_cases.algo.Algo_PercentageVolume.QAP_T4342 import QAP_T4342
+from test_cases.algo.Algo_PercentageVolume.QAP_T4345 import QAP_T4345
+from test_cases.algo.Algo_PercentageVolume.QAP_T4599 import QAP_T4599
+from test_cases.algo.Algo_PercentageVolume.QAP_T4603 import QAP_T4603
+from test_cases.algo.Algo_PercentageVolume.QAP_T4632 import QAP_T4632
+from test_cases.algo.Algo_PercentageVolume.QAP_T4633 import QAP_T4633
+from test_cases.algo.Algo_PercentageVolume.QAP_T4634 import QAP_T4634
+from test_cases.algo.Algo_PercentageVolume.QAP_T4635 import QAP_T4635
+from test_cases.algo.Algo_PercentageVolume.QAP_T4648 import QAP_T4648
+from test_cases.algo.Algo_PercentageVolume.QAP_T4659 import QAP_T4659
+from test_cases.algo.Algo_PercentageVolume.QAP_T4660 import QAP_T4660
+from test_cases.algo.Algo_PercentageVolume.QAP_T4661 import QAP_T4661
+from test_cases.algo.Algo_PercentageVolume.QAP_T4662 import QAP_T4662
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T10939 import QAP_T10939
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T4604 import QAP_T4604
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T4636 import QAP_T4636
@@ -77,6 +88,19 @@ def test_run(parent_id=None, version=None):
         QAP_T4650(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4651(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4706(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4342(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4345(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4599(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4603(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4632(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4633(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4634(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4635(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4648(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4659(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4660(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4661(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4662(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
         # region config reset
         default_config_value = ssh_client.get_and_update_file(config_file, {xpath: new_config_value})

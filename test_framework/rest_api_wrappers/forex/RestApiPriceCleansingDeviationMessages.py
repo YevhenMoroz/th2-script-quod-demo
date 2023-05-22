@@ -86,8 +86,9 @@ class RestApiPriceCleansingDeviationMessages(RestApiMessages):
         self.update_parameters({'priceCleansingReferenceVenue': []})
         return self
 
-    def add_ref_venue(self, venue_name):
-        self.parameters["priceCleansingReferenceVenue"].append({"venueID": venue_name})
+    def add_ref_venues(self, venue_names: tuple):
+        for i in venue_names:
+            self.parameters["priceCleansingReferenceVenue"].append({"venueID": i})
         return self
 
     def remove_ref_venue_by_id(self, id):

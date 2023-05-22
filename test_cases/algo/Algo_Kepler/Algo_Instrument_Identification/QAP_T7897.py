@@ -41,8 +41,8 @@ class QAP_T7897(TestCase):
         self.price_bid = 30
         self.px_for_incr = 0
         self.side = constants.OrderSide.Sell.value
-        self.text_1 = constants.RejectMessages.no_listing_8.value
-        self.text_2 = constants.RejectMessages.no_listing_9.value
+        self.text_1 = constants.RejectMessages.no_listing_7.value
+        self.text_2 = constants.RejectMessages.no_listing_8.value
         # endregion
 
         # region Gateway Side

@@ -4,6 +4,7 @@ from stubs import Stubs
 from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T10943 import QAP_T10943
 from test_cases.algo.Algo_Redburn.Algo_VWAP_Auction.QAP_T8554 import QAP_T8554
 from test_cases.algo.Algo_Redburn.Algo_VWAP_Auction.QAP_T9062 import QAP_T9062
+from test_cases.algo.Algo_VWAP.QAP_T4616 import QAP_T4616
 from test_framework.configurations.component_configuration import ComponentConfigurationAlgo
 
 
@@ -27,6 +28,7 @@ def test_run(parent_id=None, version=None):
         # endregion
 
         # region Would
+        QAP_T4616(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
         # region Navigator

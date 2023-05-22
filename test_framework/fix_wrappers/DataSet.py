@@ -54,6 +54,13 @@ class Instrument(Enum):
         SecurityExchange='XPAR',
         SecurityType='CS'
     )
+    AMS = dict(
+        Symbol='AXS',
+        SecurityID='GB00B0LMC530_EUR',
+        SecurityIDSource='4',
+        SecurityExchange='XAMS',
+        SecurityType='CS'
+    )
     PAR = dict(
         Symbol='PAR',
         SecurityID='FR0010263202',
@@ -91,8 +98,8 @@ class Instrument(Enum):
         SecurityType='CS'
     )
     RF = dict(
-        Symbol='FR0000121121_EUR',
-        SecurityID='FR0000121121',
+        Symbol='FR0000062788_EUR',
+        SecurityID='FR0000062788',
         SecurityIDSource='4',
         SecurityExchange='XPAR',
         SecurityType='CS'
@@ -137,8 +144,8 @@ class Connectivity(Enum):
 
 
 class GatewaySide(Enum):
-    Sell = "Sell"
-    Buy = "Buy"
+    Sell = "RBSell"
+    Buy = "RBBuy"
 
 
 class Status(Enum):

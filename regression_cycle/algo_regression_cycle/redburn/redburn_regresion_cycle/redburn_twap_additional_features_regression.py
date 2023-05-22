@@ -2,6 +2,20 @@ import logging
 import time
 from custom import basic_custom_actions as bca
 from stubs import Stubs
+from test_cases.algo.Algo_TWAP.QAP_T4340 import QAP_T4340
+from test_cases.algo.Algo_TWAP.QAP_T4343 import QAP_T4343
+from test_cases.algo.Algo_TWAP.QAP_T4346 import QAP_T4346
+from test_cases.algo.Algo_TWAP.QAP_T4600 import QAP_T4600
+from test_cases.algo.Algo_TWAP.QAP_T4605 import QAP_T4605
+from test_cases.algo.Algo_TWAP.QAP_T4655 import QAP_T4655
+from test_cases.algo.Algo_TWAP.QAP_T4656 import QAP_T4656
+from test_cases.algo.Algo_TWAP.QAP_T4657 import QAP_T4657
+from test_cases.algo.Algo_TWAP.QAP_T4658 import QAP_T4658
+from test_cases.algo.Algo_TWAP.QAP_T4663 import QAP_T4663
+from test_cases.algo.Algo_TWAP.QAP_T4664 import QAP_T4664
+from test_cases.algo.Algo_TWAP.QAP_T4665 import QAP_T4665
+from test_cases.algo.Algo_TWAP.QAP_T4666 import QAP_T4666
+from test_cases.algo.Algo_TWAP.QAP_T4702 import QAP_T4702
 from test_framework.ssh_wrappers.ssh_client import SshClient
 from test_cases.algo.Algo_Redburn.Algo_TWAP import QAP_T4332, QAP_T4286, QAP_T4335
 from test_cases.algo.Algo_Redburn.Algo_TWAP.QAP_T4606 import QAP_T4606
@@ -20,7 +34,6 @@ from test_cases.algo.Algo_Redburn.Algo_TWAP.QAP_T4679 import QAP_T4679
 from test_cases.algo.Algo_Redburn.Algo_TWAP.QAP_T4680 import QAP_T4680
 from test_cases.algo.Algo_Redburn.Algo_TWAP.QAP_T4681 import QAP_T4681
 from test_cases.algo.Algo_Redburn.Algo_TWAP.QAP_T4682 import QAP_T4682
-from test_cases.algo.Algo_TWAP import QAP_T4692, QAP_T4693, QAP_T4694, QAP_T4695, QAP_T4557, QAP_T4696, QAP_T4572, QAP_T4697, QAP_T4579, QAP_T4698, QAP_T4600, QAP_T4699, QAP_T4605, QAP_T4700, QAP_T4655, QAP_T4701, QAP_T4664, QAP_T4702, QAP_T4665, QAP_T4666, QAP_T4687, QAP_T4690, QAP_T4691
 from test_framework.configurations.component_configuration import ComponentConfigurationAlgo
 
 
@@ -66,6 +79,20 @@ def test_run(parent_id=None, version=None):
         QAP_T4680(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4681(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4682(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4340(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4343(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4600(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4605(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4655(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4346(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4656(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4657(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4658(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4663(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4664(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4665(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4666(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4702(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         
         # region config reset
         default_config_value = ssh_client.get_and_update_file(config_file, {xpath: new_config_value})

@@ -13,6 +13,7 @@ from test_cases.algo.Algo_Stop.QAP_T4278 import QAP_T4278
 from test_cases.algo.Algo_Stop.QAP_T4280 import QAP_T4280
 from test_cases.algo.Algo_Stop.QAP_T4272 import QAP_T4272
 from test_cases.algo.Algo_Stop.QAP_T4273 import QAP_T4273
+from test_cases.algo.Algo_Stop.QAP_T4238 import QAP_T4238
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
 timeouts = False
@@ -40,6 +41,7 @@ def test_run(parent_id=None, version=None, mode=None):
         QAP_T4280(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4272(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4273(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4238(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
         end_time = time.monotonic()
         print(f'Algo_Stop EndTime is {datetime.utcnow()}, duration is {timedelta(seconds=end_time-start_time)}')

@@ -134,7 +134,6 @@ class QAP_T8880(TestCase):
         self.fix_verifier_sell.check_fix_message(pending_POV_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew')
 
         new_POV_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.POV_order, self.gateway_side_sell, self.status_new)
-        new_POV_order_params.change_parameter('NoParty', '*')
         self.fix_verifier_sell.check_fix_message(new_POV_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
 
@@ -156,13 +155,12 @@ class QAP_T8880(TestCase):
 
         # region check cancellation parent POV order
         cancel_pov_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.POV_order, self.gateway_side_sell, self.status_cancel)
-        cancel_pov_order.change_parameters({'NoParty': '*'})
         self.fix_verifier_sell.check_fix_message(cancel_pov_order, key_parameters=self.key_params_cl,  message_name='Sell side ExecReport Canceled')
         # endregion
 
         # region Check child DMA order 1
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order", self.test_id))
-        self.dma_order_1 = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        self.dma_order_1 = FixMessageNewOrderSingleAlgo().set_DMA_params(False)
         self.dma_order_1.change_parameters(dict(OrderQty=self.child_1_qty, Price=self.price, Instrument='*', TimeInForce=self.tif_ioc))
 
         self.fix_verifier_buy.check_fix_message(self.dma_order_1, key_parameters=self.key_params, message_name='Buy side NewOrderSingle Child DMA')
@@ -174,7 +172,7 @@ class QAP_T8880(TestCase):
         self.fix_verifier_buy.check_fix_message(new_dma_order_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA')
 
         cancel_request_dma_order_1_params = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child(self.dma_order_1)
-        cancel_request_dma_order_1_params.change_parameter('NoParty', '*').remove_parameter('ChildOrderID')
+        cancel_request_dma_order_1_params.remove_parameter('ChildOrderID')
         self.fix_verifier_buy.check_fix_message(cancel_request_dma_order_1_params, key_parameters=self.key_params, direction=self.FromQuod, message_name='Buy side Cancel Request')
 
         cancel_reject_dma_order_1_params = FixMessageOrderCancelRejectReportAlgo().set_params_from_new_order_single(self.dma_order_1, self.gateway_side_buy, self.status_reject)

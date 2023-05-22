@@ -83,8 +83,8 @@ class QAP_T2652(TestCase):
             },
         ]
         self.sec_type_spot = self.data_set.get_security_type_by_name("fx_spot")
-        self.fwd_pts_offer = 0.00032
-        self.fwd_pts_bid = 0.0001
+        self.fwd_pts_offer = 0.0002
+        self.fwd_pts_bid = 0.0002
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):

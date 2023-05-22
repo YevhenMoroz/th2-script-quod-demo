@@ -50,7 +50,7 @@ class QAP_T9468(TestCase):
         self.trade_request.set_exec_misc8(self.execMisc8)
         self.trade_request.set_exec_misc9(self.execMisc9)
         self.sleep(1)
-        self.trade_request.update_fields_in_component("TradeEntryRequestBlock", {"AccountGroupID": self.client_ext})
+        self.trade_request.update_fields_in_component("TradeEntryRequestBlock", {"ClientAccountGroupID": self.client_ext})
         self.java_api_manager.send_message_and_receive_response(self.trade_request)
 
         # endregion

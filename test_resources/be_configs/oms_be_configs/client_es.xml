@@ -19,6 +19,7 @@ Copyright Quod Financial
 	<es>
 	    <execution>
 		    <ignoreTradeDate>true</ignoreTradeDate>
+			<duplicates>false</duplicates>
 		</execution>
 		<instrument>
 			<destination>

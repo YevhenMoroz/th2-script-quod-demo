@@ -185,8 +185,9 @@ class FixMessageQuoteSynergyFX(FixMessageQuoteFX):
             Instrument=dict(Symbol=quote_request.get_parameter("NoRelatedSym")[0]["Instrument"]["Symbol"],
                             SecurityType=quote_request.get_parameter("NoRelatedSym")[0]["Instrument"][
                                 "SecurityType"],
-                            SecuritySubType=quote_request.get_parameter("NoRelatedSym")[0]["Instrument"][
-                                "SecuritySubType"],
+                            SecuritySubType="FOR" if quote_request.get_parameter("NoRelatedSym")[0]["Instrument"][
+                                                         "SecuritySubType"] == "FXFWD" else
+                            quote_request.get_parameter("NoRelatedSym")[0]["Instrument"]["SecuritySubType"],
                             Product="4"),
         )
         super().change_parameters(temp)
@@ -202,6 +203,7 @@ class FixMessageQuoteSynergyFX(FixMessageQuoteFX):
             InstrumentLeg=dict(
                 LegSide=quote_request.get_parameter("NoRelatedSym")[0]["NoLegs"][0]["InstrumentLeg"]["LegSide"],
                 LegSymbol="NA",
+                LegCurrency=quote_request.get_parameter("NoRelatedSym")[0]["NoLegs"][0]["InstrumentLeg"]["LegCurrency"],
             )
         ),
             dict(
@@ -211,6 +213,8 @@ class FixMessageQuoteSynergyFX(FixMessageQuoteFX):
                 InstrumentLeg=dict(
                     LegSide=quote_request.get_parameter("NoRelatedSym")[0]["NoLegs"][1]["InstrumentLeg"]["LegSide"],
                     LegSymbol="NA",
+                    LegCurrency=quote_request.get_parameter("NoRelatedSym")[0]["NoLegs"][1]["InstrumentLeg"][
+                        "LegCurrency"],
                 )
             )
         ]

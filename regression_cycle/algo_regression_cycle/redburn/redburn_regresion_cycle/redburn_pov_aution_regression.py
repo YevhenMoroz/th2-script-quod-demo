@@ -1,6 +1,8 @@
 import logging
 from custom import basic_custom_actions as bca
 from stubs import Stubs
+from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T11233 import QAP_T11233
+from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T11234 import QAP_T11234
 from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T4386 import QAP_T4386
 from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T8719 import QAP_T8719
 from test_framework.configurations.component_configuration import ComponentConfigurationAlgo
@@ -21,6 +23,8 @@ def test_run(parent_id=None, version=None):
         configuration = ComponentConfigurationAlgo("Participation")
         QAP_T4386(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8719(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T11233(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T11234(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         pass
 
     except Exception:

@@ -115,11 +115,11 @@ class QAP_T4917(TestCase):
         self.fix_verifier_sell.check_fix_message(self.iceberg_order, direction=self.ToQuod, message_name='Sell side NewOrderSingle')
 
         pending_iceberg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.iceberg_order, self.gateway_side_sell, self.status_pending)
-        pending_iceberg_order_params.remove_parameter('NoParty')
+        
         self.fix_verifier_sell.check_fix_message(pending_iceberg_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew')
 
         new_iceberg_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.iceberg_order, self.gateway_side_sell, self.status_new)
-        new_iceberg_order_params.change_parameter('NoParty', '*')
+        
         self.fix_verifier_sell.check_fix_message(new_iceberg_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
 
@@ -150,7 +150,7 @@ class QAP_T4917(TestCase):
         self.fix_verifier_sell.check_fix_message(self.iceberg_order_replace_params, direction=self.ToQuod, message_name='Sell side OrderCancelReplaceRequest')
 
         replaced_iceberg_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.iceberg_order_replace_params, self.gateway_side_sell, self.status_cancel_replace)
-        replaced_iceberg_order_params.change_parameters(dict(NoParty='*', Price=self.dec_price))
+        replaced_iceberg_order_params.change_parameters(dict(Price=self.dec_price))
         self.fix_verifier_sell.check_fix_message(replaced_iceberg_order_params, key_parameters=self.key_params_cl, message_name='Sell Side ExecReport Replace Request')
         # endregion
 

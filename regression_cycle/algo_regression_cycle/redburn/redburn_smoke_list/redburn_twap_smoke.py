@@ -7,6 +7,7 @@ from test_cases.algo.Algo_Redburn.Algo_TWAP_Auction.QAP_T10704 import QAP_T10704
 from test_cases.algo.Algo_Redburn.Algo_TWAP_Auction.QAP_T4452 import QAP_T4452
 from test_cases.algo.Algo_Redburn.Algo_TWAP_Auction.QAP_T8553 import QAP_T8553
 from test_cases.algo.Algo_Redburn.Algo_TWAP_Auction.QAP_T9061 import QAP_T9061
+from test_cases.algo.Algo_TWAP.QAP_T4655 import QAP_T4655
 from test_framework.configurations.component_configuration import ComponentConfigurationAlgo
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
@@ -31,6 +32,7 @@ def test_run(parent_id=None, version=None):
         # endregion
 
         # region Would
+        QAP_T4655(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
         # region Navigator

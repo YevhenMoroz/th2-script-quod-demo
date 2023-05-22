@@ -75,7 +75,6 @@ class QAP_T7572(TestCase):
         # region step  1-2 : Extract position for acc1 and acc2
         posit_acc1_before_transfer = self._extract_cum_values_for_acc(self.acc1)
         common_daily_pl_before_transfer = self._extract_daily_pl_from_position_ack()
-        print(common_daily_pl_before_transfer)
         posit_acc2_before_transfer = self._extract_cum_values_for_acc(self.acc2)
         # endregion
 
@@ -112,7 +111,6 @@ class QAP_T7572(TestCase):
         self.ja_manager.send_message_and_receive_response(self.pos_trans)
         position_transfer_report = self.ja_manager.get_last_message(ORSMessageType.PositionTransferReport.value). \
             get_parameters()[JavaApiFields.PositionTransferReportBlock.value]
-        print(position_transfer_report)
         self.ja_manager.compare_values({JavaApiFields.QtyToTransfer.value: self.qty_to_transfer_third},
                                        position_transfer_report,
                                        'Verify that position transfer amended (step 8)')
@@ -124,7 +122,7 @@ class QAP_T7572(TestCase):
                                                                      self.acc1]).get_parameters()[
             JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
             JavaApiFields.PositionBlock.value][0]
-        expected_posit_qty = float(posit_acc1_before_transfer) - float(self.qty_to_transfer_third)
+        expected_posit_qty = str(float(posit_acc1_before_transfer[JavaApiFields.PositQty.value]) - float(self.qty_to_transfer_third))
         self.ja_manager.compare_values({JavaApiFields.PositQty.value: expected_posit_qty}, posit,
                                        "Check PositQty after amend for Source Acc (step 9)")
         # endregion

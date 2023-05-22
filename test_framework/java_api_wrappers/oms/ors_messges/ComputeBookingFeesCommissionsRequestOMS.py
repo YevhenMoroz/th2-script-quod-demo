@@ -63,3 +63,7 @@ class ComputeBookingFeesCommissionsRequestOMS(ComputeBookingFeesCommissionsReque
             }
         }
         super().change_parameters(base_parameters)
+
+    def clear_lists(self):
+        self.__list_order_alloc_block.clear()
+        self.__list_exec_alloc_block.clear()

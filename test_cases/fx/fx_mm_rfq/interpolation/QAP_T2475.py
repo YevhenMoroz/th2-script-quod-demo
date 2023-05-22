@@ -23,35 +23,40 @@ class QAP_T2475(TestCase):
         self.ss_connectivity = self.environment.get_list_fix_environment()[0].sell_side_rfq
         self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
         self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
+        self.new_order_single = FixMessageNewOrderMultiLegFX()
+        self.execution_report = FixMessageExecutionReportPrevQuotedFX()
+        self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set).set_swap_rfq_params()
+        self.quote = FixMessageQuoteFX()
+        self.status = Status.Fill
+        self.account = self.data_set.get_client_by_name("client_mm_2")
+        self.symbol = self.data_set.get_symbol_by_name("symbol_2")
+        self.security_type_swap = self.data_set.get_security_type_by_name("fx_swap")
+        self.security_type_spot = self.data_set.get_security_type_by_name("fx_spot")
+        self.security_type_fwd = self.data_set.get_security_type_by_name("fx_fwd")
+        self.settle_type_today = self.data_set.get_settle_type_by_name("today")
+        self.settle_type_spot = self.data_set.get_settle_type_by_name("spot")
+        self.settle_date_spo = self.data_set.get_settle_date_by_name("spot")
+        self.settle_date_tod = self.data_set.get_settle_date_by_name("today")
+        self.instrument = {
+            "Symbol": self.symbol,
+            "SecurityType": self.security_type_swap
+        }
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        status = Status.Fill
-        account = self.data_set.get_client_by_name("client_mm_2")
-        symbol = self.data_set.get_symbol_by_name("symbol_2")
-        security_type_swap = self.data_set.get_security_type_by_name("fx_swap")
-        security_type_spot = self.data_set.get_security_type_by_name("fx_spot")
-        security_type_fwd = self.data_set.get_security_type_by_name("fx_fwd")
-        settle_type_today = self.data_set.get_settle_type_by_name("today")
-        settle_type_spot = self.data_set.get_settle_type_by_name("spot")
-        settle_date_spo = self.data_set.get_settle_date_by_name("spot")
-        settle_date_tod = self.data_set.get_settle_date_by_name("today")
-        instrument = {
-            "Symbol": symbol,
-            "SecurityType": security_type_swap
-        }
-        quote_request = FixMessageQuoteRequestFX(data_set=self.data_set).set_swap_rfq_params()
-        quote_request.update_near_leg(leg_symbol=symbol, leg_sec_type=security_type_fwd, settle_type=settle_type_today,
-                                      settle_date=settle_date_tod)
-        quote_request.update_far_leg(leg_symbol=symbol, settle_type=settle_type_spot, leg_sec_type=security_type_spot,
-                                     settle_date=settle_date_spo)
-        quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=account,
-                                                      Currency="GBP", Instrument=instrument)
-        response: list = self.fix_manager_gtw.send_message_and_receive_response(quote_request, self.test_id)
-        quote = FixMessageQuoteFX().set_params_for_quote_swap(quote_request)
-        self.fix_verifier.check_fix_message(fix_message=quote, key_parameters=["QuoteReqID"])
-        new_order_single = FixMessageNewOrderMultiLegFX().set_default_prev_quoted_swap(quote_request, response[0])
-        self.fix_manager_gtw.send_message_and_receive_response(new_order_single)
-        execution_report = FixMessageExecutionReportPrevQuotedFX().set_params_from_new_order_swap(new_order_single,
-                                                                                                  status)
-        self.fix_verifier.check_fix_message(execution_report, direction=DirectionEnum.FromQuod)
+        self.quote_request.set_swap_rfq_params()
+        self.quote_request.update_near_leg(leg_symbol=self.symbol, leg_sec_type=self.security_type_fwd,
+                                           settle_type=self.settle_type_today,
+                                           settle_date=self.settle_date_tod)
+        self.quote_request.update_far_leg(leg_symbol=self.symbol, settle_type=self.settle_type_spot,
+                                          leg_sec_type=self.security_type_spot,
+                                          settle_date=self.settle_date_spo)
+        self.quote_request.update_repeating_group_by_index(component="NoRelatedSymbols", index=0, Account=self.account,
+                                                           Currency="GBP", Instrument=self.instrument)
+        response: list = self.fix_manager_gtw.send_message_and_receive_response(self.quote_request, self.test_id)
+        self.quote.set_params_for_quote_swap(self.quote_request)
+        self.fix_verifier.check_fix_message(self.quote)
+        self.new_order_single.set_default_prev_quoted_swap(self.quote_request, response[0])
+        self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single)
+        self.execution_report.set_params_from_new_order_swap(self.new_order_single, self.status)
+        self.fix_verifier.check_fix_message(self.execution_report)

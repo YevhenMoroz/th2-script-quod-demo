@@ -20,7 +20,7 @@ from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMes
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
 from test_framework.ssh_wrappers.ssh_client import SshClient
 
-class QAP_T4559(TestCase):
+class QAP_T4599(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)

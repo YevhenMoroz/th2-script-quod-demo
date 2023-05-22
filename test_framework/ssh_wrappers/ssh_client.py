@@ -1,4 +1,5 @@
 import os
+import re
 import time
 
 import paramiko
@@ -74,6 +75,26 @@ class SshClient:
         self.put_file(f"/home/{self.su_user}/quod/cfg/{component_config}", f"{ROOT_DIR}/test_resources/temp_config.xml")
         os.remove(f"{ROOT_DIR}/test_resources/temp_config.xml")
         return base_config
+
+    def find_regex_pattern(self, path_to_log_file: str, pattern: str):
+        """returns bool value True if matching pattern is found in log file, returns False otherwise.
+
+        use path_to_log_file variable to navigate log file in backend
+        use pattern variable to apply regex for the log file
+
+        Usage example:
+            self.result = self.ssh_client.findall_in_logs("/Logs/quod314/QUOD.QS_ESP_FIX_TH2.log",
+                                                          rf"^.*{order_id}.*ClientAccountGroupID=.Silver1.*$")"""
+        temp_path = os.path.join(os.path.expanduser('~'), 'PycharmProjects', 'th2-script-quod-demo', 'temp')
+        self.get_file(path_to_log_file, temp_path)
+        logs = open(temp_path, "r")
+        for line in logs:
+            key = re.findall(pattern, line)
+            if key:
+                logs.close()
+                os.remove(temp_path)
+                return True
+        return False
 
 
 if __name__ == "__main__":

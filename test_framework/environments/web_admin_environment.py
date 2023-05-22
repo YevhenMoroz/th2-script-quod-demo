@@ -24,6 +24,26 @@ class WebAdminEnvironment(BaseEnvironment):
                 WebAdminEnvironment.environment_instances.update(
                     {EnvironmentType.quod306_web_admin_saturn_chrome.value: web_admin_environment})
             return WebAdminEnvironment.environment_instances[EnvironmentType.quod306_web_admin_saturn_chrome.value]
+        elif env.value == EnvironmentType.quod310_web_admin_columbia_chrome.value:
+            if EnvironmentType.quod310_web_admin_columbia_chrome.value not in WebAdminEnvironment.environment_instances.keys():
+                web_admin_environment = WebAdminEnvironment(
+                    environment_type=EnvironmentType.quod310_web_admin_columbia_chrome.value,
+                    web_browser=WebBrowser.chrome.value,
+                    site_url=WebAdminURL.columbia_310.value
+                )
+                WebAdminEnvironment.environment_instances.update(
+                    {EnvironmentType.quod310_web_admin_columbia_chrome.value: web_admin_environment})
+            return WebAdminEnvironment.environment_instances[EnvironmentType.quod310_web_admin_columbia_chrome.value]
+        elif env.value == EnvironmentType.quod324_web_admin_venus_chrome.value:
+            if EnvironmentType.quod324_web_admin_venus_chrome.value not in WebAdminEnvironment.environment_instances.keys():
+                web_admin_environment = WebAdminEnvironment(
+                    environment_type=EnvironmentType.quod324_web_admin_venus_chrome.value,
+                    web_browser=WebBrowser.chrome.value,
+                    site_url=WebAdminURL.venus_324.value
+                )
+                WebAdminEnvironment.environment_instances.update(
+                    {EnvironmentType.quod324_web_admin_venus_chrome.value: web_admin_environment})
+            return WebAdminEnvironment.environment_instances[EnvironmentType.quod324_web_admin_venus_chrome.value]
         elif env.value == EnvironmentType.quod306_web_admin_saturn_firefox.value:
             if EnvironmentType.quod306_web_admin_saturn_firefox.value not in WebAdminEnvironment.environment_instances.keys():
                 web_admin_environment = WebAdminEnvironment(

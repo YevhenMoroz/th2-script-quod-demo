@@ -66,6 +66,7 @@ class ExecutionStrategiesWizard(CommonPage):
     def get_aggressor_indicator(self):
         return self.get_text_by_xpath(ExecutionStrategiesConstants.AGGRESSOR_INDICATOR_AT_VALUES_TAB_XPATH)
 
+    # Parent Order Defaults TAB
     def set_tif(self, value):
         self.select_value_from_dropdown_list(ExecutionStrategiesConstants.TIF_XPATH, value)
 
@@ -77,6 +78,24 @@ class ExecutionStrategiesWizard(CommonPage):
 
     def get_ord_type(self):
         return self.get_text_by_xpath(ExecutionStrategiesConstants.ORD_TYPY_XPATH)
+
+    def set_price_offset_value(self, value):
+        self.set_text_by_xpath(ExecutionStrategiesConstants.LIMIT_PRICE_OFFSET_VALUE, value)
+
+    def get_price_offset_value(self):
+        return self.get_text_by_xpath(ExecutionStrategiesConstants.LIMIT_PRICE_OFFSET_VALUE)
+
+    def set_price_offset_type(self, value):
+        self.select_value_from_dropdown_list(ExecutionStrategiesConstants.LIMIT_PRICE_OFFSET_TYPE, value)
+
+    def get_price_offset_type(self):
+        return self.get_text_by_xpath(ExecutionStrategiesConstants.LIMIT_PRICE_OFFSET_TYPE)
+
+    def set_price_reference(self, value):
+        self.select_value_from_dropdown_list(ExecutionStrategiesConstants.LIMIT_PRICE_REFERENCE, value)
+
+    def get_price_reference(self):
+        return self.get_text_by_xpath(ExecutionStrategiesConstants.LIMIT_PRICE_REFERENCE)
 
     def set_on_pegged(self):
         self.find_by_xpath(ExecutionStrategiesConstants.PEGGED_AT_VALUES_TAB_XPATH).click()
