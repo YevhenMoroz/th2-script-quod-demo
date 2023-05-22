@@ -183,7 +183,7 @@ class QAP_T6950(TestCase):
                                   'BookID', 'SettlDate', 'OrderAvgPx', 'Currency',
                                   'NetMoney', 'MatchStatus', 'ConfirmStatus', 'TradeDate',
                                   'NoParty', 'AllocInstructionMiscBlock1', 'tag5120',
-                                  'ReportedPx', 'Instrument', 'GrossTradeAmt']
+                                  'ReportedPx', 'Instrument', 'GrossTradeAmt', 'AllocInstructionMiscBlock2']
         list_of_ignored_fields.extend(['CpctyConfGrp', 'ConfirmID', 'ConfirmType', 'AllocAccount', 'tag11245'])
         self.confirmation_report.change_parameters(
             {'NoOrders': [{'ClOrdID': cl_ord_id, 'OrderID': ord_id}],

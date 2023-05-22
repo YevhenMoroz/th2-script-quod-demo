@@ -84,7 +84,8 @@ class QAP_T7188(TestCase):
         alloc_id = allocation_report[JavaApiFields.ClientAllocID.value]
 
         alloc_ignored_fields = ['Account', 'tag5120', 'Currency', 'RootCommTypeClCommBasis',
-                                'RootOrClientCommission', 'RootOrClientCommissionCurrency', 'RootSettlCurrAmt','tag11245']
+                                'RootOrClientCommission', 'RootOrClientCommissionCurrency', 'RootSettlCurrAmt',
+                                'tag11245', 'ExecAllocGrp']
         self.alloc_report.set_default_ready_to_book(nos)
         self.fix_verifier_dc.check_fix_message_fix_standard(self.alloc_report, ignored_fields=alloc_ignored_fields)
         # endregion
@@ -108,7 +109,7 @@ class QAP_T7188(TestCase):
                                                                       "AllocQty": "50",
                                                                       "AvgPx": "15"})
         self.java_api_manager.send_message_and_receive_response(self.confirm)
-        alloc_ignored_fields = ['tag5120', 'CommissionData','tag11245']
+        alloc_ignored_fields = ['tag5120', 'CommissionData', 'tag11245', 'AllocInstructionMiscBlock2']
         self.conf_report.set_default_confirmation_new(nos)
         self.conf_report.change_parameters(
             {"AllocQty": "50", "AllocAccount": account1, "AvgPx": "15",

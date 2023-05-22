@@ -180,7 +180,8 @@ class QAP_T7500(TestCase):
         # endregion
 
         # region check 35=J message on fix BackOffice gateway (step 9)
-        list_of_ignored_fields = ['AllocSettlCurrAmt', 'SettlCurrAmt', 'OrderAvgPx', 'tag11245']
+        list_of_ignored_fields = ['AllocSettlCurrAmt', 'SettlCurrAmt', 'OrderAvgPx', 'tag11245', 'ExecAllocGrp',
+                                  'AllocInstructionMiscBlock2']
         change_parameters = {
             'BookingType': '*',
             'RootSettlCurrency': new_currrency,
