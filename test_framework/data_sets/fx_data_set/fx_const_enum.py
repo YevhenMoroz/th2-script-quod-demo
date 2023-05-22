@@ -48,6 +48,7 @@ class FxClients(Enum):
     client_3 = "ASPECT_BREAK"
     client_4 = "AH_TEST_CLIENT"
     client_5 = "TH2_Taker"
+    client_6 = "CLIENT_TEST_INT"
 
     """Dummy client"""
     client_dummy = "DUMMY"
@@ -375,3 +376,4 @@ class InstrIDs(Enum):
     usd_jpy_spot = "Jbuei4sRIyA1Ttsa8mXiKg"
     gbp_myr_spot = "r6Rri_3WSHRtiA3JVZV4yg"
     eur_jpy_spot = "Twk5nricBHx4gkZ0Jm0wOg"
+    eur_usd_spot = "KExUjnMCR-wK6DgQBZpg8g"
