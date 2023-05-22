@@ -264,6 +264,7 @@ class FxSymbols(Enum):
     symbol_25 = "GBP/DKK"
     symbol_26 = "AUD/GBP"
     symbol_27 = "USD/DKK"
+    unsupported_symbol = "USS/MYR"
 
     symbol_ndf_1 = "USD/PHP"
     symbol_ndf_2 = "EUR/PHP"
