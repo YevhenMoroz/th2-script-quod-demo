@@ -124,15 +124,15 @@ class QAP_T2601(TestCase):
                                             ignored_fields=["GatingRuleCondName", "GatingRuleName", "trailer",
                                                             "header"])
         # endregion
-        self.ssh_client.find_regex_pattern("/Logs/quod314/QUOD.FIXSELLQUODTH2.log", rf"^.*ClientScenarioID=.*{order_id}.*$")
-        if self.ssh_client:
+        result = self.ssh_client.find_regex_pattern("/Logs/quod314/QUOD.FIXSELLQUODTH2.log", rf"^.*ClientScenarioID=.*{order_id}.*$")
+        if result:
             self.passed += 1
-        self.ssh_client.find_regex_pattern("/Logs/quod314/QUOD.FIXSELLQUODTH2.log", rf"^.*{order_id}.*10014=.*$")
-        if self.ssh_client:
+        result = self.ssh_client.find_regex_pattern("/Logs/quod314/QUOD.FIXSELLQUODTH2.log", rf"^.*{order_id}.*10014=.*$")
+        if result:
             self.passed += 1
         if self.passed == 2:
-            self.passed = "ok"
+            result = "ok"
         self.verifier.set_parent_id(self.test_id)
         self.verifier.set_event_name("Check \"ClientScenarioID\" tag")
-        self.verifier.compare_values("status", "ok", self.passed)
+        self.verifier.compare_values("status", "ok", result)
         self.verifier.verify()
