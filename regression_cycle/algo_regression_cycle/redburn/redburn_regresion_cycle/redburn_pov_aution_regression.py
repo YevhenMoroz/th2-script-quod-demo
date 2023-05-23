@@ -6,6 +6,7 @@ from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T11234 import QAP_T11234
 from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T4386 import QAP_T4386
 from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T4524 import QAP_T4524
 from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T4526 import QAP_T4526
+from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T4527 import QAP_T4527
 from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T4534 import QAP_T4534
 from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T8719 import QAP_T8719
 from test_framework.configurations.component_configuration import ComponentConfigurationAlgo
