@@ -239,3 +239,10 @@ class QAP_T6944(TestCase):
         self.fix_verifier_dc.check_fix_message_fix_standard(execution_report_fix_position,
                                                             filter_list, ignored_fields=ignored_fields)
         # endregion
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.db_manager.close_connection()
+
+
+
