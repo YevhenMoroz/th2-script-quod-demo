@@ -842,8 +842,21 @@ class AlgoFormulasManager:
         return (price_1 + price_2)/2
 
     @staticmethod
-    def get_avaible_qty_with_save_for_close_percent(parent_qty: int, save_for_close_percent: float):
+    def get_avaible_qty_with_save_for_close_percent(parent_qty: int, save_for_close_percent: float, child_order_qty: int):
         if (save_for_close_percent > 0 and save_for_close_percent < 1):
-            return math.ceil(parent_qty * 100) / (save_for_close_percent * 100)
+            if (parent_qty - math.ceil(parent_qty * 100) / (save_for_close_percent * 100)) > child_order_qty:
+                return child_order_qty
+            else:
+                return parent_qty - math.ceil(parent_qty * 100) / (save_for_close_percent * 100)
         else:
-            return (parent_qty - math.ceil(parent_qty / 100 * save_for_close_percent))
+            if (parent_qty - math.ceil(parent_qty / 100 * save_for_close_percent)) > child_order_qty:
+                return child_order_qty
+            else:
+                return (parent_qty - math.ceil(parent_qty / 100 * save_for_close_percent))
+
+    @staticmethod
+    def get_avaible_qty_with_save_for_close_shares(parent_qty: int, save_for_close_shares: int, child_order_qty: int):
+        if parent_qty - save_for_close_shares > child_order_qty:
+            return child_order_qty
+        else:
+            return (parent_qty - save_for_close_shares)

@@ -44,8 +44,7 @@ class QAP_T4534(TestCase):
         # endregion
 
         # region order parameters
-        self.indicative_volume = 0
-        self.historical_volume = 1000000.0
+        self.indicative_volume = 1000000
         self.percentage_volume = 10
         self.save_for_close_percentage = 90
 
@@ -58,8 +57,9 @@ class QAP_T4534(TestCase):
         self.price_bid = 30
         self.qty_bid = 1_000_000
 
-        self.auction_child_qty = AFM.get_child_qty_for_auction_historical_volume(self.historical_volume, self.percentage_volume, self.qty)
-        self.pov_qty_child = AFM.get_avaible_qty_with_save_for_close_percent(self.qty, self.save_for_close_percentage)
+        self.auction_child_qty = AFM.get_child_qty_for_auction(self.indicative_volume, self.percentage_volume, self.qty)
+        self.check_pov_qty_child = AFM.get_pov_child_qty(self.percentage_volume, self.qty_bid, self.qty)
+        self.pov_qty_child = AFM.get_avaible_qty_with_save_for_close_percent(self.qty, self.save_for_close_percentage, self.check_pov_qty_child)
 
         self.tif_atc = TimeInForce.AtTheClose.value
         # endregion
@@ -128,12 +128,6 @@ class QAP_T4534(TestCase):
         self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
         # end region
 
-        # region insert data into mongoDB
-        curve = AMM.get_straight_curve_for_mongo(trading_phases, volume=self.historical_volume)
-        self.db_manager.insert_many_to_mongodb_with_drop(curve ,f"Q{self.listing_id}")
-        bca.create_event(f"Collection Q{self.listing_id} is inserted", self.test_id, body=''.join([f"{volume['LastTradedTime']} - {volume['LastTradedQty']}, phase - {volume['LastAuctionPhase']}\n" for volume in curve]))
-        # endregion
-
         # region Send MarketDate
         self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send trading phase - Open", self.test_id))
         self.incremental_refresh = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', 0).update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase(TradingPhases.Open)
@@ -186,19 +180,19 @@ class QAP_T4534(TestCase):
         scheduler.enterabs(end_time_minus_1_min, 2, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=passive_child_order_1, key_parameters=self.key_params, message_name='Buy side NewOrderSingle DMA Child 1'))
 
         pending_passive_child_order_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(passive_child_order_1, self.gateway_side_buy, self.status_pending)
-        scheduler.enterabs(end_time_minus_1_min, 2, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=pending_passive_child_order_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew DMA Child 1'))
+        scheduler.enterabs(end_time_minus_1_min, 3, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=pending_passive_child_order_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew DMA Child 1'))
 
         new_passive_child_order_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(passive_child_order_1, self.gateway_side_buy, self.status_new)
-        scheduler.enterabs(end_time_minus_1_min, 2, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=new_passive_child_order_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New  DMA Child 1'))
+        scheduler.enterabs(end_time_minus_1_min, 4, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=new_passive_child_order_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New  DMA Child 1'))
         
         self.fix_verifier_buy.set_case_id(bca.create_event("Check POV child order Buy Side NewOrderSingle, Pending New, New and Cancel", self.case_id_2))
         cancel_auction_dma_child_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(passive_child_order_1, self.gateway_side_buy, self.status_cancel)
-        scheduler.enterabs(end_time_minus_1_min, 2, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=cancel_auction_dma_child_order, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport Canceled Auction child order'))
+        scheduler.enterabs(end_time_minus_1_min, 5, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=cancel_auction_dma_child_order, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport Canceled Auction child order'))
         # endregion
 
         # region Send PCL phase
         self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send OPN phase during random uncross", self.test_id))
-        self.incremental_refresh_1 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_MDReqID(self.listing_id, self.fix_env1.feed_handler).update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', 0).set_phase(TradingPhases.PreClosed)
+        self.incremental_refresh_1 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_MDReqID(self.listing_id, self.fix_env1.feed_handler).update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume).set_phase(TradingPhases.PreClosed)
         scheduler.enterabs(end_time, 1, self.fix_manager_feed_handler.send_message, kwargs=dict(fix_message=self.incremental_refresh_1))
         # endregion
         
