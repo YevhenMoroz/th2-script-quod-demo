@@ -60,7 +60,6 @@ class QAP_T7076(TestCase):
         exec_rep = self.fix_manager.get_last_message("ExecutionReport", 'Instrument').get_parameters()
         self.fix_manager.compare_values({"OrdStatus": "0"}, exec_rep, "Check Status")
         self.fix_message.update_fields_in_component("Instrument", {"SecurityExchange": self.mic})
-        print(exec_rep)
         self.fix_manager.compare_values(self.instrument_1, exec_rep["Instrument"], "Check instrument")
 
     @try_except(test_id=Path(__file__).name[:-3])
