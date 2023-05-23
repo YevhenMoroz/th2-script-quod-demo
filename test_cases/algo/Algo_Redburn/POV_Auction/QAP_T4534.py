@@ -117,8 +117,6 @@ class QAP_T4534(TestCase):
         self.start_date = datetime.utcnow().replace(tzinfo=timezone.utc)
         self.start_date = self.start_date - timedelta(seconds=self.start_date.second, microseconds=self.start_date.microsecond) + timedelta(minutes=1)
         self.end_date_open = (self.start_date + timedelta(minutes=1))
-
-        self.aaa = datetime.utcnow() - timedelta(seconds=datetime.utcnow().second, microseconds=datetime.utcnow().microsecond) + timedelta(minutes=2)
         # endregion
 
         # region Update Trading Phase
