@@ -148,9 +148,9 @@ class QAP_T4524(TestCase):
         # endregion
 
         scheduler = sched.scheduler(time.time, time.sleep)
-        initial_slice = AFM.get_timestamp_from_list(phases=trading_phases, phase=TradingPhases.PreOpen, start_time=False) - 125
-        end_time_minus_1_min = AFM.get_timestamp_from_list(phases=trading_phases, phase=TradingPhases.PreOpen, start_time=False) - 62
-        end_time = AFM.get_timestamp_from_list(phases=trading_phases, phase=TradingPhases.PreOpen, start_time=False) + 5
+        initial_slice = self.end_date_pre_open.timestamp() - 125
+        end_time_minus_1_min = self.end_date_pre_open.timestamp() - 62
+        end_time = self.end_date_pre_open.timestamp() + 5
 
         # region Send NewOrderSingle (35=D) for
         case_id_1 = bca.create_event("Create Auction Order", self.test_id)
