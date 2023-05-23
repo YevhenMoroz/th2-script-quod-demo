@@ -67,7 +67,6 @@ class QAP_T7005(TestCase):
                 {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value,
                  JavaApiFields.ExpireDate.value: expected_expire_date},
                 order_reply, f'Verifying that order created and has properly {JavaApiFields.ExpireDate.value}')
-            raise Exception()
         except Exception:
             bca.create_event("TEST FAILED before or after verifier", self.test_id,
                                               status='FAILED')
@@ -81,8 +80,8 @@ class QAP_T7005(TestCase):
             self.db_manager.close_connection()
 
     def _set_up_holiday(self, holiday_date):
-        self.db_manager.execute_query(f"INSERT INTO holidaycalendar (holidayid, holidaydate,holidaydescription, alive, "
-                                      f"tradingallowed) VALUES ('3', {holiday_date}, 'gvnch', 'Y','N')")
+        self.db_manager.execute_query(f"DELETE FROM holidaycalendar WHERE holidayid = '3'")
+        self.db_manager.execute_query(f"INSERT INTO holidaycalendar (holidayid,holidaydate,holidaydescription,alive,tradingallowed) VALUES ('3', {holiday_date}, 'gvnch', 'Y','N')")
         self.ssh_client.send_command("qrestart QUOD.ORS, QUOD.ESBUYTH2TEST")
         time.sleep(60)
 
@@ -90,3 +89,7 @@ class QAP_T7005(TestCase):
         self.db_manager.execute_query(f"DELETE FROM holidaycalendar WHERE holidayid = '3'")
         self.ssh_client.send_command("qrestart QUOD.ORS, QUOD.ESBUYTH2TEST")
         time.sleep(60)
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.db_manager.close_connection()
