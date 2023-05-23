@@ -12,6 +12,7 @@ from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T11355 import QAP_T11355
 from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T11373 import QAP_T11373
 from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T11374 import QAP_T11374
 from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T4218 import QAP_T4218
+from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T8801 import QAP_T8801
 from test_framework.configurations.component_configuration import ComponentConfigurationAlgo
 
 
@@ -39,6 +40,9 @@ def test_run(parent_id=None, version=None):
         # region sub-slices
         QAP_T4218(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
+
+        QAP_T8801(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+
     except Exception:
         # bca.create_event('Fail test event', status='FAILED', parent_id=parent_id)
         logging.error("Error execution", exc_info=True)
