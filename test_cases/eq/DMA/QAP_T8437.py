@@ -52,7 +52,7 @@ class QAP_T8437(TestCase):
         self.ssh_client.send_command("~/quod/script/site_scripts/change_permission_script")
         self.ssh_client.put_file(self.remote_path, "temp.xml")
         self.ssh_client.send_command("qrestart ORS")
-        time.sleep(60)
+        time.sleep(40)
         # endregion
         # region Step 1
         self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
@@ -65,5 +65,5 @@ class QAP_T8437(TestCase):
     def run_post_conditions(self):
         self.ssh_client.put_file(self.remote_path, self.local_path)
         self.ssh_client.send_command("qrestart ORS")
-        time.sleep(60)
+        time.sleep(40)
         os.remove("temp.xml")
