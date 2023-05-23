@@ -48,8 +48,8 @@ class QAP_T7076(TestCase):
         self.fix_message.update_fields_in_component("Instrument", {"SecurityExchange": self.mic_blm})
         try:
             nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.fix_env.buy_side,
-                                                                                          venue_client_name,
-                                                                                          self.mic, int(price))
+                                                                                                  venue_client_name,
+                                                                                                  self.mic, int(price))
             self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
         except Exception:
             logger.error('Error execution', exc_info=True)
