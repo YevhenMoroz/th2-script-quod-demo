@@ -163,6 +163,7 @@ class JavaApiFields(Enum):
     AllocationInstructionBlock = 'AllocationInstructionBlock'
     RequestForOverdueRetailPositionsAckBlock = 'RequestForOverdueRetailPositionsAckBlock'
     TransExecStatus = 'TransExecStatus'
+    BookingType = 'BookingType'
     RetailPositList = 'RetailPositList'
     RetailPositBlock = 'RetailPositBlock'
     PositionType = 'PositionType'
