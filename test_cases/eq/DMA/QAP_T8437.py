@@ -55,10 +55,18 @@ class QAP_T8437(TestCase):
         time.sleep(40)
         # endregion
         # region Step 1
-        self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
-        exec_rep = self.fix_manager.get_last_message("ExecutionReport").get_parameters()
-        self.fix_manager.compare_values({"OrdStatus": "A", "Currency": self.data_set.get_currency_by_name("currency_1")}
-                                        ,exec_rep, "Check OrdStatus and Currency")
+        try:
+            new_order_single = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(
+                self.fix_env.buy_side, self.venue_client_name, self.mic, float(self.price))
+            self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
+            exec_rep = self.fix_manager.get_last_message("ExecutionReport").get_parameters()
+            self.fix_manager.compare_values(
+                {"OrdStatus": "0", "Currency": self.data_set.get_currency_by_name("currency_1")}
+                , exec_rep, "Check OrdStatus and Currency")
+        except Exception as e:
+            logger.error(f'Something go wrong via {e}')
+        finally:
+            self.rule_manager.remove_rule(new_order_single)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
