@@ -46,7 +46,7 @@ class QAP_T6918(TestCase):
         self.ssh_client.send_command("~/quod/script/site_scripts/change_permission_script")
         self.ssh_client.put_file(self.remote_path, "temp.xml")
         self.ssh_client.send_command("qrestart ORS")
-        time.sleep(40)
+        time.sleep(30)
         # endregion
         # region Step 1
         client = self.data_set.get_client_by_name("client_2_ext_id")
@@ -60,5 +60,5 @@ class QAP_T6918(TestCase):
     def run_post_conditions(self):
         self.ssh_client.put_file(self.remote_path, self.local_path)
         self.ssh_client.send_command("qrestart ORS")
-        time.sleep(20)
+        time.sleep(30)
         os.remove("temp.xml")
