@@ -187,7 +187,7 @@ class QAP_T11489(TestCase):
         # region Check that there are no Cancel requests to RFQ and Dark childs and the rebalance didn't happen
         self.fix_verifier_buy.set_case_id(bca.create_event("Check that there are no Cancel requests to RFQ and Dark childs and the rebalance didn't happen", self.test_id))
 
-        self.fix_verifier_buy.check_fix_message_sequence([nos_chixlis_rfq, nos_trql_rfq, self.dma_chix_order, self.dma_bats_order], [self.key_params_with_ex_destination, self.key_params_with_ex_destination, self.key_params_with_ex_destination], self.FromQuod, pre_filter=self.pre_filter)
+        self.fix_verifier_buy.check_fix_message_sequence([nos_chixlis_rfq, nos_trql_rfq, self.dma_chix_order, self.dma_bats_order], [self.key_params_with_ex_destination, self.key_params_with_ex_destination, self.key_params_with_ex_destination, self.key_params_with_ex_destination], self.FromQuod, pre_filter=self.pre_filter)
         self.fix_verifier_buy.check_fix_message_sequence([er_pending_new_dma_chix_order_params, er_new_dma_chix_order_params, er_pending_new_MP_Dark_order_params, er_new_dma_bats_order_params, er_part_filled_batsdark], [self.key_params_ER_child, self.key_params_ER_child, self.key_params_ER_child, self.key_params_ER_child, self.key_params_ER_child], self.ToQuod, pre_filter=None)
         # endregion
 
