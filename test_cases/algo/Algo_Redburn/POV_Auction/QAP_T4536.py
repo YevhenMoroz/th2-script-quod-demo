@@ -3,7 +3,7 @@ import sched
 import time
 
 from pathlib import Path
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import pytz
 
@@ -23,6 +23,7 @@ from test_framework.core.test_case import TestCase
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
 from test_framework.db_wrapper.db_manager import DBManager
 from test_framework.algo_mongo_manager import AlgoMongoManager as AMM
+from test_framework.formulas_and_calculation.trading_phase_manager import TradingPhaseManager, TimeSlot
 
 
 class QAP_T4536(TestCase):
@@ -43,23 +44,21 @@ class QAP_T4536(TestCase):
         # endregion
 
         # region order parameters
-        self.indicative_volume = 0
-        self.historical_volume = 1200.0
+        self.indicative_volume = 1000000
         self.percentage_volume = 10
+        self.save_for_close_percentage = 90
 
-        self.qty = 10_000
-        self.price = 25
+        self.qty = 1_000_000
+        self.price = 35
 
-        self.price_ask = 30
-        self.qty_ask = 10_000
+        self.price_ask = 40
+        self.qty_ask = 1_000_000
 
-        self.price_bid_1 = 25
-        self.qty_bid_1 = 1000
+        self.price_bid = 30
+        self.qty_bid = 1_000_000
 
-        self.save_for_close_percentage = 50
-
-        self.auction_child_qty = AFM.get_child_qty_for_auction_historical_volume(self.historical_volume, self.percentage_volume, self.qty)
-        self.pov_qty_child = AFM.get_pov_child_qty(self.percentage_volume, self.qty_bid_1, self.qty)
+        self.auction_child_qty = AFM.get_child_qty_for_auction(self.indicative_volume, self.percentage_volume, self.qty)
+        self.pov_qty_child = AFM.get_pov_child_qty(self.percentage_volume, self.qty_bid, self.qty)
 
         self.tif_ato = TimeInForce.AtTheOpening.value
         # endregion
@@ -106,7 +105,7 @@ class QAP_T4536(TestCase):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price)
-        nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price)
+        nos_rule2 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price_bid)
         ocr_rule = rule_manager.add_OCR(self.fix_env1.buy_side)
         ocrr_rule = rule_manager.add_OrderCancelReplaceRequest(self.fix_env1.buy_side, self.account, self.ex_destination_1)
         cancel_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.client, self.ex_destination_1, True)
@@ -114,46 +113,43 @@ class QAP_T4536(TestCase):
         # endregion
 
         # region EndDate for TradingPhases
-        now = datetime.now()
-        end_date_pre_open = now + timedelta(minutes=2)
+        self.start_date = datetime.utcnow().replace(tzinfo=timezone.utc)
+        self.start_date = self.start_date - timedelta(seconds=self.start_date.second, microseconds=self.start_date.microsecond) + timedelta(minutes=1)
+        self.end_date_pre_open = (self.start_date + timedelta(minutes=2))
         # endregion
 
         # region Update Trading Phase
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify trading phase profile", self.test_id))
-        trading_phases = AFM.get_timestamps_for_current_phase(TradingPhases.PreOpen)
-        trading_phases = AFM.update_endtime_for_trading_phase_by_phase_name(trading_phases, TradingPhases.PreOpen, end_date_pre_open)
+        trading_phase_manager = TradingPhaseManager()
+        trading_phase_manager.build_timestamps_for_trading_phase_sequence(TradingPhases.PreOpen)
+        trading_phase_manager.update_endtime_for_trading_phase_by_phase_name(TradingPhases.PreOpen, self.end_date_pre_open)
+        trading_phases = trading_phase_manager.get_trading_phase_list()
         self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
         # end region
 
-        # region insert data into mongoDB
-        curve = AMM.get_straight_curve_for_mongo(trading_phases, volume=self.historical_volume)
-        self.db_manager.insert_many_to_mongodb_with_drop(curve, f"Q{self.listing_id}")
-        bca.create_event("Data in mongo inserted", self.test_id)
-        # endregion
-
         # region Send MarketDate
         self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send trading phase - PreOpen", self.test_id))
-        self.incremental_refresh = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', 0).update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase(TradingPhases.PreOpen)
-        self.fix_manager_feed_handler.send_message(fix_message=self.incremental_refresh)
+        self.incremental_refresh_1 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_MDReqID(self.listing_id, self.fix_env1.feed_handler).update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume).set_phase(TradingPhases.PreOpen)
+        self.fix_manager_feed_handler.send_message(fix_message=self.incremental_refresh_1)
         # endregion
         
         # region Send MarketData for POV order
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data SnapShot to clear the MarketDepth", self.test_id))
         market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id, self.fix_env1.feed_handler)
-        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid_1, MDEntrySize=self.qty_bid_1, MDEntryPositionNo=1)
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid, MDEntryPositionNo=1)
         market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
 
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data Incremental to clear the MarketDepth", self.test_id))
-        market_data_incremental_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase(TradingPhases.PreOpen)
-        market_data_incremental_par.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
+        market_data_incremental_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase(TradingPhases.PreOpen)
+        market_data_incremental_par.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.price_ask, MDEntrySize=self.indicative_volume)
         self.fix_manager_feed_handler.send_message(market_data_incremental_par)
         # endregion
 
         scheduler = sched.scheduler(time.time, time.sleep)
-        initial_slice = AFM.get_timestamp_from_list(phases=trading_phases, phase=TradingPhases.PreOpen, start_time=False) - 65
-        end_time_minus_1_min = AFM.get_timestamp_from_list(phases=trading_phases, phase=TradingPhases.PreOpen, start_time=False) - 62
-        end_time = AFM.get_timestamp_from_list(phases=trading_phases, phase=TradingPhases.PreOpen, start_time=False) + 5
+        initial_slice = self.end_date_pre_open.timestamp() - 125
+        end_time_minus_1_min = self.end_date_pre_open.timestamp() - 62
+        end_time = self.end_date_pre_open.timestamp() + 5
 
         # region Send NewOrderSingle (35=D) for
         case_id_1 = bca.create_event("Create Auction Order", self.test_id)
@@ -206,7 +202,7 @@ class QAP_T4536(TestCase):
         self.fix_verifier_buy.set_case_id(self.case_id_3)
 
         self.passive_child_order_1 = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()
-        self.passive_child_order_1.change_parameters(dict(Account=self.account, OrderQty=self.pov_qty_child, Price=self.price_bid_1, Instrument='*', ExDestination=self.ex_destination_1))
+        self.passive_child_order_1.change_parameters(dict(Account=self.account, OrderQty=self.pov_qty_child, Price=self.price_bid, Instrument='*', ExDestination=self.ex_destination_1))
         self.fix_verifier_buy.check_fix_message(self.passive_child_order_1, key_parameters=self.key_params, message_name='Buy side NewOrderSingle DMA Child 1')
 
         pending_passive_child_order_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.passive_child_order_1, self.gateway_side_buy, self.status_pending)
