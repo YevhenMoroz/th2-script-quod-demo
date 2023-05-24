@@ -181,7 +181,7 @@ class QAP_T7514(TestCase):
                                   'TradeDate', 'RootSettlCurrAmt', 'BookingType', 'GrossTradeAmt',
                                   'IndividualAllocID', 'AllocNetPrice', 'AllocQty', 'AllocPrice',
                                   'AllocInstructionMiscBlock1', 'OrderAvgPx', 'GatingRuleCondName',
-                                  'GatingRuleName']
+                                  'GatingRuleName', 'AllocInstructionMiscBlock2']
 
         list_of_ignored_fields.extend(['ConfirmID', 'MatchStatus', 'ConfirmStatus',
                                        'CpctyConfGrp', 'ConfirmTransType', 'ConfirmType', 'OrderAvgPx', 'tag11245'])

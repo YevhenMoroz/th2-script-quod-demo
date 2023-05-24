@@ -187,7 +187,8 @@ class QAP_T7039(TestCase):
                                                                })
         self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
         allocation_report = \
-            self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()
+            self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                                   JavaApiFields.BookingAllocInstructionID.value).get_parameters()
         order_update = self.java_api_manager.get_last_message(ORSMessageType.OrdUpdate.value).get_parameters()[
             JavaApiFields.OrdUpdateBlock.value]
         actually_post_trade_status = order_update[JavaApiFields.PostTradeStatus.value]
@@ -227,7 +228,7 @@ class QAP_T7039(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        self.modify_account_group.set_params_for_comm_client(agent_fee_for_route=True)
+        self.modify_account_group.set_params_for_comm_client(agent_fee_for_route=False)
         self.rest_api_manager.send_post_request(self.modify_account_group)
         self.rest_commission_sender.clear_fees()
         self.ssh_client.send_command('~/quod/script/site_scripts/change_book_agent_misc_fee_type_on_N')

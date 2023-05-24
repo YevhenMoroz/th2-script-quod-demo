@@ -216,7 +216,8 @@ class QAP_T7241(TestCase):
                                                                        })
         responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction_message)
         print_message('Create Block', responses)
-        actual_result = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()
+        actual_result = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                                               JavaApiFields.BookingAllocInstructionID.value).get_parameters()
         alloc_id = actual_result[JavaApiFields.AllocationReportBlock.value][JavaApiFields.ClientAllocID.value]
         self.java_api_manager.compare_values(misc_fee_block_expected,
                                              actual_result[JavaApiFields.AllocationReportBlock.value][
@@ -237,10 +238,12 @@ class QAP_T7241(TestCase):
             "InstrID": instrument_id
         })
         responses = self.java_api_manager.send_message_and_receive_response(self.confirmation_request)
-        actual_result = self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[
+        actual_result = \
+        self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[
             JavaApiFields.ConfirmationReportBlock.value]
         misc_fee_block_expected = {'MiscFeeType': misc_fee_type, 'MiscFeeBasis': misc_fee_basis_after_compute,
-                                   'MiscFeeAmt': misc_fee_amount_compute_reply, 'MiscFeeRate': misc_fee_amount_compute_reply,
+                                   'MiscFeeAmt': misc_fee_amount_compute_reply,
+                                   'MiscFeeRate': misc_fee_amount_compute_reply,
                                    'MiscFeeCurr': misc_fee_curr}
         self.java_api_manager.compare_values(misc_fee_block_expected, actual_result[JavaApiFields.MiscFeesList.value][
             JavaApiFields.MiscFeesBlock.value][0],
@@ -248,11 +251,9 @@ class QAP_T7241(TestCase):
         print_message('Allocate block', responses)
         # endregion
 
-    @try_except(test_id=Path(__file__).name[:-3])
-    def run_post_conditions(self):
-        self.rest_commission_sender.clear_fees()
-        self.ssh_client.send_command("~/quod/script/site_scripts/change_book_agent_misc_fee_type_on_N")
-        self.ssh_client.send_command("qrestart QUOD.ORS QUOD.ESBUYTH2TEST QUOD.CS")
-        time.sleep(80)
-
-
+    # @try_except(test_id=Path(__file__).name[:-3])
+    # def run_post_conditions(self):
+    #     self.rest_commission_sender.clear_fees()
+    #     self.ssh_client.send_command("~/quod/script/site_scripts/change_book_agent_misc_fee_type_on_N")
+    #     self.ssh_client.send_command("qrestart QUOD.ORS QUOD.ESBUYTH2TEST QUOD.CS")
+    #     time.sleep(80)

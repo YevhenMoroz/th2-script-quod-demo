@@ -198,7 +198,8 @@ class QAP_T8458(TestCase):
         responses = self.java_api_manager.send_message_and_receive_response(self.compute_booking_fee_commission_request)
         print_message("send ComputeBookingCommissionFeesRequest (part of step 5)", responses)
         compute_booking_misc_fee_response = self.java_api_manager.get_last_message(
-            ORSMessageType.ComputeBookingFeesCommissionsReply.value).get_parameters()[JavaApiFields.ComputeBookingFeesCommissionsReplyBlock.value]
+            ORSMessageType.ComputeBookingFeesCommissionsReply.value).get_parameters()[
+            JavaApiFields.ComputeBookingFeesCommissionsReplyBlock.value]
         self.java_api_manager.key_is_absent(JavaApiFields.RootMiscFeesList.value, compute_booking_misc_fee_response,
                                             'Check that ComputeMiscFeeCommissionReply doesn`t have Agent Fees')
         # the end
@@ -222,7 +223,8 @@ class QAP_T8458(TestCase):
         responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
         print_message("Allocation Instruction", responses)
         allocation_report = \
-            self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+            self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                                   JavaApiFields.BookingAllocInstructionID.value).get_parameters()[
                 JavaApiFields.AllocationReportBlock.value]
         self.java_api_manager.key_is_absent(JavaApiFields.RootMiscFeesList.value, allocation_report,
                                             'Check that Block doesn`t has Agent Fees')

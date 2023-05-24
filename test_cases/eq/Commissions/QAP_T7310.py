@@ -23,7 +23,6 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-@try_except(test_id=Path(__file__).name[:-3])
 class QAP_T7310(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -113,7 +112,8 @@ class QAP_T7310(TestCase):
                                                      "InstrID": self.data_set.get_instrument_id_by_name(
                                                          "instrument_3")})
         self.java_api_manager.send_message_and_receive_response(self.alloc_instr)
-        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                                              JavaApiFields.BookingAllocInstructionID.value).get_parameters()[
             JavaApiFields.AllocationReportBlock.value]
         self.java_api_manager.compare_values(expected_result,
                                              alloc_report["ClientCommissionList"]["ClientCommissionBlock"][0],
