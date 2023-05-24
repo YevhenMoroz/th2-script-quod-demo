@@ -34,14 +34,6 @@ class QAP_T6958(TestCase):
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.ss_connectivity = self.fix_env.sell_side
         self.qty = '100'
-        self.price = '10'
-        self.client = self.data_set.get_client('client_pt_1')
-        self.alloc_account = self.data_set.get_account_by_name('client_pt_1_acc_1')
-        self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
-        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
-        self.fix_verifier = FixVerifier(self.fix_env.drop_copy, self.test_id)
-        self.execution_report = FixMessageExecutionReportOMS(self.data_set)
-        self.rest_api_manager = RestCommissionsSender(self.rest_api_connectivity, self.test_id, self.data_set)
         self.java_api_env = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.ja_manager = JavaApiManager(self.java_api_env, self.test_id)
         self.nos = FixNewOrderSingleOMS(self.data_set)
