@@ -256,7 +256,7 @@ class TradingPhaseManager:
         current_phase = self.get_phase_time_by_phase(phase)
         if type(end_time) == datetime.datetime:
             current_phase.end_time = end_time
-            current_phase.duration = int((current_phase.end_time - current_phase.start_time).total_seconds() / 60)
+            current_phase.duration = int((current_phase.end_time - current_phase.start_time.replace(tzinfo=current_phase.end_time.tzinfo)).total_seconds() / 60)
         elif type(end_time) == int:
             current_phase.end_time = current_phase.start_time + datetime.timedelta(minutes=end_time)
             current_phase.duration = end_time

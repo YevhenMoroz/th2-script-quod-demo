@@ -3,7 +3,7 @@ import sched
 import time
 
 from pathlib import Path
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import pytz
 
@@ -114,14 +114,18 @@ class QAP_T4534(TestCase):
         # endregion
 
         # region EndDate for TradingPhases
-        end_date_open = datetime.utcnow() + timedelta(minutes=1) - timedelta(seconds=datetime.utcnow().second, microseconds=datetime.utcnow().microsecond)
+        self.start_date = datetime.utcnow().replace(tzinfo=timezone.utc)
+        self.start_date = self.start_date - timedelta(seconds=self.start_date.second, microseconds=self.start_date.microsecond) + timedelta(minutes=1)
+        self.end_date_open = (self.start_date + timedelta(minutes=1))
+
+        self.aaa = datetime.utcnow() - timedelta(seconds=datetime.utcnow().second, microseconds=datetime.utcnow().microsecond) + timedelta(minutes=2)
         # endregion
 
         # region Update Trading Phase
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify trading phase profile", self.test_id))
         trading_phase_manager = TradingPhaseManager()
         trading_phase_manager.build_timestamps_for_trading_phase_sequence(TradingPhases.Open)
-        trading_phase_manager.update_endtime_for_trading_phase_by_phase_name(TradingPhases.Open, end_date_open)
+        trading_phase_manager.update_endtime_for_trading_phase_by_phase_name(TradingPhases.Open, self.end_date_open)
         trading_phases = trading_phase_manager.get_trading_phase_list()
         self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
         # end region
@@ -152,9 +156,9 @@ class QAP_T4534(TestCase):
         # endregion
 
         scheduler = sched.scheduler(time.time, time.sleep)
-        initial_slice = AFM.get_timestamp_from_list(phases=trading_phases, phase=TradingPhases.Open, start_time=False) - 60
-        end_time_minus_1_min = AFM.get_timestamp_from_list(phases=trading_phases, phase=TradingPhases.Open, start_time=False) + 3
-        end_time = AFM.get_timestamp_from_list(phases=trading_phases, phase=TradingPhases.Open, start_time=False) + 10
+        initial_slice = self.end_date_open.timestamp() - 60
+        end_time_minus_1_min = self.end_date_open.timestamp() + 3
+        end_time = self.end_date_open.timestamp() + 10
 
         # region Send NewOrderSingle (35=D) for
         case_id_1 = bca.create_event("Create Auction Order", self.test_id)
