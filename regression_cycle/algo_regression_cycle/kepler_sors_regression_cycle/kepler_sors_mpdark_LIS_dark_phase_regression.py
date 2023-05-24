@@ -3,6 +3,7 @@ import time
 
 from custom import basic_custom_actions as bca
 from stubs import Stubs
+from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T11489 import QAP_T11489
 
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4522 import QAP_T4522
 from test_cases.algo.Algo_Kepler.Algo_MPDark.QAP_T4587 import QAP_T4587
@@ -121,6 +122,7 @@ def test_run(parent_id=None, version=None):
         QAP_T4614(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4589(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4587(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T11489(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
         # region Part Execution (LIS order)
