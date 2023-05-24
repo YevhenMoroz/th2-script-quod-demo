@@ -3,6 +3,7 @@ from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T11233 import QAP_T11233
 from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T11234 import QAP_T11234
+from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T4177 import QAP_T4177
 from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T4386 import QAP_T4386
 from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T4524 import QAP_T4524
 from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T4526 import QAP_T4526
@@ -39,6 +40,7 @@ def test_run(parent_id=None, version=None):
         QAP_T4536(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4535(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4533(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4177(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
     except Exception:
         # bca.create_event('Fail test event', status='FAILED', parent_id=parent_id)
