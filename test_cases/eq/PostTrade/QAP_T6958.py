@@ -6,17 +6,17 @@ from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.message_types import ORSMessageType
+from test_framework.db_wrapper.db_manager import DBManager
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields
+from test_framework.java_api_wrappers.oms.ors_messges.FixNewOrderSingleOMS import FixNewOrderSingleOMS
+from test_framework.java_api_wrappers.oms.ors_messges.TradeEntryOMS import TradeEntryOMS
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
-from test_framework.ssh_wrappers.ssh_client import SshClient
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, PostTradeStatuses, Status
-from test_framework.win_gui_wrappers.oms.oms_booking_window import OMSBookingWindow
-from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
-from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -37,70 +37,42 @@ class QAP_T6958(TestCase):
         self.price = '10'
         self.client = self.data_set.get_client('client_pt_1')
         self.alloc_account = self.data_set.get_account_by_name('client_pt_1_acc_1')
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
         self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
-        self.client_inbox = OMSClientInbox(self.test_id, self.session_id)
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
         self.fix_verifier = FixVerifier(self.fix_env.drop_copy, self.test_id)
         self.execution_report = FixMessageExecutionReportOMS(self.data_set)
-        self.booking_blotter = OMSBookingWindow(self.test_id, self.session_id)
         self.rest_api_manager = RestCommissionsSender(self.rest_api_connectivity, self.test_id, self.data_set)
-        self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
-        self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
-                                    self.ssh_client_env.password, self.ssh_client_env.su_user,
-                                    self.ssh_client_env.su_password)
+        self.java_api_env = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.ja_manager = JavaApiManager(self.java_api_env, self.test_id)
+        self.nos = FixNewOrderSingleOMS(self.data_set)
+        self.trade_entry = TradeEntryOMS(self.data_set)
+        self.db_manager = DBManager(self.environment.get_list_data_base_environment()[0])
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region create order via fix (precondition)
-        self.fix_message.set_default_care_limit('instrument_1')
-        self.fix_message.change_parameters(
-            {'Side': '1', 'OrderQtyData': {'OrderQty': self.qty}, 'Account': self.client, 'Price': self.price})
-        self.fix_message.change_parameters(
-            {'TimeInForce': '6', 'ExpireDate': (datetime.now()).strftime("%Y%m%d")})
-        response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
-        order_id = response[0].get_parameters()['OrderID']
-        filter_dict = {OrderBookColumns.order_id.value: order_id}
-        filter_list = [OrderBookColumns.order_id.value, order_id]
-        self.client_inbox.accept_order(filter=filter_dict)
-
+        self.nos.set_default_care_limit()
+        expire_date = (datetime.now().strftime("%Y%m%d"))
+        self.nos.update_fields_in_component("NewOrderSingleBlock", {"TimeInForce": "GTD", "ExpireDate": expire_date})
+        self.ja_manager.send_message_and_receive_response(self.nos)
+        order_id = self.ja_manager.get_last_message(ORSMessageType.OrdNotification.value) \
+            .get_parameters()[JavaApiFields.OrderNotificationBlock.value]["OrdID"]
         # endregion
 
         # region partially filled CO order
-        cum_qty = str(int(int(self.qty) / 2))
-        self.order_book.manual_execution(cum_qty, self.price,filter_dict=filter_dict)
-        # endregion
-
-        # region check daycumqty
-        self.order_book.set_filter(filter_list)
-        actual_day_cum_qty = self.order_book.extract_fields_list(
-            {OrderBookColumns.day_cum_qty.value: OrderBookColumns.day_cum_qty.value})
-        self.order_book.compare_values({OrderBookColumns.day_cum_qty.value: cum_qty}, actual_day_cum_qty,
-                                       "Comparing day cum Qty")
+        cum_qty = str(int(self.qty) / 2)
+        self.trade_entry.set_default_trade(order_id, exec_qty=cum_qty)
+        self.ja_manager.send_message_and_receive_response(self.trade_entry)
+        exec_rep = self.ja_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
+            JavaApiFields.ExecutionReportBlock.value]
+        self.ja_manager.compare_values({JavaApiFields.CumQty.value: cum_qty}, exec_rep, "Check DayCumQty")
         # endregion
 
         # region call end of day procedures
-        self.ssh_client.send_command("~/quod/script/site_scripts/db_endOfDay_postgres")
+        self.db_manager.execute_query('BEGIN;SELECT eod_expireOrders();COMMIT;', False)
         # endregion
         # region check order after perform of procedure
-        self.order_book.set_filter(filter_list)
-        actual_day_cum_qty = self.order_book.extract_fields_list(
-            {OrderBookColumns.day_cum_qty.value: OrderBookColumns.day_cum_qty.value})
-        self.order_book.compare_values({OrderBookColumns.day_cum_qty.value: cum_qty}, actual_day_cum_qty,
-                                       "Comparing actual result")
-        # endregion
-
-        # region check expected result from step 3
-        self.order_book.refresh_order(filter_list)
-        self.order_book.set_filter(filter_list)
-        values = self.order_book.extract_fields_list({OrderBookColumns.sts.value: OrderBookColumns.sts.value,
-                                                      OrderBookColumns.free_notes.value: OrderBookColumns.free_notes.value,
-                                                      OrderBookColumns.post_trade_status.value: OrderBookColumns.post_trade_status.value})
-        self.order_book.compare_values({
-            OrderBookColumns.sts.value: Status.expired.value,
-            OrderBookColumns.free_notes.value: "Order terminated by Quod eod_ExpireOrders procedure",
-            OrderBookColumns.post_trade_status.value: PostTradeStatuses.ready_to_book.value
-        }, values, 'Comparing values from step 3')
+        ord_status = self.db_manager.execute_query(f"SELECT ordstatus FROM ordr WHERE ordid='{order_id}'")[0][0]
+        self.ja_manager.compare_values({"ordstatus": "EXP"}, {"ordstatus": ord_status}, "Check order status")
         # endregion
