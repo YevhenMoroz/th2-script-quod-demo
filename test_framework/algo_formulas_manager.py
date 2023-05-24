@@ -62,9 +62,9 @@ class AlgoFormulasManager:
         return remaining_ord_qty - reserve
 
     @staticmethod
-    def get_nav_reserve(remaining_ord_qty: int, remaining_waves: int, ats: int, nav_percentage: float = 100) -> int:
+    def get_nav_reserve(remaining_ord_qty: int, child_qty: int, ats: int = 10000, nav_percentage: float = 100) -> int:
         first_reserve = max(5 * ats, math.ceil(remaining_ord_qty * (100 - nav_percentage)))
-        reserve = max(first_reserve, AlgoFormulasManager.get_next_twap_slice(remaining_ord_qty, remaining_waves))
+        reserve = max(first_reserve, child_qty)
         return reserve
 
     @staticmethod
