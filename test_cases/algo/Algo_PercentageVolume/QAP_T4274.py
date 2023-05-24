@@ -126,7 +126,6 @@ class QAP_T4274(TestCase):
         self.fix_verifier_sell.check_fix_message(pending_POV_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew')
 
         new_POV_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.POV_order, self.gateway_side_sell, self.status_new)
-        new_POV_order_params.change_parameter('NoParty', '*')
         self.fix_verifier_sell.check_fix_message(new_POV_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
 
@@ -142,7 +141,6 @@ class QAP_T4274(TestCase):
         self.fix_verifier_sell.check_fix_message(self.POV_order_replace_params, direction=self.ToQuod, message_name='Sell side OrderCancelReplaceRequest')
 
         replaced_pov_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.POV_order_replace_params, self.gateway_side_sell, self.status_cancel_replace)
-        replaced_pov_order_params.change_parameter('NoParty', '*')
         self.fix_verifier_sell.check_fix_message(replaced_pov_order_params, key_parameters=self.key_params_cl, message_name='Sell Side ExecReport Replace Request')
         # endregion
 
@@ -202,7 +200,7 @@ class QAP_T4274(TestCase):
         self.fix_verifier_buy.set_case_id(case_id_3)
 
         eliminate_pov_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.POV_order, self.gateway_side_sell, self.status_eliminate)
-        eliminate_pov_order.change_parameters({'NoParty': '*', 'SettlType': 'B', 'Text':'reached end time'})
+        eliminate_pov_order.change_parameters({'SettlType': 'B', 'Text':'reached end time'})
         self.fix_verifier_sell.check_fix_message(eliminate_pov_order, key_parameters=self.key_params_cl,  message_name='Sell side ExecReport eliminateed')
         # endregion
 

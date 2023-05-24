@@ -123,7 +123,6 @@ class QAP_T5064(TestCase):
         self.fix_verifier_sell.check_fix_message(pending_POV_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew')
 
         new_POV_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.POV_order, self.gateway_side_sell, self.status_new)
-        new_POV_order_params.change_parameter('NoParty', '*')
         self.fix_verifier_sell.check_fix_message(new_POV_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
 
@@ -131,7 +130,7 @@ class QAP_T5064(TestCase):
         
         # region check elimination parent POV order
         eliminate_pov_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.POV_order, self.gateway_side_sell, self.status_eliminate)
-        eliminate_pov_order.change_parameters({'NoParty': '*', 'Text': 'reached end time'})
+        eliminate_pov_order.change_parameters({'Text': 'reached end time'})
         eliminate_pov_order.remove_parameter('LastMkt')
         self.fix_verifier_sell.check_fix_message(eliminate_pov_order, key_parameters=self.key_params_cl,  message_name='Sell side ExecReport eliminated')
         # endregion

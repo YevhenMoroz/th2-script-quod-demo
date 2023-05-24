@@ -12,6 +12,7 @@ from test_framework.fix_wrappers.forex.FixMessagePositionReportFX import FixMess
 from test_framework.fix_wrappers.forex.FixMessageRequestForPositionsFX import FixMessageRequestForPositionsFX
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.fx.FixPositionMaintenanceRequestFX import FixPositionMaintenanceRequestFX
+from test_framework.java_api_wrappers.fx.FixPositionMassCancelRequestFX import FixPositionMassCancelRequestFX
 from test_framework.java_api_wrappers.fx.HeldOrderAckRequestFX import HeldOrderAckRequestFX
 from test_framework.java_api_wrappers.fx.TradeEntryRequestFX import TradeEntryRequestFX
 from test_framework.positon_verifier_fx import PositionVerifier
@@ -30,25 +31,18 @@ class QAP_T10301(TestCase):
         self.rest_api_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
         self.java_api_manager = JavaApiManager(self.java_api_env, self.test_id)
         self.rest_api_manager = RestApiManager(self.rest_api_connectivity, self.test_id)
-        self.maintenance_request_ext = FixPositionMaintenanceRequestFX()
-        self.maintenance_request_int = FixPositionMaintenanceRequestFX()
-        self.maintenance_request_backup = FixPositionMaintenanceRequestFX()
+        self.cancel_request = FixPositionMassCancelRequestFX()
         self.fix_manager = FixManager(self.pks_connectivity, self.test_id)
         self.fix_pos_verifier = FixVerifier(self.pks_connectivity, self.test_id)
         self.fix_drop_copy_verifier = FixVerifier(self.dc_connectivity, self.test_id)
-        self.fix_pos_int_verifier = None
         self.position_verifier = PositionVerifier(self.test_id)
-        self.request_for_position_ext = FixMessageRequestForPositionsFX()
         self.request_for_position_int = FixMessageRequestForPositionsFX()
         self.request_for_position_backup = FixMessageRequestForPositionsFX()
-        self.position_report_ext = FixMessagePositionReportFX()
         self.position_report_int = FixMessagePositionReportFX()
         self.position_report_backup = FixMessagePositionReportFX()
         self.trade_request = TradeEntryRequestFX()
         self.ack_request = HeldOrderAckRequestFX()
         self.ah_order = FixMessageNewOrderSingleTakerDC()
-        self.mo_order = FixMessageNewOrderSingleTakerDC()
-        self.ah_exec_report = FixMessageExecutionReportDropCopyFX()
         self.client_ext = self.data_set.get_client_by_name("client_mm_8")
         self.account_ext = self.data_set.get_account_by_name("account_mm_8")
         self.client_int = self.data_set.get_client_by_name("client_int_5")
@@ -60,6 +54,7 @@ class QAP_T10301(TestCase):
         self.eur_gbp = self.data_set.get_symbol_by_name("symbol_3")
         self.sec_type_spo = self.data_set.get_security_type_by_name("fx_spot")
         self.listing_eur_gbp = self.data_set.get_listing_id_by_name("eur_gbp_spo")
+        self.instr_type = self.data_set.get_fx_instr_type_ja("fx_spot")
         self.instrument = {
             "SecurityType": self.sec_type_spo,
             "Symbol": self.eur_gbp
@@ -90,8 +85,8 @@ class QAP_T10301(TestCase):
 
         # region Step 3
         self.trade_request.set_default_params()
-        self.trade_request.update_fields_in_component("TradeEntryRequestBlock", {"AccountGroupID": self.client_ext,
-                                                                                 "ListingID": self.listing_eur_gbp})
+        self.trade_request.update_fields_in_component("TradeEntryRequestBlock", {"ClientAccountGroupID": self.client_ext})
+        self.trade_request.change_instrument(self.eur_gbp, self.instr_type)
         response: list = self.java_api_manager.send_message_and_receive_response(self.trade_request)
         ah_order_id = self.trade_request.get_ord_id_from_held(response)
 
@@ -152,23 +147,15 @@ class QAP_T10301(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         # region Clear position after test
-        self.maintenance_request_ext.set_default_params()
-        self.maintenance_request_ext.change_account(self.account_ext)
-        self.maintenance_request_ext.change_client(self.client_ext)
-        self.maintenance_request_ext.change_instrument(self.eur_gbp)
-        self.java_api_manager.send_message(self.maintenance_request_ext)
+
+        self.cancel_request.set_params(self.account_ext)
+        self.java_api_manager.send_message(self.cancel_request)
         self.sleep(5)
-        self.maintenance_request_int.set_default_params()
-        self.maintenance_request_int.change_account(self.account_int)
-        self.maintenance_request_int.change_client(self.client_int)
-        self.maintenance_request_int.change_instrument(self.eur_gbp)
-        self.java_api_manager.send_message(self.maintenance_request_int)
+        self.cancel_request.set_params(self.account_int)
+        self.java_api_manager.send_message(self.cancel_request)
         self.sleep(5)
-        self.maintenance_request_backup.set_default_params()
-        self.maintenance_request_backup.change_account(self.account_backup)
-        self.maintenance_request_backup.change_client(self.client_back_up)
-        self.maintenance_request_backup.change_instrument(self.eur_gbp)
-        self.java_api_manager.send_message(self.maintenance_request_backup)
+        self.cancel_request.set_params(self.account_backup)
+        self.java_api_manager.send_message(self.cancel_request)
         self.sleep(5)
         # endregion
         self.rest_api_ah_msg_2.find_all_auto_hedger()

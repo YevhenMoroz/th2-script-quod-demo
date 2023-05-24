@@ -52,7 +52,7 @@ class QAP_T3949(CommonTestCase):
             expected_pdf_content = [f"ID: {self.id}",
                                     f"Ext ID Client: {self.ext_id_client}",
                                     "Client ID Source: BIC",
-                                    "Clearing Account Type: Institution"
+                                    "Clearing Account Type: Institution",
                                     f"Institution: {self.institution}"]
             self.verify(f"Is PDF contains {expected_pdf_content}", True,
                         wash_book_wizard.click_on_download_pdf_button_and_check_data(expected_pdf_content))

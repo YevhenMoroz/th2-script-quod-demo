@@ -208,6 +208,8 @@ class ClientAlgoPolicy(Enum):
     qa_mpdark_rr_1 = "QA_Auto_MPDark_RR_1"
     qa_mpdark_rr_2 = "QA_Auto_MPDark_RR_2"
     qa_mpdark_rr_3 = "QA_Auto_MPDark_RR_3"
+    qa_mpdark_rr_4 = "QA_Auto_MPDark_RR_4"
+    qa_mpdark_rr_5 = "QA_Auto_MPDark_RR_5"
     qa_sorping = "QA_SORPING"
     qa_sorping_1 = "QA_Auto_SORPING_1"
     qa_sorping_2 = "QA_Auto_SORPING_2"
@@ -370,6 +372,7 @@ class ReadLogVerifiers(Enum):
     log_319_check_exec_type = "log319-check-exec-type"
     log_319_cancel_child = "log319-cancel-child"
     log_319_check_dfd_mapping_buy_side = "log319-check-dfd-mapping-buy-side"
+    log319_check_resident_time_calculation = "log319-check-resident-time-calculation"
 
 
 class ExecType(Enum):
@@ -378,6 +381,8 @@ class ExecType(Enum):
 
 class WebAdminURL(Enum):
     saturn_306 = "http://10.0.22.38:3480/adm/saturn/#/auth/login"
+    columbia_310 = "http://10.0.22.38:4780/adm/qakharkiv310NewDesign/#/auth/login"
+    venus_324 = "http://10.0.22.38:9980/adm/qakharkiv324/#/auth/login"
     test_site = ""
 
 
@@ -424,11 +429,10 @@ class SshClientEnv(Enum):
     DB_USER_314 = "quod314prd"
     DB_PASSWORD_314 = "quod314prd"
 
-
     HOST_319 = "10.0.22.39"
     PORT_319 = 22
-    USER_319 = ""
-    PASSWORD_319 = ""
+    USER_319 = "quod319"
+    PASSWORD_319 = "quod319"
     SU_USER_319 = "quod319"
     SU_PASSWORD_319 = "quod319"
 
@@ -488,6 +492,8 @@ class FreeNotesReject(Enum):
     CouldNotDetermineLimitPriceFromPrimary = "could not determine Limit price from Primary"
     AuctionOrderEliminatedCoreOrderRejected = "auction order Eliminated - core order Rejected"
     CouldNotRetrieveAverageVolumeDistribution = "could not retrieve average volume distribution"
+    NoRemainingVenueToCheck = 'no remaining venue to check (Stale Data)'
+    ReachedMaximumNumberOfUnsuccessfulAtLastAttempts = 'reached maximum number of unsuccessful at-last attempts'
 
 
 class TradingPhases(Enum):
@@ -505,15 +511,12 @@ class RejectMessages(Enum):
     no_listing_2 = '11697 No listing found for order with currency EUR'
     no_listing_3 = '11697 No listing found for order with currency USD on exchange FRANKFURT'
     no_listing_4 = '11697 No listing found for order with currency USD'
-    no_listing_5 = '11752 Instrument not traded at primary BRUSSELS / 11697 No listing found on exchange BRUSSELS'
-    no_listing_6 = '11752 Instrument not traded at primary BRUSSELS / 11697 No listing found for order with currency EUR on exchange BRUSSELS'
-    no_listing_7 = '11752 Instrument not traded at primary FRANKFURT / 11697 No listing found for order with currency USD on exchange FRANKFURT'
-    no_listing_8 = '11752 Instrument not traded at primary PARIS / 11697 No listing found on exchange PARIS'
-    no_listing_9 = '11752 Instrument not traded at primary PARIS / 11697 No listing found for order with currency EUR on exchange PARIS'
-    no_listing_10 = '11752 Instrument not traded at primary BRUSSELS / 11697 No listing found for order with currency USD on exchange BRUSSELS'
-    no_listing_11 = '11697 No listing found for order with currency USD on exchange BRUSSELS'
-    no_listing_12 = '11697 No listing found for order with currency USD on exchange XETRA'
-    no_listing_13 = '11752 Instrument not traded at primary XETRA / 11697 No listing found for order with currency USD on exchange XETRA'
+    no_listing_5 = '11697 No listing found on exchange BRUSSELS'
+    no_listing_6 = '11697 No listing found for order with currency EUR on exchange BRUSSELS'
+    no_listing_7 = '11697 No listing found on exchange PARIS'
+    no_listing_8 = '11697 No listing found for order with currency EUR on exchange PARIS'
+    no_listing_9 = '11697 No listing found for order with currency USD on exchange BRUSSELS'
+    no_listing_10 = '11697 No listing found for order with currency USD on exchange XETRA'
 
 
 class PegPriceType(Enum):

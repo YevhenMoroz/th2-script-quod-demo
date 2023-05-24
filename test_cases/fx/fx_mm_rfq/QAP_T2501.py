@@ -1,7 +1,7 @@
 from pathlib import Path
 from custom import basic_custom_actions as bca
 from test_cases.fx.fx_wrapper.common_tools import check_quote_request_id, extract_automatic_quoting, extract_freenotes, \
-    check_quote_status
+    check_value_in_db
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
@@ -66,7 +66,7 @@ class QAP_T2501(TestCase):
         self.action_request.set_action_reject()
         self.java_manager.send_message(self.action_request)
         automatic_quoting = extract_automatic_quoting(self.quote_request)
-        quote_status = check_quote_status(req_id, "quoterequestid")
+        quote_status = check_value_in_db(req_id, "quoterequestid")
         expected_list = ["N", "REM"]
         actual = [automatic_quoting, quote_status]
         self.compare_values(self.test_id, expected_list, actual, event_name="Check Quote status and FreeNotes")
