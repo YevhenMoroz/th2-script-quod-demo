@@ -1,17 +1,18 @@
 import logging
-import time
+import os
 from datetime import datetime
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
+from custom.verifier import Verifier
 from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, OrderReplyConst, ExecutionReportConst, \
-    AllocationInstructionConst, AllocationReportConst, ConfirmationReportConst
+    AllocationReportConst, ConfirmationReportConst
 from test_framework.java_api_wrappers.oms.es_messages.ExecutionReportOMS import ExecutionReportOMS
 from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS import AllocationInstructionOMS
 from test_framework.java_api_wrappers.oms.ors_messges.ComputeBookingFeesCommissionsRequestOMS import \
@@ -21,8 +22,7 @@ from test_framework.java_api_wrappers.oms.ors_messges.ForceAllocInstructionStatu
     ForceAllocInstructionStatusRequestOMS
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
 from test_framework.java_api_wrappers.ors_messages.BlockUnallocateRequest import BlockUnallocateRequest
-from test_framework.read_log_wrappers.ReadLogVerifier import ReadLogVerifier
-from test_framework.read_log_wrappers.oms_messages.AlsMessages import AlsMessages
+from test_framework.ssh_wrappers.ssh_client import SshClient
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -56,9 +56,11 @@ class QAP_T7217(TestCase):
         self.compute_booking_fees_commission_request = ComputeBookingFeesCommissionsRequestOMS(self.data_set)
         self.confirmation_request = ConfirmationOMS(self.data_set)
         self.approve_message = ForceAllocInstructionStatusRequestOMS(self.data_set)
-        self.als_email_report = self.environment.get_list_read_log_environment()[0].read_log_conn
-        self.read_log_verifier = ReadLogVerifier(self.als_email_report, self.test_id)
         self.unallocate_request = BlockUnallocateRequest()
+        self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
+        self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
+                                    self.ssh_client_env.password, self.ssh_client_env.su_user,
+                                    self.ssh_client_env.su_password)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -169,10 +171,25 @@ class QAP_T7217(TestCase):
         # endregion
 
         # region step 6 Check ALS logs Status New
-        als_message = AlsMessages.execution_report.value
         trade_date = datetime.now().strftime('%Y-%m-%d')
-        als_message.update({"ConfirmStatus": "New", "ClientAccountID": self.alloc_account_1, "AllocQty": self.qty,
-                            'TradeDate': trade_date, "NetMoney": "4,000"})
-        self.read_log_verifier.check_read_log_message(als_message, ["ConfirmStatus", 'ClientAccountID', 'AllocQty'],
-                                                      timeout=30000)
+        self.ssh_client.send_command('cdl')
+        self.ssh_client.send_command('egrep "Sent email for {.*.}" QUOD.ALS.log > logs.txt')
+        self.ssh_client.send_command("sed -n '$'p logs.txt > logs2.txt")
+        self.ssh_client.get_file('/Logs/quod317/logs2.txt', './logs.txt')
+        verifier = Verifier(self.test_id)
+        with open('./logs.txt') as file:
+            print(file.read())
+            if not (
+                    f'ClientAccountID={self.alloc_account_1}'
+                    and "ConfirmStatus=New"
+                    and f"TradeDate={trade_date}"
+                    and "NetMoney=4,000" in file.read()
+            ):
+                verifier.success = False
+
+            verifier.fields.update(
+                {"": {"key": False, "type": "field", "status": "PASSED" if self.verifier.success else "FAILED"}})
+            verifier.set_event_name("Email message has correct values:")
+            verifier.verify()
+        os.remove('./logs.txt')
         # endregion
