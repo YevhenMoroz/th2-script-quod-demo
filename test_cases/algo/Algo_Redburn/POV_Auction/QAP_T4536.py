@@ -233,7 +233,9 @@ class QAP_T4536(TestCase):
 
         # region Update Trading Phase
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Revert trading phase profile", self.test_id))
-        trading_phases = AFM.get_default_timestamp_for_trading_phase()
+        trading_phase_manager = TradingPhaseManager()
+        trading_phase_manager.build_default_timestamp_for_trading_phase()
+        trading_phases = trading_phase_manager.get_trading_phase_list(new_standard=False)
         self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
         # endregion
         
