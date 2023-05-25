@@ -25,7 +25,7 @@ from test_framework.core.test_case import TestCase
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
 
 
-class QAP_T10704(TestCase):
+class QAP_T11493(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -52,6 +52,7 @@ class QAP_T10704(TestCase):
         self.percentage = 10
         self.child_qty = AFM.get_next_twap_slice(self.qty, self.waves)
         self.price = 30
+        self.historical_volume = 1200.0
         self.price2 = AFM.calc_ticks_offset_minus(self.price, 1, 0.005)
 
 
@@ -117,7 +118,11 @@ class QAP_T10704(TestCase):
         self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
         # end region
 
-
+        # region insert data into mongoDB
+        curve = AMM.get_straight_curve_for_mongo(trading_phases, volume=self.historical_volume)
+        self.db_manager.insert_many_to_mongodb_with_drop(curve, f"Q{self.listing_id}")
+        bca.create_event(f"Collection Q{self.listing_id} is inserted", self.test_id, body=''.join([f"{volume['LastTradedTime']} - {volume['LastTradedQty']}, phase - {volume['LastAuctionPhase']}\n" for volume in curve]))
+        # endregion
 
         # region Send MarketDate
         self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send trading phase - Open", self.test_id))
@@ -136,12 +141,13 @@ class QAP_T10704(TestCase):
         self.fix_verifier_sell.set_case_id(case_id_1)
 
         # region Send TWAP algo
-        self.auction_algo = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_TWAP_params()
+        self.auction_algo = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_VWAP_auction_params()
         self.auction_algo.add_ClordId((os.path.basename(__file__)[:-3]))
         self.auction_algo.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.mic))
         self.auction_algo.add_tag(dict(QuodFlatParameters=dict(Waves=self.waves)))
         self.fix_manager_sell.send_message_and_receive_response(fix_message=self.auction_algo, case_id=case_id_1)
         # endregion
+
 
         # region Check Sell side
         self.auction_algo_verification = deepcopy(self.auction_algo)
@@ -163,9 +169,9 @@ class QAP_T10704(TestCase):
         self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send trading phase - Auction", self.test_id))
         self.fix_manager_feed_handler.send_message(fix_message=self.incremental_refresh_pre_auction)
 
-        # region Check that TWAP cancel benchmark child
+        # region Check that VWAP cancel benchmark child
         time.sleep(3)
-        case_id_2 = bca.create_event("Check that TWAP cancel benchmark child", self.test_id)
+        case_id_2 = bca.create_event("Check that VWAP cancel benchmark child", self.test_id)
         self.fix_verifier_buy.set_case_id(case_id_2)
 
         self.dma_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_RB_params()

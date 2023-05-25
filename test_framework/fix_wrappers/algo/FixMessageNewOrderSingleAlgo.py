@@ -1606,7 +1606,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'TargetStrategy': '1008',
             'ClientAlgoPolicyID': 'QA_Auto_SORPING_Spray_1',
             'PegInstructions': {
-                'PegOffsetValue': '0',
+                'PegOffsetValue': '0.2',
                 'PegPriceType': '1',
                 'PegOffsetType': '0',
             }
