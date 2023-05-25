@@ -168,6 +168,7 @@ class JavaApiFields(Enum):
     RetailPositBlock = 'RetailPositBlock'
     CDOrdAckBatchRequestBlock = 'CDOrdAckBatchRequestBlock'
     ModifyChildren = 'ModifyChildren'
+    CancelChildren = ' CancelChildren'
     PositionType = 'PositionType'
     TransactTime = 'TransactTime'
     ErrorMsg = "ErrorMsg"
