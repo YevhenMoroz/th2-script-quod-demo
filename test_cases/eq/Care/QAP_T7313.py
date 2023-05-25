@@ -60,14 +60,14 @@ class QAP_T7313(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region prepare pre-precondition:
-        # tree_cs = ET.parse(self.local_path_cs)
-        # tree_cs.getroot().find("cs/fixAutoAcknowledge").text = 'false'
-        # tree_cs.getroot().find("cs/fixAutoAckNewOrderEvenIfRecipientNotConnected").text = 'false'
-        # tree_cs.write("temp_cs.xml")
-        # self.ssh_client.send_command('~/quod/script/site_scripts/change_permission_script')
-        # self.ssh_client.put_file(self.remote_path_cs, "temp_cs.xml")
-        # self.ssh_client.send_command("qrestart QUOD.CS")
-        # time.sleep(50)
+        tree_cs = ET.parse(self.local_path_cs)
+        tree_cs.getroot().find("cs/fixAutoAcknowledge").text = 'false'
+        tree_cs.getroot().find("cs/fixAutoAckNewOrderEvenIfRecipientNotConnected").text = 'false'
+        tree_cs.write("temp_cs.xml")
+        self.ssh_client.send_command('~/quod/script/site_scripts/change_permission_script')
+        self.ssh_client.put_file(self.remote_path_cs, "temp_cs.xml")
+        self.ssh_client.send_command("qrestart QUOD.CS")
+        time.sleep(50)
         # # endergion
 
         # region  precondition : create CO order via FIX
@@ -228,9 +228,9 @@ class QAP_T7313(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
-        # self.ssh_client.put_file(self.remote_path_cs, self.local_path_cs)
-        # self.ssh_client.send_command("qrestart QUOD.CS")
-        # os.remove('temp_cs.xml')
-        # time.sleep(50)
-        # self.ssh_client.close()
+        self.ssh_client.put_file(self.remote_path_cs, self.local_path_cs)
+        self.ssh_client.send_command("qrestart QUOD.CS")
+        os.remove('temp_cs.xml')
+        time.sleep(50)
+        self.ssh_client.close()
         self.db_manager.close_connection()
