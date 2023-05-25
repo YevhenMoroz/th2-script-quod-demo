@@ -83,21 +83,13 @@ class QAP_T4488(TestCase):
         # endregion
 
         # region venue param
-        # self.instrument = self.data_set.get_fix_instrument_by_name("instrument_1")
-        # self.client = self.data_set.get_client_by_name("client_2")
-        # self.account = self.data_set.get_account_by_name("account_2")
-        # self.ex_destination_1 = self.data_set.get_mic_by_name("mic_1")
-        # self.listing_id = self.data_set.get_listing_id_by_name("listing_36")
-
-        # self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile1")
-
-        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_21")
+        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_1")
         self.client = self.data_set.get_client_by_name("client_2")
-        self.account = self.data_set.get_account_by_name("account_18")
-        self.ex_destination_1 = self.data_set.get_mic_by_name("mic_31")
-        self.listing_id = self.data_set.get_listing_id_by_name("listing_37")
+        self.account = self.data_set.get_account_by_name("account_2")
+        self.ex_destination_1 = self.data_set.get_mic_by_name("mic_1")
+        self.listing_id = self.data_set.get_listing_id_by_name("listing_36")
 
-        self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile2")
+        self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile1")
         # endregion
 
         # region Key parameters
