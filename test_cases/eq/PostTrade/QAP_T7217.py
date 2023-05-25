@@ -5,7 +5,7 @@ from pathlib import Path
 
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
-from custom.verifier import Verifier
+from custom.verifier import VerificationMethod
 from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
@@ -176,20 +176,12 @@ class QAP_T7217(TestCase):
         self.ssh_client.send_command('egrep "Sent email for {.*.}" QUOD.ALS.log > logs.txt')
         self.ssh_client.send_command("sed -n '$'p logs.txt > logs2.txt")
         self.ssh_client.get_file('/Logs/quod317/logs2.txt', './logs.txt')
-        verifier = Verifier(self.test_id)
         with open('./logs.txt') as file:
-            print(file.read())
-            if not (
-                    f'ClientAccountID={self.alloc_account_1}'
-                    and "ConfirmStatus=New"
-                    and f"TradeDate={trade_date}"
-                    and "NetMoney=4,000" in file.read()
-            ):
-                verifier.success = False
-
-            verifier.fields.update(
-                {"": {"key": False, "type": "field", "status": "PASSED" if self.verifier.success else "FAILED"}})
-            verifier.set_event_name("Email message has correct values:")
-            verifier.verify()
+            res = file.read()
+            self.java_api_manager.compare_values({
+                "ClientAccountID": f'ClientAccountID={self.alloc_account_1}', 'ConfirmStatus': 'ConfirmStatus=New',
+                'TradeDate': f"TradeDate={trade_date}", "NetMoney": "NetMoney=4,000"}, {
+                "ClientAccountID": res, "ConfirmStatus": res, "TradeDate": res, "NetMoney": res}, "Check ALS message",
+                VerificationMethod.CONTAINS)
         os.remove('./logs.txt')
         # endregion

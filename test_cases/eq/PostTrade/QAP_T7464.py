@@ -1,8 +1,9 @@
 import logging
-import time
+import os
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
+from custom.verifier import VerificationMethod
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.message_types import ORSMessageType
@@ -17,8 +18,8 @@ from test_framework.java_api_wrappers.oms.ors_messges.ConfirmationOMS import Con
 from test_framework.java_api_wrappers.oms.ors_messges.ForceAllocInstructionStatusRequestOMS import \
     ForceAllocInstructionStatusRequestOMS
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
-from test_framework.read_log_wrappers.ReadLogVerifier import ReadLogVerifier
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
+from test_framework.ssh_wrappers.ssh_client import SshClient
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -46,8 +47,10 @@ class QAP_T7464(TestCase):
         self.confirmation_report = FixMessageConfirmationReportOMS(self.data_set)
         self.fix_verifier = FixVerifier(self.fix_env.drop_copy, self.test_id)
         self.rest_api_manager = RestCommissionsSender(self.rest_api_connectivity, self.test_id, self.data_set)
-        self.ors_report = self.environment.get_list_read_log_environment()[0].read_log_conn_ors
-        self.read_log_verifier = ReadLogVerifier(self.ors_report, self.test_id)
+        self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
+        self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
+                                    self.ssh_client_env.password, self.ssh_client_env.su_user,
+                                    self.ssh_client_env.su_password)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -172,8 +175,16 @@ class QAP_T7464(TestCase):
             # endregion
 
             # region Check Fix_Confirmation message in ors logs
-            als_message = dict()
-            als_message.update({"ConfirmationID": confirmation_id, "NetGrossInd": indicator})
-            self.read_log_verifier.check_read_log_message(als_message, ["ConfirmationID"], timeout=50000)
-            time.sleep(10)
+            self.ssh_client.send_command('cdl')
+            self.ssh_client.send_command('serializing fix Confirmation={.*. } }" QUOD.ORS.log > logs.txt')
+            self.ssh_client.send_command("sed -n '$'p logs.txt > logs2.txt")
+            self.ssh_client.get_file('/Logs/quod317/logs2.txt', './logs.txt')
+            with open('./logs.txt') as file:
+                res = file.read()
+                self.java_api_manager.compare_values({
+                    "ConfirmationID": f"ConfirmationID={confirmation_id}", "NetGrossInd": f"NetGrossInd={indicator}"}, {
+                    "ConfirmationID": res, "NetGrossInd": res}, "Check ORS message",
+                    VerificationMethod.CONTAINS)
+            os.remove('./logs.txt')
+            self.ssh_client.close()
             # endregion
