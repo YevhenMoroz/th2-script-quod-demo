@@ -62,9 +62,9 @@ class AlgoFormulasManager:
         return remaining_ord_qty - reserve
 
     @staticmethod
-    def get_nav_reserve(remaining_ord_qty: int, remaining_waves: int, ats: int, nav_percentage: float = 100) -> int:
+    def get_nav_reserve(remaining_ord_qty: int, child_qty: int, ats: int = 10000, nav_percentage: float = 100) -> int:
         first_reserve = max(5 * ats, math.ceil(remaining_ord_qty * (100 - nav_percentage)))
-        reserve = max(first_reserve, AlgoFormulasManager.get_next_twap_slice(remaining_ord_qty, remaining_waves))
+        reserve = max(first_reserve, child_qty)
         return reserve
 
     @staticmethod
@@ -842,8 +842,21 @@ class AlgoFormulasManager:
         return (price_1 + price_2)/2
 
     @staticmethod
-    def get_avaible_qty_with_save_for_close_percent(parent_qty: int, save_for_close_percent: float):
+    def get_avaible_qty_with_save_for_close_percent(parent_qty: int, save_for_close_percent: float, child_order_qty: int):
         if (save_for_close_percent > 0 and save_for_close_percent < 1):
-            return math.ceil(parent_qty * 100) / (save_for_close_percent * 100)
+            if (parent_qty - math.ceil(parent_qty * 100) / (save_for_close_percent * 100)) > child_order_qty:
+                return child_order_qty
+            else:
+                return parent_qty - math.ceil(parent_qty * 100) / (save_for_close_percent * 100)
         else:
-            return (parent_qty - math.ceil(parent_qty / 100 * save_for_close_percent))
+            if (parent_qty - math.ceil(parent_qty / 100 * save_for_close_percent)) > child_order_qty:
+                return child_order_qty
+            else:
+                return (parent_qty - math.ceil(parent_qty / 100 * save_for_close_percent))
+
+    @staticmethod
+    def get_avaible_qty_with_save_for_close_shares(parent_qty: int, save_for_close_shares: int, child_order_qty: int):
+        if parent_qty - save_for_close_shares > child_order_qty:
+            return child_order_qty
+        else:
+            return (parent_qty - save_for_close_shares)
