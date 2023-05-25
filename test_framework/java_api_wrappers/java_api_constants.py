@@ -166,6 +166,8 @@ class JavaApiFields(Enum):
     BookingType = 'BookingType'
     RetailPositList = 'RetailPositList'
     RetailPositBlock = 'RetailPositBlock'
+    CDOrdAckBatchRequestBlock = 'CDOrdAckBatchRequestBlock'
+    ModifyChildren = 'ModifyChildren'
     PositionType = 'PositionType'
     TransactTime = 'TransactTime'
     ErrorMsg = "ErrorMsg"
