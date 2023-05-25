@@ -1057,6 +1057,30 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         super().change_parameters(temp)
         return self
 
+    def set_params_for_twap_eliminate_rb(self, new_order_single: FixMessageNewOrderSingle = None):
+        temp = dict()
+        if new_order_single.is_parameter_exist('Price'):
+            temp.update(Price=new_order_single.get_parameter('Price'))
+        temp.update(
+            AvgPx='*',
+            ClOrdID='*',
+            CumQty='*',
+            TimeInForce=new_order_single.get_parameter('TimeInForce'),
+            ExecID='*',
+            OrderID='*',
+            OrderQty=new_order_single.get_parameter('OrderQty'),
+            OrdStatus=4,
+            Side=new_order_single.get_parameter('Side'),
+            TransactTime='*',
+            ExecType=4,
+            LeavesQty='*',
+            OrdType=new_order_single.get_parameter('OrdType'),
+            Text='*',
+            OrigClOrdID='*'
+        )
+        super().change_parameters(temp)
+        return self
+
     def set_params_for_nos_dfd_rule(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
         temp.update(

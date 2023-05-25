@@ -85,20 +85,29 @@ class QAP_T9215(TestCase):
         # endregion
 
         # region Venue params
-        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_1")
-        self.client = self.data_set.get_client_by_name("client_2")
-        self.account = self.data_set.get_account_by_name("account_2")
-        self.ex_destination_xpar = self.data_set.get_mic_by_name("mic_1")
-        self.listing_id = self.data_set.get_listing_id_by_name("listing_36")
-
-        self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile1")
+        # self.instrument = self.data_set.get_fix_instrument_by_name("instrument_1")
+        # self.client = self.data_set.get_client_by_name("client_2")
+        # self.account = self.data_set.get_account_by_name("account_2")
+        # self.ex_destination_xpar = self.data_set.get_mic_by_name("mic_1")
+        # self.listing_id = self.data_set.get_listing_id_by_name("listing_36")
+        #
+        # self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile1")
         # endregion
+
+        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_38")
+        self.client = self.data_set.get_client_by_name("client_3")
+        self.account = self.data_set.get_account_by_name("account_21")
+        self.ex_destination_xpar = self.data_set.get_mic_by_name("mic_47")
+        self.listing_id = self.data_set.get_listing_id_by_name("listing_58")
+
+        self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile3")
 
         # region Key parameters
         self.key_params_NOS_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_parent")
         self.key_params_ER_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_1")
         self.key_params_NOS_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_child")
         self.key_params_ER_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_ER_child")
+        self.key_params_ER_eliminate_child = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_2")
         # endregion
 
         self.rule_list = []
@@ -208,13 +217,16 @@ class QAP_T9215(TestCase):
         self.fix_verifier_buy.check_fix_message(er_replaced_twap_slice_1_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side 1st ExecReport Replaced TWAP slice 1 order')
         # endregion
 
-        # region Check the 2nd replacing of the 1st TWAP slice
-        self.fix_verifier_buy.set_case_id(bca.create_event("1st TWAP slice goes to the aggressive phase", self.test_id))
+        # region Check the 2nd replacing and eliminating of the 1st TWAP slice
+        self.fix_verifier_buy.set_case_id(bca.create_event("1st TWAP slice goes to the aggressive phase and eliminates", self.test_id))
 
         twap_slice_1_order.change_parameters(dict(Price=self.price, TimeInForce=self.tif_ioc))
 
         er_replaced_twap_slice_1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_slice_1_order, self.gateway_side_buy, self.status_cancel_replace)
         self.fix_verifier_buy.check_fix_message(er_replaced_twap_slice_1_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side 2nd ExecReport Replaced TWAP slice 1 order')
+
+        er_eliminated_twap_slice_1_order_params = FixMessageExecutionReportAlgo().set_params_for_twap_eliminate_rb(twap_slice_1_order)
+        self.fix_verifier_buy.check_fix_message(er_eliminated_twap_slice_1_order_params, key_parameters=self.key_params_ER_eliminate_child, direction=self.ToQuod, message_name='Buy side ExecReport Eliminated TWAP slice 1 order')
         # endregion
 
         # region Check the 2nd TWAP slice order
@@ -239,6 +251,9 @@ class QAP_T9215(TestCase):
 
         er_replaced_twap_slice_2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_slice_2_order, self.gateway_side_buy, self.status_cancel_replace)
         self.fix_verifier_buy.check_fix_message(er_replaced_twap_slice_2_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side 2nd ExecReport Replaced TWAP slice 2 order')
+
+        er_eliminated_twap_slice_2_order_params = FixMessageExecutionReportAlgo().set_params_for_twap_eliminate_rb(twap_slice_2_order)
+        self.fix_verifier_buy.check_fix_message(er_eliminated_twap_slice_2_order_params, key_parameters=self.key_params_ER_eliminate_child, direction=self.ToQuod, message_name='Buy side ExecReport Eliminated TWAP slice 2 order')
         # endregion
 
         # region Check the 3rd TWAP slice order
@@ -263,6 +278,9 @@ class QAP_T9215(TestCase):
 
         er_replaced_twap_slice_3_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_slice_3_order, self.gateway_side_buy, self.status_cancel_replace)
         self.fix_verifier_buy.check_fix_message(er_replaced_twap_slice_3_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side 2nd ExecReport Replaced TWAP slice 3 order')
+
+        er_eliminated_twap_slice_3_order_params = FixMessageExecutionReportAlgo().set_params_for_twap_eliminate_rb(twap_slice_3_order)
+        self.fix_verifier_buy.check_fix_message(er_eliminated_twap_slice_3_order_params, key_parameters=self.key_params_ER_eliminate_child, direction=self.ToQuod, message_name='Buy side ExecReport Eliminated TWAP slice 3 order')
         # endregion
 
         # region Check the 4th TWAP slice order
@@ -287,6 +305,9 @@ class QAP_T9215(TestCase):
 
         er_replaced_twap_slice_4_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_slice_4_order, self.gateway_side_buy, self.status_cancel_replace)
         self.fix_verifier_buy.check_fix_message(er_replaced_twap_slice_4_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side 2nd ExecReport Replaced TWAP slice 4 order')
+
+        er_eliminated_twap_slice_4_order_params = FixMessageExecutionReportAlgo().set_params_for_twap_eliminate_rb(twap_slice_4_order)
+        self.fix_verifier_buy.check_fix_message(er_eliminated_twap_slice_4_order_params, key_parameters=self.key_params_ER_eliminate_child, direction=self.ToQuod, message_name='Buy side ExecReport Eliminated TWAP slice 4 order')
         # endregion
 
         # region Check the 5th TWAP slice order
@@ -311,6 +332,9 @@ class QAP_T9215(TestCase):
 
         er_replaced_twap_slice_5_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_slice_5_order, self.gateway_side_buy, self.status_cancel_replace)
         self.fix_verifier_buy.check_fix_message(er_replaced_twap_slice_5_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side 2nd ExecReport Replaced TWAP slice 5 order')
+
+        er_eliminated_twap_slice_5_order_params = FixMessageExecutionReportAlgo().set_params_for_twap_eliminate_rb(twap_slice_5_order)
+        self.fix_verifier_buy.check_fix_message(er_eliminated_twap_slice_5_order_params, key_parameters=self.key_params_ER_eliminate_child, direction=self.ToQuod, message_name='Buy side ExecReport Eliminated TWAP slice 5 order')
         # endregion
 
         # region Check Auction DMA child order
