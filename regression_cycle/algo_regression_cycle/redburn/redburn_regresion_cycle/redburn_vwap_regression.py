@@ -4,6 +4,7 @@ from stubs import Stubs
 from test_cases.algo.Algo_Redburn.Algo_VWAP import QAP_T4285
 from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T10943 import QAP_T10943
 from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T10944 import QAP_T10944
+from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T11220 import QAP_T11220
 from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T11227 import QAP_T11227
 from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T11304 import QAP_T11304
 from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T11312 import QAP_T11312
@@ -42,6 +43,7 @@ def test_run(parent_id=None, version=None):
         # endregion
 
         QAP_T8801(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T11220(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
     except Exception:
         # bca.create_event('Fail test event', status='FAILED', parent_id=parent_id)

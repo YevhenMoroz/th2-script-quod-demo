@@ -26,7 +26,7 @@ from test_framework.algo_mongo_manager import AlgoMongoManager as AMM
 from test_framework.formulas_and_calculation.trading_phase_manager import TradingPhaseManager, TimeSlot
 
 
-class QAP_T4386(TestCase):
+class QAP_T4232(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -60,6 +60,10 @@ class QAP_T4386(TestCase):
         self.pov_qty_child = AFM.get_pov_child_qty(self.percentage_volume, self.qty_bid_1, self.qty)
 
         self.tif_ato = TimeInForce.AtTheOpening.value
+
+        self.check_order_sequence = False
+
+        self.pre_filter_new_order_single = self.data_set.get_pre_filter('pre_filer_equal_D')
         # endregion
 
         # region Gateway Side
@@ -154,7 +158,7 @@ class QAP_T4386(TestCase):
         case_id_1 = bca.create_event("Create Auction Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.pov_algo = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_POV_MOO_Auction_params()
+        self.pov_algo = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_POV_Auctions_params()
         self.pov_algo.add_ClordId((os.path.basename(__file__)[:-3]))
         self.pov_algo.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.ex_destination_1))
         self.pov_algo.update_fields_in_component('QuodFlatParameters', dict(MaxParticipation=self.percentage_volume))
@@ -211,6 +215,25 @@ class QAP_T4386(TestCase):
         self.fix_verifier_buy.check_fix_message(new_passive_child_order_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New  DMA Child 1')
         # endregion
 
+        time.sleep(3)
+
+        # region Send Intraday auction phase
+        self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send AUC phase", self.test_id))
+        self.incremental_refresh_1 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_MDReqID(self.listing_id, self.fix_env1.feed_handler).update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume).set_phase(TradingPhases.Auction)
+        self.fix_manager_feed_handler.send_message(fix_message=self.incremental_refresh_1)
+        # endregion
+
+        # region Check POV child orders
+        self.fix_verifier_buy.set_case_id(self.case_id_3)
+        cancel_dma_child_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.passive_child_order_1, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message(cancel_dma_child_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport Cancel DMA 1 child')
+
+        self.case_id_4 = bca.create_event("Check child order during Intraday", self.test_id)
+        self.fix_verifier_buy.set_case_id(self.case_id_4)
+
+        self.fix_verifier_buy.check_no_message_found(message_timeout=5000, direction=self.ToQuod, pre_filter=self.pre_filter_new_order_single, message_name='Buy side No NewOrderSingle message')
+        # endregion
+
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         time.sleep(3)
@@ -232,10 +255,6 @@ class QAP_T4386(TestCase):
         trading_phases = trading_phase_manager.get_trading_phase_list(new_standard=False)
         self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
         # endregion
-
-        self.fix_verifier_buy.set_case_id(self.case_id_3)
-        cancel_dma_child_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.passive_child_order_1, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message(cancel_dma_child_1_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport Cancel DMA 1 child')
 
         cancel_pov_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.pov_algo, self.gateway_side_sell, self.status_cancel)
         self.fix_verifier_sell.check_fix_message(cancel_pov_order, key_parameters=self.key_params, message_name='Sell side ExecReport Cancel')
