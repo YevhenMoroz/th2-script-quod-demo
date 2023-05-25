@@ -176,7 +176,7 @@ class QAP_T7464(TestCase):
 
             # region Check Fix_Confirmation message in ors logs
             self.ssh_client.send_command('cdl')
-            self.ssh_client.send_command('serializing fix Confirmation={.*. } }" QUOD.ORS.log > logs.txt')
+            self.ssh_client.send_command('egrep "serializing fix Confirmation={.*. } }" QUOD.ORS.log > logs.txt')
             self.ssh_client.send_command("sed -n '$'p logs.txt > logs2.txt")
             self.ssh_client.get_file('/Logs/quod317/logs2.txt', './logs.txt')
             with open('./logs.txt') as file:
@@ -186,5 +186,4 @@ class QAP_T7464(TestCase):
                     "ConfirmationID": res, "NetGrossInd": res}, "Check ORS message",
                     VerificationMethod.CONTAINS)
             os.remove('./logs.txt')
-            self.ssh_client.close()
             # endregion
