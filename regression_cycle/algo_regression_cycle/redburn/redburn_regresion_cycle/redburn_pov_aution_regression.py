@@ -8,6 +8,7 @@ from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T4173 import QAP_T4173
 from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T4174 import QAP_T4174
 from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T4176 import QAP_T4176
 from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T4177 import QAP_T4177
+from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T4232 import QAP_T4232
 from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T4386 import QAP_T4386
 from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T4487 import QAP_T4487
 from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T4488 import QAP_T4488
@@ -53,6 +54,7 @@ def test_run(parent_id=None, version=None):
         QAP_T4150(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4488(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4487(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4232(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
     except Exception:
         # bca.create_event('Fail test event', status='FAILED', parent_id=parent_id)
