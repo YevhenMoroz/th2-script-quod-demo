@@ -1057,7 +1057,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         super().change_parameters(temp)
         return self
 
-    def set_params_for_twap_eliminate_rb(self, new_order_single: FixMessageNewOrderSingle = None):
+    def set_params_for_wap_replace_eliminate_rb(self, new_order_single: FixMessageNewOrderSingle = None):
         temp = dict()
         if new_order_single.is_parameter_exist('Price'):
             temp.update(Price=new_order_single.get_parameter('Price'))

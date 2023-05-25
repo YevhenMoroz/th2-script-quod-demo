@@ -217,7 +217,7 @@ class QAP_T9215(TestCase):
         er_replaced_twap_slice_1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_slice_1_order, self.gateway_side_buy, self.status_cancel_replace)
         self.fix_verifier_buy.check_fix_message(er_replaced_twap_slice_1_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side 2nd ExecReport Replaced TWAP slice 1 order')
 
-        er_eliminated_twap_slice_1_order_params = FixMessageExecutionReportAlgo().set_params_for_twap_eliminate_rb(twap_slice_1_order)
+        er_eliminated_twap_slice_1_order_params = FixMessageExecutionReportAlgo().set_params_for_wap_replace_eliminate_rb(twap_slice_1_order)
         self.fix_verifier_buy.check_fix_message(er_eliminated_twap_slice_1_order_params, key_parameters=self.key_params_ER_eliminate_child, direction=self.ToQuod, message_name='Buy side ExecReport Eliminated TWAP slice 1 order')
         # endregion
 
@@ -244,7 +244,7 @@ class QAP_T9215(TestCase):
         er_replaced_twap_slice_2_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_slice_2_order, self.gateway_side_buy, self.status_cancel_replace)
         self.fix_verifier_buy.check_fix_message(er_replaced_twap_slice_2_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side 2nd ExecReport Replaced TWAP slice 2 order')
 
-        er_eliminated_twap_slice_2_order_params = FixMessageExecutionReportAlgo().set_params_for_twap_eliminate_rb(twap_slice_2_order)
+        er_eliminated_twap_slice_2_order_params = FixMessageExecutionReportAlgo().set_params_for_wap_replace_eliminate_rb(twap_slice_2_order)
         self.fix_verifier_buy.check_fix_message(er_eliminated_twap_slice_2_order_params, key_parameters=self.key_params_ER_eliminate_child, direction=self.ToQuod, message_name='Buy side ExecReport Eliminated TWAP slice 2 order')
         # endregion
 
@@ -271,7 +271,7 @@ class QAP_T9215(TestCase):
         er_replaced_twap_slice_3_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_slice_3_order, self.gateway_side_buy, self.status_cancel_replace)
         self.fix_verifier_buy.check_fix_message(er_replaced_twap_slice_3_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side 2nd ExecReport Replaced TWAP slice 3 order')
 
-        er_eliminated_twap_slice_3_order_params = FixMessageExecutionReportAlgo().set_params_for_twap_eliminate_rb(twap_slice_3_order)
+        er_eliminated_twap_slice_3_order_params = FixMessageExecutionReportAlgo().set_params_for_wap_replace_eliminate_rb(twap_slice_3_order)
         self.fix_verifier_buy.check_fix_message(er_eliminated_twap_slice_3_order_params, key_parameters=self.key_params_ER_eliminate_child, direction=self.ToQuod, message_name='Buy side ExecReport Eliminated TWAP slice 3 order')
         # endregion
 
@@ -298,7 +298,7 @@ class QAP_T9215(TestCase):
         er_replaced_twap_slice_4_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_slice_4_order, self.gateway_side_buy, self.status_cancel_replace)
         self.fix_verifier_buy.check_fix_message(er_replaced_twap_slice_4_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side 2nd ExecReport Replaced TWAP slice 4 order')
 
-        er_eliminated_twap_slice_4_order_params = FixMessageExecutionReportAlgo().set_params_for_twap_eliminate_rb(twap_slice_4_order)
+        er_eliminated_twap_slice_4_order_params = FixMessageExecutionReportAlgo().set_params_for_wap_replace_eliminate_rb(twap_slice_4_order)
         self.fix_verifier_buy.check_fix_message(er_eliminated_twap_slice_4_order_params, key_parameters=self.key_params_ER_eliminate_child, direction=self.ToQuod, message_name='Buy side ExecReport Eliminated TWAP slice 4 order')
         # endregion
 
@@ -325,7 +325,7 @@ class QAP_T9215(TestCase):
         er_replaced_twap_slice_5_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_slice_5_order, self.gateway_side_buy, self.status_cancel_replace)
         self.fix_verifier_buy.check_fix_message(er_replaced_twap_slice_5_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side 2nd ExecReport Replaced TWAP slice 5 order')
 
-        er_eliminated_twap_slice_5_order_params = FixMessageExecutionReportAlgo().set_params_for_twap_eliminate_rb(twap_slice_5_order)
+        er_eliminated_twap_slice_5_order_params = FixMessageExecutionReportAlgo().set_params_for_wap_replace_eliminate_rb(twap_slice_5_order)
         self.fix_verifier_buy.check_fix_message(er_eliminated_twap_slice_5_order_params, key_parameters=self.key_params_ER_eliminate_child, direction=self.ToQuod, message_name='Buy side ExecReport Eliminated TWAP slice 5 order')
         # endregion
 
