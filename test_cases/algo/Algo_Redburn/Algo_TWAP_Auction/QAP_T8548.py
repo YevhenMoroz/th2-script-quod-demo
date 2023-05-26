@@ -25,7 +25,7 @@ from test_framework.algo_mongo_manager import AlgoMongoManager as AMM
 from test_framework.formulas_and_calculation.trading_phase_manager import TradingPhaseManager, TimeSlot
 
 
-class QAP_T8547(TestCase):
+class QAP_T8548(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -152,7 +152,8 @@ class QAP_T8547(TestCase):
         scheduler = sched.scheduler(time.time, time.sleep)
         send_algo_order_checkpoint = self.end_phase.timestamp() - 120
         twap_child_checkpoint = self.end_phase.timestamp() - 110
-        send_incremental_refresh_send_phase_checkpoint = self.end_phase.timestamp() + 10
+        send_incremental_refresh_pcl_s_checkpoint = self.end_phase.timestamp() - 20
+        send_incremental_refresh_open_checkpoint = self.end_phase.timestamp() + 10
 
         # region Send NewOrderSingle (35=D) for
         case_id_1 = bca.create_event("Create TWAP Order", self.test_id)
@@ -193,13 +194,13 @@ class QAP_T8547(TestCase):
         # region Send the POP phase with the TradingStatus=S
         self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send the POP phase with the TradingStatus=S", self.test_id))
         self.incremental_refresh_1 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_MDReqID(self.listing_id, self.fix_env1.feed_handler).update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntrySize=0, SecurityTradingStatus=2).set_phase(TradingPhases.PreOpen)
-        scheduler.enterabs(send_incremental_refresh_send_phase_checkpoint, 1, self.fix_manager_feed_handler.send_message, kwargs=dict(fix_message=self.incremental_refresh_1))
+        scheduler.enterabs(send_incremental_refresh_pcl_s_checkpoint, 1, self.fix_manager_feed_handler.send_message, kwargs=dict(fix_message=self.incremental_refresh_1))
         # endregion
 
         # region Send the Open phase
         self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send the Open phase", self.test_id))
         self.incremental_refresh_1 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id, self.fix_env1.feed_handler).update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', 0).set_phase(TradingPhases.Open)
-        scheduler.enterabs(send_incremental_refresh_send_phase_checkpoint, 2, self.fix_manager_feed_handler.send_message, kwargs=dict(fix_message=self.incremental_refresh_1))
+        scheduler.enterabs(send_incremental_refresh_open_checkpoint, 2, self.fix_manager_feed_handler.send_message, kwargs=dict(fix_message=self.incremental_refresh_1))
         # endregion
 
         scheduler.run()
