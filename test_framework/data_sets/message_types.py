@@ -147,6 +147,7 @@ class ORSMessageType(Enum):
     TradeCaptureReportNotif = 'Order_TradeCaptureReportNotif'
     GatewayConfirmation = 'Gateway_Confirmation'
     GatewayAllocationInstruction = 'Gateway_AllocationInstruction'
+    BlockChangeConfirmationServiceReply = 'Order_BlockChangeConfirmationServiceReply'
 
 
 class TradingRestApiMessageType(Enum):
