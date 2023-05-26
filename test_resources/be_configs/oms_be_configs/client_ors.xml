@@ -29,6 +29,13 @@ Copyright Quod Financial
                 </subjects>
         </middleware>
 	<ors>
+		 <benchmarking>
+            <FIX>false</FIX> <!-- enables benchmarking for orders coming from FIX -->
+            <Unsolicited>false</Unsolicited>
+            <benchmarks> <!-- depending on scope can be true, false, parentless, caresynth, or DMA -->
+                <DVW>false</DVW> <!-- Day VWAP -->
+            </benchmarks>
+        </benchmarking>
      <FIXNotif>
             <gtw>gtwbo</gtw> <!-- default drop-copy gateway -->
 			<makingInternal>true</makingInternal> <!-- internal messages for/from SBP venue -->
