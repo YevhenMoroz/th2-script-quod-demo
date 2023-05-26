@@ -137,6 +137,7 @@ class TradeEntryRequestFX(JavaApiMessage):
         for msg in response:
             if msg.get_message_type() == ORSMessageType.ExecutionReport.value:
                 if msg.get_parameters()["ExecutionReportBlock"]["AccountGroupID"] != self.get_client():
+                    if msg.get_parameters()["ExecutionReportBlock"]["OrdID"].startswith("AO"):
                         return msg.get_parameters()["ExecutionReportBlock"]["OrdID"]
 
     def get_ord_id_from_held(self, response) -> str:
