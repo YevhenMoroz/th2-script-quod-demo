@@ -8,6 +8,7 @@ from test_cases.fx.fx_mm_positions.QAP_T10760 import QAP_T10760
 from test_cases.fx.fx_mm_positions.QAP_T10840 import QAP_T10840
 from test_cases.fx.fx_mm_positions.QAP_T11053 import QAP_T11053
 from test_cases.fx.fx_mm_positions.QAP_T11080 import QAP_T11080
+from test_cases.fx.fx_mm_positions.QAP_T11216 import QAP_T11216
 from test_cases.fx.fx_mm_positions.QAP_T11217 import QAP_T11217
 from test_cases.fx.fx_mm_positions.QAP_T11218 import QAP_T11218
 from test_cases.fx.fx_mm_positions.QAP_T11222 import QAP_T11222
@@ -52,6 +53,7 @@ def test_run(parent_id=None, version="5.1.178.192"):
         QAP_T10614(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10760(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10840(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T11216(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T11217(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T11218(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T11222(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
