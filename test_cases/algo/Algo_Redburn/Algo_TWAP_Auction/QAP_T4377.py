@@ -83,22 +83,14 @@ class QAP_T4377(TestCase):
         # endregion
 
         # region Venue params
-        # self.instrument = self.data_set.get_fix_instrument_by_name("instrument_1")
-        # self.client = self.data_set.get_client_by_name("client_2")
-        # self.account = self.data_set.get_account_by_name("account_2")
-        # self.ex_destination_xpar = self.data_set.get_mic_by_name("mic_1")
-        # self.listing_id = self.data_set.get_listing_id_by_name("listing_36")
-        #
-        # self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile1")
+        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_1")
+        self.client = self.data_set.get_client_by_name("client_2")
+        self.account = self.data_set.get_account_by_name("account_2")
+        self.ex_destination_xpar = self.data_set.get_mic_by_name("mic_1")
+        self.listing_id = self.data_set.get_listing_id_by_name("listing_36")
+
+        self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile1")
         # endregion
-
-        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_38")
-        self.client = self.data_set.get_client_by_name("client_3")
-        self.account = self.data_set.get_account_by_name("account_21")
-        self.ex_destination_xpar = self.data_set.get_mic_by_name("mic_47")
-        self.listing_id = self.data_set.get_listing_id_by_name("listing_58")
-
-        self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile3")
 
         # region Key parameters
         self.key_params_NOS_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_parent")
