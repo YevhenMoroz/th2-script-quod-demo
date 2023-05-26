@@ -71,7 +71,7 @@ class QAP_T10861(TestCase):
 
         # region step 2
         start_date: str = (tm(datetime.utcnow().isoformat()) + bd(n=-1)).date().strftime('%Y-%m-%d') + 'T23:00'
-        end_date: str = (tm(datetime.utcnow().isoformat())).date().strftime(
+        end_date: str = (tm(datetime.utcnow().isoformat())+bd(n=1)).date().strftime(
             '%Y-%m-%d') + 'T06:40'
         bench_notification = \
             self.java_api_manager.get_last_message(ORSMessageType.BenchmarkNotification.value).get_parameters() \
