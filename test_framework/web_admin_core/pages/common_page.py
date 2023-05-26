@@ -24,7 +24,7 @@ def waiting_until_page_requests_to_be_load(function):
         if self.is_element_present(CommonConstants.USER_ICON) or self.is_element_present(CommonConstants.HELP_ICON):
             a = 0
             while True:
-                if "done" not in self.web_driver.find_element_by_xpath(CommonConstants.PAGE_BODY).get_attribute(
+                if "done" not in self.web_driver.find_element(By.XPATH, CommonConstants.PAGE_BODY).get_attribute(
                                     'class'):
                     a += 1
                     time.sleep(0.25)
@@ -131,6 +131,7 @@ class CommonPage:
         Method was created for setting checkbox list inside field type of multiselect,
         concatenates the xpath to the checkbox through its values
         """
+        self.find_by_xpath(field_xpath).click()
         if not self.is_element_present(CommonConstants.MULTISELECT_FORM_LOOK_UP):
             self.find_by_xpath(field_xpath).click()
         time.sleep(1)
@@ -216,7 +217,7 @@ class CommonPage:
 
     def is_element_present(self, xpath):
         try:
-            self.web_driver.find_element_by_xpath(xpath)
+            self.web_driver.find_element(By.XPATH, xpath)
         except NoSuchElementException:
             return False
         return True
@@ -237,7 +238,7 @@ class CommonPage:
         '''
         scr_elem = self.find_by_xpath(CommonConstants.HORIZONTAL_SCROLL_ELEMENT_XPATH)
         elem_size = int(scr_elem.size['width'])
-        e = self.web_driver.find_element_by_xpath(CommonConstants.HORIZONTAL_SCROLL_WHEEL).get_attribute('style')
+        e = self.web_driver.find_element(By.XPATH, CommonConstants.HORIZONTAL_SCROLL_WHEEL).get_attribute('style')
         scr_elem_full_size = int(e.split()[1].replace('px;', ''))
         wheel_position = 0
         if 'transform' in e:
@@ -254,7 +255,7 @@ class CommonPage:
             d = wheel_position
             while True:
                 if d <= wheel_position and c <= elem_size:
-                    e = self.web_driver.find_element_by_xpath(CommonConstants.HORIZONTAL_SCROLL_WHEEL).get_attribute(
+                    e = self.web_driver.find_element(By.XPATH, CommonConstants.HORIZONTAL_SCROLL_WHEEL).get_attribute(
                         'style')
                     d = abs(int(e.split()[-1].replace('translateX(', '').replace('px);', '')))
                     c += 100
@@ -266,7 +267,7 @@ class CommonPage:
                 action = ActionChains(self.web_driver)
                 action.move_to_element_with_offset(scr_elem, c, 5).click().perform()
                 c += 100
-                e = self.web_driver.find_element_by_xpath(CommonConstants.HORIZONTAL_SCROLL_WHEEL).get_attribute('style')
+                e = self.web_driver.find_element(By.XPATH, CommonConstants.HORIZONTAL_SCROLL_WHEEL).get_attribute('style')
                 if self.is_element_present(search_element) and 'transform' in e and '(0px)' not in e:
                     break
 

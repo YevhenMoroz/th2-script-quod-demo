@@ -111,6 +111,11 @@ class ClientsValuesSubWizard(CommonPage):
     def get_fix_matching_profile(self):
         return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_FIX_MATCHING_PROFILE_XPATH)
 
+    def get_all_fix_matching_profile_from_drop_menu(self):
+        self.find_by_xpath(ClientsConstants.VALUES_TAB_FIX_MATCHING_PROFILE_XPATH).click()
+        time.sleep(1)
+        return self.get_all_items_from_drop_down(ClientsConstants.DROP_DOWN_MENU_XPATH)
+
     def set_counterpart(self, value):
         self.set_combobox_value(ClientsConstants.VALUES_TAB_COUNTERPART_XPATH, value)
 
@@ -152,6 +157,12 @@ class ClientsValuesSubWizard(CommonPage):
 
     def get_external_allocation_matching_service(self):
         return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_EXTERNAL_ALLOCATION_MATCHING_SERVICE_XPATH)
+
+    def get_all_external_allocation_matching_service_from_drop_menu(self):
+        if not self.is_element_present(ClientsConstants.CHECKBOX_DROP_DOWN_MENU):
+            self.find_by_xpath(ClientsConstants.VALUES_TAB_EXTERNAL_ALLOCATION_MATCHING_SERVICE_XPATH).click()
+        time.sleep(1)
+        return self.get_all_items_from_drop_down(ClientsConstants.CHECKBOX_DROP_DOWN_MENU)
 
     def is_external_allocation_matching_service_field_enable(self):
         return 'disabled' not in self.find_by_xpath(ClientsConstants.VALUES_TAB_EXTERNAL_ALLOCATION_MATCHING_SERVICE_XPATH)\

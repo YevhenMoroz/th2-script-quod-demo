@@ -51,4 +51,7 @@ class UsersWizard(CommonPage):
         self.find_by_xpath(UsersConstants.OK_BUTTON_XPATH).click() if confirm \
             else self.find_by_xpath(UsersConstants.CANCEL_BUTTON_XPATH).click()
 
+    def is_wizard_open(self):
+        return self.is_element_present(UsersConstants.USER_WIZARD_HEADER_LINK)
+
 

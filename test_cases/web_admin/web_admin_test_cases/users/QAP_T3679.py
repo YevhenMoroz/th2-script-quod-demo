@@ -80,6 +80,7 @@ class QAP_T3679(CommonTestCase):
             common_page.click_on_user_icon()
             time.sleep(1)
             common_page.click_on_logout()
+            time.sleep(2)
             login_page = LoginPage(self.web_driver_container)
             login_page.set_login(self.user_id)
             login_page.set_password(self.new_password)
