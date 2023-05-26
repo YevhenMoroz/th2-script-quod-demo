@@ -53,8 +53,9 @@ class QAP_T10861(TestCase):
         self.ssh_client.send_command('~/quod/script/site_scripts/change_permission_script')
         self.ssh_client.put_file(self.remote_path_ors, 'temp_ors.xml')
         self.db_manager.execute_query("UPDATE venue SET timezone = 'Asia/Tokyo', opentime = '08:00:00',closetime='15:40:00' WHERE venueid ='PARIS'")
+        self.ssh_client.send_command('qstart BS')
         self.ssh_client.send_command("qrestart all")
-        time.sleep(120)
+        time.sleep(140)
         # # endregion
 
         # region step 1
@@ -69,9 +70,9 @@ class QAP_T10861(TestCase):
         # endregion
 
         # region step 2
-        start_date: str = (tm(datetime.utcnow().isoformat()) + bd(n=-1)).date().strftime('%Y-%m-%d') + 'T23:00:00'
+        start_date: str = (tm(datetime.utcnow().isoformat()) + bd(n=-1)).date().strftime('%Y-%m-%d') + 'T23:00'
         end_date: str = (tm(datetime.utcnow().isoformat())).date().strftime(
-            '%Y-%m-%d') + 'T06:40:00'
+            '%Y-%m-%d') + 'T06:40'
         bench_notification = \
             self.java_api_manager.get_last_message(ORSMessageType.BenchmarkNotification.value).get_parameters() \
                 [JavaApiFields.BenchmarkNotificationBlock.value][JavaApiFields.BenchmarkList.value][
@@ -89,6 +90,6 @@ class QAP_T10861(TestCase):
             "UPDATE venue SET timezone = 'Europe/Paris', opentime = '01:00:00',closetime='00:00:00' WHERE venueid ='PARIS'")
         self.ssh_client.send_command("qrestart all")
         os.remove('temp_ors.xml')
-        time.sleep(120)
+        time.sleep(140)
         self.db_manager.close_connection()
         self.ssh_client.close()
