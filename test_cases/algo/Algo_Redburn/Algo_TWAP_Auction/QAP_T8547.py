@@ -144,8 +144,8 @@ class QAP_T8547(TestCase):
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
 
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data Incremental to clear the MarketDepth", self.test_id))
-        market_data_incremental_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase(TradingPhases.PreOpen)
-        market_data_incremental_par.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
+        market_data_incremental_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase(TradingPhases.PreOpen)
+        market_data_incremental_par.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.price_ask, MDEntrySize=0)
         self.fix_manager_feed_handler.send_message(market_data_incremental_par)
         # endregion
 
@@ -192,7 +192,7 @@ class QAP_T8547(TestCase):
 
         # region Send the POP phase with the TradingStatus=S
         self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send the POP phase with the TradingStatus=S", self.test_id))
-        self.incremental_refresh_1 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id, self.fix_env1.feed_handler).update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntrySize=0, SecurityTradingStatus=2).set_phase(TradingPhases.PreOpen)
+        self.incremental_refresh_1 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_MDReqID(self.listing_id, self.fix_env1.feed_handler).update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntrySize=0, SecurityTradingStatus=2).set_phase(TradingPhases.PreOpen)
         scheduler.enterabs(send_incremental_refresh_send_phase_checkpoint, 1, self.fix_manager_feed_handler.send_message, kwargs=dict(fix_message=self.incremental_refresh_1))
         # endregion
 
