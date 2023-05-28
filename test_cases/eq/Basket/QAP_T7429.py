@@ -107,7 +107,9 @@ class QAP_T7429(TestCase):
                                         "TransactTime", "Side", "AvgPx", "Parties", "SettlDate", "Currency",
                                         "TimeInForce", "HandlInst", "CxlQty", "LeavesQty", "CumQty", "LastPx",
                                         "OrdType", "OrderCapacity", "QtyType", "Price", "OrderListName", "Instrument",
-                                        "OrderQtyData", "trailer", "header"]
+                                        "OrderQtyData", "trailer", "header",
+                                        'QuodTradeQualifier', 'BookID',
+                                        'NoParty', 'tag5120', 'ExecBroker']
         exec_report1 = FixMessageExecutionReportOMS(self.data_set)
         exec_report1.change_parameters({"OrderID": ord_id1, "ExecType": "4", "OrdStatus": "4", "ClOrdID": ord_id1})
 
