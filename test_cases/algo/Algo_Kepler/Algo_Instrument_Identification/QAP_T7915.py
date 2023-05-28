@@ -76,7 +76,7 @@ class QAP_T7915(TestCase):
         # region Instrument parameters
         self.symbol = constants.Symbol.symbol_1.value
         self.sid = constants.SecurityID.security_id_2.value
-        self.sids = constants.SecurityIDSource.sids_8.value
+        self.sids = constants.SecurityIDSource.sids_4.value
         self.sec_type = constants.SecurityType.cs.value
         # endregion
 

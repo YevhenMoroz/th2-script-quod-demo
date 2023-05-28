@@ -31,6 +31,7 @@ class QAP_T3801(CommonTestCase):
         self.lookup_symbol = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.instr_symbol = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.instr_type = ['FXForward', 'DepositLoanLeg']
+        self.security_exchange = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.tenor = 'Cash'
 
         self.venue = self.data_set.get_venue_by_name("venue_3")
@@ -52,6 +53,7 @@ class QAP_T3801(CommonTestCase):
             values_tab = ListingsValuesSubWizard(self.web_driver_container)
             values_tab.set_symbol(self.symbol)
             values_tab.set_lookup_symbol(self.lookup_symbol)
+            values_tab.set_security_exchange(self.security_exchange)
             values_tab.set_instr_symbol(self.instr_symbol)
             attachment_tab = ListingsAttachmentSubWizard(self.web_driver_container)
             attachment_tab.set_venue(self.venue)

@@ -72,7 +72,7 @@ class QAP_T7474(TestCase):
         # region Set-up parameters for ExecutionReports
         list_of_ignored_fields = ['NoMiscFees', 'Account', 'CommissionData', 'MiscFeesGrp', 'ReplyReceivedTime',
                                   'SecurityDesc', 'OrderAvgPx', 'GatingRuleCondName', 'GatingRuleName',
-                                  'PartyRoleQualifier', 'tag11245', 'PartyRoleQualifier']
+                                  'PartyRoleQualifier', 'tag11245', 'PartyRoleQualifier', 'ExecAllocGrp']
         list_of_counterparts = [
             self.data_set.get_counterpart_id_fix('counterpart_id_investment_firm_cl_counterpart_sa1'),
             self.data_set.get_counterpart_id_fix('counterpart_id_regulatory_body_venue_paris'),

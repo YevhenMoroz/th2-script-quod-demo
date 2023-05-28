@@ -127,23 +127,26 @@ class QAP_T2547(TestCase):
         self.md_request.set_md_req_parameters_maker().change_parameter("NoRelatedSymbols",
                                                                        self.no_related_symbols_1).change_parameter(
             "SenderSubID", self.palladium2)
+        self.fix_manager_gtw.send_message(self.md_request)
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request)
         self.md_request.set_md_req_parameters_maker().change_parameter("NoRelatedSymbols",
                                                                        self.no_related_symbols_2).change_parameter(
             "SenderSubID", self.palladium2)
+        self.fix_manager_gtw.send_message(self.md_request)
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request)
         self.md_request.set_md_req_parameters_maker().change_parameter("NoRelatedSymbols",
                                                                        self.no_related_symbols_3).change_parameter(
             "SenderSubID", self.palladium2)
+        self.fix_manager_gtw.send_message(self.md_request)
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request)
         self.md_request.set_md_req_parameters_maker().change_parameter("NoRelatedSymbols",
                                                                        self.no_related_symbols_4).change_parameter(
             "SenderSubID", self.palladium2)
-        self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request)
+        self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request)
         # endregion
         # region Step 1

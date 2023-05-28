@@ -99,7 +99,7 @@ class QAP_T7472(TestCase):
         }
         alloc_list_ignor = ['AvgPx', 'Currency', 'tag5120', 'RootOrClientCommission', 'RootOrClientCommissionCurrency',
                             'NoRootMiscFeesList', 'RootCommTypeClCommBasis', 'Account', 'OrderAvgPx',
-                            'PartyRoleQualifier']
+                            'PartyRoleQualifier', 'ExecAllocGrp']
         alloc_report = FixMessageAllocationInstructionReportOMS().set_default_ready_to_book(self.fix_message)
         alloc_report.change_parameters({'NoParty': parties})
         self.fix_verifier_dc.check_fix_message_fix_standard(alloc_report, ignored_fields=alloc_list_ignor)

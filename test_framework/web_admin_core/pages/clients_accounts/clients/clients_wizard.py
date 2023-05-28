@@ -35,3 +35,6 @@ class ClientsWizard(CommonPage):
 
     def is_footer_warning_displayed(self):
         return self.find_by_xpath(ClientsConstants.FOOTER_WARNING_XPATH).is_displayed()
+
+    def is_wizard_open(self):
+        return self.is_element_present(ClientsConstants.WIZARD_HEADER_LINK)

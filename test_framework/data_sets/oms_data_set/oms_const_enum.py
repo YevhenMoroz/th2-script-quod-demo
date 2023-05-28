@@ -79,6 +79,7 @@ class OmsInstrumentId(Enum):
     instrument_5 = "zjZwA8LXItn246hPYfpe9w"  # MultyLeg
     instrument_6 = "HNUAw6jnU8PDj2cvSkJlYg"  # Leg instrument
     instrument_7 = "4o_6NqkKiqQpmUhKO4xUEw"  # MultiListed instrument
+    instrument_8 = 'KojIbEE6b0HgK4VBgy8F9w'  # MFD instrument
 
 
 class OmsListingId(Enum):
@@ -90,6 +91,7 @@ class OmsListingId(Enum):
     listing_6 = "488"  # one listing of MultiListed instrument
     listing_7 = "1233"  # one listing of MultiListed instrument
     listing_8 = "3346"  # one listing of MultiListed instrument
+    listing_9 = "10100000077"  # listing for MFD instrument
 
 
 class OmsVenues(Enum):
@@ -196,6 +198,7 @@ class OmsAccounts(Enum):
     """Base"""
     client_1_acc_1 = "NEWACCOUNT"
     client_1_acc_2 = "TEST2"
+    client_1_acc_3 = 'CLIENT1_SA1'
     """PositionMgt"""
     client_pos_3_acc_1 = "Facilitation"
     client_pos_3_acc_2 = "Prime_Optimise"
@@ -333,6 +336,7 @@ class OMSCommissionProfiles(Enum):
     abs_amt_gbp_small = 800021
     amt_plus_client = 600020
     sixbps = 800024
+    perc_amt_gbp = 1000044
 
 
 class OMSFeeType(Enum):
@@ -476,6 +480,7 @@ class OMSCounterpartID(Enum):
 
 class OMSInstrType(Enum):
     equity = "EQU"
+    mutual_fund = 'MFD'
 
 
 class OMSContraFirm(Enum):

@@ -90,10 +90,10 @@ class QAP_T7579(TestCase):
         # region step 3: Cancel House Fill
         self.trade_entry_request.set_default_cancel_house_fill(orders_id_list[1], self.firm_acc, exec_id_washbook)
         self.ja_manager.send_message_and_receive_response(self.trade_entry_request, response_time=14000)
-        order_reply = self.ja_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameters()[
-            JavaApiFields.OrderNotificationBlock.value]
+        execution_report = self.ja_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
+            JavaApiFields.ExecutionReportBlock.value]
         self.ja_manager.compare_values({JavaApiFields.LeavesQty.value: self.qty_for_wash_book},
-                                       order_reply,
+                                       execution_report,
                                        f"Verifing that second CO order has {JavaApiFields.LeavesQty.value} as {self.qty_for_wash_book} (step 3)")
         # endregion
 
@@ -130,10 +130,10 @@ class QAP_T7579(TestCase):
         self.trade_entry_request.get_parameters().clear()
         self.trade_entry_request.set_default_cancel_execution(orders_id_list[0], exec_id_firm_account)
         self.ja_manager.send_message_and_receive_response(self.trade_entry_request)
-        order_reply = self.ja_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameters()[
-            JavaApiFields.OrderNotificationBlock.value]
+        execution_report = self.ja_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
+            JavaApiFields.ExecutionReportBlock.value]
         self.ja_manager.compare_values({JavaApiFields.LeavesQty.value: self.qty_for_firm},
-                                       order_reply,
+                                       execution_report,
                                        f"Verifing that first CO order has {JavaApiFields.LeavesQty.value} as {self.qty_for_firm} (step 6)")
         # endregion
 

@@ -22,6 +22,7 @@ class ListingsConstants:
     ERROR_MESSAGE_WIZARD_XPATH = "//*[@outline='danger']"
     REQUEST_FAILED_MESSAGE_XPATH = "//nb-toast[contains(@class, 'danger')]"
     DISPLAYED_LISTING_XPATH = "//*[text()='{}']"
+    DROP_DOWN = '//*[@class="option-list"]//nb-option | span'
 
     # Main page
     MAIN_PAGE_LISTING_GLOBAL_FILTER_XPATH = '//*[text()="Listing"]/preceding-sibling::input'

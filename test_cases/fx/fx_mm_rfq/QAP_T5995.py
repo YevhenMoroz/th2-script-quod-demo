@@ -2,7 +2,7 @@ import time
 from pathlib import Path
 from datetime import datetime
 from custom import basic_custom_actions as bca
-from test_cases.fx.fx_wrapper.common_tools import check_quote_status, check_quote_request_id
+from test_cases.fx.fx_wrapper.common_tools import check_value_in_db, check_quote_request_id
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
@@ -34,7 +34,7 @@ class QAP_T5995(TestCase):
         self.fix_manager_fh_314 = FixManager(self.fx_fh_connectivity, self.test_id)
 
         self.settle_date_1w = self.data_set.get_settle_date_by_name("wk1")
-        self.settle_date_bda = self.data_set.get_settle_date_by_name("wk2_ndf")
+        self.settle_date_bda = self.data_set.get_settle_date_by_name("broken_w1w2")
         self.iridium1 = self.data_set.get_client_by_name("client_mm_3")
         self.eur_usd = self.data_set.get_symbol_by_name("symbol_1")
         self.sec_type_swap = self.data_set.get_security_type_by_name("fx_swap")
@@ -110,6 +110,7 @@ class QAP_T5995(TestCase):
         self.fix_md.update_repeating_group("NoMDEntries", self.correct_no_md_entries)
         self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
         self.fix_manager_fh_314.send_message(self.fix_md)
+        self.sleep(4)
         self.fix_md.set_market_data_fwd()
         self.fix_md.update_fields_in_component("Instrument", self.instrument_fwd)
         self.fix_md.update_repeating_group("NoMDEntries", self.incorrect_no_md_entries)
@@ -117,7 +118,7 @@ class QAP_T5995(TestCase):
         self.fix_manager_fh_314.send_message(self.fix_md)
         time.sleep(4)
         req_id = check_quote_request_id(self.quote_request)
-        quote_status = check_quote_status(req_id, self.key_parameter, self.quote_state, "quoterequest")
+        quote_status = check_value_in_db(req_id, self.key_parameter, self.quote_state, "quoterequest")
         self.verifier.set_parent_id(self.test_id)
         self.verifier.set_event_name("Quote Cancel presence check")
         self.verifier.compare_values("QuoteStatusReason", "TER", quote_status)

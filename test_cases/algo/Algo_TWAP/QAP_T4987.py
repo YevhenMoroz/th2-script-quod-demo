@@ -127,7 +127,7 @@ class QAP_T4987(TestCase):
         self.fix_verifier_sell.check_fix_message(pending_twap_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew')
 
         new_twap_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_order, self.gateway_side_sell, self.status_new)
-        new_twap_order_params.change_parameter('NoParty', '*')
+        
         self.fix_verifier_sell.check_fix_message(new_twap_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
 
@@ -158,7 +158,7 @@ class QAP_T4987(TestCase):
         self.fix_verifier_sell.check_fix_message(cancel_request_twap_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
 
         cancel_twap_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_order, self.gateway_side_sell, self.status_eliminate)
-        cancel_twap_order.change_parameters(dict(NoParty='*', OrigClOrdID='*')).remove_parameter('LastMkt')
+        cancel_twap_order.change_parameters(dict(OrigClOrdID='*')).remove_parameter('LastMkt')
         self.fix_verifier_sell.check_fix_message(cancel_twap_order, key_parameters=self.key_params_cl,  message_name='Sell side ExecReport Eliminated')
         # endregion
         

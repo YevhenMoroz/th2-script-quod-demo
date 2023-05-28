@@ -1,4 +1,5 @@
 import logging
+import os
 import time
 from pathlib import Path
 
@@ -36,6 +37,7 @@ class QAP_T10575(TestCase):
         self.venue_client_names = self.data_set.get_venue_client_names_by_name("client_pt_1_venue_1")  # MOClient_PARIS
         self.venue = self.data_set.get_mic_by_name("mic_1")  # XPAR
         self.client = self.data_set.get_client("client_pt_1")  # MOClient
+        self.fe_env = self.environment.get_list_fe_environment()[0]
         self.exec_report = FixMessageExecutionReportOMS(self.data_set)
         self.fix_verifier_bs = FixVerifier(self.environment.get_list_fix_environment()[0].buy_side, self.test_id)
         self.java_api_connectivity = self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
@@ -57,16 +59,15 @@ class QAP_T10575(TestCase):
     def run_pre_conditions_and_steps(self):
         # region precondition
         tree = ET.parse(self.local_path)
-        element_1 = ET.fromstring('<execution><duplicates>true</duplicates></execution>')
-        es = tree.getroot().find('es')
-        es.append(element_1)
+        quod = tree.getroot()
+        quod.find("es/execution/duplicates").text = 'true'
         tree.write("temp.xml")
-        self.ssh_client.send_command('~/quod/script/site_scripts/change_permission_script')
+        self.ssh_client.send_command("~/quod/script/site_scripts/change_permission_script")
         self.ssh_client.put_file(self.remote_path, "temp.xml")
-        self.ssh_client.send_command("qrestart QUOD.ESBUYTH2TEST")
+        self.ssh_client.send_command("qrestart ESBUYTH2TEST")
         time.sleep(50)
-
         # endregion
+
         # region step 1: Send 35 = 8 message
         self.nos.update_fields_in_component(JavaApiFields.NewOrderReplyBlock.value,
                                             {JavaApiFields.VenueAccount.value: {JavaApiFields.VenueActGrpName.value:
@@ -118,11 +119,11 @@ class QAP_T10575(TestCase):
         # region step 4: Resent the same execution report:
         self.java_api_manager.send_message(self.exec_rep)
         dont_know_trade = FixDontKnowTrade(data_set=self.data_set)
-        list_ignored_fields = ['Side', 'LastPx'
+        list_ignored_fields = ['Side', 'LastPx',
                                        'LastQty', 'Instrument', 'OrderQtyData']
         dont_know_trade.set_default(ord_venue_id)
         dont_know_trade.change_parameters({'DKReason': 'Z'})
-        self.fix_verifier_bs.check_fix_message_fix_standard(dont_know_trade)
+        self.fix_verifier_bs.check_fix_message_fix_standard(dont_know_trade, ignored_fields=list_ignored_fields)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -130,5 +131,6 @@ class QAP_T10575(TestCase):
         self.ssh_client.put_file(self.remote_path, self.local_path)
         self.ssh_client.send_command("qrestart QUOD.ESBUYTH2TEST")
         time.sleep(50)
+        os.remove('temp.xml')
         self.ssh_client.close()
         self.db_manager.close_connection()

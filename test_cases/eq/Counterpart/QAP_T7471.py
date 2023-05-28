@@ -94,7 +94,8 @@ class QAP_T7471(TestCase):
         list_of_ignored_fields = ['SecurityDesc', 'CommissionData', 'RootSettlCurrAmt', 'AllocInstructionMiscBlock1',
                                   'MiscFeesGrp', 'BookingType', 'RootOrClientCommission',
                                   'RootOrClientCommissionCurrency', 'RootCommTypeClCommBasis', 'Account',
-                                  'NoRootMiscFeesList', 'OrderAvgPx','GatingRuleCondName', 'GatingRuleName', 'PartyRoleQualifier']
+                                  'NoRootMiscFeesList', 'OrderAvgPx','GatingRuleCondName', 'GatingRuleName', 'PartyRoleQualifier',
+                                  'RootSettlCurrency', 'ExecAllocGrp']
         exec_report = FixMessageExecutionReportOMS(self.data_set).set_default_filled(
             self.fix_message).change_parameters(
             {"Parties": {"NoPartyIDs": parties}, "LastMkt": "*", "VenueType": "*", "MiscFeesGrp": "*",
@@ -176,7 +177,7 @@ class QAP_T7471(TestCase):
         ]
         self.alloc_report.add_tag(
             {"NoParty": {"NoParty": parties}, "RootCommTypeClCommBasis": "*", "tag5120": "*",
-             "RootOrClientCommission": "*", "RootOrClientCommissionCurrency": "*", "Quantity": "*", 'AllocType': '5'})
+             "RootOrClientCommission": "*", "RootOrClientCommissionCurrency": "*", "Quantity": "*", 'AllocType': '5',})
         self.alloc_report.add_fields_into_repeating_group("NoOrders",
                                                           [{"ClOrdID": '*', "OrderID": order_id_second}])
         self.fix_verifier_dc.check_fix_message_fix_standard(self.alloc_report, key_parameters=['AllocType'],

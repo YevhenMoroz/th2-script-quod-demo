@@ -244,4 +244,14 @@ class ReadLogMessageAlgo(ReadLogMessage):
         super().change_parameters(base_parameters)
         return self
 
+    def set_compare_message_for_check_resident_time_calculation(self) -> ReadLogMessage:
+        base_parameters = {
+            "ParentOrder": "*",
+            "ChildOrder": "*",
+            "AllottedTime": "*"
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+
 

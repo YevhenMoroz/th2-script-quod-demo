@@ -128,4 +128,4 @@ class QAP_T9434(TestCase):
         self._set_new_counterparts_for_account_and_client(counter_part_for_user_1, self.user_1)
         self._set_new_counterparts_for_account_and_client(counter_part_for_user_2, self.user_2)
         self.ssh_client.send_command("qrestart all")
-        time.sleep(200)
+        time.sleep(140)
