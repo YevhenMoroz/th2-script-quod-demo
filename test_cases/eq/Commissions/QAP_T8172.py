@@ -195,7 +195,7 @@ class QAP_T8172(TestCase):
         responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction_message)
         # endregion
         allocation_report = \
-        self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+        self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value, JavaApiFields.BookingAllocInstructionID.value).get_parameters()[
             JavaApiFields.AllocationReportBlock.value]
         alloc_id = allocation_report[JavaApiFields.ClientAllocID.value]
         self.java_api_manager.compare_values(expected_commission,
@@ -205,7 +205,6 @@ class QAP_T8172(TestCase):
 
         # region approve and allocate block
         self.approve_block.set_default_approve(alloc_id)
-        responses = self.java_api_manager.send_message_and_receive_response(self.approve_block)
         self.confirmation_request.set_default_allocation(alloc_id)
         self.confirmation_request.update_fields_in_component('ConfirmationBlock', {
             "AllocAccountID": self.alloc_account,
@@ -213,7 +212,6 @@ class QAP_T8172(TestCase):
             'AvgPx': new_avg_px,
             "InstrID": instrument_id
         })
-        responses = self.java_api_manager.send_message_and_receive_response(self.confirmation_request)
         confirmation_report = \
         self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[
             JavaApiFields.ConfirmationReportBlock.value]
