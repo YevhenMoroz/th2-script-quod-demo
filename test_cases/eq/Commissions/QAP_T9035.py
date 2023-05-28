@@ -40,7 +40,7 @@ class QAP_T9035(TestCase):
         self.venue = self.data_set.get_mic_by_name('mic_2')
         self.client = self.data_set.get_client('client_com_1')
         self.rule_manager = RuleManager(sim=Simulators.equity)
-        self.venue_client_names = self.data_set.get_venue_client_names_by_name('client_com_1_venue_2')  # MOClient_EUREX
+        self.venue_client_names = self.data_set.get_venue_client_names_by_name('client_com_1_venue_2')
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
         self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
         self.fix_verifier = FixVerifier(self.fix_env.sell_side, self.test_id)
@@ -85,8 +85,8 @@ class QAP_T9035(TestCase):
         tree.write("temp.xml")
         self.ssh_client.send_command("~/quod/script/site_scripts/change_permission_script")
         self.ssh_client.put_file(self.remote_path, "temp.xml")
-        self.ssh_client.send_command("qrestart all")
-        time.sleep(180)
+        self.ssh_client.send_command("qrestart QUOD.CS QUOD.ESBUYTH2TEST, QUOD.ORS")
+        time.sleep(90)
         # end_of_part
         # endregion
 
@@ -149,7 +149,7 @@ class QAP_T9035(TestCase):
     def run_post_conditions(self):
         self.rest_commission_sender.clear_fees()
         self.ssh_client.put_file(self.remote_path, self.local_path)
-        self.ssh_client.send_command("qrestart all")
-        time.sleep(180)
+        self.ssh_client.send_command("qrestart QUOD.CS QUOD.ESBUYTH2TEST, QUOD.ORS")
+        time.sleep(90)
         os.remove("temp.xml")
         self.ssh_client.close()
