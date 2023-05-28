@@ -35,7 +35,7 @@ class QAP_T7429(TestCase):
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
-        self.fix_verifier = FixVerifier(self.fix_env.sell_side, self.test_id)
+        self.fix_verifier = FixVerifier(self.fix_env.drop_copy, self.test_id)
 
         self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
