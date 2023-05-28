@@ -200,7 +200,7 @@ class QAP_T8180(TestCase):
         responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction_message)
         print_message('Create Block', responses)
         # endregion
-        allocation_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[JavaApiFields.AllocationReportBlock.value]
+        allocation_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value, JavaApiFields.BookingAllocInstructionID.value).get_parameters()[JavaApiFields.AllocationReportBlock.value]
         alloc_id = allocation_report[JavaApiFields.ClientAllocID.value]
         self.java_api_manager.compare_values(expected_commission,
                                              allocation_report[JavaApiFields.ClientCommissionList.value][JavaApiFields.ClientCommissionBlock.value][0],
