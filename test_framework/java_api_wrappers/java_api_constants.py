@@ -316,6 +316,8 @@ class JavaApiFields(Enum):
     QtyPercentageProfile = 'QtyPercentageProfile'
     RootParentOrdID = 'RootParentOrdID'
     RouteID = 'RouteID'
+    """Bag Wave"""
+    QtyToRelease = 'QtyToRelease'
     """External Algo"""
     ExternalAlgoParametersBlock = 'ExternalAlgoParametersBlock'
     ExternalAlgoParameterListBlock = 'ExternalAlgoParameterListBlock'
