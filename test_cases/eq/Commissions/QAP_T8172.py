@@ -164,7 +164,7 @@ class QAP_T8172(TestCase):
         new_avg_px = str(int(self.price) / 100)
         self.compute_booking_fee_commission_request.update_fields_in_component(
             'ComputeBookingFeesCommissionsRequestBlock', {'AvgPx': new_avg_px, 'AccountGroupID': self.client})
-        responses = self.java_api_manager.send_message_and_receive_response(self.compute_booking_fee_commission_request)
+        self.java_api_manager.send_message_and_receive_response(self.compute_booking_fee_commission_request)
         client_commission = \
             self.java_api_manager.get_last_message(ORSMessageType.ComputeBookingFeesCommissionsReply.value). \
                 get_parameters()[JavaApiFields.ComputeBookingFeesCommissionsReplyBlock.value][
@@ -205,6 +205,7 @@ class QAP_T8172(TestCase):
 
         # region approve and allocate block
         self.approve_block.set_default_approve(alloc_id)
+        self.java_api_manager.send_message_and_receive_response(self.approve_block)
         self.confirmation_request.set_default_allocation(alloc_id)
         self.confirmation_request.update_fields_in_component('ConfirmationBlock', {
             "AllocAccountID": self.alloc_account,
@@ -212,6 +213,7 @@ class QAP_T8172(TestCase):
             'AvgPx': new_avg_px,
             "InstrID": instrument_id
         })
+        self.java_api_manager.send_message_and_receive_response(self.confirmation_request)
         confirmation_report = \
         self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[
             JavaApiFields.ConfirmationReportBlock.value]
