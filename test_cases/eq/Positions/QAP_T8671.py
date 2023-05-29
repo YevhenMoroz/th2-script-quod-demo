@@ -2,7 +2,7 @@ import logging
 import time
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from test_cases.eq.Positions.PreConditionForPosition import PreConditionForPosition
+from test_framework.pre_condition_for_position import PreConditionForPosition
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.message_types import CSMessageType, PKSMessageType

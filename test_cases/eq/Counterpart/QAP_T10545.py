@@ -167,7 +167,7 @@ class QAP_T10545(TestCase):
             self.db_manager.execute_query(
                 f"UPDATE securityaccount SET counterpartid = '{counterpart_id_sec_account}' WHERE accountid = '{self.alloc_account}'")
         self.ssh_client.send_command("qrestart all")
-        time.sleep(200)
+        time.sleep(140)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
