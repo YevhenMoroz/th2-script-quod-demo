@@ -186,8 +186,8 @@ class QAP_T7164(TestCase):
 
         # check fee and commission of parent order
         exec_report_child = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value,
-                                                                    [ord_id_dma,
-                                                                     ExecutionReportConst.ExecType_TRD.value]).get_parameter(
+                                                                   [ord_id_dma,
+                                                                    ExecutionReportConst.ExecType_TRD.value]).get_parameter(
             JavaApiFields.ExecutionReportBlock.value)
         self.java_api_manager.compare_values(
             {JavaApiFields.ClientCommissionList.value:
@@ -261,7 +261,8 @@ class QAP_T7164(TestCase):
         self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
 
         # region step 3 - Check commission
-        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameter(
+        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                                              JavaApiFields.BookingAllocInstructionID.value).get_parameter(
             JavaApiFields.AllocationReportBlock.value)
         alloc_report_fee = alloc_report[JavaApiFields.RootMiscFeesList.value][
             JavaApiFields.RootMiscFeesBlock.value][0]
