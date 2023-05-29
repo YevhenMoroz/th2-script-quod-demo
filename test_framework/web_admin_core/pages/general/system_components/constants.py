@@ -1,6 +1,7 @@
 class Constants:
     class MainPage:
         PAGE_TITLE = '//span[@class="entity-title left"][normalize-space()="System Components"]'
+        SITE_HEADER = '//*[@class="fixed"]'
         GLOBAL_FILTER = '//nb-card-header//*[@placeholder="Filter"]'
         HELP_ICON = '//nb-card-header//*[@nbtooltip="Help"]/a'
         DOWNLOAD_CSV_BUTTON = '//nb-card-header//*[@data-name="download"]'
@@ -17,8 +18,23 @@ class Constants:
         PINNED_ENTITY = '//*[@ref="eTop"]//*[@col-id="componentInstanceID"]//span[normalize-space()="{}"]'
         ACTIVE_STATUS_ICON = '//*[@class="action-cell"]//*[@nbtooltip="Active"]'
 
-        class MoreActions:
-            MORE_ACTIONS_BUTTON = '//*[@data-name="more-vertical"]'
-            EDIT_BUTTON = '//nb-overlay-container//*[@data-name="edit"]'
+        MORE_ACTIONS_BUTTON = '//*[@data-name="more-vertical"]'
+        EDIT_BUTTON = '//nb-overlay-container//*[@data-name="edit"]'
+        CLONE_BUTTON = '//nb-overlay-container//*[@data-name="copy"]'
+        DELETE_BUTTON = '//nb-overlay-container//*[@data-name="trash-2"]'
+        DOWNLOAD_PDF_BUTTON = '//nb-overlay-container//*[@nbtooltip="Download PDF"]'
+        PIN_BUTTON = '//nb-overlay-container//*[@icon="unpinned-outline" or @icon="pinned-outline"]'
+        NEW_BUTTON = '//*[normalize-space()="New"]'
 
-            PIN_BUTTON = '//nb-overlay-container//*[@icon="unpinned-outline"]'
+    class Wizard:
+        REVERT_CHANGES_BUTTON = '//button[normalize-space()="Revert Changes"]'
+        SAVE_CHANGES_BUTTON = '//button[normalize-space()="Save Changes"]'
+        HELP_ICON = '//*[@data-name="menu-arrow-circle"]'
+        PAGE_HEADER_LINK = '//nb-card-header//a//span'
+        DOWNLOAD_LOCAL_FILE_BUTTON = '//*[@data-name="download"]'
+        CLOSE_WIZARD_BUTTON = '//*[@data-name="close"]'
+
+    class ValuesTab:
+        SHORT_NAME = '//*[@formcontrolname="componentShortName"]'
+        LONG_NAME = '//*[@formcontrolname="componentLongName"]'
+        VERSION = '//*[@formcontrolname="componentRevision"]'

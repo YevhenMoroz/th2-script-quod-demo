@@ -35,7 +35,7 @@ class QAP_T7686(TestCase):
         self.java_api_manager2.send_message_and_receive_response(self.nos)
         order_id = self.java_api_manager2.get_last_message(ORSMessageType.OrdNotification.value).get_parameters()[
             JavaApiFields.OrderNotificationBlock.value][JavaApiFields.OrdID.value]
-        desk = self.environment.get_list_fe_environment()[0].desk_ids[1]
+        desk = self.environment.get_list_fe_environment()[0].desk_ids[0]
         cd_order_notif_message = self.java_api_manager2.get_last_message(CSMessageType.CDOrdNotif.value)
         cd_order_notif_id = cd_order_notif_message.get_parameter("CDOrdNotifBlock")["CDOrdNotifID"]
         self.accept_request.set_default(order_id, cd_order_notif_id, desk, set_reject=True)

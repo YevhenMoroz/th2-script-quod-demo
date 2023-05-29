@@ -50,7 +50,7 @@ class QAP_T2962(TestCase):
         # endregion
         # region Step 2
         self.new_order_single.set_default_prev_quoted(self.quote_request, response[0], side="1")
-        price = self.new_order_single.get_parameter("Price")
+        price = response[0].get_parameter('OfferPx')
         price_bellow = str(round(float(price) - 0.0001, 5))
         self.new_order_single.change_parameter("Price", str(price_bellow))
         self.fix_manager_sel.send_message_and_receive_response(self.new_order_single)

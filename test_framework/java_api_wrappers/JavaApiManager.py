@@ -57,12 +57,12 @@ class JavaApiManager:
                         message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                                  message.get_parameters(), self.get_session_alias()),
                         parent_event_id=self.get_case_id(), filterFields=filter_dict, response_time=response_time))
-            else:
-                response = self.act.submitTradeEntryFX(
-                    request=ActJavaSubmitMessageRequest(
-                        message=bca.message_to_grpc_fix_standard(message.get_message_type(),
-                                                                 message.get_parameters(), self.get_session_alias()),
-                        parent_event_id=self.get_case_id()))
+        elif message.get_message_type() == ORSMessageType.Fix_TradeEntryRequest.value:
+            response = self.act.submitTradeEntryFX(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id()))
         elif message.get_message_type() == ORSMessageType.OrderSubmit.value:
             response = self.act.submitOrderSubmit(
                 request=ActJavaSubmitMessageRequest(
@@ -486,6 +486,12 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id(), response_time=response_time))
+        elif message.get_message_type() == PKSMessageType.FixPositionMassCancelRequest.value:
+            response = self.act.submitPositionMassCancelRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict, response_time=response_time))
         elif message.get_message_type() == ORSMessageType.AssignInstrumentRequest.value:
             response = self.act.submitAssignInstrumentRequest(
                 request=ActJavaSubmitMessageRequest(

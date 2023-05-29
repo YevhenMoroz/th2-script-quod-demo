@@ -46,7 +46,7 @@ class QAP_T3920(CommonTestCase):
         common_act = CommonPage(self.web_driver_container)
         common_act.click_on_user_icon()
         common_act.click_on_logout()
-        time.sleep(1)
+        time.sleep(2)
 
         login_page.set_login(self.user_for_block)
         login_page.set_password(self.wrong_password)

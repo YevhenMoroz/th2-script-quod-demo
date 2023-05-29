@@ -42,7 +42,7 @@ class QAP_T7896(TestCase):
         self.px_for_incr = 0
         self.side = constants.OrderSide.Sell.value
         self.currency = self.data_set.get_currency_by_name("currency_1")
-        self.text = constants.RejectMessages.no_listing_8.value
+        self.text = constants.RejectMessages.no_listing_7.value
         # endregion
 
         # region Gateway Side

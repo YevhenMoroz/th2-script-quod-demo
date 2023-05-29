@@ -116,7 +116,7 @@ class QAP_T4590(TestCase):
 
         er_rejected_pov_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.pov_order, self.gateway_side_sell, self.status_reject)
         er_rejected_pov_order_params.change_parameters({'Account': self.client, 'LastQty': 0, 'SettlDate': '*', 'Currency': '*',
-                                                        'HandlInst': '*', 'NoParty': '*', 'LastPx': 0, 'Text': 'MinParticipationPriceOffset should be a positive number',
+                                                        'HandlInst': '*', 'LastPx': 0, 'Text': 'MinParticipationPriceOffset should be a positive number',
                                                         'OrderCapacity': 'A', 'QtyType': 0, 'ExecRestatementReason': 4, 'TargetStrategy': 2, 'Instrument': '*'})\
             .remove_parameter('ExDestination')
         self.fix_verifier_sell.check_fix_message(er_rejected_pov_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side Reject')

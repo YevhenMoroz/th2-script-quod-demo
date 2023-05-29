@@ -31,11 +31,14 @@ class QAP_T10643(CommonTestCase):
             actual_result = [common_act.get_site_name_from_header(), common_act.get_user_data()]
             self.verify("Site name and user data displayed after first login", expected_result, actual_result)
 
-            common_act.refresh_page(True)
+            common_act.refresh_page()
+            time.sleep(2)
+            actual_result = [common_act.get_site_name_from_header(), common_act.get_user_data()]
             self.verify("Site name and user data displayed after page reload", expected_result, actual_result)
 
             common_act.click_on_user_icon()
             common_act.click_on_logout()
+            time.sleep(2)
 
             login_page.login_to_web_admin(self.login, self.password)
             time.sleep(1)
@@ -43,7 +46,9 @@ class QAP_T10643(CommonTestCase):
             actual_result = [common_act.get_site_name_from_header(), common_act.get_user_data()]
             self.verify("Site name and user data displayed after second login", expected_result, actual_result)
 
-            common_act.refresh_page(True)
+            common_act.refresh_page()
+            time.sleep(2)
+            actual_result = [common_act.get_site_name_from_header(), common_act.get_user_data()]
             self.verify("Site name and user data displayed after page reload", expected_result, actual_result)
 
         except Exception:
