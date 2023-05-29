@@ -798,6 +798,32 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
+    def set_Native_Iceberg_with_Peg_params(self):
+        base_parameters = {
+            'Account': "CLIENT1",
+            'ClOrdID': '*',
+            'HandlInst': "2",
+            'Side': '1',
+            'OrderQty': '30000',
+            'TimeInForce': "0",
+            'Price': "20",
+            'OrdType': "2",
+            'TransactTime': datetime.utcnow().isoformat(),
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_2'),
+            'OrderCapacity': 'A',
+            'Currency': 'EUR',
+            "DisplayInstruction": {
+                'DisplayQty': '15000'
+            },
+            'PegInstructions': {
+                'PegOffsetValue': '0.2',
+                'PegPriceType': '1',
+                'PegOffsetType': '0'
+            }
+        }
+        super().change_parameters(base_parameters)
+        return self
+
     def set_TIF_params(self):
         base_parameters = {
             'Account': "CLIENT1",
