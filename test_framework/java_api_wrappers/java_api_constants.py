@@ -160,11 +160,17 @@ class QtyPercentageProfile(Enum):
 
 class JavaApiFields(Enum):
     ExecCommission = 'ExecCommission'
+    SettlDate = 'SettlDate'
     AllocationInstructionBlock = 'AllocationInstructionBlock'
     RequestForOverdueRetailPositionsAckBlock = 'RequestForOverdueRetailPositionsAckBlock'
     TransExecStatus = 'TransExecStatus'
     BookingType = 'BookingType'
+    BenchmarkList = 'BenchmarkList'
+    BenchmarkBlock = 'BenchmarkBlock'
+    StartBenchmarkTimestamp = 'StartBenchmarkTimestamp'
+    EndBenchmarkTimestamp = 'EndBenchmarkTimestamp'
     RetailPositList = 'RetailPositList'
+    BenchmarkNotificationBlock = 'BenchmarkNotificationBlock'
     RetailPositBlock = 'RetailPositBlock'
     CDOrdAckBatchRequestBlock = 'CDOrdAckBatchRequestBlock'
     ModifyChildren = 'ModifyChildren'

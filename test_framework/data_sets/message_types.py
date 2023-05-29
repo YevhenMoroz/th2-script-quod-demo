@@ -143,6 +143,7 @@ class ORSMessageType(Enum):
     AssignInstrumentRequest = 'Order_AssignInstrumentRequest'
     AssignInstrumentReply = 'Order_AssignInstrumentReply'
     TradeCaptureReportNotif = 'Order_TradeCaptureReportNotif'
+    BenchmarkNotification = 'Order_BenchmarkNotification'
 
 
 class TradingRestApiMessageType(Enum):
