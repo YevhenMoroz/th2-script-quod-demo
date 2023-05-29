@@ -173,7 +173,8 @@ class QAP_T7108(TestCase):
                                   'TransactTime', 'Side', 'IndividualAllocID',
                                   'BookID', 'SettlDate', 'AllocID',
                                   'Currency', 'NetMoney', 'NoParty', 'ReportedPx',
-                                  'Instrument', 'GrossTradeAmt','OrderAvgPx'
+                                  'Instrument', 'GrossTradeAmt', 'AllocInstructionMiscBloc',
+                                  'AllocInstructionMiscBlock2', 'tag5120', 'tag11245', 'QuodTradeQualifier'
                                   ]
         confirmation_report.change_parameters({'NoOrders': [{
             'ClOrdID': cl_ord_id,

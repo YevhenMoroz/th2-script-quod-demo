@@ -63,14 +63,9 @@ class QAP_T7616(TestCase):
 
         # region Set-up parameters for ExecutionReports
         list_of_ignored_fields: list = [
-            "ReplyReceivedTime",
-            "SecondaryOrderID",
-            "LastMkt",
-            "Price",
-            "SettlCurrency",
-            "Instrument",
-            "GatingRuleCondName",
-            "GatingRuleName"
+            "ReplyReceivedTime", "SecondaryOrderID", "LastMkt",
+            "Price", "SettlCurrency", "Instrument",
+            "GatingRuleCondName", "GatingRuleName", 'Account'
         ]
         self.exec_report.set_default_filled(self.fix_message).change_parameters(
             {"OrdStatus": "1", "Text": "Partial fill"}

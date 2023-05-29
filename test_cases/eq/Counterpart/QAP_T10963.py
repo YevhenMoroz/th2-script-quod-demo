@@ -36,28 +36,29 @@ class QAP_T10963(TestCase):
         self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
         self.rule_manager = RuleManager(Simulators.equity)
-        self.client_for_rule = self.data_set.get_venue_client_names_by_name("client_counterpart_1_venue_1")
+        self.client_for_rule = self.data_set.get_venue_client_names_by_name("client_1_venue_1")
+        self.mic = self.data_set.get_mic_by_name('mic_1')
         self.execution_report = ExecutionReportOMS(self.data_set)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region step 1: Create DMA order via Fix
-        self.fix_message.change_parameters({'Account': self.client})
-        self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
-        execution_report = self.fix_manager.get_first_message('ExecutionReport').get_parameters()
-        order_id = execution_report['OrderID']
-        cl_ord_id = execution_report['ClOrdID']
-        self.fix_manager.compare_values({'ExecType': 'A'}, execution_report,
-                                        'Verify that order created and has Sts = Send (step 1)')
-        # endregion
-
-        # region step 2: Send 35 = 8 (39 = 0) message via BuyGateWay
-        self.execution_report.set_default_new(order_id)
-        self.java_api_manager.send_message_and_receive_response(self.execution_report)
-        order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
-            JavaApiFields.OrdReplyBlock.value]
-        self.java_api_manager.compare_values({JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value},
-                                             order_reply, 'Verifying that order has Sts = Open')
+        # region step 1-2: Create DMA order via Fix
+        order_id = nos_rule = None
+        try:
+            nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.fix_env.buy_side,
+                                                                                                  self.client_for_rule,
+                                                                                                  self.mic,
+                                                                                                  float(self.price))
+            self.fix_message.change_parameters({'Account': self.client})
+            self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
+            execution_report = self.fix_manager.get_last_message('ExecutionReport').get_parameters()
+            order_id = execution_report['OrderID']
+            self.fix_manager.compare_values({'ExecType': '0'}, execution_report,
+                                            'Verify that order created (step 1-2)')
+        except Exception as e:
+            logger.error(e)
+        finally:
+            self.rule_manager.remove_rule(nos_rule)
         # endregion
 
         # region step 3: Execute CO order with ContraFirm
