@@ -17,6 +17,7 @@ Copyright Quod Financial
         <cancelWaitChildOrderTerminationOrDFD>false</cancelWaitChildOrderTerminationOrDFD>
         <!-- auto-acknowledge FE cancel and modify requests for care orders. Default false. This token has higher priority than 'assignFEModifyCancelToDesk' -->
         <autoAcknowledge>false</autoAcknowledge>
+        <assignFEModifyCancelToDesk>false</assignFEModifyCancelToDesk>
         <fixAutoAckNewOrderEvenIfRecipientNotConnected>true</fixAutoAckNewOrderEvenIfRecipientNotConnected>
         <forwardRecipientRejectToHeadDisable>true</forwardRecipientRejectToHeadDisable>
         <dummyAveragePriceBag>true</dummyAveragePriceBag>

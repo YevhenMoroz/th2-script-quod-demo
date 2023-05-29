@@ -379,7 +379,7 @@ class JavaApiFields(Enum):
     AlgoType = 'AlgoType'
     LastPx = 'LastPx'
     LastTradedQty = 'LastTradedQty'
-
+    SingleAllocClientAccountID = 'SingleAllocClientAccountID'
     ComputeBookingFeesCommissionsReplyBlock = 'ComputeBookingFeesCommissionsReplyBlock'
     RootMiscFeeBasis = 'RootMiscFeeBasis'
     RootMiscFeeRate = 'RootMiscFeeRate'
