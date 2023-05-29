@@ -54,14 +54,14 @@ class OrderSubmitOMS(OrderSubmit):
         self.add_tag(params)
         if external_algo_twap:
             algo_params = {"AlgoParametersBlock": {"AlgoType": "External",
-                                                   "ScenarioID": "101",
+                                                   "ScenarioID": "1001",
                                                    "AlgoPolicyID": "1000131"},
                            "ExternalAlgoParametersBlock": {"ExternalAlgoParameterListBlock":
                                {"ExternalAlgoParameterBlock": [
                                    {'AlgoParameterName': "StrategyTag",
                                     "AlgoParamString": "TWAP",
                                     'VenueScenarioParameterID': "7505"}]},
-                               'ScenarioID': "101",
+                               'ScenarioID': "1001",
                                "ScenarioIdentifier": "8031",
                                "VenueScenarioID": "TWAP",
                                "VenueScenarioVersionID": "9682",
