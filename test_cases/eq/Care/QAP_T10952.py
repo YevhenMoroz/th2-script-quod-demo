@@ -64,7 +64,7 @@ class QAP_T10952(TestCase):
         # endregion
 
     def _create_co_dma_order(self, parameter_dict: dict, step, is_dma=False):
-        if is_dma:
+        if not is_dma:
             self.order_submit.update_fields_in_component(JavaApiFields.NewOrderSingleBlock.value, parameter_dict)
         self.ja_manager.send_message_and_receive_response(self.order_submit)
         ord_rep = self.ja_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
