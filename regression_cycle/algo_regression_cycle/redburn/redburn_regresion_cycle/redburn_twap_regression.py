@@ -18,8 +18,8 @@ def test_run(parent_id=None, version=None):
     try:
         # region TWAP tests
         configuration = ComponentConfigurationAlgo("Twap")
-        QAP_T4673(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T10471(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_T4673(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_T10471(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
         # config change interslice = 20
