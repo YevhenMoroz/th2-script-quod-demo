@@ -88,7 +88,7 @@ class QAP_T10685(TestCase):
         self.ssh_client.send_command('~/quod/script/site_scripts/change_permission_script')
         self.ssh_client.put_file(self.remote_path, "temp.xml")
         self.ssh_client.send_command("qrestart all")
-        time.sleep(250)
+        time.sleep(120)
         # end_of_part
 
         # endregion:
@@ -140,7 +140,7 @@ class QAP_T10685(TestCase):
                                                     WHERE venueid = 'PARIS'""")
         self.ssh_client.put_file(self.remote_path, self.local_path)
         self.ssh_client.send_command("qrestart all")
-        time.sleep(250)
+        time.sleep(120)
         os.remove("temp.xml")
         self.db_manager.close_connection()
         self.ssh_client.close()

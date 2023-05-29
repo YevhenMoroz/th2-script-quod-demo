@@ -97,5 +97,6 @@ class QAP_T6898(TestCase):
     def run_post_conditions(self):
         self.disable_listing_request.set_default_enable()
         self.rest_api_manager.send_post_request(self.disable_listing_request)
+        self.db_manager.close_connection()
         time.sleep(2)
 

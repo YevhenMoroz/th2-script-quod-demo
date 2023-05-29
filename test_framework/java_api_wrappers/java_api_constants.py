@@ -163,8 +163,12 @@ class JavaApiFields(Enum):
     AllocationInstructionBlock = 'AllocationInstructionBlock'
     RequestForOverdueRetailPositionsAckBlock = 'RequestForOverdueRetailPositionsAckBlock'
     TransExecStatus = 'TransExecStatus'
+    BookingType = 'BookingType'
     RetailPositList = 'RetailPositList'
     RetailPositBlock = 'RetailPositBlock'
+    CDOrdAckBatchRequestBlock = 'CDOrdAckBatchRequestBlock'
+    ModifyChildren = 'ModifyChildren'
+    CancelChildren = ' CancelChildren'
     PositionType = 'PositionType'
     TransactTime = 'TransactTime'
     ErrorMsg = "ErrorMsg"
@@ -375,7 +379,7 @@ class JavaApiFields(Enum):
     AlgoType = 'AlgoType'
     LastPx = 'LastPx'
     LastTradedQty = 'LastTradedQty'
-
+    SingleAllocClientAccountID = 'SingleAllocClientAccountID'
     ComputeBookingFeesCommissionsReplyBlock = 'ComputeBookingFeesCommissionsReplyBlock'
     RootMiscFeeBasis = 'RootMiscFeeBasis'
     RootMiscFeeRate = 'RootMiscFeeRate'

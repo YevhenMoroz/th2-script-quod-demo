@@ -140,4 +140,5 @@ class QAP_T7133(TestCase):
         os.remove('temp_cs.xml')
         os.remove('temp_ors.xml')
         time.sleep(90)
+        self.db_manager.close_connection()
         self.ssh_client.close()
