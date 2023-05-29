@@ -1,7 +1,7 @@
 <regression>
     <target_server_win></target_server_win>
     <name>Regression 192v</name>
-    <version>5.1.179.192</version>
+    <version>5.1.180.193</version>
     <product_lines>
         <product_line name="algo" run="False">
             <components>
