@@ -7,6 +7,7 @@ from pkg_resources import resource_filename
 
 import xml.etree.ElementTree as ET
 from custom import basic_custom_actions as bca
+from rule_management import Simulators, RuleManager
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.fix_wrappers.FixManager import FixManager
@@ -28,12 +29,14 @@ class QAP_T6918(TestCase):
         self.fix_message = FixMessageNewOrderSingleOMS(self.data_set).set_default_dma_limit()
         self.price = self.fix_message.get_parameter("Price")
         self.qty = self.fix_message.get_parameter("OrderQtyData")["OrderQty"]
+        self.mic = self.data_set.get_mic_by_name('mic_1')
         self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
         self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
                                     self.ssh_client_env.password, self.ssh_client_env.su_user,
                                     self.ssh_client_env.su_password)
         self.local_path = resource_filename("test_resources.be_configs.oms_be_configs", "client_ors.xml")
         self.remote_path = f"/home/{self.ssh_client_env.su_user}/quod/cfg/client_ors.xml"
+        self.rule_manager = RuleManager(sim=Simulators.equity)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -50,9 +53,18 @@ class QAP_T6918(TestCase):
         # endregion
         # region Step 1
         client = self.data_set.get_client_by_name("client_2_ext_id")
-        self.fix_message.change_parameters({"Account": client})
-        self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
-        exec_rep = self.fix_manager.get_last_message("ExecutionReport").get_parameters()
+        try:
+            client_for_rule = self.data_set.get_venue_client_names_by_name('client_2_venue_1')
+            rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(
+                self.fix_env.buy_side, client_for_rule, self.mic, float(self.price))
+            self.fix_message.change_parameters({"Account": client})
+            self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
+        except Exception as e:
+            logger.info(f'Your Exception is {e}')
+        finally:
+            time.sleep(3)
+            self.rule_manager.remove_rule(rule)
+        exec_rep = self.fix_manager.get_last_message("ExecutionReport", "'ExecType': '0'").get_parameters()
         self.fix_manager.compare_values({"Account": client, "OrdStatus": "A"}, exec_rep, "Check Client")
         # endregion
 
@@ -60,5 +72,5 @@ class QAP_T6918(TestCase):
     def run_post_conditions(self):
         self.ssh_client.put_file(self.remote_path, self.local_path)
         self.ssh_client.send_command("qrestart ORS")
-        time.sleep(20)
+        time.sleep(40)
         os.remove("temp.xml")

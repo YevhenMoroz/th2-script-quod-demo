@@ -1,7 +1,9 @@
 import logging
+import os
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
+from custom.verifier import VerificationMethod
 from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
@@ -17,8 +19,8 @@ from test_framework.java_api_wrappers.oms.ors_messges.ForceAllocInstructionStatu
     ForceAllocInstructionStatusRequestOMS
 from test_framework.java_api_wrappers.ors_messages.BlockChangeConfirmationServiceRequest import \
     BlockChangeConfirmationServiceRequest
-from test_framework.read_log_wrappers.ReadLogVerifier import ReadLogVerifier
 from test_framework.read_log_wrappers.oms_messages.AlsMessages import AlsMessages
+from test_framework.ssh_wrappers.ssh_client import SshClient
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -33,8 +35,6 @@ class QAP_T6928(TestCase):
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.ss_connectivity = self.fix_env.sell_side
         self.bs_connectivity = self.fix_env.buy_side
-        self.als_email_report = self.environment.get_list_read_log_environment()[0].read_log_conn
-        self.read_log_verifier = ReadLogVerifier(self.als_email_report, self.test_id)
         self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
         self.java_api_connectivity = self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
@@ -42,6 +42,10 @@ class QAP_T6928(TestCase):
         self.change_confirm = BlockChangeConfirmationServiceRequest()
         self.approve = ForceAllocInstructionStatusRequestOMS(self.data_set)
         self.confirm = ConfirmationOMS(self.data_set)
+        self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
+        self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
+                                    self.ssh_client_env.password, self.ssh_client_env.su_user,
+                                    self.ssh_client_env.su_password)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -121,7 +125,15 @@ class QAP_T6928(TestCase):
                                              f'Check statuses of confirmation of {account1}')
         # endregion
         # region Check ALS logs Status New
-        als_message = AlsMessages.execution_report.value
-        als_message.update({"ConfirmStatus": "New", "ClientAccountID": account1})
-        self.read_log_verifier.check_read_log_message(als_message, ["ClientAccountID"], timeout=60000)
+        self.ssh_client.send_command('cdl')
+        self.ssh_client.send_command('egrep "Sent email for {.*.}" QUOD.ALS.log > logs.txt')
+        self.ssh_client.send_command("sed -n '$'p logs.txt > logs2.txt")
+        self.ssh_client.get_file('/Logs/quod317/logs2.txt', './logs.txt')
+        with open('./logs.txt') as file:
+            res = file.read()
+            self.java_api_manager.compare_values({
+                "ClientAccountID": f'ClientAccountID={account1}', 'ConfirmStatus': 'ConfirmStatus=New'}, {
+                "ClientAccountID": res, "ConfirmStatus": res}, "Check ALS message",
+                VerificationMethod.CONTAINS)
+        os.remove('./logs.txt')
         # endregion

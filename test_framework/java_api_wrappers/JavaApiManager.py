@@ -148,7 +148,7 @@ class JavaApiManager:
                 request=ActJavaSubmitMessageRequest(
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
-                    parent_event_id=self.get_case_id()))
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
         elif message.get_message_type() == ORSMessageType.OrderBagCreationRequest.value:
             response = self.act.submitOrderBagCreationRequest(
                 request=ActJavaSubmitMessageRequest(
@@ -481,7 +481,6 @@ class JavaApiManager:
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id(), filterFields=filter_dict, response_time=response_time))
         elif message.get_message_type() == PKSMessageType.RequestForOverdueRetailPositions.value:
-            print('Common')
             response = self.act.submitRequestForOverdueRetailPosition(
                 request=ActJavaSubmitMessageRequest(
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
@@ -489,6 +488,18 @@ class JavaApiManager:
                     parent_event_id=self.get_case_id(), response_time=response_time))
         elif message.get_message_type() == PKSMessageType.FixPositionMassCancelRequest.value:
             response = self.act.submitPositionMassCancelRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict, response_time=response_time))
+        elif message.get_message_type() == ORSMessageType.AssignInstrumentRequest.value:
+            response = self.act.submitAssignInstrumentRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict, response_time=response_time))
+        elif message.get_message_type() == ORSMessageType.OrderMassCancelRequest.value:
+            response = self.act.submitOrderMassCancelRequest(
                 request=ActJavaSubmitMessageRequest(
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
