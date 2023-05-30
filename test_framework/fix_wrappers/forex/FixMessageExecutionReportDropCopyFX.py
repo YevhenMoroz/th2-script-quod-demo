@@ -85,8 +85,6 @@ class FixMessageExecutionReportDropCopyFX(FixMessageExecutionReport):
             ExecID="*",
             LastMkt="*",
             LastPx="*",
-            GatingRuleCondName="*",
-            GatingRuleName="*",
             OrderID="*",
             SettlDate="*",
             TradeDate=datetime.today().strftime("%Y%m%d"),
