@@ -2,14 +2,13 @@ import logging
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
-from test_cases.eq.Positions.PreConditionForPosition import PreConditionForPosition
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from test_framework.data_sets.message_types import CSMessageType, ORSMessageType, PKSMessageType
+from test_framework.data_sets.message_types import CSMessageType, PKSMessageType
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.cs_message.CDOrdAckBatchRequest import CDOrdAckBatchRequest
 from test_framework.java_api_wrappers.java_api_constants import SubmitRequestConst, JavaApiFields, \
-    OrderReplyConst, ExecutionReportConst, SubscriptionRequestTypes, PosReqTypes
+    SubscriptionRequestTypes, PosReqTypes
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
 from test_framework.java_api_wrappers.oms.ors_messges.PositionTransferInstructionOMS import \
     PositionTransferInstructionOMS
