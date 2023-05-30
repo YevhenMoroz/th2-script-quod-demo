@@ -75,9 +75,9 @@ class Connectivity(Enum):
 
 class FrontEnd(Enum):
     # 317 site
-    USERS_317 = ["JavaApiUser", "JavaApiUser2", "mantonov", "mantonov2"]
-    PASSWORDS_317 = ["Mantonov1*", "Mantonov1*"]
-    FOLDER_317 = "C:\\ProgramData\\QuodFinancialQUOD_QUOD317_GANYMEDE\\Quod_Financial_Trader_Front-end_64bits"
+    USERS_317 = ["JavaApiUser", "JavaApiUser2"]
+    PASSWORDS_317 = [""]
+    FOLDER_317 = ""
     DESKS_317 = ["Desk of Order Book", "Desk of Middle Office"]
     DESKS_ID_317 = [9, 10]
     MAIN_WIN_NAME_317 = "Quod Financial - 317 GANYMEDE"
@@ -399,8 +399,8 @@ class WebTradingURL(Enum):
 class SshClientEnv(Enum):
     HOST_317 = "10.0.22.35"
     PORT_317 = 22
-    USER_317 = "mantonov"
-    PASSWORD_317 = "uKZ9znmtuh"
+    USER_317 = "ymoroz"
+    PASSWORD_317 = "1DfXtWYOF9"
     SU_USER_317 = "quod317"
     SU_PASSWORD_317 = "quod317"
 
