@@ -50,8 +50,8 @@ class QAP_T7348(TestCase):
         # region precondition:
         self.db_manager.execute_query(f"""UPDATE  venue SET  valvenueclientaccountname  = 'Y'
                                             WHERE venueid = 'PARIS'""")
-        self.ssh_client.send_command("qrestart all")
-        time.sleep(250)
+        self.ssh_client.send_command("qrestart QUOD.ORS QUOD.RDS QUOD.CS")
+        time.sleep(100)
         # endregion
 
         # region step 1-2: Create CO order with wrong  NIN (VenueClientAccountGroupName (VenueClientAccountName))
@@ -94,7 +94,7 @@ class QAP_T7348(TestCase):
     def run_post_conditions(self):
         self.db_manager.execute_query(f"""UPDATE  venue SET  valvenueclientaccountname  = 'N'
                                                     WHERE venueid = 'PARIS'""")
-        self.ssh_client.send_command("qrestart all")
-        time.sleep(250)
+        self.ssh_client.send_command("qrestart QUOD.ORS QUOD.RDS QUOD.CS")
+        time.sleep(100)
         self.db_manager.close_connection()
         self.ssh_client.close()
