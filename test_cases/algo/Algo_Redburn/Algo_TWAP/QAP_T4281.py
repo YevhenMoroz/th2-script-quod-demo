@@ -28,7 +28,7 @@ qty_would = 10000
 waves = 5
 qty_twap_child = AlgoFormulasManager.get_next_twap_slice(qty, waves)            # 15000
 qty_nav_child1 = AlgoFormulasManager.get_twap_nav_child_qty(qty, waves, ats)    # 25000
-qty_nav_rebalance = AlgoFormulasManager.get_nav_reserve(qty, waves, ats)        # 50000
+qty_nav_rebalance = 50000 #AlgoFormulasManager.get_nav_reserve(qty, waves, ats)        # 50000
 nav_rebalance_time = 15
 tif_ioc = DataSet.TimeInForce.ImmediateOrCancel.value
 

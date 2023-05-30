@@ -44,7 +44,7 @@ class QAP_T11294(TestCase):
         self.price_bid_qdl2 = 28
         self.delay = 0
         self.tif_iok = constants.TimeInForce.ImmediateOrCancel.value
-        self.algopolicy = 'QA_Auto_SORPING_Spray_1'
+        self.algopolicy = constants.ClientAlgoPolicy.qa_sorping_spray_1.value
         self.display_qty = 50
         # endregion
 
@@ -75,7 +75,9 @@ class QAP_T11294(TestCase):
         self.ex_destination_qlv2 = self.data_set.get_mic_by_name("mic_42")
         self.ex_destination_qlv3 = self.data_set.get_mic_by_name("mic_43")
         self.client = self.data_set.get_client_by_name("client_2")
-        self.account = self.data_set.get_account_by_name("account_23")
+        self.account_qlv1 = self.data_set.get_account_by_name("account_22")
+        self.account_qlv2 = self.data_set.get_account_by_name("account_23")
+        self.account_qlv3 = self.data_set.get_account_by_name("account_24")
         self.listing_qlv1 = self.data_set.get_listing_id_by_name("listing_53")
         self.listing_qlv2 = self.data_set.get_listing_id_by_name("listing_54")
         self.listing_qlv3 = self.data_set.get_listing_id_by_name("listing_55")
@@ -94,12 +96,12 @@ class QAP_T11294(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
-        nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_qlv1, self.price)
-        nos_2_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_qlv2, self.price)
-        nos_3_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_qlv3, self.price)
-        ocr_1_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_qlv1, True)
-        ocr_2_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_qlv2, True)
-        ocr_3_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_qlv3, True)
+        nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_qlv1, self.ex_destination_qlv1, self.price)
+        nos_2_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_qlv2, self.ex_destination_qlv2, self.price)
+        nos_3_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_qlv3, self.ex_destination_qlv3, self.price)
+        ocr_1_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_qlv1, self.ex_destination_qlv1, True)
+        ocr_2_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_qlv2, self.ex_destination_qlv2, True)
+        ocr_3_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_qlv3, self.ex_destination_qlv3, True)
         self.rule_list = [nos_1_rule, nos_2_rule, nos_3_rule, ocr_1_rule, ocr_2_rule, ocr_3_rule]
         # endregion
 
@@ -147,7 +149,7 @@ class QAP_T11294(TestCase):
         
         # region Check the 1st child DMA order
         self.dma_qlv1_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_Kepler_params()
-        self.dma_qlv1_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_qlv1, OrderQty=self.display_qty, Price=self.price, Instrument=self.instrument))
+        self.dma_qlv1_order.change_parameters(dict(Account=self.account_qlv1, ExDestination=self.ex_destination_qlv1, OrderQty=self.display_qty, Price=self.price, Instrument=self.instrument))
         self.fix_verifier_buy.check_fix_message_kepler(self.dma_qlv1_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
         er_pending_new_dma_qlv1_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_qlv1_order, self.gateway_side_buy, self.status_pending)
@@ -159,7 +161,7 @@ class QAP_T11294(TestCase):
 
         # region Check the 2nd child DMA order
         self.dma_qlv2_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_Kepler_params()
-        self.dma_qlv2_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_qlv2, OrderQty=self.display_qty, Price=self.price, Instrument=self.instrument))
+        self.dma_qlv2_order.change_parameters(dict(Account=self.account_qlv2, ExDestination=self.ex_destination_qlv2, OrderQty=self.display_qty, Price=self.price, Instrument=self.instrument))
         self.fix_verifier_buy.check_fix_message_kepler(self.dma_qlv2_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 2 order')
 
         er_pending_new_dma_qlv2_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_qlv2_order, self.gateway_side_buy, self.status_pending)
@@ -171,7 +173,7 @@ class QAP_T11294(TestCase):
         
         # region Check the 3rd child DMA order
         self.dma_qlv3_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_Kepler_params()
-        self.dma_qlv3_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_qlv3, OrderQty=self.display_qty, Price=self.price, Instrument=self.instrument))
+        self.dma_qlv3_order.change_parameters(dict(Account=self.account_qlv3, ExDestination=self.ex_destination_qlv3, OrderQty=self.display_qty, Price=self.price, Instrument=self.instrument))
         self.fix_verifier_buy.check_fix_message_kepler(self.dma_qlv3_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 2 order')
 
         er_pending_new_dma_qlv3_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_qlv3_order, self.gateway_side_buy, self.status_pending)
