@@ -79,7 +79,7 @@ class QAP_T6957(TestCase):
         self.return_result(responses, ORSMessageType.OrdReply.value)
         algo_param_block = self.result.get_parameter('OrdReplyBlock')['ExternalAlgoParametersBlock']
         self.java_api_manager.compare_values(
-            {'ScenarioID': '101'},
+            {'ScenarioID': '1001'},
             algo_param_block, 'Check child order algo')
         # endregion
 
