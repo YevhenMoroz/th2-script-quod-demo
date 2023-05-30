@@ -143,6 +143,7 @@ class ORSMessageType(Enum):
     MatchCptyMOBlocksRequest = 'Order_MatchCptyMOBlocksRequest'
     FixAllocationInstructionAck = 'Fix_AllocationInstructionAck'
     AssignInstrumentRequest = 'Order_AssignInstrumentRequest'
+    FixPositionTransferInstruction = 'Fix_PositionTransferInstruction'
 
 
 class TradingRestApiMessageType(Enum):
