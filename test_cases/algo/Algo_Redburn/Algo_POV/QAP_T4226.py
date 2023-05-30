@@ -84,21 +84,13 @@ class QAP_T4226(TestCase):
         # endregion
 
         # region venue param
-        # self.instrument = self.data_set.get_fix_instrument_by_name("instrument_1")
-        # self.mic = self.data_set.get_mic_by_name("mic_1")
-        # self.client = self.data_set.get_client_by_name("client_2")
-        # self.account = self.data_set.get_account_by_name('account_2')
-        # self.listing_id = self.data_set.get_listing_id_by_name("listing_36")
-        #
-        # self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile1")
+        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_1")
+        self.mic = self.data_set.get_mic_by_name("mic_1")
+        self.client = self.data_set.get_client_by_name("client_2")
+        self.account = self.data_set.get_account_by_name('account_2')
+        self.listing_id = self.data_set.get_listing_id_by_name("listing_36")
 
-        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_38")
-        self.client = self.data_set.get_client_by_name("client_3")
-        self.account = self.data_set.get_account_by_name("account_21")
-        self.mic = self.data_set.get_mic_by_name("mic_47")
-        self.listing_id = self.data_set.get_listing_id_by_name("listing_58")
-
-        self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile3")
+        self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile1")
         # endregion
 
         # region Key parameters
