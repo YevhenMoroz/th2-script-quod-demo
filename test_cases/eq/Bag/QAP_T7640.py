@@ -5,6 +5,7 @@ import string
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
+from custom.verifier import VerificationMethod
 from rule_management import Simulators, RuleManager
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
@@ -60,7 +61,7 @@ class QAP_T7640(TestCase):
         self.bag_creation_request.set_default(BagChildCreationPolicy.Split.value, bag_name, orders_id)
         self.java_api_manager.send_message_and_receive_response(self.bag_creation_request)
         order_bag_notification = \
-                self.java_api_manager.get_last_message(ORSMessageType.OrderBagNotification.value).get_parameters()[
+            self.java_api_manager.get_last_message(ORSMessageType.OrderBagNotification.value).get_parameters()[
                 JavaApiFields.OrderBagNotificationBlock.value]
         bag_order_id = order_bag_notification[JavaApiFields.OrderBagID.value]
         qty_of_bag = str(int(int(self.qty) * 2))
@@ -77,7 +78,7 @@ class QAP_T7640(TestCase):
         finally:
             self.rule_manager.remove_rule(nos_rule)
         wave_notify = self.java_api_manager.get_last_message(ORSMessageType.OrderBagWaveNotification.value) \
-                .get_parameters()[JavaApiFields.OrderBagWaveNotificationBlock.value]
+            .get_parameters()[JavaApiFields.OrderBagWaveNotificationBlock.value]
         wave_id = wave_notify["OrderBagWaveID"]
         expected_result = {JavaApiFields.OrderWaveStatus.value: OrderBagConst.OrderBagStatus_NEW.value}
         self.java_api_manager.compare_values(expected_result, wave_notify, "Check wave from precondition")
@@ -91,14 +92,20 @@ class QAP_T7640(TestCase):
         self.java_api_manager.compare_values(
             {JavaApiFields.OrderBagStatus.value: OrderBagConst.OrderBagStatus_TER.value},
             order_bag_notification, 'Checking OrderBagStatus')
-        ord_update = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value, ord_id).get_parameter(
-            JavaApiFields.OrderNotificationBlock.value)
-        ord_update2 = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value, ord_id2).get_parameter(
-            JavaApiFields.OrderNotificationBlock.value)
-        expected_result = {JavaApiFields.LeavesQty.value: str(float(self.qty)),
-                           JavaApiFields.UnmatchedQty.value: str(float(self.qty)),
-                           JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value}
-        self.java_api_manager.compare_values(expected_result, ord_update, "UnmatchedQty for order 1")
-        self.java_api_manager.compare_values(expected_result, ord_update2, "UnmatchedQty for order 2")
+        ord_update = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value,
+                                                            ord_id).get_parameters()
+        ord_update_block = ord_update[JavaApiFields.OrderNotificationBlock.value]
+        ord_update2 = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value,
+                                                             ord_id2).get_parameters()
+        ord_update_block2 = ord_update2[JavaApiFields.OrderNotificationBlock.value]
+        expected_result = {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value}
+        self.java_api_manager.compare_values(expected_result, ord_update_block, "Check order sts for order 1")
+        self.java_api_manager.compare_values(expected_result, ord_update_block2, "Check order sts for order 2")
+        expected_result = {JavaApiFields.OrderNotificationBlock.value: JavaApiFields.OrderBagID.value}
+        self.java_api_manager.compare_values(expected_result, ord_update,
+                                             "Check order doesn't contain OrderBagID for order 1",
+                                             VerificationMethod.NOT_CONTAINS)
+        self.java_api_manager.compare_values(expected_result, ord_update2,
+                                             "Check order doesn't contain OrderBagID for order 2",
+                                             VerificationMethod.NOT_CONTAINS)
         # endregion
-
