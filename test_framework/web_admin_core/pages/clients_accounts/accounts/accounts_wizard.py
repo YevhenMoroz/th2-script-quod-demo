@@ -46,6 +46,20 @@ class AccountsWizard(CommonPage):
     def get_position_source(self):
         return self.get_text_by_xpath(AccountsConstants.WIZARD_POSITION_SOURCE_COMBOBOX_XPATH)
 
+    def set_cash_accounts(self, cash_acc):
+        self.set_multiselect_field_value(AccountsConstants.WIZARD_CASH_ACCOUNTS_XPATH, cash_acc)
+
+    def get_cash_accounts(self):
+        return self.get_text_by_xpath(AccountsConstants.WIZARD_CASH_ACCOUNTS_XPATH)
+
+    def get_all_cash_accounts_from_drop_menu(self, searching_pattern=None):
+        self.find_by_xpath(AccountsConstants.WIZARD_CASH_ACCOUNTS_XPATH).click()
+        time.sleep(1)
+        if searching_pattern is not None:
+            self.set_text_by_xpath(AccountsConstants.MULTISELECT_FORM_LOOK_UP, searching_pattern)
+            time.sleep(1)
+        return self.get_all_items_from_drop_down(AccountsConstants.MULTISELECT_DROP_DOWN)
+
     def set_clearing_account_type(self, value: str):
         self.set_combobox_value(AccountsConstants.WIZARD_CLEARING_ACCOUNT_TYPE_COMBOBOX_XPATH, value)
 
@@ -139,3 +153,6 @@ class AccountsWizard(CommonPage):
 
     def is_wizard_page_open(self):
         return self.is_element_present(AccountsConstants.WIZARD_TITLE_XPATH)
+
+    def is_unable_to_unassign_cash_account_warning_displayed(self):
+        return self.is_element_present(AccountsConstants.UNABLE_UNASSIGN_CASH_ACCOUNT_MESSAGE)

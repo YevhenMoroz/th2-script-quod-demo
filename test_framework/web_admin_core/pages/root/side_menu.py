@@ -8,6 +8,8 @@ from test_framework.web_admin_core.pages.clients_accounts.external_client_groups
 from test_framework.web_admin_core.pages.clients_accounts.client_groups.client_groups_constants import \
     ClientGroupsConstants
 from test_framework.web_admin_core.pages.clients_accounts.client_lists.constants import ClientListsConstants
+from test_framework.web_admin_core.pages.clients_accounts.account_lists.constants import \
+    Constants as AccountListConstants
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_constants import ClientsConstants
 from test_framework.web_admin_core.pages.positions.cash_positions.constants import Constants as \
     CashPositionsConstants
@@ -28,6 +30,8 @@ from test_framework.web_admin_core.pages.general.system_commands.system_commands
     SystemCommandsConstants
 from test_framework.web_admin_core.pages.general.system_components.constants import Constants as \
     SystemComponentsConstants
+from test_framework.web_admin_core.pages.general.interface_preferences.constants import Constants as \
+    InterfacePreferencesConstants
 from test_framework.web_admin_core.pages.general.entitlements.constants import \
     EntitlementsConstants
 from test_framework.web_admin_core.pages.general.settings.settings_constants import SettingsConstants
@@ -153,6 +157,11 @@ class SideMenu(CommonPage):
                        container_expected_state)
         self.check_is_page_opened(ClientListsConstants.CLIENT_LIST_PAGE_TITLE_XPATH)
 
+    def open_account_list_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+        self.open_page(RootConstants.ACCOUNT_LISTS_ITEM_XPATH, RootConstants.CLIENTS_ACCOUNTS_TOGGLE_CSS_SELECTOR,
+                       container_expected_state)
+        self.check_is_page_opened(AccountListConstants.MainPage.PAGE_TITLE)
+
     def open_clients_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.CLIENTS_ITEM_XPATH, RootConstants.CLIENTS_ACCOUNTS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
@@ -193,6 +202,11 @@ class SideMenu(CommonPage):
                        container_expected_state)
         self.check_is_page_opened(SystemComponentsConstants.MainPage.PAGE_TITLE)
 
+    def open_interface_preferences_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+        self.open_page(RootConstants.INTERFACE_PREFERENCES_XPATH, RootConstants.GENERAL_TOGGLE_CSS_SELECTOR,
+                       container_expected_state)
+        self.check_is_page_opened(InterfacePreferencesConstants.MainPage.PAGE_TITLE)
+
     def open_entitlements_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.ENTITLEMENTS_ITEM_XPATH, RootConstants.GENERAL_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
@@ -220,7 +234,7 @@ class SideMenu(CommonPage):
     def open_allocation_matching_profiles_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.ALLOCATION_MATCHING_PROFILES_ITEM_XPATH, RootConstants.MIDDLE_OFFICE_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(AllocationMatchingProfilesConstants.MainPage.MAIN_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(AllocationMatchingProfilesConstants.MainPage.MAIN_PAGE_TITLE)
 
     def open_settlement_models_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.SETTLEMENT_MODELS_ITEM_XPATH, RootConstants.MIDDLE_OFFICE_TOGGLE_CSS_SELECTOR,

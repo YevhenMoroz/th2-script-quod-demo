@@ -25,8 +25,12 @@ class ClientsInstrTypesSubWizard(CommonPage):
     def set_instr_type(self, value):
         self.select_value_from_dropdown_list(ClientsConstants.INSTR_TYPES_TAB_INSTR_TYPE_XPATH, value)
 
+    # for future: get_instr_type_in_edit_mode
     def get_instr_type(self):
         return self.get_text_by_xpath(ClientsConstants.INSTR_TYPES_TAB_INSTR_TYPE_XPATH)
+
+    def get_instr_type_in_table(self):
+        return self.find_by_xpath(ClientsConstants.INSTR_TYPES_TAB_INSTR_TYPE_TABLE_XPATH).text
 
     def set_instr_type_filter(self, value):
         self.set_text_by_xpath(ClientsConstants.INSTR_TYPES_TAB_INSTR_TYPE_FILTER_XPATH, value)

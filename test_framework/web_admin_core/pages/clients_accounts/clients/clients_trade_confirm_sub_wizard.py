@@ -43,8 +43,12 @@ class ClientsTradeConfirmSubWizard(CommonPage):
     def set_email_address(self, value):
         self.set_text_by_xpath(ClientsConstants.TRADE_CONFIRM_EMAIL_ADDRESS_XPATH, value)
 
+    # for future: get_email_address_in_edit_mode
     def get_email_address(self):
         return self.get_text_by_xpath(ClientsConstants.TRADE_CONFIRM_EMAIL_ADDRESS_XPATH)
+
+    def get_email_address_in_table(self):
+        return self.find_by_xpath(ClientsConstants.TRADE_CONFIRM_EMAIL_ADDRESS_TABLE).text
 
     def set_email_address_filter(self, value):
         self.set_text_by_xpath(ClientsConstants.TRADE_CONFIRM_EMAIL_ADDRESS_FILTER_XPATH, value)

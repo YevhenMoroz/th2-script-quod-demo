@@ -39,6 +39,7 @@ class QAP_T3881(CommonTestCase):
             time.sleep(2)
             current_url = common_page.get_current_page_url()
             common_page.open_new_browser_tab_and_set_url(current_url)
+            time.sleep(2)
 
             login_page = LoginPage(self.web_driver_container)
             self.verify("Login page is opened", True, login_page.is_login_page_opened())

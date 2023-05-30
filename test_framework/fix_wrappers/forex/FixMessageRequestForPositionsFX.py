@@ -65,6 +65,19 @@ class FixMessageRequestForPositionsFX(FixMessageRequestForPositions):
         super().change_parameters(base_parameters)
         return self
 
+    def set_params_for_date(self, date=None):
+        base_parameters = {
+            "PosReqID": bca.client_orderid(9),
+            "PosReqType": "0",
+            "SubscriptionRequestType": "1",
+            "TransactTime": datetime.utcnow().isoformat(),
+            "SettlDate": date if date is not None else self.get_data_set().get_settle_date_by_name("spot"),
+            "Account": self.get_data_set().get_client_by_name("client_mm_1"),
+            "ClearingBusinessDate": self.get_data_set().get_settle_date_by_name("spot"),
+
+        }
+        super().change_parameters(base_parameters)
+        return self
     def set_unsubscribe(self):
         self.change_parameter("SubscriptionRequestType", "2")
         return self
