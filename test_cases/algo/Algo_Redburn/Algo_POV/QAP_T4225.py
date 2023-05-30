@@ -18,7 +18,8 @@ from test_framework.data_sets import constants
 from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
 from test_framework.algo_formulas_manager import AlgoFormulasManager as AFM
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
-
+from test_framework.ssh_wrappers.ssh_client import SshClient
+from test_framework.formulas_and_calculation.trading_phase_manager import TradingPhaseManager, TimeSlot
 
 class QAP_T4225(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
@@ -102,8 +103,22 @@ class QAP_T4225(TestCase):
 
         self.rest_api_manager = RestApiAlgoManager(session_alias=self.restapi_env1.session_alias_wa, case_id=self.test_id)
 
+        # region SSH
+        self.config_file = "client_sats.xml"
+        self.xpath = ".//Participate/levels"
+        self.new_config_value = "3"
+        self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
+        self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user, self.ssh_client_env.password, self.ssh_client_env.su_user, self.ssh_client_env.su_password)
+        self.default_config_value = self.ssh_client.get_and_update_file(self.config_file, {self.xpath: self.new_config_value})
+        # endregion
+
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        # region precondition: Prepare SATS configuration
+        self.ssh_client.send_command("qrestart SATS")
+        time.sleep(35)
+        # endregion
+
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
         nos_ioc_rule_1 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price_bid_1)
@@ -116,7 +131,9 @@ class QAP_T4225(TestCase):
 
         # region Update Trading Phase
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify trading phase profile", self.test_id))
-        trading_phases = AFM.get_timestamps_for_current_phase(TradingPhases.Open)
+        trading_phase_manager = TradingPhaseManager()
+        trading_phase_manager.build_timestamps_for_trading_phase_sequence(TradingPhases.Open)
+        trading_phases = trading_phase_manager.get_trading_phase_list()
         self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
         # endregion
 
@@ -204,11 +221,20 @@ class QAP_T4225(TestCase):
 
         time.sleep(3)
 
+        # region config reset
+        self.ssh_client.get_and_update_file(self.config_file, {self.xpath: self.default_config_value})
+        self.ssh_client.send_command("qrestart SATS")
+        time.sleep(35)
+        self.ssh_client.close()
+        # endregion
+
         RuleManager(Simulators.algo).remove_rules(self.rule_list)
 
         # region Update Trading Phase
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Revert trading phase profile", self.test_id))
-        trading_phases = AFM.get_default_timestamp_for_trading_phase()
+        trading_phase_manager = TradingPhaseManager()
+        trading_phase_manager.build_default_timestamp_for_trading_phase()
+        trading_phases = trading_phase_manager.get_trading_phase_list(new_standard=False)
         self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
         # endregion
 
