@@ -163,7 +163,7 @@ class QAP_T4053(TestCase):
         # region Check child DMA order 2
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order 2", self.test_id))
 
-        self.dma_order_2 = FixMessageNewOrderSingleAlgo().set_DMA_params()
+        self.dma_order_2 = FixMessageNewOrderSingleAlgo().set_DMA_params(False)
         self.dma_order_2.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_1, OrderQty=self.qty_child_1, Price=self.price, Instrument='*'))
         self.fix_verifier_buy.check_fix_message(self.dma_order_2, key_parameters=self.key_params_child, message_name='Buy side NewOrderSingle Child DMA order 2')
 
@@ -174,7 +174,7 @@ class QAP_T4053(TestCase):
         self.fix_verifier_buy.check_fix_message(er_new_dma_order_2_params, key_parameters=self.key_params_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA order 2')
         
         self.mod_dma_order_2 = FixMessageOrderCancelReplaceRequestAlgo(self.dma_order_2)
-        self.mod_dma_order_2.change_parameters(dict(OrderQty=self.qty, NoParty='*'))
+        self.mod_dma_order_2.change_parameters(dict(OrderQty=self.qty))
         self.fix_verifier_buy.check_fix_message(self.mod_dma_order_2, key_parameters=self.key_params_child, message_name='Buy side OCRR Child DMA order 2')
 
         er_mod_dma_order_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order_2, self.gateway_side_buy, self.status_replace)

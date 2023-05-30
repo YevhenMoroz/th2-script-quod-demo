@@ -37,7 +37,7 @@ class QAP_T9094(TestCase):
 
         # region order parameters
         self.qty = 1_000_000
-        self.price = 30
+        self.price = 40
         self.price_bid = 30
         self.price_ask = 40
         self.qty_bid = self.qty_ask = 1_000_000
@@ -45,9 +45,11 @@ class QAP_T9094(TestCase):
         self.indicative_price = 100
         self.pct = 0.1
         self.tif_day = TimeInForce.Day.value
-        self.pass_child_qty = AFM.get_pov_child_qty(self.pct, self.qty_bid, self.qty)
+        self.agr_child_qty = AFM.get_pov_child_qty(self.pct, self.indicative_volume, self.qty)
         self.float_type = StrategyParameterType.Float.value
         self.dateformat = "time_only"
+        self.bool_type = StrategyParameterType.Boolean.value
+        self.book_participation = "false"
         # endregion
 
         # region Gateway Side
@@ -94,9 +96,9 @@ class QAP_T9094(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
-        nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price_bid)
+        nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_1, True, self.agr_child_qty, self.price)
         ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_1, True)
-        self.rule_list = [nos_rule, ocr_rule]
+        self.rule_list = [nos_ioc_rule, ocr_rule]
         # endregion
 
         # region Update Trading Phase
@@ -131,6 +133,7 @@ class QAP_T9094(TestCase):
         self.POV_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.POV_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Instrument=self.instrument, ExDestination=self.ex_destination_1, Price=self.price))
         self.POV_order.update_repeating_group("NoStrategyParameters", [dict(StrategyParameterName='PercentageVolume', StrategyParameterType=self.float_type, StrategyParameterValue=self.pct)])
+        self.POV_order.add_fields_into_repeating_group("NoStrategyParameters", [dict(StrategyParameterName='BookParticipation', StrategyParameterType=self.bool_type, StrategyParameterValue=self.book_participation)])
         self.fix_manager_sell.send_message_and_receive_response(self.POV_order, case_id_1)
 
         time.sleep(3)
@@ -159,7 +162,7 @@ class QAP_T9094(TestCase):
         # region Check child DMA order
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order", self.test_id))
         self.dma_1_order = FixMessageNewOrderSingleAlgo().set_DMA_params()
-        self.dma_1_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_1, OrderQty=self.pass_child_qty, Price=self.price_bid, Instrument='*'))
+        self.dma_1_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_1, OrderQty=self.agr_child_qty, Price=self.price_bid, Instrument='*'))
         self.fix_verifier_buy.check_fix_message(self.dma_1_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
         er_pending_dma_1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy, self.status_pending)

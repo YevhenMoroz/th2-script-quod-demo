@@ -31,6 +31,30 @@ class ClientsAssignmentsSubWizard(CommonPage):
     def is_desk_field_displayed_and_has_correct_name(self):
         return self.is_element_present(ClientsConstants.ASSIGNMENTS_TAB_DESK_LABEL_XPATH)
 
+    def set_fix_order_recipient_user(self, value):
+        self.set_combobox_value(ClientsConstants.MANAGEMENTS_TAB_FIX_ORDER_RECIPIENT_USER_XPATH, value)
+
+    def get_fix_order_recipient_user(self):
+        return self.get_text_by_xpath(ClientsConstants.MANAGEMENTS_TAB_FIX_ORDER_RECIPIENT_USER_XPATH)
+
+    def set_fix_order_recipient_desk(self, value):
+        self.set_combobox_value(ClientsConstants.MANAGEMENTS_TAB_FIX_ORDER_RECIPIENT_DESK_XPATH, value)
+
+    def get_fix_order_recipient_desk(self):
+        return self.get_text_by_xpath(ClientsConstants.MANAGEMENTS_TAB_FIX_ORDER_RECIPIENT_DESK_XPATH)
+
+    def set_middle_office_desk(self, value):
+        self.set_combobox_value(ClientsConstants.MANAGEMENTS_TAB_MIDDLE_OFFICE_DESK_XPATH, value)
+
+    def get_middle_office_desk(self):
+        return self.get_text_by_xpath(ClientsConstants.MANAGEMENTS_TAB_MIDDLE_OFFICE_DESK_XPATH)
+
+    def set_middle_office_user(self, value):
+        self.set_combobox_value(ClientsConstants.MANAGEMENTS_TAB_MIDDLE_OFFICE_USER_XPATH, value)
+
+    def get_middle_office_user(self):
+        return self.get_text_by_xpath(ClientsConstants.MANAGEMENTS_TAB_MIDDLE_OFFICE_USER_XPATH)
+
     def click_on_account_link(self, account_name):
         self.find_by_xpath(ClientsConstants.ASSIGNMENTS_TAB_ACCOUNT_NAME_XPATH.format(account_name)).click()
 

@@ -7,12 +7,11 @@ from test_framework.environments.full_environment import FullEnvironment
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.forex.FixMessageExecutionReportDropCopyFX import FixMessageExecutionReportDropCopyFX
-from test_framework.fix_wrappers.forex.FixMessagePositionReportFX import FixMessagePositionReportFX
+from test_framework.fix_wrappers.forex.FixMessageRequestForPositionsAckFX import FixMessageRequestForPositionsAckFX
 from test_framework.fix_wrappers.forex.FixMessageRequestForPositionsFX import FixMessageRequestForPositionsFX
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
-from test_framework.java_api_wrappers.fx.FixPositionMaintenanceRequestFX import FixPositionMaintenanceRequestFX
+from test_framework.java_api_wrappers.fx.FixPositionMassCancelRequestFX import FixPositionMassCancelRequestFX
 from test_framework.java_api_wrappers.fx.TradeEntryRequestFX import TradeEntryRequestFX
-from test_framework.positon_verifier_fx import PositionVerifier
 
 
 class QAP_T2681(TestCase):
@@ -24,16 +23,13 @@ class QAP_T2681(TestCase):
         self.pks_connectivity = self.environment.get_list_fix_environment()[0].sell_side_pks
         self.dc_connectivity = self.environment.get_list_fix_environment()[0].drop_copy
         self.java_api_manager = JavaApiManager(self.java_api_env, self.test_id)
-        self.maintenance_request_ext = FixPositionMaintenanceRequestFX()
-        self.maintenance_request_int = FixPositionMaintenanceRequestFX()
         self.fix_manager = FixManager(self.pks_connectivity, self.test_id)
         self.fix_pos_verifier = FixVerifier(self.pks_connectivity, self.test_id)
         self.fix_drop_copy_verifier = FixVerifier(self.dc_connectivity, self.test_id)
-        self.position_verifier = PositionVerifier(self.test_id)
         self.request_for_position_ext = FixMessageRequestForPositionsFX()
         self.request_for_position_int = FixMessageRequestForPositionsFX()
-        self.position_report_ext = FixMessagePositionReportFX()
-        self.position_report_int = FixMessagePositionReportFX()
+        self.cancel_request = FixPositionMassCancelRequestFX()
+        self.pos_report_none = FixMessageRequestForPositionsAckFX()
         self.trade_request = TradeEntryRequestFX()
         self.ah_exec_report = FixMessageExecutionReportDropCopyFX()
         self.client_ext = self.data_set.get_client_by_name("client_mm_6")
@@ -43,7 +39,7 @@ class QAP_T2681(TestCase):
         self.currency = self.data_set.get_currency_by_name("currency_gbp")
         self.gbp_dkk = self.data_set.get_symbol_by_name("symbol_25")
         self.sec_type_spo = self.data_set.get_security_type_by_name("fx_spot")
-        self.listing = self.data_set.get_listing_id_by_name("gbp_dkk_spo")
+        self.instr_type_spo = self.data_set.get_fx_instr_type_ja("fx_spot")
         self.instrument = {
             "SecurityType": self.sec_type_spo,
             "Symbol": self.gbp_dkk
@@ -53,29 +49,21 @@ class QAP_T2681(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Clear position before start and check that they equal to 0
-        self.maintenance_request_ext.set_default_params()
-        self.maintenance_request_ext.change_account(self.account_ext)
-        self.maintenance_request_ext.change_client(self.client_ext)
-        self.maintenance_request_ext.change_instrument(self.gbp_dkk)
-        self.java_api_manager.send_message(self.maintenance_request_ext)
+
+        self.cancel_request.set_params(self.account_ext)
+        self.java_api_manager.send_message(self.cancel_request)
         self.sleep(5)
-        self.maintenance_request_int.set_default_params()
-        self.maintenance_request_int.change_account(self.account_int)
-        self.maintenance_request_int.change_client(self.client_int)
-        self.maintenance_request_int.change_instrument(self.gbp_dkk)
-        self.java_api_manager.send_message(self.maintenance_request_int)
+        self.cancel_request.set_params(self.account_int)
+        self.java_api_manager.send_message(self.cancel_request)
         self.sleep(5)
 
         self.request_for_position_ext.set_default()
         self.request_for_position_ext.change_parameters({"Instrument": self.instrument, "Currency": self.currency,
                                                          "Account": self.client_ext})
-        external_report: list = self.fix_manager.send_message_and_receive_response(self.request_for_position_ext,
-                                                                                   self.test_id)
-        self.position_report_ext.set_params_from_reqeust(self.request_for_position_ext)
-        self.position_report_ext.change_parameter("LastPositEventType", "11")
-        self.fix_pos_verifier.check_fix_message(self.position_report_ext,
+        self.fix_manager.send_message_and_receive_response(self.request_for_position_ext, self.test_id)
+        self.pos_report_none.set_params_from_reqeust(self.request_for_position_ext)
+        self.fix_pos_verifier.check_fix_message(self.pos_report_none,
                                                 message_name=f"Check position for {self.client_ext} before start")
-        self.position_verifier.check_base_position(external_report, "0", text=f"Check base for {self.client_ext}")
         self.sleep(1)
         self.request_for_position_ext.set_unsubscribe()
         self.fix_manager.send_message(self.request_for_position_ext)
@@ -84,13 +72,10 @@ class QAP_T2681(TestCase):
         self.request_for_position_int.set_default()
         self.request_for_position_int.change_parameters({"Instrument": self.instrument, "Currency": self.currency,
                                                          "Account": self.client_int})
-        internal_report: list = self.fix_manager.send_message_and_receive_response(self.request_for_position_int,
-                                                                                   self.test_id)
-        self.position_report_int.set_params_from_reqeust(self.request_for_position_int)
-        self.position_report_int.change_parameter("LastPositEventType", "11")
-        self.fix_pos_verifier.check_fix_message(self.position_report_int,
+        self.fix_manager.send_message_and_receive_response(self.request_for_position_int, self.test_id)
+        self.pos_report_none.set_params_from_reqeust(self.request_for_position_int)
+        self.fix_pos_verifier.check_fix_message(self.pos_report_none,
                                                 message_name=f"Check position for {self.client_int} before start")
-        self.position_verifier.check_base_position(internal_report, "0", text=f"Check base for {self.client_int}")
         self.request_for_position_int.set_unsubscribe()
         self.fix_manager.send_message(self.request_for_position_int)
         self.sleep(1)
@@ -101,8 +86,8 @@ class QAP_T2681(TestCase):
         self.sleep(1)
         self.trade_request.set_default_params()
         self.trade_request.update_fields_in_component("TradeEntryRequestBlock",
-                                                      {"AccountGroupID": self.client_ext, "ExecQty": self.qty,
-                                                       "ListingID": self.listing})
+                                                      {"ClientAccountGroupID": self.client_ext, "ExecQty": self.qty})
+        self.trade_request.change_instrument(self.gbp_dkk, self.instr_type_spo)
         response: list = self.java_api_manager.send_message_and_receive_response(self.trade_request)
         ord_id = self.trade_request.get_ah_ord_id(response)
         # endregion
@@ -111,7 +96,7 @@ class QAP_T2681(TestCase):
         self.ah_exec_report.set_params_from_trade_mo(self.trade_request)
         self.ah_exec_report.change_parameters(
             {"Currency": self.currency, "OrderID": ord_id, "Account": self.account_int})
-        ah_exec_params = ["OrderID", "OrdStatus", "OrdStatus"]
-        self.fix_drop_copy_verifier.check_fix_message(self.ah_exec_report, key_parameters=ah_exec_params, message_name=
-        "Check AutoHedger ExecutionReport on DropCopy gtw")
+        ah_exec_params = ["OrderID", "OrdStatus", "ExecType"]
+        self.fix_drop_copy_verifier.check_fix_message(self.ah_exec_report, key_parameters=ah_exec_params,
+                                                      message_name="Check AutoHedger ExecutionReport on DropCopy gtw")
         # endregion

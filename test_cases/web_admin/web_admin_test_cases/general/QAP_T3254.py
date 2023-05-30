@@ -18,7 +18,7 @@ class QAP_T3254(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
         self.preview = {"instance_id_1": "AQS", "short_name_1": "aqs", "long_name_1": "Admin and Query Servers",
-                        "instance_id_2": "BS", "short_name_2": "bs", "long_name_2": "Benchmark server"}
+                        "instance_id_2": "ALS", "short_name_2": "als", "long_name_2": "Alert Module"}
         self.active = ['true', 'false']
         self.version = str
 

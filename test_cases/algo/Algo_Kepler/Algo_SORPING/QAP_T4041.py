@@ -84,11 +84,11 @@ class QAP_T4041(TestCase):
         # region Rule creation
         # The default rule will be changed (for manual executing restart the FH after the deleting the default rule and adding a new market data rule)
         rule_manager = RuleManager(Simulators.algo)
-        special_market_rule = rule_manager.add_MarketDataRequestWithTimeout(self.feed_handler, [self.listing_id_qdl1])
+        # special_market_rule = rule_manager.add_MarketDataRequestWithTimeout(self.feed_handler, [self.listing_id_qdl1])
         nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit1, False, 0, self.price)
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit1, self.price)
         ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit1, True)
-        self.rule_list = [special_market_rule, nos_ioc_rule, nos_rule, ocr_rule]
+        self.rule_list = [nos_ioc_rule, nos_rule, ocr_rule]
 
         rule_manager.remove_rule_by_id(2)
         # endregion

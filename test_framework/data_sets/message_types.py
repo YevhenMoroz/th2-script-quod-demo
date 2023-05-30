@@ -35,12 +35,14 @@ class ORSMessageType(Enum):
     OrderSubmit = 'Order_OrderSubmit'
     FixNewOrderSingle = 'Fix_NewOrderSingle'
     TradeEntryRequest = 'Order_TradeEntryRequest'
+    Fix_TradeEntryRequest = 'Fix_TradeEntryRequest'
     OrderListWaveCreationRequest = 'Order_OrderListWaveCreationRequest'
     UnMatchRequest = 'Order_UnMatchRequest'
     ManualOrderCrossRequest = 'Order_ManualOrderCrossRequest'
     OrderModificationRequest = 'Order_OrderModificationRequest'
     OrderCancelRequest = 'Order_OrderCancelRequest'
     OrdReply = 'Order_OrdReply'
+    HeldOrderNotif = 'Order_HeldOrderNotif'
     OrdNotification = 'Order_OrdNotification'
     ExecutionReport = 'Order_ExecutionReport'
     DFDManagementBatch = 'Order_DFDManagementBatch'
@@ -143,6 +145,11 @@ class ORSMessageType(Enum):
     AssignInstrumentRequest = 'Order_AssignInstrumentRequest'
     AssignInstrumentReply = 'Order_AssignInstrumentReply'
     TradeCaptureReportNotif = 'Order_TradeCaptureReportNotif'
+    OrderMassCancelRequest = 'Order_OrderMassCancelRequest'
+    OrderMassCancelReport = 'Order_OrderMassCancelReport'
+    GatewayConfirmation = 'Gateway_Confirmation'
+    GatewayAllocationInstruction = 'Gateway_AllocationInstruction'
+    BlockChangeConfirmationServiceReply = 'Order_BlockChangeConfirmationServiceReply'
     BenchmarkNotification = 'Order_BenchmarkNotification'
 
 
@@ -191,6 +198,15 @@ class ResAPIMessageType(Enum):
     FindAllOrderVelocity = "FindAllOrderVelocityLimit"
     DeleteOrderVelocity = "DeleteOrderVelocityLimit"
     ModifyOrderVelocity = "ModifyOrderVelocityLimit"
+    ManageSecurityBlock = "ManageSecurityBlock"
+    CreateOrderPricing = "CreateOrderPricing"
+    ModifyOrderPricing = "ModifyOrderPricing"
+    DeleteOrderPricing = "DeleteOrderPricing"
+    CreateOrderCompression = "CreateOrderCompression"
+    ModifyOrderCompression = "ModifyOrderCompression"
+    DeleteOrderCompression = "DeleteOrderCompression"
+    FindAllOrderPricing = "FindAllOrderPricing"
+    FindAllOrderCompression = "FindAllOrderCompression"
 
 
 class PKSMessageType(Enum):
@@ -202,6 +218,7 @@ class PKSMessageType(Enum):
     PositionReport = "Order_PositionReport"
     RetailPositionConversionRequest = "Order_RetailPositionConversionRequest"
     RequestForPositionsAck = "Order_RequestForPositionsAck"
+    FixPositionMassCancelRequest = "Fix_PositionMassCancelRequest"
     RequestForOverdueRetailPositions = 'Order_RequestForOverdueRetailPositions'
     RequestForOverdueRetailPositionsAck = 'Order_RequestForOverdueRetailPositionsAck'
 

@@ -27,8 +27,12 @@ class ClientsVenuesSubWizard(CommonPage):
     def set_venue(self, value):
         self.set_combobox_value(ClientsConstants.VENUES_TAB_VENUE_XPATH, value)
 
+    # for future: get_venue_in_edit_mode
     def get_venue(self):
         return self.get_text_by_xpath(ClientsConstants.VENUES_TAB_VENUE_XPATH)
+
+    def get_venue_in_table(self):
+        return self.find_by_xpath(ClientsConstants.VENUES_TAB_VENUE_TABLE).text
 
     def get_all_venue_from_drop_menu(self):
         self.click_on_plus()

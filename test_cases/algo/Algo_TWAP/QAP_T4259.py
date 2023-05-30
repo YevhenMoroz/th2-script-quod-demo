@@ -45,11 +45,12 @@ class QAP_T4259(TestCase):
         # endregion
         
         # region children parameters
-        self.waves = 4
+        self.waves_calc = 4
         self.slice1_qty = AlgoFormulasManager.get_next_twap_slice(self.qty, self.waves)
         self.slice2_qty = AlgoFormulasManager.get_next_twap_slice(self.qty, self.waves-1)
         self.slice3_qty = AlgoFormulasManager.get_next_twap_slice(self.qty, self.waves-2)
         self.slice4_qty = AlgoFormulasManager.get_next_twap_slice(self.qty, self.waves-3)
+        # endregion
 
         # region Gateway Side
         self.gateway_side_buy = GatewaySide.Buy
@@ -133,7 +134,7 @@ class QAP_T4259(TestCase):
         self.fix_verifier_sell.check_fix_message(pending_twap_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew')
 
         new_twap_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_order, self.gateway_side_sell, self.status_new)
-        new_twap_order_params.change_parameter('NoParty', '*')
+        
         self.fix_verifier_sell.check_fix_message(new_twap_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
 
@@ -223,7 +224,7 @@ class QAP_T4259(TestCase):
         self.fix_verifier_sell.set_case_id(case_id_3)
 
         eliminate_twap_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_order, self.gateway_side_sell, self.status_eliminate)
-        eliminate_twap_order.change_parameters(dict(NoParty='*', Text='*'))
+        eliminate_twap_order.change_parameters(dict(Text='*'))
 
         self.fix_verifier_sell.check_fix_message(eliminate_twap_order, key_parameters=self.key_params_cl,  message_name='Sell side ExecReport Eliminated')
 

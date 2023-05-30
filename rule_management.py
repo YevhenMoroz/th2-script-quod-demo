@@ -37,7 +37,7 @@ from google.protobuf.empty_pb2 import Empty
 
 class Simulators(Enum):
     default = {"core": Stubs.core, "sim": Stubs.simulator,
-               "default_rules": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]}
+               "default_rules": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]}
     equity = {"core": Stubs.core_equity, "sim": Stubs.simulator_equity, "default_rules": [1, 2, 3, 4]}
     algo = {"core": Stubs.core_algo, "sim": Stubs.simulator_algo, "default_rules": [1, 2, 3]}
 
@@ -700,11 +700,12 @@ class RuleManager:
 
 
 if __name__ == '__main__':
-    rule_manager = RuleManager()
-    rule_manager.print_active_rules()
+    # rule_manager = RuleManager()
+    # rule_manager.print_active_rules()
     # rule_manager.remove_all_rules()
-    # rule_manager_eq = RuleManager(Simulators.equity)
-    # print("_________________________")
-    # rule_manager_eq.print_active_rules()
+    rule_manager_eq = RuleManager(Simulators.equity)
+    print("_________________________")
+    rule_manager_eq.remove_all_rules()
+    rule_manager_eq.print_active_rules()
     Stubs.factory.close()
 

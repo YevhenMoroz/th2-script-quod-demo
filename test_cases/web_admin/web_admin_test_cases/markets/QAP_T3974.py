@@ -62,7 +62,7 @@ class QAP_T3974(CommonTestCase):
         self.language = 'German'
         self.language_description = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.venue = self.data_set.get_venue_by_name("venue_3")
-        self.sub_venue = 'DEMO'
+        self.sub_venue = ''
         self.currency = self.data_set.get_currency_by_name("currency_1")
         self.instr_currency = 'AED'
         self.per_unit_comm_amt = str(random.randint(1, 11))
@@ -122,6 +122,7 @@ class QAP_T3974(CommonTestCase):
             translation_tab_listing.click_on_checkmark()
 
             attachment_tab = ListingsAttachmentSubWizard(self.web_driver_container)
+            self.sub_venue = random.choice(attachment_tab.get_all_sub_venue_from_drop_menu())
             attachment_tab.set_sub_venue(self.sub_venue)
 
             currency_tab = ListingsCurrencySubWizard(self.web_driver_container)

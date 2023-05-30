@@ -3,7 +3,7 @@ from pathlib import Path
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from stubs import Stubs
-from test_cases.fx.fx_wrapper.common_tools import check_quote_status
+from test_cases.fx.fx_wrapper.common_tools import check_value_in_db
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
@@ -63,5 +63,5 @@ class QAP_T2978(TestCase):
         self.fix_manager_gtw.send_message(self.quote_cancel)
         self.sleep(2)
         self.verifier.set_event_name("Check quote status")
-        self.verifier.compare_values("Check quote status", "CXL",  check_quote_status(self.response[0]))
+        self.verifier.compare_values("Check quote status", "CXL",  check_value_in_db(self.response[0]))
         self.verifier.verify()

@@ -19,7 +19,7 @@ def execute(report_id):
     try:
         new_order_single_params = {
             'header': {
-                'OnBehalfOfCompID': 'kames_ul_DCOI'
+                'OnBehalfOfCompID': 'capres_ul_DCOI'
             },
             'Account': "REDBURN",
             'ClOrdID': 'TWAP_NAV_01 ' + bca.client_orderid(9),
@@ -39,7 +39,7 @@ def execute(report_id):
             'QuodFlatParameters': {
                 'NavigatorPercentage': '100',
                 'NavigatorExecution': '1',
-                'NavigatorInitialSweepTime': '5',
+                # 'NavigatorInitialSweepTime': '5',
                 'NavGuard': '0',
                 'AllowedVenues': 'XLON'
             }
@@ -52,5 +52,42 @@ def execute(report_id):
             message_to_grpc('NewOrderSingle', new_order_single_params,
                             "fix-sell-side-redburn")
         ))
+
+        modification_params = {
+            'header': {
+                'OnBehalfOfCompID': 'capres_ul_DCOI'
+            },
+            'Account': "REDBURN",
+            'ClOrdID': 'TWAP_NAV_01 ' + bca.client_orderid(9),
+            'HandlInst': 2,
+            'Side': 1,
+            'OrderQty': 350000,
+            'TimeInForce': 0,
+            'Price': 117,
+            'OrdType': 2,
+            'OrigClOrdID': 'TWAP_NAV_01 368468926',
+            'TransactTime': datetime.utcnow().isoformat(),
+            'Instrument': instrument,
+            'Currency': "GBX",
+            'TargetStrategy': 1005,
+            'ExDestination': 'XLON',
+            'Text': 'TWAP_NAV_01',
+            'QuodFlatParameters': {
+                'NavigatorPercentage': '100',
+                'NavigatorExecution': '1',
+                # 'NavigatorInitialSweepTime': '5',
+                'NavGuard': '0',
+                'AllowedVenues': 'XLON'
+            }
+        }
+
+        # Stubs.fix_act.sendMessage(request=convert_to_request(
+        #     'Send OrderCancelReplaceRequest',
+        #     "fix-sell-side-redburn",
+        #     report_id,
+        #     message_to_grpc('OrderCancelReplaceRequest', modification_params,
+        #                     "fix-sell-side-redburn")
+        # ))
+
     except:
         logging.error("Error execution", exc_info=True)

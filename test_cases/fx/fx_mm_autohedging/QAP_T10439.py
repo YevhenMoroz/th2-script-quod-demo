@@ -9,9 +9,10 @@ from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.forex.FixMessageExecutionReportDropCopyFX import FixMessageExecutionReportDropCopyFX
 from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleTakerDC import FixMessageNewOrderSingleTakerDC
 from test_framework.fix_wrappers.forex.FixMessagePositionReportFX import FixMessagePositionReportFX
+from test_framework.fix_wrappers.forex.FixMessageRequestForPositionsAckFX import FixMessageRequestForPositionsAckFX
 from test_framework.fix_wrappers.forex.FixMessageRequestForPositionsFX import FixMessageRequestForPositionsFX
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
-from test_framework.java_api_wrappers.fx.FixPositionMaintenanceRequestFX import FixPositionMaintenanceRequestFX
+from test_framework.java_api_wrappers.fx.FixPositionMassCancelRequestFX import FixPositionMassCancelRequestFX
 from test_framework.java_api_wrappers.fx.HeldOrderAckRequestFX import HeldOrderAckRequestFX
 from test_framework.java_api_wrappers.fx.TradeEntryRequestFX import TradeEntryRequestFX
 from test_framework.positon_verifier_fx import PositionVerifier
@@ -30,21 +31,19 @@ class QAP_T10439(TestCase):
         self.rest_api_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
         self.java_api_manager = JavaApiManager(self.java_api_env, self.test_id)
         self.rest_api_manager = RestApiManager(self.rest_api_connectivity, self.test_id)
-        self.maintenance_request_ext = FixPositionMaintenanceRequestFX()
-        self.maintenance_request_int = FixPositionMaintenanceRequestFX()
         self.fix_manager = FixManager(self.pks_connectivity, self.test_id)
         self.fix_pos_verifier = FixVerifier(self.pks_connectivity, self.test_id)
         self.fix_drop_copy_verifier = FixVerifier(self.dc_connectivity, self.test_id)
-        self.fix_pos_int_verifier = None
         self.position_verifier = PositionVerifier(self.test_id)
         self.request_for_position_ext = FixMessageRequestForPositionsFX()
         self.request_for_position_int = FixMessageRequestForPositionsFX()
+        self.cancel_request = FixPositionMassCancelRequestFX()
+        self.pos_report_none = FixMessageRequestForPositionsAckFX()
         self.position_report_ext = FixMessagePositionReportFX()
         self.position_report_int = FixMessagePositionReportFX()
         self.trade_request = TradeEntryRequestFX()
         self.ack_request = HeldOrderAckRequestFX()
         self.ah_order = FixMessageNewOrderSingleTakerDC()
-        self.mo_order = FixMessageNewOrderSingleTakerDC()
         self.ah_exec_report = FixMessageExecutionReportDropCopyFX()
         self.client_ext = self.data_set.get_client_by_name("client_mm_8")
         self.account_ext = self.data_set.get_account_by_name("account_mm_8")
@@ -54,7 +53,7 @@ class QAP_T10439(TestCase):
         self.currency = self.data_set.get_currency_by_name("currency_eur")
         self.eur_gbp = self.data_set.get_symbol_by_name("symbol_3")
         self.sec_type_spo = self.data_set.get_security_type_by_name("fx_spot")
-        self.listing_eur_gbp = self.data_set.get_listing_id_by_name("eur_gbp_spo")
+        self.instr_type_spo = self.data_set.get_fx_instr_type_ja("fx_spot")
         self.instrument = {
             "SecurityType": self.sec_type_spo,
             "Symbol": self.eur_gbp
@@ -62,49 +61,26 @@ class QAP_T10439(TestCase):
 
         self.rest_api_ah_msg_1 = RestApiAutoHedgerMessages()
         self.rest_api_ah_msg_2 = RestApiAutoHedgerMessages()
-        self.rest_api_ah_msg_3 = RestApiAutoHedgerMessages()
         self.ah_params = None
         self.ah_params_2 = None
-        self.ah_params_3 = None
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region Set holdOrder to false
-        self.rest_api_ah_msg_1.find_all_auto_hedger()
-        self.ah_params = self.rest_api_manager.send_get_request_filtered(self.rest_api_ah_msg_1)
-        self.ah_params = self.rest_api_manager.parse_response_details(self.ah_params,
-                                                                      {"autoHedgerName": self.auto_hedger_name})
-        for i in self.ah_params["autoHedgerInstrSymbol"]:
-            if i["instrSymbol"] == 'EUR/GBP':
-                i["holdOrder"] = "false"
-        self.rest_api_ah_msg_1.clear_message_params().modify_auto_hedger().set_params(self.ah_params)
-        self.rest_api_manager.send_post_request(self.rest_api_ah_msg_1)
-        self.sleep(3)
-        # endregion
         # region Clear position before start and check that they equal to 0
-        self.maintenance_request_ext.set_default_params()
-        self.maintenance_request_ext.change_account(self.account_ext)
-        self.maintenance_request_ext.change_client(self.client_ext)
-        self.maintenance_request_ext.change_instrument(self.eur_gbp)
-        self.java_api_manager.send_message(self.maintenance_request_ext)
+        self.cancel_request.set_params(self.account_ext)
+        self.java_api_manager.send_message(self.cancel_request)
         self.sleep(5)
-        self.maintenance_request_int.set_default_params()
-        self.maintenance_request_int.change_account(self.account_int)
-        self.maintenance_request_int.change_client(self.client_int)
-        self.maintenance_request_int.change_instrument(self.eur_gbp)
-        self.java_api_manager.send_message(self.maintenance_request_int)
+        self.cancel_request.set_params(self.account_int)
+        self.java_api_manager.send_message(self.cancel_request)
         self.sleep(5)
 
         self.request_for_position_ext.set_default()
         self.request_for_position_ext.change_parameters({"Instrument": self.instrument, "Currency": self.currency,
                                                          "Account": self.client_ext})
-        external_report: list = self.fix_manager.send_message_and_receive_response(self.request_for_position_ext,
-                                                                                   self.test_id)
-        self.position_report_ext.set_params_from_reqeust(self.request_for_position_ext)
-        self.position_report_ext.change_parameter("LastPositEventType", "11")
-        self.fix_pos_verifier.check_fix_message(self.position_report_ext,
+        self.fix_manager.send_message_and_receive_response(self.request_for_position_ext, self.test_id)
+        self.pos_report_none.set_params_from_reqeust(self.request_for_position_ext)
+        self.fix_pos_verifier.check_fix_message(self.pos_report_none,
                                                 message_name=f"Check position for {self.client_ext} before start")
-        self.position_verifier.check_base_position(external_report, "0", text=f"Check base for {self.client_ext}")
         self.sleep(1)
         self.request_for_position_ext.set_unsubscribe()
         self.fix_manager.send_message(self.request_for_position_ext)
@@ -113,33 +89,31 @@ class QAP_T10439(TestCase):
         self.request_for_position_int.set_default()
         self.request_for_position_int.change_parameters({"Instrument": self.instrument, "Currency": self.currency,
                                                          "Account": self.client_int})
-        internal_report: list = self.fix_manager.send_message_and_receive_response(self.request_for_position_int,
-                                                                                   self.test_id)
-        self.position_report_int.set_params_from_reqeust(self.request_for_position_int)
-        self.position_report_int.change_parameter("LastPositEventType", "11")
-        self.fix_pos_verifier.check_fix_message(self.position_report_int,
+        self.fix_manager.send_message_and_receive_response(self.request_for_position_int, self.test_id)
+        self.pos_report_none.set_params_from_reqeust(self.request_for_position_int)
+        self.fix_pos_verifier.check_fix_message(self.pos_report_none,
                                                 message_name=f"Check position for {self.client_int} before start")
-        self.position_verifier.check_base_position(internal_report, "0", text=f"Check base for {self.client_int}")
         self.request_for_position_int.set_unsubscribe()
         self.fix_manager.send_message(self.request_for_position_int)
         self.sleep(1)
 
         # endregion
-        self.rest_api_ah_msg_2.find_all_auto_hedger()
-        self.ah_params_2 = self.rest_api_manager.send_get_request_filtered(self.rest_api_ah_msg_2)
-        self.ah_params_2 = self.rest_api_manager.parse_response_details(self.ah_params_2,
-                                                                        {"autoHedgerName": self.auto_hedger_name})
-        for i in self.ah_params_2["autoHedgerInstrSymbol"]:
+        self.rest_api_ah_msg_1.find_all_auto_hedger()
+        self.ah_params = self.rest_api_manager.send_get_request_filtered(self.rest_api_ah_msg_1)
+        self.ah_params = self.rest_api_manager.parse_response_details(self.ah_params,
+                                                                      {"autoHedgerName": self.auto_hedger_name})
+        for i in self.ah_params["autoHedgerInstrSymbol"]:
             if i["instrSymbol"] == 'EUR/GBP':
                 i["holdOrder"] = "true"
-        self.rest_api_ah_msg_2.clear_message_params().modify_auto_hedger().set_params(self.ah_params_2)
-        self.rest_api_manager.send_post_request(self.rest_api_ah_msg_2)
+        self.rest_api_ah_msg_1.clear_message_params().modify_auto_hedger().set_params(self.ah_params)
+        self.rest_api_manager.send_post_request(self.rest_api_ah_msg_1)
         self.sleep(3)
         # region Step 3
 
         self.trade_request.set_default_params()
-        self.trade_request.update_fields_in_component("TradeEntryRequestBlock", {"AccountGroupID": self.client_ext,
-                                                                                 "ListingID": self.listing_eur_gbp})
+        self.trade_request.update_fields_in_component("TradeEntryRequestBlock",
+                                                      {"ClientAccountGroupID": self.client_ext})
+        self.trade_request.change_instrument(self.eur_gbp, self.instr_type_spo)
         response: list = self.java_api_manager.send_message_and_receive_response(self.trade_request)
         exec_id_ext = self.trade_request.get_exec_id(response)
         ah_order_id = self.trade_request.get_ord_id_from_held(response)
@@ -171,8 +145,9 @@ class QAP_T10439(TestCase):
         self.ah_exec_report.change_parameter("ClOrdID", ah_order_id)
         self.ah_exec_report.change_parameter("Account", self.account_int)
         ah_params = ["ClOrdID", "OrdStatus", "ExecType"]
-        self.fix_drop_copy_verifier.check_fix_message(self.ah_exec_report, key_parameters=ah_params, message_name=
-        "Check AutoHedger ExecutionReport")
+        self.fix_drop_copy_verifier.check_fix_message(self.ah_exec_report,
+                                                      key_parameters=ah_params,
+                                                      message_name="Check AutoHedger ExecutionReport")
 
         self.request_for_position_ext.set_default()
         self.request_for_position_ext.change_parameters({"Instrument": self.instrument, "Currency": self.currency,
@@ -207,24 +182,25 @@ class QAP_T10439(TestCase):
         # endregion
 
         # region Step 6
-        self.rest_api_ah_msg_3.find_all_auto_hedger()
-        self.ah_params_3 = self.rest_api_manager.send_get_request_filtered(self.rest_api_ah_msg_3)
-        self.ah_params_3 = self.rest_api_manager.parse_response_details(self.ah_params_3,
+        self.rest_api_ah_msg_2.find_all_auto_hedger()
+        self.ah_params_2 = self.rest_api_manager.send_get_request_filtered(self.rest_api_ah_msg_2)
+        self.ah_params_2 = self.rest_api_manager.parse_response_details(self.ah_params_2,
                                                                         {"autoHedgerName": self.auto_hedger_name})
-        for i in self.ah_params_3["autoHedgerInstrSymbol"]:
+        for i in self.ah_params_2["autoHedgerInstrSymbol"]:
             if i["instrSymbol"] == 'EUR/GBP':
                 i["holdOrder"] = "false"
 
-        self.rest_api_ah_msg_3.clear_message_params().modify_auto_hedger().set_params(self.ah_params_3)
-        self.rest_api_manager.send_post_request(self.rest_api_ah_msg_3)
+        self.rest_api_ah_msg_2.clear_message_params().modify_auto_hedger().set_params(self.ah_params_2)
+        self.rest_api_manager.send_post_request(self.rest_api_ah_msg_2)
         self.sleep(3)
         # endregion
 
         # region Step 7
         self.fix_drop_copy_verifier = FixVerifier(self.dc_connectivity, self.test_id)
         self.trade_request.set_default_params()
-        self.trade_request.update_fields_in_component("TradeEntryRequestBlock", {"AccountGroupID": self.client_ext,
-                                                                                 "ListingID": self.listing_eur_gbp})
+        self.trade_request.update_fields_in_component("TradeEntryRequestBlock",
+                                                      {"ClientAccountGroupID": self.client_ext})
+        self.trade_request.change_instrument(self.eur_gbp, self.instr_type_spo)
         response: list = self.java_api_manager.send_message_and_receive_response(self.trade_request)
         ah_order_id = self.trade_request.get_ah_ord_id(response)
 
@@ -246,6 +222,7 @@ class QAP_T10439(TestCase):
         self.ah_exec_report.change_parameter("ClOrdID", ah_order_id)
         self.ah_exec_report.change_parameter("Account", self.account_int)
         ah_params = ["ClOrdID", "OrdStatus", "ExecType"]
-        self.fix_drop_copy_verifier.check_fix_message(self.ah_exec_report, key_parameters=ah_params, message_name=
-        "Check AutoHedger ExecutionReport")
+        self.fix_drop_copy_verifier.check_fix_message(self.ah_exec_report,
+                                                      key_parameters=ah_params,
+                                                      message_name="Check AutoHedger ExecutionReport")
         # endregion

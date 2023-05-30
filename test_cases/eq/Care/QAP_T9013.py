@@ -50,24 +50,26 @@ class QAP_T9013(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Precondition
-        child_qty = str(int(self.qty)//2)
+        child_qty = str(int(self.qty) // 2)
         self.java_api_manager.send_message_and_receive_response(self.ord_sub)
         ord_id_care = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameters()[
             JavaApiFields.OrderNotificationBlock.value][JavaApiFields.OrdID.value]
 
         self.ord_sub.set_default_child_care(self.environment.get_list_fe_environment()[0].user_1,
-                                                  self.environment.get_list_fe_environment()[0].desk_ids[0],
-                                                  SubmitRequestConst.USER_ROLE_1.value, ord_id_care)
-        self.ord_sub.update_fields_in_component("NewOrderSingleBlock",{"OrdQty": child_qty})
+                                            self.environment.get_list_fe_environment()[0].desk_ids[0],
+                                            SubmitRequestConst.USER_ROLE_1.value, ord_id_care)
+        self.ord_sub.update_fields_in_component("NewOrderSingleBlock", {"OrdQty": child_qty})
         self.java_api_manager.send_message_and_receive_response(self.ord_sub)
-        child_ord_id_care = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameters()[
+        child_ord_id_care = \
+        self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameters()[
             JavaApiFields.OrderNotificationBlock.value][JavaApiFields.OrdID.value]
 
         self.ord_sub.set_default_child_dma(ord_id_care)
+        self.ord_sub.update_fields_in_component("NewOrderSingleBlock", {"OrdQty": child_qty})
         self.java_api_manager.send_message_and_receive_response(self.ord_sub)
         child_ord_id_dma = \
-        self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameters()[
-            JavaApiFields.OrderNotificationBlock.value][JavaApiFields.OrdID.value]
+            self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameters()[
+                JavaApiFields.OrderNotificationBlock.value][JavaApiFields.OrdID.value]
         # endregion
         # region step 1
         self.trd_request.set_default_trade(child_ord_id_care, exec_qty=child_qty)
@@ -108,4 +110,3 @@ class QAP_T9013(TestCase):
         status = self.db_manager.execute_query(f"select ordstatus from ordr where ordid='{ord_id_care}';")[0][0]
         self.java_api_manager.compare_values({"Sts": "EXP"}, {"Sts": status}, "Check order status")
         # endregion
-
