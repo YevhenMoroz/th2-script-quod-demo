@@ -1,88 +1,96 @@
 import logging
+from getpass import getuser as get_pc_name
 from datetime import datetime
 from pathlib import Path
-
-
-
 from custom import basic_custom_actions as bca
 from stubs import Stubs
-from test_cases.eq.PostTrade.QAP_T10867 import QAP_T10867
-from test_cases.eq.PostTrade.QAP_T11138 import QAP_T11138
-from test_cases.eq.PostTrade.QAP_T11139 import QAP_T11139
-from test_cases.eq.PostTrade.QAP_T11140 import QAP_T11140
-from test_cases.eq.PostTrade.QAP_T11257 import QAP_T11257
-from test_cases.eq.PostTrade.QAP_T6995 import QAP_T6995
-from test_cases.eq.PostTrade.QAP_T7112 import QAP_T7112
-from test_cases.eq.PostTrade.QAP_T7217 import QAP_T7217
-
+from test_cases.eq.Gateway.QAP_T10497 import QAP_T10497
+from test_cases.eq.Gateway.QAP_T7015 import QAP_T7015
+from test_cases.eq.Gateway.QAP_T7106 import QAP_T7106
+from test_cases.eq.Gateway.QAP_T7139 import QAP_T7139
+from test_cases.eq.Gateway.QAP_T7167 import QAP_T7167
+from test_cases.eq.Gateway.QAP_T7173 import QAP_T7173
+from test_cases.eq.Gateway.QAP_T7499 import QAP_T7499
+from test_cases.eq.Gateway.QAP_T7500 import QAP_T7500
+from test_cases.eq.Gateway.QAP_T7501 import QAP_T7501
+from test_cases.eq.Gateway.QAP_T7503 import QAP_T7503
+from test_cases.eq.Gateway.QAP_T7504 import QAP_T7504
+from test_cases.eq.Gateway.QAP_T7507 import QAP_T7507
+from test_cases.eq.Gateway.QAP_T7514 import QAP_T7514
+from test_cases.eq.Gateway.QAP_T8705 import QAP_T8705
+from test_cases.eq.Gateway.QAP_T8741 import QAP_T8741
+from test_cases.eq.Gateway.QAP_T9070 import QAP_T9070
+from test_cases.eq.GatingRules.QAP_T10668 import QAP_T10668
+from test_cases.eq.GatingRules.QAP_T8825 import QAP_T8825
+from test_cases.eq.GatingRules.QAP_T8827 import QAP_T8827
+from test_cases.eq.Positions.QAP_T6893 import QAP_T6893
+from test_cases.eq.PostTrade.QAP_T10397 import QAP_T10397
+from test_cases.eq.PostTrade.QAP_T6900 import QAP_T6900
+from test_cases.eq.PostTrade.QAP_T6928 import QAP_T6928
+from test_cases.eq.PostTrade.QAP_T6948 import QAP_T6948
+from test_cases.eq.PostTrade.QAP_T6950 import QAP_T6950
+from test_cases.eq.PostTrade.QAP_T6958 import QAP_T6958
+from test_cases.eq.PostTrade.QAP_T6965 import QAP_T6965
+from test_cases.eq.PostTrade.QAP_T6972 import QAP_T6972
+from test_cases.eq.PostTrade.QAP_T7080 import QAP_T7080
+from test_cases.eq.PostTrade.QAP_T7188 import QAP_T7188
+from test_cases.eq.PostTrade.QAP_T7230 import QAP_T7230
+from test_cases.eq.PostTrade.QAP_T7359 import QAP_T7359
+from test_cases.eq.PostTrade.QAP_T7360 import QAP_T7360
 from test_cases.eq.PostTrade.QAP_T7462 import QAP_T7462
-from test_cases.eq.PostTrade.QAP_T7463 import QAP_T7463
-from test_cases.eq.PostTrade.QAP_T7550 import QAP_T7550
-from test_cases.eq.PostTrade.QAP_T8731 import QAP_T8731
-from test_cases.eq.PostTrade.QAP_T9126 import QAP_T9126
-from test_cases.eq.PostTrade.QAP_T9201 import QAP_T9201
-
+from test_cases.eq.PostTrade.QAP_T7464 import QAP_T7464
+from test_cases.eq.PostTrade.QAP_T7465 import QAP_T7465
+from test_cases.eq.PostTrade.QAP_T7468 import QAP_T7468
+from test_cases.eq.PostTrade.QAP_T7476 import QAP_T7476
+from test_cases.eq.PostTrade.QAP_T7477 import QAP_T7477
+from test_cases.eq.PostTrade.QAP_T7481 import QAP_T7481
+from test_cases.eq.PostTrade.QAP_T7505 import QAP_T7505
+from test_cases.eq.PostTrade.QAP_T7510 import QAP_T7510
+from test_cases.eq.PostTrade.QAP_T7517 import QAP_T7517
+from test_cases.eq.PostTrade.QAP_T7530 import QAP_T7530
+from test_cases.eq.PostTrade.QAP_T7531 import QAP_T7531
+from test_cases.eq.PostTrade.QAP_T7532 import QAP_T7532
+from test_cases.eq.PostTrade.QAP_T7535 import QAP_T7535
+from test_cases.eq.PostTrade.QAP_T7538 import QAP_T7538
+from test_cases.eq.PostTrade.QAP_T7547 import QAP_T7547
+from test_cases.eq.PostTrade.QAP_T7548 import QAP_T7548
+from test_cases.eq.PostTrade.QAP_T7551 import QAP_T7551
+from test_cases.eq.PostTrade.QAP_T7552 import QAP_T7552
+from test_cases.eq.PostTrade.QAP_T8089 import QAP_T8089
+from test_cases.eq.PostTrade.QAP_T8118 import QAP_T8118
+from test_cases.eq.PostTrade.QAP_T8339 import QAP_T8339
+from test_cases.eq.PostTrade.QAP_T9155 import QAP_T9155
+from test_cases.eq.PostTrade.QAP_T9175 import QAP_T9175
 from test_framework.configurations.component_configuration import ComponentConfiguration
-from test_framework.fix_wrappers.FixManager import FixManager
-from test_framework.fix_wrappers.oms.FixMessageAllocationOMS import FixMessageAllocationOMS
-from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
-from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
-from test_framework.java_api_wrappers.oms.es_messages.ExecutionReportOMS import ExecutionReportOMS
-from test_framework.java_api_wrappers.oms.es_messages.NewOrderReplyOMS import NewOrderReplyOMS
-from test_framework.java_api_wrappers.oms.es_messages.OrdReportOMS import OrdReportOMS
-from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS import AllocationInstructionOMS
-from test_framework.java_api_wrappers.oms.ors_messges.FixAllocationInstructionOMS import FixAllocationInstructionOMS
-from test_framework.java_api_wrappers.oms.ors_messges.NewOrderListOMS import NewOrderListOMS
-from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
 from test_framework.win_gui_wrappers.base_main_window import BaseMainWindow
 from win_gui_modules.utils import set_session_id
-from protobuf_to_dict import protobuf_to_dict
+
 logging.basicConfig(format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
-logging.getLogger().setLevel(logging.WARN)
+logging.getLogger().setLevel(logging.INFO)
 
 
 def test_run():
     # Generation id and time for test run
-    pc_name = "ymoroz"  # getting PC name
+    pc_name = 'mantonov'  # getting PC name
     report_id = bca.create_event(f'[{pc_name}] ' + datetime.now().strftime('%Y%m%d-%H:%M:%S'))
     logger.info(f"Root event was created (id = {report_id.id})")
     # initializing FE session
-    session_id = set_session_id("ymoroz2")
+    session_id = set_session_id(pc_name)
     base_main_window = BaseMainWindow(bca.create_event(Path(__file__).name[:-3], report_id), session_id)
     # region creation FE environment and initialize fe_ values
-    configuration = ComponentConfiguration("DMA")  # <--- provide your component from XML (DMA, iceberg, etc)
+    configuration = ComponentConfiguration("YOUR_COMPONENT")  # <--- provide your component from XML (DMA, iceberg, etc)
     fe_env = configuration.environment.get_list_fe_environment()[0]
     fe_folder = fe_env.folder
     fe_user = fe_env.user_1
     fe_pass = fe_env.password_1
-    java_api_manager = JavaApiManager("317_java_api_user2", report_id)
-    nos = OrderSubmitOMS(configuration.data_set).set_default_dma_limit()
-    nos2 = NewOrderReplyOMS(configuration.data_set).set_unsolicited_dma_limit()
-    ord_rep = OrdReportOMS(configuration.data_set).set_default_open("175502612", "MO1230408201158316001")
-    exec_rep = ExecutionReportOMS(configuration.data_set).set_default_trade("407194355")
-    alloc_rec = FixAllocationInstructionOMS(configuration.data_set).set_default_preliminary("CO1230218111844196001")
-    fix_manager = FixManager("fix-sell-317-standard-test", report_id)
-    fix_manager42 = FixManager("fix-sell-317-standard42", report_id)
-    fix_nos = FixMessageNewOrderSingleOMS(configuration.data_set).set_fix42_care_limit()
-    # fix_nos2 = FixMessageNewOrderSingleOMS(configuration.data_set).set_default_dma_limit()
-    # fix_nos.change_parameter("Account", "CLIENT_YMOROZ")
-    # print(fix_nos.get_parameters())
-    fix_alloc = FixMessageAllocationOMS()
-
-    # print(fix_alloc.get_parameters())
-    alloc = AllocationInstructionOMS(configuration.data_set)
-    nol = NewOrderListOMS(configuration.data_set).set_default_order_list()
     # endregion
 
     try:
-        # fix_alloc.set_fix42_preliminary(fix_nos,  "CLIENT_YMOROZ_SA1124sdf")
-        # fix_manager42.send_message_and_receive_response_fix_standard(fix_alloc)
-
-        # java_api_manager.send_message(exec_rep)
-        QAP_T9126(report_id=report_id, session_id=session_id, data_set=configuration.data_set,
-                  environment=configuration.environment).execute()
-
+        # base_main_window.open_fe(report_id=report_id, fe_env=fe_env, user_num=1)
+        QAP_T8827(report_id=report_id, session_id=session_id, data_set=configuration.data_set,
+                 environment=configuration.environment) \
+            .execute()
     except Exception:
         logging.error("Error execution", exc_info=True)
     finally:
