@@ -170,7 +170,7 @@ class QAP_T3712(TestCase):
                                                               JavaApiFields.ClOrdID.value: bca.client_orderid(9),
                                                               JavaApiFields.PosValidity.value: pos_validity,
                                                               })
-                self.ja_manager.send_message_and_receive_response(self.order_submit, response_time=15000)
+                self.ja_manager.send_message_and_receive_response(self.order_submit, response_time=30000)
                 order_reply = self.ja_manager.get_last_message(ORSMessageType.OrderReply.value).get_parameters()[
                     JavaApiFields.OrdReplyBlock.value]
                 self.ja_manager.compare_values({JavaApiFields.PosValidity.value: pos_validity},
