@@ -81,14 +81,14 @@ class QAP_T10662(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region set configuration on backend (precondition)
-        # tree = ET.parse(self.local_path)
-        # tree.getroot().find("ignoreRecomputeInConfirmation").text = 'true'
-        # tree.write("temp.xml")
-        # self.ssh_client.send_command("~/quod/script/site_scripts/change_permission_script")
-        # self.ssh_client.put_file(self.remote_path, "temp.xml")
-        # self.ssh_client.send_command("qrestart ORS CS")
-        # time.sleep(60)
-        # # endregion
+        tree = ET.parse(self.local_path)
+        tree.getroot().find("ignoreRecomputeInConfirmation").text = 'true'
+        tree.write("temp.xml")
+        self.ssh_client.send_command("~/quod/script/site_scripts/change_permission_script")
+        self.ssh_client.put_file(self.remote_path, "temp.xml")
+        self.ssh_client.send_command("qrestart ORS CS")
+        time.sleep(60)
+        # endregion
 
         # region send fee
         self.rest_commission_sender.clear_commissions()
@@ -195,10 +195,10 @@ class QAP_T10662(TestCase):
                                              "Check Fee after allocation")
         # endregion
 
-    # @try_except(test_id=Path(__file__).name[:-3])
-    # def run_post_conditions(self):
-    #     self.rest_commission_sender.clear_fees()
-    #     self.ssh_client.put_file(self.remote_path, self.local_path)
-    #     self.ssh_client.send_command("qrestart ORS CS")
-    #     time.sleep(60)
-    #     os.remove("temp.xml")
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rest_commission_sender.clear_fees()
+        self.ssh_client.put_file(self.remote_path, self.local_path)
+        self.ssh_client.send_command("qrestart ORS CS")
+        time.sleep(60)
+        os.remove("temp.xml")
