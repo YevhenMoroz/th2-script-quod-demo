@@ -100,7 +100,7 @@ class QAP_T10719(TestCase):
                                   'tag5120', 'LastMkt', 'OrderCapacity',
                                   'QtyType', 'ExecBroker', 'Price',
                                   'VenueType', 'Instrument', 'NoMiscFees',
-                                  'CommissionData'
+                                  'CommissionData',
                                   'ExDestination', 'GrossTradeAmt']
         execution_report = FixMessageExecutionReportOMS(self.data_set).change_parameters(
             {"NoParty": parties,
