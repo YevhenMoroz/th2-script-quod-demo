@@ -120,7 +120,7 @@ class QAP_T7159(TestCase):
         # region check 35=8 150 = B message
         self.fix_message_execution_report.set_default_calculated(self.fix_message)
         self.fix_message_execution_report.remove_parameter('Parties')
-        amount = str(round((5 / 1000000) * 5000, 3))
+        amount = str(round((5 / 1000000) * 1000, 3))
         self.fix_message_execution_report.remove_parameter('TradeReportingIndicator')
         self.fix_message_execution_report.change_parameters({'QuodTradeQualifier': '*', 'BookID': '*',
                                                              'Currency': self.currency, 'NoParty': '*',
@@ -135,9 +135,9 @@ class QAP_T7159(TestCase):
         self.fix_verifier.check_fix_message_fix_standard(self.fix_message_execution_report, ignored_fields=ignored_fields)
         # endregion
 
-    @try_except(test_id=Path(__file__).name[:-3])
-    def run_post_conditions(self):
-        self.rest_commission_sender.clear_fees()
+    # @try_except(test_id=Path(__file__).name[:-3])
+    # def run_post_conditions(self):
+    #     self.rest_commission_sender.clear_fees()
 
     def __compare_ord_status(self, expected_result):
         ord_status = self.responses[len(self.responses)-1].get_parameters()['OrdStatus']
