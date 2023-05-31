@@ -73,17 +73,17 @@ class QAP_T7577(TestCase):
                                                   {"InstrID": self.data_set.get_instrument_id_by_name('instrument_1')})
         self.ja_manager.send_message_and_receive_response(self.pos_trans)
         pos_report_acc2 = self.ja_manager.get_last_message(PKSMessageType.PositionReport.value,
-                                                           self.acc2).get_parameters()["PositionReportBlock"][
+                                                           f"AccountID': '{self.acc2}'").get_parameters()["PositionReportBlock"][
             "PositionList"]["PositionBlock"][0]
         # endregion
         # region Step 5-8
         result_for_acc2_new = self._extract_cum_values_for_acc(self.acc2)
         ecp_pos_qty_acc2 = str(float(posit_acc2["PositQty"]) + float(self.qty))
-        exp_net_weighted_avg_px_acc2 = self.pos_manager.calculate_gross_weighted_avg_px_buy_side_execution(
+        exp_net_weighted_avg_px_acc2 = self.pos_manager.calculate_net_weighted_avg_px_buy_side_execution(
             posit_acc2["NetWeightedAvgPx"], posit_acc2["PositQty"], self.qty, self.price)
 
         self.ja_manager.compare_values({"PositQty": ecp_pos_qty_acc2, "NetWeightedAvgPx": exp_net_weighted_avg_px_acc2},
-                                       result_for_acc2_new, "check PositQty and NetWeightedAvgPx for PROP_TEST")
+                                       result_for_acc2_new, "check PositQty and NetWeightedAvgPx for PROP")
 
         result_for_acc1_new = self._extract_cum_values_for_acc(self.acc1)
         ecp_pos_qty_acc1 = str(float(posit_acc1["PositQty"]) - float(self.qty))
