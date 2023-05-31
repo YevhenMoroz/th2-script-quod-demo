@@ -106,6 +106,6 @@ class QAP_T7516(TestCase):
                                   ]
         execution_report = FixMessageExecutionReportOMS(self.data_set, change_parameters)
         execution_report.change_parameters({'ExecType': 'F', "OrdStatus": "2",
-                                            'StrategyName': '1025'})
+                                            'StrategyName': '1024'})
         self.fix_verifier_dc.check_fix_message_fix_standard(execution_report, ignored_fields=list_of_ignored_fields)
         # endregion
