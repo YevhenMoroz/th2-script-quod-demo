@@ -117,7 +117,7 @@ class QAP_T11355(TestCase):
         rule_manager = RuleManager(Simulators.algo)
         nos = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.mic, self.child_price)
         # ocrr1 = rule_manager.add_OrderCancelReplaceRequest(self.fix_env1.buy_side, self.account, self.mic, True, 0)
-        ocrr2 = rule_manager.add_OrderCancelReplaceRequest_ExecutionReport(self.fix_env1.buy_side, False, 2000)
+        ocrr2 = rule_manager.add_OrderCancelReplaceRequest_ExecutionReport(self.fix_env1.buy_side, False)
         ocr = rule_manager.add_OCR(self.fix_env1.buy_side)
         self.rule_list = [nos, ocrr2, ocr]
         # endregion

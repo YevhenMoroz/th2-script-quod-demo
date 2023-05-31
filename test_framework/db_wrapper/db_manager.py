@@ -14,10 +14,10 @@ class DBManager:
         self.my_db = DBConnector().connect_to_db(host=self.db_host, name=self.db_name, user=self.db_user,
                                                  password=self.db_pass, db_type=self.db_type, port=self.db_port)
 
-    def execute_query(self, query: str = None):
-        out = tuple()
-        if 'SELECT' in query.upper():
+    def execute_query(self, query: str = None, fetch_result=True):
+        if 'SELECT' in query.upper() and fetch_result:
             self.my_db.execute(query)
+            out = tuple()
             for value in self.my_db:
                 out += (value,)
             return out

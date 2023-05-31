@@ -145,7 +145,8 @@ class QAP_T7021(TestCase):
         responses = self.java_api_manager.send_message_and_receive_response(self.execution_report)
         print_message('Execute DMA order', responses)
         execution_report = \
-            self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value, ExecutionReportConst.ExecType_TRD.value).get_parameters()[
+            self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value,
+                                                   ExecutionReportConst.ExecType_TRD.value).get_parameters()[
                 JavaApiFields.ExecutionReportBlock.value]
         actually_trans_exec_status = execution_report[JavaApiFields.TransExecStatus.value]
         exec_id = execution_report[JavaApiFields.ExecID.value]
@@ -212,7 +213,8 @@ class QAP_T7021(TestCase):
                                                      "InstrID": self.data_set.get_instrument_id_by_name(
                                                          "instrument_3")})
         self.java_api_manager.send_message_and_receive_response(self.alloc_instr)
-        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameter(
+        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                                              JavaApiFields.BookingAllocInstructionID.value).get_parameter(
             JavaApiFields.AllocationReportBlock.value)
         self.java_api_manager.compare_values(expected_per_trans,
                                              {"ExpectedFee": str(
@@ -285,14 +287,14 @@ class QAP_T7021(TestCase):
         no_misc_fee = [{'MiscFeeAmt': fee_amount_fix, 'MiscFeeCurr': self.currency, 'MiscFeeType': '10'}]
         # pre step check 35 = 8 message
         list_of_ignored_fields = ['Account', 'ExecID', 'OrderQtyData', 'LastQty',
-                                  'OrderID', 'TransactTime', 'Side', 'AvgPx','ExecAllocGrp',
+                                  'OrderID', 'TransactTime', 'Side', 'AvgPx', 'ExecAllocGrp',
                                   'QuodTradeQualifier', 'BookID', 'SettlCurrency',
                                   'SettlDate', 'Currency', 'TimeInForce', 'PositionEffect',
                                   'TradeDate', 'HandlInst', 'LeavesQty', 'NoParty', 'CumQty', 'LastPx',
                                   'OrdType', 'tag5120', 'LastMkt', 'OrderCapacity', 'QtyType',
                                   'ExecBroker', 'Price', 'VenueType', 'Instrument',
                                   'ExDestination', 'GrossTradeAmt', 'CommissionData',
-                                  'SecondaryOrderID', 'LastExecutionPolicy', 'SecondaryExecID','OrderAvgPx',
+                                  'SecondaryOrderID', 'LastExecutionPolicy', 'SecondaryExecID', 'OrderAvgPx',
                                   'GatingRuleName', 'GatingRuleCondName']
 
         self.fix_execution_report.change_parameters({"ExecType": "F", "OrdStatus": "2", "ClOrdID": cl_order_id,
@@ -321,7 +323,7 @@ class QAP_T7021(TestCase):
                                                          ignored_fields=list_of_ignored_fields)
         # end region
         # pre step check 35=J message (626 = 2)
-        list_of_ignored_fields.extend(['IndividualAllocID', 'AllocNetPrice', 'AllocQty', 'AllocPrice'])
+        list_of_ignored_fields.extend(['IndividualAllocID', 'AllocNetPrice', 'AllocQty', 'AllocPrice', 'tag11245'])
         self.allocation_instruction_fix.remove_parameter('NoRootMiscFeesList')
         self.allocation_instruction_fix.change_parameters({'NoAllocs': [{
             'NoMiscFees': no_misc_fee,
@@ -333,7 +335,7 @@ class QAP_T7021(TestCase):
                                                          ignored_fields=list_of_ignored_fields)
         # end region
         # pre step check 35=AK message
-        list_of_ignored_fields.extend(['CpctyConfGrp', 'ConfirmID', 'ConfirmType', 'AllocAccount','tag11245'])
+        list_of_ignored_fields.extend(['CpctyConfGrp', 'ConfirmID', 'ConfirmType', 'AllocAccount', 'tag11245'])
         self.confirmation_report.change_parameters(
             {'NoOrders': [{'ClOrdID': cl_order_id, 'OrderID': order_id}],
              'ConfirmTransType': "0",

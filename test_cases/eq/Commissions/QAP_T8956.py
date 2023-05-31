@@ -134,7 +134,8 @@ class QAP_T8956(TestCase):
         # endregion
 
         # region check alloc instr
-        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameter(
+        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                                              JavaApiFields.BookingAllocInstructionID.value).get_parameter(
             JavaApiFields.AllocationReportBlock.value)
         alloc_id = alloc_report[JavaApiFields.AllocInstructionID.value]
         self.java_api_manager.compare_values(expected_result_comm,

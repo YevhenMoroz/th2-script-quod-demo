@@ -69,6 +69,12 @@ class OmsJavaApiInstruments(Enum):
         InstrType="Equity",
         SecurityExchange="XEUR"
     )
+    instrument_dummy = dict(
+        InstrSymbol="DUMMY_2",
+        SecurityID="DUMMY_1",
+        SecurityIDSource='ExchSymb',
+        SecurityExchange="DUMMY_EXC"
+    )
 
 
 class OmsInstrumentId(Enum):
@@ -80,6 +86,7 @@ class OmsInstrumentId(Enum):
     instrument_6 = "HNUAw6jnU8PDj2cvSkJlYg"  # Leg instrument
     instrument_7 = "4o_6NqkKiqQpmUhKO4xUEw"  # MultiListed instrument
     instrument_8 = 'KojIbEE6b0HgK4VBgy8F9w'  # MFD instrument
+    instrument_9 = 'OqYEQbjef05OTF0ken9_qw'
 
 
 class OmsListingId(Enum):
@@ -92,6 +99,7 @@ class OmsListingId(Enum):
     listing_7 = "1233"  # one listing of MultiListed instrument
     listing_8 = "3346"  # one listing of MultiListed instrument
     listing_9 = "10100000077"  # listing for MFD instrument
+    listing_10 = '905'
 
 
 class OmsVenues(Enum):
@@ -223,6 +231,7 @@ class OmsAccounts(Enum):
     client_pt_7_acc_1 = "MOClient7_SA1"
     client_pt_8_acc_1 = "MOClient8_SA1"
     client_pt_9_acc_1 = "MOClient9_SA1"
+    client_pt_9_acc_2 = "MOClient9_SA2"
     client_pt_10_acc_1 = "MOClient10_SA1"
     client_pt_pp_3_acc_1 = "MOClient_PP3_SA1"
     dummy_sec_account = "DummyAccount"

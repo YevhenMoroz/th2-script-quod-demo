@@ -158,6 +158,9 @@
                         <fix_environments>
                             <fix_environment>quod319_kuiper_kepler</fix_environment>
                         </fix_environments>
+                        <ssh_client_environments>
+                            <ssh_client_environment>quod319_ssh_client</ssh_client_environment>
+                        </ssh_client_environments>
                     </environments>
                 </component>
                 <component name="Multiple_emulation" run="False">

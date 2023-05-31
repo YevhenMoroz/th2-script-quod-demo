@@ -51,6 +51,9 @@ class QAP_T7299(TestCase):
         self.rest_commission_sender.clear_commissions()
         self.rest_commission_sender.clear_fees()
         self.rest_commission_sender.send_default_fee()
+        self.rest_commission_sender.change_message_params(
+            {'execCommissionProfileID': self.data_set.get_comm_profile_by_name("perc_qty")})
+        self.rest_commission_sender.send_post_request()
         # endregion
         # region step 1
         self.submit_request.set_default_care_limit(recipient=self.environment.get_list_fe_environment()[0].user_1,
@@ -70,7 +73,7 @@ class QAP_T7299(TestCase):
         self.java_api_manager.send_message_and_receive_response(self.trade_request)
         exec_reply = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
             JavaApiFields.ExecutionReportBlock.value]
-        expected_result = {"TransExecStatus": "FIL", "ExecCommission": "1.0"}
+        expected_result = {"TransExecStatus": "FIL", "ExecCommission": "2.0"}
         self.java_api_manager.compare_values(expected_result, exec_reply,
                                              "Compare TransExecStatus and ExecCommission")
         # endregion
@@ -90,8 +93,8 @@ class QAP_T7299(TestCase):
         compute_reply = self.java_api_manager.get_last_message(
             ORSMessageType.ComputeBookingFeesCommissionsReply.value).get_parameters()[
             "ComputeBookingFeesCommissionsReplyBlock"]
-        expected_result = {'RootMiscFeeBasis': 'P', 'RootMiscFeeType': 'EXC', 'RootMiscFeeRate': '5.0',
-                           'RootMiscFeeAmt': '100.0', 'RootMiscFeeCurr': 'GBP'}
+        expected_result = {'RootMiscFeeBasis': 'P', 'RootMiscFeeType': 'EXC', 'RootMiscFeeRate': '10.0',
+                           'RootMiscFeeAmt': '10.0', 'RootMiscFeeCurr': 'GBP'}
         self.java_api_manager.compare_values(expected_result,
                                              compute_reply["RootMiscFeesList"]["RootMiscFeesBlock"][0],
                                              "Compare RootMiscFees")
