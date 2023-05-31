@@ -36,7 +36,7 @@ class QAP_T7585(TestCase):
         self.qty_for_check = '200'
         self.qty_for_first_hf = '50'
         self.qty_for_second_hf = '70'
-        self.source_acc = self.data_set.get_account_by_name('client_pos_3_acc_1')
+        self.source_acc = self.data_set.get_account_by_name('client_pos_3_acc_2')
         self.price = '2'
         self.client = self.data_set.get_client_by_name('client_pos_1')
         self.care_washbook = self.data_set.get_washbook_account_by_name('washbook_account_2')
@@ -49,7 +49,7 @@ class QAP_T7585(TestCase):
             JavaApiFields.OrdQty.value: self.qty_for_check,
             JavaApiFields.Price.value: self.price,
             JavaApiFields.AccountGroupID.value: self.client,
-            "WashBookAccountID": self.care_washbook})
+            JavaApiFields.WashBookAccountID.value: self.care_washbook})
         # endregion
 
         # region step 3: get postion for Source Account and Security Account
@@ -138,7 +138,7 @@ class QAP_T7585(TestCase):
         self.java_api_manager.compare_values(
             {f'Increment{JavaApiFields.CumSellQty.value}': str(float(self.qty_for_second_hf))},
             {f'Increment{JavaApiFields.CumSellQty.value}': increment_qty},
-            f'Verifying that {JavaApiFields.CumSellQty.value} increased on {self.qty_for_second_hf} for Facilitation (step 8)')
+            f'Verifying that {JavaApiFields.CumSellQty.value} increased on {self.qty_for_second_hf} for {self.source_acc} (step 8)')
 
         posit_qty_after_trade_for_source_account_qty_after_trade2 = \
             position_after_trading_for_source_acc_after_trade2[JavaApiFields.PositQty.value]
@@ -147,7 +147,7 @@ class QAP_T7585(TestCase):
         self.java_api_manager.compare_values(
             {f'Decrement{JavaApiFields.PositQty.value}': str(float(self.qty_for_second_hf))},
             {f'Decrement{JavaApiFields.PositQty.value}': decrement_qty},
-            f'Verifying that {JavaApiFields.PositQty.value} decreased on {self.qty_for_second_hf} for Facilitation (step 8)')
+            f'Verifying that {JavaApiFields.PositQty.value} decreased on {self.qty_for_second_hf} for {self.source_acc} (step 8)')
         # endregion
 
         # region step 9 : Check changes in WashBook Position
