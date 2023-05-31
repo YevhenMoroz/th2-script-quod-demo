@@ -135,9 +135,9 @@ class QAP_T7159(TestCase):
         self.fix_verifier.check_fix_message_fix_standard(self.fix_message_execution_report, ignored_fields=ignored_fields)
         # endregion
 
-    # @try_except(test_id=Path(__file__).name[:-3])
-    # def run_post_conditions(self):
-    #     self.rest_commission_sender.clear_fees()
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rest_commission_sender.clear_fees()
 
     def __compare_ord_status(self, expected_result):
         ord_status = self.responses[len(self.responses)-1].get_parameters()['OrdStatus']
