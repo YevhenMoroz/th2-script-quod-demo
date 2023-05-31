@@ -129,8 +129,8 @@ class QAP_T10663(TestCase):
 
         expected_result_comm = {
             JavaApiFields.CommissionBasis.value: 'BPS',
-            JavaApiFields.CommissionAmount.value: '1.0',
-            JavaApiFields.CommissionRate.value: '5.0',
+            JavaApiFields.CommissionAmount.value: '0.2',
+            JavaApiFields.CommissionRate.value: '1.0',
             JavaApiFields.CommissionAmountType.value: 'BRK',
             JavaApiFields.CommissionCurrency.value: self.comm_cur
         }
@@ -168,8 +168,8 @@ class QAP_T10663(TestCase):
         # region step 4 - Allocate order
         expected_result_comm = {
             JavaApiFields.CommissionBasis.value: 'BPS',
-            JavaApiFields.CommissionAmount.value: '0.01',
-            JavaApiFields.CommissionRate.value: '5.0',
+            JavaApiFields.CommissionAmount.value: '0.002',
+            JavaApiFields.CommissionRate.value: '1.0',
             JavaApiFields.CommissionAmountType.value: 'BRK',
             JavaApiFields.CommissionCurrency.value: self.comm_cur
         }
