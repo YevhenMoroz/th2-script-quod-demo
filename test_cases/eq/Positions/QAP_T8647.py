@@ -77,21 +77,27 @@ class QAP_T8647(TestCase):
         # endregion
 
         # region step 1 - 2: Create  and Trade DMA order with checking Position`s values
-        result_for_washbook = self._extract_cum_values_for_washbook(self.wash_book)
+        result_for_washbook: dict = self._extract_cum_values_for_washbook(self.wash_book)
+        print(result_for_washbook)
         posit_qty = result_for_washbook[JavaApiFields.PositQty.value]
         gross_weighted_avg_px = result_for_washbook[JavaApiFields.GrossWeightedAvgPx.value]
-        daily_agent_fees_before = result_for_washbook[JavaApiFields.DailyAgentFeeAmt.value]
-        daily_client_commission_before = result_for_washbook[JavaApiFields.DailyClientCommission.value]
-        daily_realized_gross_pl_before = result_for_washbook[JavaApiFields.DailyRealizedGrossPL.value]
+        daily_agent_fees_before = '0.0' if not (JavaApiFields.DailyAgentFeeAmt.value in result_for_washbook) else \
+            result_for_washbook[JavaApiFields.DailyAgentFeeAmt.value]
+        daily_client_commission_before = '0.0' if not(JavaApiFields.DailyClientCommission.value in result_for_washbook) else \
+            result_for_washbook[JavaApiFields.DailyClientCommission.value]
+        daily_realized_gross_pl_before = '0.0' if not(JavaApiFields.DailyRealizedGrossPL.value in result_for_washbook) else result_for_washbook[JavaApiFields.DailyRealizedGrossPL.value]
 
-        self.order_submit.update_fields_in_component("NewOrderSingleBlock", {
-            "AccountGroupID": self.client,
-            'WashBookAccountID': self.wash_book,
-            "ClOrdID": bca.client_orderid(9)})
+        self.order_submit.update_fields_in_component(JavaApiFields.NewOrderSingleBlock.value, {
+            JavaApiFields.AccountGroupID.value: self.client,
+            JavaApiFields.WashBookAccountID.value: self.wash_book,
+            JavaApiFields.ClOrdID.value: bca.client_orderid(9)})
         try:
             new_order_single = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(
                 self.fix_env.buy_side, self.account, self.mic, float(self.price))
-            trade_rule = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.fix_env.buy_side, self.account, self.mic, float(self.price), int(self.qty),0)
+            trade_rule = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.fix_env.buy_side,
+                                                                                            self.account, self.mic,
+                                                                                            float(self.price),
+                                                                                            int(self.qty), 0)
             self.ja_manager.send_message_and_receive_response(self.order_submit)
         except Exception as e:
             logging.error(e)
@@ -134,7 +140,7 @@ class QAP_T8647(TestCase):
             get_parameters()[JavaApiFields.RequestForPositionsAckBlock.value][JavaApiFields.PositionReportBlock.value] \
             [JavaApiFields.PositionList.value][JavaApiFields.PositionBlock.value]
         for position_record in request_for_position_ack:
-            if self.instrument_id == position_record[JavaApiFields.InstrID.value]:
+            if self.instrument_id == position_record[JavaApiFields.InstrID.value] and position_record[JavaApiFields.PositionType.value] == 'N':
                 return position_record
 
     @try_except(test_id=Path(__file__).name[:-3])
