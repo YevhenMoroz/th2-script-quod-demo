@@ -78,7 +78,6 @@ class QAP_T8647(TestCase):
 
         # region step 1 - 2: Create  and Trade DMA order with checking Position`s values
         result_for_washbook: dict = self._extract_cum_values_for_washbook(self.wash_book)
-        print(result_for_washbook)
         posit_qty = result_for_washbook[JavaApiFields.PositQty.value]
         gross_weighted_avg_px = result_for_washbook[JavaApiFields.GrossWeightedAvgPx.value]
         daily_agent_fees_before = '0.0' if not (JavaApiFields.DailyAgentFeeAmt.value in result_for_washbook) else \
