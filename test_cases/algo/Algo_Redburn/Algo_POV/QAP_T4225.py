@@ -60,6 +60,8 @@ class QAP_T4225(TestCase):
 
         self.price_bid_3 = 21.8
         self.qty_bid_3 = 1000
+        
+        self.qty_bid_0 = 0
 
         self.qty_child_1 = AFM.get_pov_child_qty(self.percentage_volume, self.qty_bid_1, self.qty)
         self.qty_child_2 = AFM.get_pov_child_qty(self.percentage_volume, self.qty_bid_2, self.qty)
@@ -90,7 +92,7 @@ class QAP_T4225(TestCase):
         self.ex_destination_1 = self.data_set.get_mic_by_name("mic_1")
         self.client = self.data_set.get_client_by_name("client_2")
         self.account = self.data_set.get_account_by_name("account_2")
-        self.s_par = self.data_set.get_listing_id_by_name("listing_36")
+        self.listing_id = self.data_set.get_listing_id_by_name("listing_36")
         # endregion
 
         # region Key parameters
@@ -139,7 +141,7 @@ class QAP_T4225(TestCase):
 
         # region Clear Market Data
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data SnapShot to clear the MarketDepth", self.test_id))
-        market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
+        market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id, self.fix_env1.feed_handler)
         market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid_1, MDEntrySize=self.qty_bid_1, MDEntryPositionNo=1)
         market_data_snap_shot_par.add_fields_into_repeating_group('NoMDEntries',  [dict(MDEntryType=0, MDEntryPx=self.price_bid_2, MDEntrySize=self.qty_bid_2, MDEntryPositionNo=2)])
         market_data_snap_shot_par.add_fields_into_repeating_group('NoMDEntries',  [dict(MDEntryType=0, MDEntryPx=self.price_bid_3, MDEntrySize=self.qty_bid_3, MDEntryPositionNo=3)])
@@ -147,7 +149,7 @@ class QAP_T4225(TestCase):
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
 
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data Incremental to clear the MarketDepth", self.test_id))
-        market_data_incremental_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.s_par, self.fix_env1.feed_handler).set_phase(TradingPhases.Open)
+        market_data_incremental_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase(TradingPhases.Open)
         market_data_incremental_par.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.price_ltq, MDEntrySize=self.price_ltq)
         self.fix_manager_feed_handler.send_message(market_data_incremental_par)
 
@@ -206,6 +208,16 @@ class QAP_T4225(TestCase):
 
         new_passive_child_order_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.passive_child_order_2, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message(new_passive_child_order_2_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New  DMA Child 2')
+        # endregion
+        
+        # region Clear Market Data
+        self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data SnapShot to clear the MarketDepth", self.test_id))
+        market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id, self.fix_env1.feed_handler)
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid_1, MDEntrySize=self.qty_bid_0, MDEntryPositionNo=1)
+        market_data_snap_shot_par.add_fields_into_repeating_group('NoMDEntries',  [dict(MDEntryType=0, MDEntryPx=self.price_bid_2, MDEntrySize=self.qty_bid_0, MDEntryPositionNo=2)])
+        market_data_snap_shot_par.add_fields_into_repeating_group('NoMDEntries',  [dict(MDEntryType=0, MDEntryPx=self.price_bid_3, MDEntrySize=self.qty_bid_0, MDEntryPositionNo=3)])
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
+        self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

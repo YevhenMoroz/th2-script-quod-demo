@@ -61,6 +61,8 @@ class QAP_T4226(TestCase):
         self.price_bid_3 = 21.99
         self.qty_bid_3 = 1000
 
+        self.qty_bid_0 = 0
+
         self.qty_child_1 = AFM.get_pov_child_qty(self.percentage_volume, self.qty_bid_1, self.qty)
         self.qty_child_2 = AFM.get_pov_child_qty(self.percentage_volume, self.qty_bid_2, self.qty)
         self.qty_child_3 = AFM.get_pov_child_qty(self.percentage_volume, self.qty_bid_3, self.qty)
@@ -220,6 +222,16 @@ class QAP_T4226(TestCase):
 
         new_passive_child_order_3_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.passive_child_order_3, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message(new_passive_child_order_3_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New  DMA Child 3')
+        # endregion
+
+        # region Clear Market Data
+        self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data SnapShot to clear the MarketDepth", self.test_id))
+        market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id, self.fix_env1.feed_handler)
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid_1, MDEntrySize=self.qty_bid_0, MDEntryPositionNo=1)
+        market_data_snap_shot_par.add_fields_into_repeating_group('NoMDEntries',  [dict(MDEntryType=0, MDEntryPx=self.price_bid_2, MDEntrySize=self.qty_bid_0, MDEntryPositionNo=2)])
+        market_data_snap_shot_par.add_fields_into_repeating_group('NoMDEntries',  [dict(MDEntryType=0, MDEntryPx=self.price_bid_3, MDEntrySize=self.qty_bid_0, MDEntryPositionNo=3)])
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
+        self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
