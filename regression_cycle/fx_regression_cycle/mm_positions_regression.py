@@ -31,10 +31,10 @@ timeouts = False
 channels = dict()
 
 
-def test_run(parent_id=None, version="5.1.178.192"):
+def test_run(parent_id=None, version="5.1.178.193"):
     # report_id = bca.create_event(f"FX_MM_Positions" if version is None else f"FX_MM_Positions | {version}", parent_id)
-    report_id = bca.create_event(f"Positions_fx| {version}", parent_id)
-    configuration = ComponentConfigurationFX("ESP_MM_309")
+    report_id = bca.create_event(f"FX_MM_Positions | {version}", parent_id)
+    configuration = ComponentConfiguration("ESP_MM")
     try:
         # prepare_position()
         QAP_T11053(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
