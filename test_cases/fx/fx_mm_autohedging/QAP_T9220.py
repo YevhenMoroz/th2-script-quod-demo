@@ -37,7 +37,7 @@ class QAP_T9220(TestCase):
             "Symbol": self.usd_php
         }
 
-        self.exec_qty = "10000000"
+        self.exec_qty = "20000000"
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -66,6 +66,7 @@ class QAP_T9220(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
+        self.sleep(10)
         self.cancel_request.set_params(self.account_int)
         self.java_api_manager.send_message(self.cancel_request)
         self.sleep(5)
