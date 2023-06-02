@@ -57,7 +57,7 @@ class QAP_T10859(TestCase):
         self.rest_manager.send_post_request(self.order_pricing)
         self.order_compression.set_params(self.order_compression_message).modify_order_compression()
         self.rest_manager.send_post_request(self.order_compression)
-        self.sleep(0.5)
+        self.sleep(1.5)
         # endregion
         # region Step 1
         self.submit_request.set_default_care().get_parameter("NewOrderSingleBlock")["OrdQty"] = self.random_qty_1
