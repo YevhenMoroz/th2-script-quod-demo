@@ -142,8 +142,8 @@ class QAP_T7605(TestCase):
                                                                  self.wash_book]).get_parameters()[
                 JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
                 JavaApiFields.PositionBlock.value][0]
-        self.ja_manager.compare_values({JavaApiFields.PositQty.value: first_qty,
-                                        JavaApiFields.CumSellQty.value: first_qty},
+        self.ja_manager.compare_values({JavaApiFields.PositQty.value: second_qty,
+                                        JavaApiFields.CumSellQty.value: second_qty},
                                        {JavaApiFields.PositQty.value: str(
                                            float(position_report_second_block[JavaApiFields.PositQty.value]) - float(
                                                position_report_first_block[JavaApiFields.PositQty.value])),
@@ -151,7 +151,7 @@ class QAP_T7605(TestCase):
                                                float(
                                                    position_report_first_block[JavaApiFields.CumSellQty.value]) - float(
                                                    position_report_second_block[JavaApiFields.CumSellQty.value]))},
-                                       f'Verify that {JavaApiFields.CumSellQty.value} decreased and {JavaApiFields.PositQty.value} increased on {first_qty} (step 11)')
+                                       f'Verify that {JavaApiFields.CumSellQty.value} decreased and {JavaApiFields.PositQty.value} increased on {second_qty} (step 11)')
         # endregion
 
     def _create_co_orders(self, step, qty, client):
