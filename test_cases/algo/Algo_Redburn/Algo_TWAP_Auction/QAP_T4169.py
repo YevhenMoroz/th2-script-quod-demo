@@ -59,7 +59,8 @@ class QAP_T4169(TestCase):
         self.ltq = 1000
         self.ltp = 1
 
-        self.slice_qty = AFM.get_pov_child_qty_on_ltq(self.max_part, self.ltp, self.qty)
+        # TODO Need to change the formula
+        self.slice_qty = AFM.get_pov_child_qty_on_ltq(self.max_part, self.ltq, self.qty, round='floor') - 1
         self.auction_child_qty = AFM.get_child_qty_for_auction(self.indicative_volume, self.max_part, self.qty)
 
         self.passive_phase_price = self.price_bid - 0.005
@@ -221,6 +222,27 @@ class QAP_T4169(TestCase):
         scheduler.run()
 
         time.sleep(5)
+
+        # region Check the 1st replacing of the 1st TWAP slice
+        self.fix_verifier_buy.set_case_id(bca.create_event("1st TWAP slice goes to the neutral phase", self.test_id))
+
+        twap_slice_1_order.change_parameters(dict(Price=self.neutral_phase_price))
+
+        er_replaced_twap_slice_1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_slice_1_order, self.gateway_side_buy, self.status_cancel_replace)
+        self.fix_verifier_buy.check_fix_message(er_replaced_twap_slice_1_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side 1st ExecReport Replaced TWAP slice 1 order')
+        # endregion
+
+        # region Check the 2nd replacing and eliminating of the 1st TWAP slice
+        self.fix_verifier_buy.set_case_id(bca.create_event("1st TWAP slice goes to the aggressive phase and eliminates", self.test_id))
+
+        twap_slice_1_order.change_parameters(dict(Price=self.price, TimeInForce=self.tif_ioc))
+
+        er_replaced_twap_slice_1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(twap_slice_1_order, self.gateway_side_buy, self.status_cancel_replace)
+        self.fix_verifier_buy.check_fix_message(er_replaced_twap_slice_1_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side 2nd ExecReport Replaced TWAP slice 1 order')
+
+        er_eliminated_twap_slice_1_order_params = FixMessageExecutionReportAlgo().set_params_for_wap_replace_eliminate_rb(twap_slice_1_order)
+        self.fix_verifier_buy.check_fix_message(er_eliminated_twap_slice_1_order_params, key_parameters=self.key_params_ER_eliminate_child, direction=self.ToQuod, message_name='Buy side ExecReport Eliminated TWAP slice 1 order')
+        # endregion
 
         # region Check Auction DMA child order
         self.case_id_3 = bca.create_event("DMA Auction child order", self.test_id)
