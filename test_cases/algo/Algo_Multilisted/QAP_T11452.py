@@ -72,7 +72,7 @@ class QAP_T11452(TestCase):
         # endregion
 
         # region instrument
-        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_36")
+        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_2")
         # endregion
 
         # region Direction
@@ -81,14 +81,14 @@ class QAP_T11452(TestCase):
         # endregion
 
         # region venue param
-        self.ex_destination_qlv1 = self.data_set.get_mic_by_name("mic_41")
+        self.ex_destination_qlv1 = self.data_set.get_mic_by_name("mic_1")
         self.ex_destination_qlv2 = self.data_set.get_mic_by_name("mic_42")
         self.ex_destination_qlv3 = self.data_set.get_mic_by_name("mic_43")
         self.client = self.data_set.get_client_by_name("client_2")
-        self.account_qlv1 = self.data_set.get_account_by_name("account_22")
+        self.account_qlv1 = self.data_set.get_account_by_name("account_2")
         self.account_qlv2 = self.data_set.get_account_by_name("account_23")
         self.account_qlv3 = self.data_set.get_account_by_name("account_24")
-        self.listing_qlv1 = self.data_set.get_listing_id_by_name("listing_53")
+        self.listing_qlv1 = self.data_set.get_listing_id_by_name("listing_1")
         self.listing_qlv2 = self.data_set.get_listing_id_by_name("listing_54")
         self.listing_qlv3 = self.data_set.get_listing_id_by_name("listing_55")
         # endregion
@@ -135,7 +135,7 @@ class QAP_T11452(TestCase):
         # region Send_MarkerData LTP 1
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data LTP initial", self.test_id))
         market_data_incr_qlv1 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_qlv1, self.fix_env1.feed_handler)
-        market_data_incr_qlv1.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.ltp_1_qlv1, MDEntrySize=self.qty)
+        market_data_incr_qlv1.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=38, MDEntrySize=self.qty)
         self.fix_manager_feed_handler.send_message(market_data_incr_qlv1)
 
         market_data_incr_qlv2 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_qlv2, self.fix_env1.feed_handler)
@@ -151,10 +151,9 @@ class QAP_T11452(TestCase):
         case_id_1 = bca.create_event("Create SORPING Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.Multilisted_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Native_Iceberg_with_Peg_params()
+        self.Multilisted_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Single_listed_LitSOR_with_Iceberg_and_Peg_params()
         self.Multilisted_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.Multilisted_order.change_parameters(dict(Account=self.account_qlv1, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.ex_destination_qlv1, DisplayInstruction=dict(DisplayQty=self.display_qty)))
-
+        self.Multilisted_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.ex_destination_qlv1, DisplayInstruction=dict(DisplayQty=self.display_qty)))
         self.fix_manager_sell.send_message_and_receive_response(self.Multilisted_order, case_id_1)
 
         time.sleep(3)
@@ -214,7 +213,7 @@ class QAP_T11452(TestCase):
         # region Send_MarkerData LTP 2
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data LTP new", self.test_id))
         market_data_incr_qlv1 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_qlv1, self.fix_env1.feed_handler)
-        market_data_incr_qlv1.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.ltp_2_qlv1, MDEntrySize=self.qty)
+        market_data_incr_qlv1.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=32, MDEntrySize=self.qty)
         self.fix_manager_feed_handler.send_message(market_data_incr_qlv1)
 
         market_data_incr_qlv2 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_qlv2, self.fix_env1.feed_handler)
@@ -227,6 +226,13 @@ class QAP_T11452(TestCase):
         # endregion
 
         time.sleep(10)
+
+        self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data LTP new", self.test_id))
+        market_data_incr_qlv1 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_qlv1, self.fix_env1.feed_handler)
+        market_data_incr_qlv1.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=39, MDEntrySize=self.qty)
+        self.fix_manager_feed_handler.send_message(market_data_incr_qlv1)
+
+        time.sleep(5)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):

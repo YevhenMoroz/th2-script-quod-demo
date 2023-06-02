@@ -798,7 +798,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
-    def set_Native_Iceberg_with_Peg_params(self):
+    def set_Single_listed_LitSOR_with_Iceberg_and_Peg_params(self):
         base_parameters = {
             'Account': "CLIENT1",
             'ClOrdID': '*',
@@ -812,6 +812,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_2'),
             'OrderCapacity': 'A',
             'Currency': 'EUR',
+            'TargetStrategy': '1008',
             "DisplayInstruction": {
                 'DisplayQty': '15000'
             },
