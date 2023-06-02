@@ -49,8 +49,8 @@ class QAP_T7591(TestCase):
                 f"DELETE FROM dailyposit WHERE  accountid = '{self.acc2}' AND instrid = '{self.instrument_id}'")
             self._db_manager.execute_query(
                 f"DELETE FROM posit WHERE  accountid = '{self.acc2}' AND instrid = '{self.instrument_id}'")
-        self.ssh_client.send_command('qrestart all')
-        time.sleep(140)
+            self.ssh_client.send_command('qrestart all')
+            time.sleep(140)
         # endregion
 
         # region step  1-2 : Extract position for acc1 and acc2
