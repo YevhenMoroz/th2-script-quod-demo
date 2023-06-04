@@ -56,7 +56,7 @@ class QAP_T7593(TestCase):
             JavaApiFields.Price.value: self.price,
             JavaApiFields.Side.value: SubmitRequestConst.Side_Sell.value,
             JavaApiFields.AccountGroupID.value: self.client,
-            "ClOrdID": cl_ord_id})
+            JavaApiFields.ClOrdID.value: cl_ord_id})
         # endregion
 
         # region step 2: get postion for default_washbook
@@ -74,7 +74,7 @@ class QAP_T7593(TestCase):
                 traded_qty=int(self.qty_for_check),
                 delay=0)
             self.order_submit.set_default_child_dma(order_id, bca.client_orderid(9))
-            self.order_submit.update_fields_in_component('NewOrderSingleBlock', {
+            self.order_submit.update_fields_in_component(JavaApiFields.NewOrderSingleBlock.value, {
                 JavaApiFields.WashBookAccountID.value: self.dma_washbook,
                 JavaApiFields.Price.value: self.price,
                 JavaApiFields.Side.value: SubmitRequestConst.Side_Sell.value,
@@ -114,7 +114,7 @@ class QAP_T7593(TestCase):
             recipient=self.environment.get_list_fe_environment()[0].user_1,
             desk=self.desk,
             role=SubmitRequestConst.USER_ROLE_1.value)
-        self.order_submit.update_fields_in_component("NewOrderSingleBlock", dictionary_with_needed_tags)
+        self.order_submit.update_fields_in_component(JavaApiFields.NewOrderSingleBlock.value, dictionary_with_needed_tags)
         self.java_api_manager.send_message_and_receive_response(self.order_submit)
         order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrderReply.value).get_parameters()[
             JavaApiFields.OrdReplyBlock.value]
@@ -134,5 +134,5 @@ class QAP_T7593(TestCase):
             get_parameters()[JavaApiFields.RequestForPositionsAckBlock.value][JavaApiFields.PositionReportBlock.value] \
             [JavaApiFields.PositionList.value][JavaApiFields.PositionBlock.value]
         for position_record in request_for_position_ack:
-            if self.instrument_id == position_record[JavaApiFields.InstrID.value]:
+            if self.instrument_id == position_record[JavaApiFields.InstrID.value] and position_record[JavaApiFields.PositionType.value] == 'N':
                 return position_record
