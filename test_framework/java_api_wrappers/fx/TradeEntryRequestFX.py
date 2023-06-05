@@ -135,10 +135,14 @@ class TradeEntryRequestFX(JavaApiMessage):
     def get_ah_ord_id(self, response) -> str:
         self.check_response(response)
         for msg in response:
-            if msg.get_message_type() == ORSMessageType.ExecutionReport.value:
-                if msg.get_parameters()["ExecutionReportBlock"]["AccountGroupID"] != self.get_client():
-                    if msg.get_parameters()["ExecutionReportBlock"]["OrdID"].startswith("AO"):
-                        return msg.get_parameters()["ExecutionReportBlock"]["OrdID"]
+            if msg.get_message_type() == ORSMessageType.OrdNotification.value:
+                if msg.get_parameters()["OrdNotificationBlock"]["AccountGroupID"] != self.get_client():
+                    if msg.get_parameters()["OrdNotificationBlock"]["OrdID"].startswith("AO"):
+                        ah_order_id = msg.get_parameters()["OrdNotificationBlock"]["OrdID"]
+                        if ah_order_id is None:
+                            raise Exception("AH id not found")
+                        else:
+                            return ah_order_id
 
     def get_ord_id_from_held(self, response) -> str:
         self.check_response(response)
