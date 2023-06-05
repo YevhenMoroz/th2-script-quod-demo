@@ -134,6 +134,7 @@ class TradeEntryRequestFX(JavaApiMessage):
 
     def get_ah_ord_id(self, response) -> str:
         self.check_response(response)
+        ah_order_id = None
         for msg in response:
             if msg.get_message_type() == ORSMessageType.OrdNotification.value:
                 if msg.get_parameters()["OrdNotificationBlock"]["AccountGroupID"] != self.get_client():
