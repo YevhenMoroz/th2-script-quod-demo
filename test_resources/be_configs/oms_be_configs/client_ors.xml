@@ -59,6 +59,7 @@ Copyright Quod Financial
 					<Cancelled>true</Cancelled>
 					<Replaced>true</Replaced>
 					<Eliminated>true</Eliminated>
+					<PendingOpen>true</PendingOpen>
 					<Calculated>true</Calculated>
 					<TradeCancel>true</TradeCancel>
                     <PositionTrade>true</PositionTrade>
