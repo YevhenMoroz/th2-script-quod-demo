@@ -225,7 +225,7 @@ class QAP_T8742(TestCase):
         self.fix_verifier.check_fix_message_fix_standard(allocation_report, ignored_fields=list_of_ignored_fields)
         # end_of_part
 
-        # part 2 check 35 = AK messages step 11
+        # part 2 check 35 = AK message
         del change_parameters['AllocType']
         change_parameters['AllocAccount'] = dummy_account
         confirmation_report = FixMessageConfirmationReportOMS(self.data_set, change_parameters)
