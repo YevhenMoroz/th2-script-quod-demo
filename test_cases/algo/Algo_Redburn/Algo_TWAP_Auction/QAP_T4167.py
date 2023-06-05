@@ -61,7 +61,7 @@ class QAP_T4167(TestCase):
         self.ltp = 1
 
         # TODO Need to change the formula and set up the correct slice qty
-        self.slice_qty = AFM.get_pov_child_qty_on_ltq(self.max_part, self.ltq, self.qty, round='floor') - 1
+        self.slice_qty = int((AFM.get_pov_child_qty_on_ltq(self.max_part, self.ltq, self.qty, round='floor') - 1) / 5)
         self.auction_child_qty = AFM.get_child_qty_for_auction(self.indicative_volume, self.max_part_close, self.qty)
 
         self.passive_phase_price = self.price_bid - 0.005
