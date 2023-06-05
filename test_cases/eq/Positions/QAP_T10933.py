@@ -133,7 +133,7 @@ class QAP_T10933(TestCase):
 
         # region Verify wave
         list_wave_notify_block = self.java_api_manager.get_last_message(
-            ORSMessageType.OrderListWaveNotification.value).get_parameter(
+            ORSMessageType.OrderListWaveNotification.value, OrderBagConst.OrderWaveStatus_NEW.value).get_parameter(
             JavaApiFields.OrderListWaveNotificationBlock.value)
         self.java_api_manager.compare_values(
             {JavaApiFields.OrderListWaveStatus.value: OrderBagConst.OrderWaveStatus_NEW.value},
