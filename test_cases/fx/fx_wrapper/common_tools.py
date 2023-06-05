@@ -136,6 +136,10 @@ def check_ah_decision(order_id):
         query = f"SELECT freenotes  FROM autohedgerdecision WHERE hedgeordid ='{order_id}'"
         cursor.execute(query)
         response = cursor.fetchone()[0]
+        if response is None:
+            raise Exception("Record not found")
+        else:
+            return response
         print(f"Extraction is successful! Notes is {response}.")
         return response
     except (Exception, Error) as error:
@@ -177,7 +181,8 @@ def check_quote_request_id(quote_request):
             print("PostgreSQL connection is closed")
 
 
-def check_value_in_db(id_reference=None, key_parameter="clientquoteid", extracting_value="quotestatus", table="quote", query=None):
+def check_value_in_db(id_reference=None, key_parameter="clientquoteid", extracting_value="quotestatus", table="quote",
+                      query=None):
     """
     Get value from DB using quote_id from fix request
     """
@@ -294,8 +299,6 @@ def execute_db_command(*args):
             cursor.close()
             connection.close()
             print("PostgreSQL connection is closed.")
-
-
 
 
 def generate_schedule(hours_from_time=None, hours_to_time=None, minutes_from_time=None,
@@ -426,6 +429,7 @@ def restart_mpas():
     Restart MPAS component on quod314 backend
     """
     login_and_execute("qrestart QUOD.MPAS")
+
 
 def stop_fxfh():
     """
