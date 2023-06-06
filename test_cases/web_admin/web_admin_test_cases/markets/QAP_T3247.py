@@ -84,6 +84,7 @@ class QAP_T3247(CommonTestCase):
 
             market_identifiers_tab = ListingsMarketIdentifiersSubWizard(self.web_driver_container)
             market_identifiers_tab.set_security_id("")
+            market_identifiers_tab.set_security_id_source(self.security_id_source)
 
             wizard = ListingsWizard(self.web_driver_container)
             wizard.click_on_save_changes()

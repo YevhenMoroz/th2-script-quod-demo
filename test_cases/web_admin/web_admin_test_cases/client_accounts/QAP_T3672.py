@@ -51,7 +51,6 @@ class QAP_T3672(CommonTestCase):
         self.disclose_exec = 'Manual'
         self.client_group = 'ACAClientGroup'
         self.invalid_tick_size_policy = 'Reject'
-        self.virtual_account = 'ACABankFirm'
         self.external_ordID_format = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.booking_inst = 'Manual'
         self.allocation_preference = 'Manual'
@@ -147,7 +146,6 @@ class QAP_T3672(CommonTestCase):
             values_tab.set_disclose_exec(self.disclose_exec)
             values_tab.set_client_group(self.client_group)
             values_tab.set_invalid_tick_size_policy(self.invalid_tick_size_policy)
-            values_tab.set_virtual_account(self.virtual_account)
             values_tab.set_external_odr_id_format(self.external_ordID_format)
             values_tab.set_booking_inst(self.booking_inst)
             values_tab.set_allocation_preference(self.allocation_preference)
@@ -227,7 +225,6 @@ class QAP_T3672(CommonTestCase):
                                     f"Description: {self.description}", f"Disclose Exec: {self.disclose_exec}",
                                     f"Client Group: {self.client_group}",
                                     f"Invalid Tick Size Policy: {self.invalid_tick_size_policy}",
-                                    f"Virtual Account: {self.virtual_account}",
                                     f"External OrdID Format: {self.external_ordID_format}",
                                     f"Booking Inst: {self.booking_inst}",
                                     f"Allocation Preference: {self.allocation_preference}",
