@@ -20,11 +20,10 @@ from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
 from test_framework.db_wrapper.db_manager import DBManager
-from test_framework.algo_mongo_manager import AlgoMongoManager as AMM
-from test_framework.formulas_and_calculation.trading_phase_manager import TradingPhaseManager, TimeSlot
+from test_framework.formulas_and_calculation.trading_phase_manager import TradingPhaseManager
 
 
-class QAP_T4171(TestCase):
+class QAP_T4491(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -42,13 +41,11 @@ class QAP_T4171(TestCase):
         # endregion
 
         # region order parameters
-        self.indicative_volume = 1000
-        self.historical_volume = 1000.0
+        self.indicative_volume = 2000
 
         self.qty = 1_000_000
         self.price = 40
         self.max_part = 10
-        self.max_part_open = 5
         self.scal_opt = False
 
         self.price_ask = 40
@@ -57,19 +54,21 @@ class QAP_T4171(TestCase):
         self.price_bid = 30
         self.qty_bid = 1_000_000
 
-        self.ltq = 1000
+        self.ltq = 2000
         self.ltp = 1
 
         self.slice_qty = AFM.get_twap_child_qty_with_min_max_participation(self.max_part, self.ltq, self.qty)
-        self.auction_child_qty = AFM.get_child_qty_for_auction(self.indicative_volume, self.max_part_open, self.qty)
+        self.auction_child_qty = AFM.get_child_qty_for_auction(self.indicative_volume, self.max_part, self.qty)
 
-        # Because of the bi-lateral behaviour the 1st auc child changed qty to 50.
-        self.cancel_auc_qty_1 = 50
+        # Because of the bi-lateral behaviour the 1st auc child changed qty to 198. And the new child with the qty=2 is created
+        self.cancel_auc_qty_1 = 198
+        self.cancel_auc_qty_2 = 2
 
         self.passive_phase_price = self.price_bid - 0.005
         self.neutral_phase_price = int((self.price_bid + self.price_ask) / 2)
 
         self.tif_ato = TimeInForce.AtTheOpening.value
+        self.tif_atc = TimeInForce.AtTheClose.value
         self.tif_ioc = TimeInForce.ImmediateOrCancel.value
         # endregion
 
@@ -127,22 +126,21 @@ class QAP_T4171(TestCase):
 
         self.send_algo = datetime.utcnow().replace(tzinfo=timezone.utc)
         self.send_algo = self.send_algo - timedelta(seconds=self.send_algo.second, microseconds=self.send_algo.microsecond) + timedelta(minutes=1)
-        self.end_phase = (self.send_algo + timedelta(minutes=1))
+        self.end_pop_phase = (self.send_algo + timedelta(minutes=1))
         start_date = self.send_algo.strftime("%Y%m%d-%H:%M:%S")
 
         # region Update Trading Phase
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify trading phase profile", self.test_id))
         trading_phase_manager = TradingPhaseManager()
         trading_phase_manager.build_timestamps_for_trading_phase_sequence(TradingPhases.PreOpen)
-        trading_phase_manager.update_endtime_for_trading_phase_by_phase_name(TradingPhases.PreOpen, self.end_phase)
+        trading_phase_manager.update_endtime_for_trading_phase_by_phase_name(TradingPhases.PreOpen, self.end_pop_phase)
         trading_phases = trading_phase_manager.get_trading_phase_list(new_standard=False)
         self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
         # endregion
 
         # region insert data into mongoDB
-        curve = AMM.get_straight_curve_for_mongo(trading_phases, volume=self.historical_volume)
-        self.db_manager.insert_many_to_mongodb_with_drop(curve, f"Q{self.listing_id}")
-        bca.create_event("Data in mongo inserted", self.test_id)
+        self.db_manager.create_empty_collection(f"Q{self.listing_id}")
+        bca.create_event("Empty collection is created", self.test_id)
         # endregion
 
         # region Send MarketData for the TWAP order
@@ -159,10 +157,12 @@ class QAP_T4171(TestCase):
         # endregion
 
         scheduler = sched.scheduler(time.time, time.sleep)
-        send_algo_order_checkpoint = self.end_phase.timestamp() - 60
-        auction_child_checkpoint = self.end_phase.timestamp() - 50
-        send_incremental_refresh_opn_checkpoint = self.end_phase.timestamp() + 1
-        send_incremental_refresh_ltq_checkpoint = self.end_phase.timestamp() + 10
+        send_algo_order_checkpoint = self.end_pop_phase.timestamp() - 60
+        auction_child_checkpoint = self.end_pop_phase.timestamp() - 50
+        send_incremental_refresh_opn_checkpoint = self.end_pop_phase.timestamp() + 1
+        send_incremental_refresh_ltq_checkpoint = self.end_pop_phase.timestamp() + 10
+        start_pcl = trading_phase_manager.get_phase_time_by_phase(TradingPhases.PreClosed)
+        send_incremental_refresh_pcl_checkpoint = self.end_pop_phase.timestamp() + 301
 
         # region Send NewOrderSingle (35=D) for
         case_id_1 = bca.create_event("Create TWAP Order", self.test_id)
@@ -171,7 +171,7 @@ class QAP_T4171(TestCase):
         self.twap_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_TWAP_auction_params()
         self.twap_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.twap_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.ex_destination_xpar))
-        self.twap_order.update_fields_in_component('QuodFlatParameters', dict(StartDate2=start_date, MaxParticipation=self.max_part, MaxParticipationOpen=self.max_part_open))
+        self.twap_order.update_fields_in_component('QuodFlatParameters', dict(StartDate2=start_date, MaxParticipation=self.max_part))
         scheduler.enterabs(send_algo_order_checkpoint, 1, self.fix_manager_sell.send_message_and_receive_response, kwargs=dict(fix_message=self.twap_order))
 
         # region Check Sell side
@@ -189,17 +189,17 @@ class QAP_T4171(TestCase):
         # region Check DMA Auction child order
         self.case_id_2 = bca.create_event("TWAP child order", self.test_id)
 
-        self.dma_auction_child_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_RB_params()
-        self.dma_auction_child_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_xpar, OrderQty=self.auction_child_qty, Price=self.price, TimeInForce=self.tif_ato, Instrument=self.instrument))
-        scheduler.enterabs(auction_child_checkpoint, 1, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=self.dma_auction_child_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle DMA Auction child'))
+        self.dma_auction_child_order_pop = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_RB_params()
+        self.dma_auction_child_order_pop.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_xpar, OrderQty=self.auction_child_qty, Price=self.price, TimeInForce=self.tif_ato, Instrument=self.instrument))
+        scheduler.enterabs(auction_child_checkpoint, 1, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=self.dma_auction_child_order_pop, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle DMA Auction child'))
 
-        er_pending_new_dma_auction_child_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_auction_child_order, self.gateway_side_buy, self.status_pending)
-        scheduler.enterabs(auction_child_checkpoint, 2, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=er_pending_new_dma_auction_child_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew DMA Auction child'))
+        er_pending_new_dma_auction_child_order_pop_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_auction_child_order_pop, self.gateway_side_buy, self.status_pending)
+        scheduler.enterabs(auction_child_checkpoint, 2, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=er_pending_new_dma_auction_child_order_pop_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew DMA Auction child'))
 
         self.fix_verifier_buy.set_case_id(bca.create_event("Check Auction child order Buy Side NewOrderSingle, Pending New, New", self.case_id_2))
 
-        er_new_dma_auction_child_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_auction_child_order, self.gateway_side_buy, self.status_new)
-        scheduler.enterabs(auction_child_checkpoint, 3, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=er_new_dma_auction_child_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New  DMA Auction child'))
+        er_new_dma_auction_child_order_pop_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_auction_child_order_pop, self.gateway_side_buy, self.status_new)
+        scheduler.enterabs(auction_child_checkpoint, 3, self.fix_verifier_buy.check_fix_message, kwargs=dict(fix_message=er_new_dma_auction_child_order_pop_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New  DMA Auction child'))
         # endregion
 
         # region Send Open phase
@@ -220,16 +220,26 @@ class QAP_T4171(TestCase):
         scheduler.enterabs(send_incremental_refresh_ltq_checkpoint, 1, self.fix_manager_feed_handler.send_message, kwargs=dict(fix_message=self.incremental_refresh_1))
         # endregion
 
-        scheduler.run()
+        # region Send PCL phase
+        case_id_5 = bca.create_event("Send the PCL phase", self.test_id)
+        scheduler.enterabs(send_incremental_refresh_ltq_checkpoint, 1, self.fix_manager_feed_handler.set_case_id, kwargs=dict(case_id=case_id_5))
 
-        time.sleep(65)
+        self.incremental_refresh_1 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase(TradingPhases.PreClosed)
+        scheduler.enterabs(send_incremental_refresh_pcl_checkpoint, 1, self.fix_manager_feed_handler.send_message, kwargs=dict(fix_message=self.incremental_refresh_1))
+        # endregion
+
+        scheduler.run()
 
         # region Check that the DMA Auction child was cancelled
         self.fix_verifier_buy.set_case_id(self.case_id_2)
 
-        er_cancelled_dma_1_auction_child_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_auction_child_order, self.gateway_side_buy, self.status_cancel)
+        er_cancelled_dma_1_auction_child_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_auction_child_order_pop, self.gateway_side_buy, self.status_cancel)
         er_cancelled_dma_1_auction_child_order_params.change_parameters(dict(OrderQty=self.cancel_auc_qty_1))
         self.fix_verifier_buy.check_fix_message(er_cancelled_dma_1_auction_child_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Cancelled DMA 1 Auction child')
+
+        er_cancelled_dma_2_auction_child_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_auction_child_order_pop, self.gateway_side_buy, self.status_cancel)
+        er_cancelled_dma_2_auction_child_order_params.change_parameters(dict(OrderQty=self.cancel_auc_qty_2))
+        self.fix_verifier_buy.check_fix_message(er_cancelled_dma_2_auction_child_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Cancelled DMA 2 Auction child')
         # endregion
 
         # region Check the 1st TWAP slice order
@@ -256,14 +266,43 @@ class QAP_T4171(TestCase):
         self.fix_verifier_buy.check_fix_message(er_replaced_twap_slice_1_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side 1st ExecReport Replaced TWAP slice 1 order')
         # endregion
 
+        # region Check the 2nd replacing and eliminating of the 1st TWAP slice
+        self.fix_verifier_buy.set_case_id(bca.create_event("1st TWAP slice goes to the aggressive phase and eliminates", self.test_id))
+
+        self.twap_slice_1_order.change_parameters(dict(Price=self.price, TimeInForce=self.tif_ioc))
+
+        er_replaced_twap_slice_1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_slice_1_order, self.gateway_side_buy, self.status_cancel_replace)
+        self.fix_verifier_buy.check_fix_message(er_replaced_twap_slice_1_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side 2nd ExecReport Replaced TWAP slice 1 order')
+
+        er_eliminated_twap_slice_1_order_params = FixMessageExecutionReportAlgo().set_params_for_wap_replace_eliminate_rb(self.twap_slice_1_order)
+        self.fix_verifier_buy.check_fix_message(er_eliminated_twap_slice_1_order_params, key_parameters=self.key_params_ER_eliminate_child, direction=self.ToQuod, message_name='Buy side ExecReport Eliminated TWAP slice 1 order')
+        # endregion
+
+        # region Check PCL Auction DMA child order
+        self.case_id_3 = bca.create_event("PCL: DMA Auction child order", self.test_id)
+        self.fix_verifier_buy.set_case_id(self.case_id_3)
+
+        self.dma_auction_child_order_pcl = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_RB_params()
+        self.dma_auction_child_order_pcl.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_xpar, OrderQty=self.auction_child_qty, Price=self.price, TimeInForce=self.tif_atc, Instrument=self.instrument))
+        self.fix_verifier_buy.check_fix_message(fix_message=self.dma_auction_child_order_pcl, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle DMA Auction child order PCL')
+
+        er_pending_new_dma_auction_child_order_pcl = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_auction_child_order_pcl, self.gateway_side_buy, self.status_pending)
+        self.fix_verifier_buy.check_fix_message(fix_message=er_pending_new_dma_auction_child_order_pcl, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport PendingNew DMA Auction child order PCL')
+
+        er_new_dma_auction_child_order_pcl = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_auction_child_order_pcl, self.gateway_side_buy, self.status_new)
+        self.fix_verifier_buy.check_fix_message(er_new_dma_auction_child_order_pcl, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New DMA Auction child order PCL')
+        # endregion
+
+        time.sleep(2)
+
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         # region Cancel Algo Order
-        case_id_3 = bca.create_event("Cancel Algo Order", self.test_id)
-        self.fix_verifier_sell.set_case_id(case_id_3)
+        case_id_2 = bca.create_event("Cancel Algo Order", self.test_id)
+        self.fix_verifier_sell.set_case_id(case_id_2)
 
         cancel_request_twap_order = FixMessageOrderCancelRequest(self.twap_order)
-        self.fix_manager_sell.send_message_and_receive_response(cancel_request_twap_order, case_id_3)
+        self.fix_manager_sell.send_message_and_receive_response(cancel_request_twap_order, case_id_2)
         self.fix_verifier_sell.check_fix_message(cancel_request_twap_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
         # endregion
 
@@ -285,9 +324,11 @@ class QAP_T4171(TestCase):
 
         # region Check ERs Cancelled for the parent TWAP (1st LVL) and the DMA Auction child (3rd LVL)
         self.fix_verifier_buy.set_case_id(self.case_id_3)
-        er_cancelled_twap_slice_1_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_slice_1_order, self.gateway_side_buy, self.status_cancel)
-        self.fix_verifier_buy.check_fix_message(er_cancelled_twap_slice_1_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Cancel TWAP slice 1 order')
+        er_cancelled_dma_child_auction_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_auction_child_order_pcl, self.gateway_side_buy, self.status_cancel)
+        self.fix_verifier_buy.check_fix_message(er_cancelled_dma_child_auction_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Cancel DMA Auction child PCL')
 
         er_cancelled_twap_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.twap_order, self.gateway_side_sell, self.status_cancel)
         self.fix_verifier_sell.check_fix_message(er_cancelled_twap_order, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
+
+

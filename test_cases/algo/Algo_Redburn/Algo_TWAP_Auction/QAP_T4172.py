@@ -275,6 +275,9 @@ class QAP_T4172(TestCase):
         rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)
 
+        self.db_manager.drop_collection(f"Q{self.listing_id}")
+        bca.create_event(f"Collection QP{self.listing_id} is dropped", self.test_id)
+
         # region Revert the TradingPhase
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Revert trading phase profile", self.test_id))
         trading_phase_manager = TradingPhaseManager()
