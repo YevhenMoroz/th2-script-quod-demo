@@ -197,7 +197,7 @@ class QAP_T6983(TestCase):
 
         # part of step 6 check statuses of block
         list_of_executions_of_co_order = [first_exec_id_parent_order, second_exec_id_parent_order]
-        self.allocation_instruction.set_ament_book_with_multiply_execution(alloc_id, list_of_executions_of_co_order,
+        self.allocation_instruction.set_amend_book_with_multiply_execution(alloc_id, list_of_executions_of_co_order,
                                                                            half_qty, self.price)
         self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
         allocation_report = \
