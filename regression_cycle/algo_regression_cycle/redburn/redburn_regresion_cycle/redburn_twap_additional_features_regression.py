@@ -2,6 +2,8 @@ import logging
 import time
 from custom import basic_custom_actions as bca
 from stubs import Stubs
+from test_cases.algo.Algo_Redburn.Algo_TWAP.QAP_T11324 import QAP_T11324
+from test_cases.algo.Algo_Redburn.Algo_TWAP.QAP_T4685 import QAP_T4685
 from test_cases.algo.Algo_TWAP.QAP_T4340 import QAP_T4340
 from test_cases.algo.Algo_TWAP.QAP_T4343 import QAP_T4343
 from test_cases.algo.Algo_TWAP.QAP_T4346 import QAP_T4346
@@ -95,12 +97,15 @@ def test_run(parent_id=None, version=None):
         QAP_T4702(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         
         # region config reset
-        default_config_value = ssh_client.get_and_update_file(config_file, {xpath: new_config_value})
+        ssh_client.get_and_update_file(config_file, {xpath: default_config_value})
         ssh_client.send_command("qrestart SATS")
         time.sleep(35)
         ssh_client.close()
         # endregion
         # endregion
+
+        QAP_T11324(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4685(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
         # region Needs Refactoring
         # QAP_T4692.execute(report_id)

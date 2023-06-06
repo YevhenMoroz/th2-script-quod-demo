@@ -115,14 +115,16 @@ class TradeEntryRequestFX(JavaApiMessage):
 
     # endregion
     # region Getters
-    def get_exec_id(self, response: JavaApiMessage) -> str:
+    def get_exec_id(self, response: list) -> str:
+        self.check_response(response)
         for msg in response:
             if msg.get_message_type() == ORSMessageType.ExecutionReport.value:
                 if msg.get_parameters()["ExecutionReportBlock"]["AccountGroupID"] == self.get_client():
                     if msg.get_parameters()["ExecutionReportBlock"]["ExecID"].endswith("1"):
                         return msg.get_parameters()["ExecutionReportBlock"]["ExecID"]
 
-    def get_mo_id(self, response: JavaApiMessage) -> str:
+    def get_mo_id(self, response: list) -> str:
+        self.check_response(response)
         for msg in response:
             if msg.get_message_type() == ORSMessageType.TradeEntryNotif.value:
                 return msg.get_parameters()["TradeEntryNotifBlock"]["OrdID"]
@@ -131,9 +133,14 @@ class TradeEntryRequestFX(JavaApiMessage):
         return response[-1].get_parameters()["ExecutionReportBlock"]["ExecID"]
 
     def get_ah_ord_id(self, response) -> str:
-        return response[-1].get_parameters()["ExecutionReportBlock"]["OrdID"]
+        self.check_response(response)
+        for msg in response:
+            if msg.get_message_type() == ORSMessageType.ExecutionReport.value:
+                if msg.get_parameters()["ExecutionReportBlock"]["AccountGroupID"] != self.get_client():
+                        return msg.get_parameters()["ExecutionReportBlock"]["OrdID"]
 
     def get_ord_id_from_held(self, response) -> str:
+        self.check_response(response)
         for msg in response:
             if msg.get_message_type() == ORSMessageType.HeldOrderNotif.value:
                 return msg.get_parameters()["HeldOrderNotifBlock"]["OrdID"]
@@ -142,6 +149,7 @@ class TradeEntryRequestFX(JavaApiMessage):
         return response[0].get_parameters()["ExecutionReportBlock"]["ExecID"]
 
     def get_termination_time(self, response) -> str:
+        self.check_response(response)
         for msg in response:
             if msg.get_message_type() == ORSMessageType.ExecutionReport.value:
                 if msg.get_parameters()["ExecutionReportBlock"]["AccountGroupID"] == self.get_client():
@@ -165,4 +173,9 @@ class TradeEntryRequestFX(JavaApiMessage):
 
     def get_notes(self):
         return self.get_parameters()["TradeEntryRequestBlock"]["CDOrdFreeNotes"]
+
     # endregion
+
+    def check_response(self, response):
+        if not response:
+            raise Exception("Response is not found")

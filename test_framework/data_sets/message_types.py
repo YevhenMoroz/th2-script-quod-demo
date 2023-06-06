@@ -29,6 +29,8 @@ class FIXMessageType(Enum):
     PositionReport = "PositionReport"
     DontKnowTrade = "DontKnowTrade"
     AllocationACK = "AllocationACK"
+    SecurityStatusRequest = "SecurityStatusRequest"
+    SecurityStatus = "SecurityStatus"
 
 
 class ORSMessageType(Enum):
@@ -143,6 +145,13 @@ class ORSMessageType(Enum):
     MatchCptyMOBlocksRequest = 'Order_MatchCptyMOBlocksRequest'
     FixAllocationInstructionAck = 'Fix_AllocationInstructionAck'
     AssignInstrumentRequest = 'Order_AssignInstrumentRequest'
+    AssignInstrumentReply = 'Order_AssignInstrumentReply'
+    TradeCaptureReportNotif = 'Order_TradeCaptureReportNotif'
+    OrderMassCancelRequest = 'Order_OrderMassCancelRequest'
+    OrderMassCancelReport = 'Order_OrderMassCancelReport'
+    GatewayConfirmation = 'Gateway_Confirmation'
+    GatewayAllocationInstruction = 'Gateway_AllocationInstruction'
+    BlockChangeConfirmationServiceReply = 'Order_BlockChangeConfirmationServiceReply'
 
 
 class TradingRestApiMessageType(Enum):
@@ -205,6 +214,7 @@ class PKSMessageType(Enum):
     RequestForPositions = "Order_RequestForPositions"
     RequestForFXPositions = "Order_RequestForFXPositions"
     FixRequestForPositions = "Fix_RequestForPositions"
+    FixRequestForPositionsAck = "Fix_RequestForPositionsAck"
     FixPositionReport = "Fix_PositionReport"
     FixPositionMaintenanceRequest = "Fix_PositionMaintenanceRequest"
     PositionReport = "Order_PositionReport"
@@ -225,7 +235,6 @@ class QSMessageType(Enum):
     ListingQuotingNotification = "Order_ListingQuotingNotification"
     StopQuotingRequest = "Order_StopQuotingRequest"
     QuoteManagementReply = "Order_QuoteManagementReply"
-    ExecutePricedOrderRequest = "Order_ExecutePricedOrderRequest"
 
 
 class ReadLogMessageType(Enum):

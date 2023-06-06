@@ -84,7 +84,7 @@ class QAP_T10350(TestCase):
         # region set up configuration on BackEnd(precondition)
         self.ssh_client.send_command('~/quod/script/site_scripts/change_book_agent_misk_fee_type_on_Y')
         self.ssh_client.send_command("qrestart QUOD.ORS QUOD.CS QUOD.ESBUYTH2TEST")
-        time.sleep(120)
+        time.sleep(90)
         # endregion
 
         # region step 1: Create CO order
@@ -199,5 +199,5 @@ class QAP_T10350(TestCase):
         self.rest_commission_sender.clear_fees()
         self.ssh_client.send_command('~/quod/script/site_scripts/change_book_agent_misc_fee_type_on_N')
         self.ssh_client.send_command("qrestart QUOD.ORS QUOD.CS QUOD.ESBUYTH2TEST")
-        time.sleep(120)
+        time.sleep(90)
         self.ssh_client.close()

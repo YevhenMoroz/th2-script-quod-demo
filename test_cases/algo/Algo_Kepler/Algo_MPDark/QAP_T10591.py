@@ -86,12 +86,13 @@ class QAP_T10591(TestCase):
         # endregion
 
         # region SSH
-        self.config_file = "client_sats.xml"
-        self.xpath = ".//DarkPool/tolerance"
-        self.new_config_value = "3"
-        self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
-        self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user, self.ssh_client_env.password, self.ssh_client_env.su_user, self.ssh_client_env.su_password)
-        self.default_config_value = self.ssh_client.get_and_update_file(self.config_file, {self.xpath: self.new_config_value})
+        # The config will be changed in the QAP-T10298 and will be reverted in the QAP-T10592, uncomment the below block and the block 'Prepare SATS configuration' for the manual execution only this one test
+        # self.config_file = "client_sats.xml"
+        # self.xpath = ".//DarkPool/tolerance"
+        # self.new_config_value = "3"
+        # self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
+        # self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user, self.ssh_client_env.password, self.ssh_client_env.su_user, self.ssh_client_env.su_password)
+        # self.default_config_value = self.ssh_client.get_and_update_file(self.config_file, {self.xpath: self.new_config_value})
         # endregion
 
         self.pre_filter = self.data_set.get_pre_filter("pre_filer_equal_D")
@@ -100,8 +101,8 @@ class QAP_T10591(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region precondition: Prepare SATS configuration
-        self.ssh_client.send_command("qrestart SORS")
-        time.sleep(180)
+        # self.ssh_client.send_command("qrestart SORS")
+        # time.sleep(180)
         # endregion
         # TODO Add nos_reject_rule for 1 time
         # region Rule creation
@@ -206,7 +207,7 @@ class QAP_T10591(TestCase):
 
         # region Check replace first dma child order
         ocrr_dma_2_chix_order = FixMessageOrderCancelReplaceRequestAlgo(self.dma_2_chix_order)
-        ocrr_dma_2_chix_order.change_parameters(dict(OrderQty=self.inc_qty))
+        ocrr_dma_2_chix_order.change_parameters(dict(OrderQty=self.inc_qty)).add_tag(dict(misc5='*', ChildOrderID='*'))
 
         er_cancel_replace_dma_2_chix_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_chix_order, self.gateway_side_buy, self.status_cancel_replace)
         self.fix_verifier_buy.check_fix_message_kepler(er_cancel_replace_dma_2_chix_order, self.key_params_ER_child, self.ToQuod, "Buy Side ExecReport CancelReplace child DMA 2 order on venue CHIX DARKPOOL UK")
@@ -243,11 +244,6 @@ class QAP_T10591(TestCase):
         self.fix_verifier_buy.check_fix_message_kepler(self.nos_2_trql_rfq, key_parameters=self.key_params_NOS_child, message_name='Buy side 2nd RFQ on TQLIS')
         # endregion
 
-        # region Check order of the messages
-        self.fix_verifier_buy.set_case_id(bca.create_event("Check order of the messages", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([nos_chixlis_rfq, nos_trql_rfq, self.dma_1_chix_order, self.dma_2_chix_order, ocrr_dma_2_chix_order, ocr_rfq_canceled_trqx, ocr_rfq_canceled_chix, self.nos_2_chixlis_rfq, self.nos_2_trql_rfq], [self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child], self.FromQuod, pre_filter=None)
-        # endregion
-
         # region Check that the 1st child expires
         order_cancel_request_dma_2_chix_order = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child_kepler(self.dma_2_chix_order)
         self.fix_verifier_buy.check_fix_message_kepler(order_cancel_request_dma_2_chix_order, key_parameters=self.key_params_OCR_child, message_name='Buy side OrderCancelRequest Child DMA 1 order')
@@ -268,10 +264,6 @@ class QAP_T10591(TestCase):
         self.fix_verifier_buy.check_fix_message_kepler(er_new_dma_bats_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 2 order')
         # endregion
 
-        time.sleep(2)
-
-    @try_except(test_id=Path(__file__).name[:-3])
-    def run_post_conditions(self):
         # region Cancel Algo Order
         case_id_3 = bca.create_event("Cancel Algo Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_3)
@@ -281,23 +273,46 @@ class QAP_T10591(TestCase):
         self.fix_verifier_sell.check_fix_message(cancel_request_MPDark_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
 
         # region Check that the dark child order was canceled
+        order_cancel_request_dma_bats_order = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child_kepler(self.dma_bats_order)
+
         er_cancel_dma_bats_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_bats_order, self.gateway_side_buy, self.status_cancel)
         self.fix_verifier_buy.check_fix_message_kepler(er_cancel_dma_bats_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport Cancel Child DMA 1 order')
         # endregion
 
-        er_cancel_MPDark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MPDark_order, self.gateway_side_sell, self.status_cancel)
+        er_cancel_MPDark_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.MPDark_order_replace_params, self.gateway_side_sell, self.status_cancel)
         self.fix_verifier_sell.check_fix_message(er_cancel_MPDark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Cancel')
         # endregion
 
-        time.sleep(3)
+        # OCR rfq 2
+        ocr_rfq_canceled_trqx_2 = FixMessageOrderCancelRequestAlgo().set_cancel_RFQ(self.nos_2_trql_rfq).change_parameter("ExDestination", self.ex_destination_trqx).add_header().add_DeliverToCompID(self.ex_destination_tqlis)
 
-        # region config reset
-        self.ssh_client.get_and_update_file(self.config_file, {self.xpath: self.default_config_value})
-        self.ssh_client.send_command("qrestart SORS")
-        time.sleep(180)
-        self.ssh_client.close()
+        ocr_rfq_canceled_chix_2 = FixMessageOrderCancelRequestAlgo().set_cancel_RFQ(self.nos_2_chixlis_rfq).change_parameter("ExDestination", self.ex_destination_trqx).add_header().add_DeliverToCompID(self.ex_destination_chixlis)
         # endregion
+
+        # region Check order of the messages
+        self.fix_verifier_buy.set_case_id(bca.create_event("Check order of the messages", self.test_id))
+
+        # Change value for NOS message for the 2nd dark child before the amend
+        self.dma_2_chix_order.change_parameters(dict(OrderQty=self.qty))
+
+        self.fix_verifier_buy.check_fix_message_sequence([nos_chixlis_rfq, nos_trql_rfq, self.dma_1_chix_order, self.dma_2_chix_order, ocr_rfq_canceled_chix, ocr_rfq_canceled_trqx, ocrr_dma_2_chix_order, self.nos_2_chixlis_rfq, self.nos_2_trql_rfq, order_cancel_request_dma_2_chix_order, self.dma_bats_order, order_cancel_request_dma_bats_order, ocr_rfq_canceled_chix_2, ocr_rfq_canceled_trqx_2], [self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child], self.FromQuod, pre_filter=None)
+        # endregion
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+
+        time.sleep(3)
 
         rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)
+
+        # region config reset
+        # The config will be reverted in the QAP-T10592, uncomment the below block for the manual execution only this one test
+        # self.ssh_client.get_and_update_file(self.config_file, {self.xpath: self.default_config_value})
+        # self.ssh_client.send_command("qrestart SORS")
+        # time.sleep(180)
+        # self.ssh_client.close()
+        # endregion
+
+
 

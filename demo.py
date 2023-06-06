@@ -35,7 +35,7 @@ def test_run():
     # endregion
 
     try:
-        base_main_window.open_fe(report_id=report_id, fe_env=fe_env, user_num=1)
+        # base_main_window.open_fe(report_id=report_id, fe_env=fe_env, user_num=1)
         QAP_T7685(report_id=report_id, session_id=session_id, data_set=configuration.data_set,
                  environment=configuration.environment) \
             .execute()

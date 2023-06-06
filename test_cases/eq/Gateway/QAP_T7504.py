@@ -109,7 +109,7 @@ class QAP_T7504(TestCase):
                                       'BookID', 'SettlDate', 'AllocID', 'Currency', 'NetMoney', 'MatchStatus',
                                       'ConfirmStatus', 'TradeDate', 'NoParty', 'AllocInstructionMiscBlock1', 'tag5120',
                                       'CpctyConfGrp', 'ReportedPx', 'Instrument', 'GrossTradeAmt', 'ConfirmID',
-                                      'OrderAvgPx', 'tag11245']
+                                      'OrderAvgPx', 'tag11245', 'AllocInstructionMiscBlock2']
         conf_report = FixMessageConfirmationReportOMS(self.data_set, params)
         self.fix_verifier_dc.check_fix_message_fix_standard(conf_report, ignored_fields=ignored_fields_conf_report)
         # endregion
@@ -127,7 +127,8 @@ class QAP_T7504(TestCase):
         ignored_fields_alloc_report = ["Account", "TransactTime", "Side", "AvgPx", "QuodTradeQualifier", "BookID",
                                        "SettlDate", "AllocID", "Currency", "NetMoney", "TradeDate", "BookingType",
                                        "NoAllocs", "NoParty", "AllocInstructionMiscBlock1", "Quantity", "tag5120",
-                                       "ReportedPx", "Instrument", "RootSettlCurrAmt", "GrossTradeAmt", 'OrderAvgPx']
+                                       "ReportedPx", "Instrument", "RootSettlCurrAmt", "GrossTradeAmt", 'OrderAvgPx',
+                                       'ExecAllocGrp']
         alloc_report = FixMessageAllocationInstructionReportOMS(new_params)
         self.fix_verifier_dc.check_fix_message_fix_standard(alloc_report, ['AllocTransType', 'AllocType'],
                                                             ignored_fields=ignored_fields_alloc_report)

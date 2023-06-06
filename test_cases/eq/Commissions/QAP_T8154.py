@@ -150,6 +150,7 @@ class QAP_T8154(TestCase):
         time.sleep(5)
 
         # region create order (step 4)
+        self.order_submit = OrderSubmitOMS(self.data_set)
         self.order_submit.set_default_care_limit(recipient=self.environment.get_list_fe_environment()[0].user_1,
                                                  desk=self.environment.get_list_fe_environment()[0].desk_ids[0],
                                                  role=SubmitRequestConst.USER_ROLE_1.value)
