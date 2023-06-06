@@ -133,19 +133,19 @@ class QAP_T8196(TestCase):
         self.fix_exec_report.set_default_filled(self.new_order_single)
         self.fix_exec_report.change_parameters(
             {"ClOrdID": cl_order_id1, "OrdStatus": "1", 'OrderListName': self.basket_name})
-        self.fix_verifier_back_office.check_fix_message(self.fix_exec_report, key_parameters=['ClOrdID', 'OrdStatus'],
+        self.fix_verifier_back_office.check_fix_message_fix_standard(self.fix_exec_report, key_parameters=['ClOrdID', 'OrdStatus'],
                                                         ignored_fields=ignored_fields)
         self.fix_exec_report.change_parameters({"ClOrdID": cl_order_id2})
-        self.fix_verifier_back_office.check_fix_message(self.fix_exec_report, key_parameters=['ClOrdID', 'OrdStatus'],
+        self.fix_verifier_back_office.check_fix_message_fix_standard(self.fix_exec_report, key_parameters=['ClOrdID', 'OrdStatus'],
                                                         ignored_fields=ignored_fields)
         # endregion
 
         # region check execution report on the Sell Side (step 6)
         self.fix_exec_report.change_parameters({"ClOrdID": cl_order_id1})
-        self.fix_verifier_sell.check_fix_message(self.fix_exec_report, key_parameters=['ClOrdID', 'OrdStatus'],
+        self.fix_verifier_sell.check_fix_message_fix_standard(self.fix_exec_report, key_parameters=['ClOrdID', 'OrdStatus'],
                                                         ignored_fields=ignored_fields)
         self.fix_exec_report.change_parameters({"ClOrdID": cl_order_id2})
-        self.fix_verifier_sell.check_fix_message(self.fix_exec_report, key_parameters=['ClOrdID', 'OrdStatus'],
+        self.fix_verifier_sell.check_fix_message_fix_standard(self.fix_exec_report, key_parameters=['ClOrdID', 'OrdStatus'],
                                                         ignored_fields=ignored_fields)
         # endregion
 
@@ -198,18 +198,18 @@ class QAP_T8196(TestCase):
         # region check execution report on the BO (step 9)
         self.fix_exec_report.set_default_filled(self.new_order_single)
         self.fix_exec_report.change_parameters({"ClOrdID": cl_order_id1, 'OrderListName': self.basket_name})
-        self.fix_verifier_back_office.check_fix_message(self.fix_exec_report, key_parameters=['ClOrdID', 'OrdStatus'],
+        self.fix_verifier_back_office.check_fix_message_fix_standard(self.fix_exec_report, key_parameters=['ClOrdID', 'OrdStatus'],
                                                         ignored_fields=ignored_fields)
         self.fix_exec_report.change_parameters({"ClOrdID": cl_order_id2})
-        self.fix_verifier_back_office.check_fix_message(self.fix_exec_report, key_parameters=['ClOrdID', 'OrdStatus'],
+        self.fix_verifier_back_office.check_fix_message_fix_standard(self.fix_exec_report, key_parameters=['ClOrdID', 'OrdStatus'],
                                                         ignored_fields=ignored_fields)
         # endregion
 
         # region check execution report on the Sell Side (step 10)
         self.fix_exec_report.change_parameters({"ClOrdID": cl_order_id1})
-        self.fix_verifier_sell.check_fix_message(self.fix_exec_report, key_parameters=['ClOrdID', 'OrdStatus'],
+        self.fix_verifier_sell.check_fix_message_fix_standard(self.fix_exec_report, key_parameters=['ClOrdID', 'OrdStatus'],
                                                         ignored_fields=ignored_fields)
         self.fix_exec_report.change_parameters({"ClOrdID": cl_order_id2})
-        self.fix_verifier_sell.check_fix_message(self.fix_exec_report, key_parameters=['ClOrdID', 'OrdStatus'],
+        self.fix_verifier_sell.check_fix_message_fix_standard(self.fix_exec_report, key_parameters=['ClOrdID', 'OrdStatus'],
                                                         ignored_fields=ignored_fields)
         # endregion
