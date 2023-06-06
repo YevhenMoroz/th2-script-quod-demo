@@ -14,7 +14,7 @@ from test_framework.java_api_wrappers.fx.FixPositionMassCancelRequestFX import F
 from test_framework.java_api_wrappers.fx.TradeEntryRequestFX import TradeEntryRequestFX
 
 
-class QAP_T8678(TestCase):
+class QAP_T8778(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
         super().__init__(report_id, session_id, data_set, environment)
