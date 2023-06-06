@@ -105,7 +105,6 @@ class QAP_T3670(CommonTestCase):
                 account_lists_page.set_name(self.account_list["name"])
                 time.sleep(1)
             account_list_csv = account_lists_page.click_on_download_csv_button_and_get_content()[0].values()
-            print(account_list_csv)
             self.account_list.pop("account")
             actual_result = ''
             for i in list(self.account_list.items()):
@@ -131,7 +130,6 @@ class QAP_T3670(CommonTestCase):
                 clients_page.set_name(self.client["name"])
                 time.sleep(1)
             clients_csv = clients_page.click_on_download_csv_button_and_get_content()[0].values()
-            print(clients_csv)
             self.client.pop("id")
             actual_result = ''
             for i in list(self.client.items()):
@@ -156,7 +154,6 @@ class QAP_T3670(CommonTestCase):
                 client_lists_page.set_name(self.client_list["name"])
                 time.sleep(1)
             client_list_csv = client_lists_page.click_on_download_csv_button_and_get_content()[0].values()
-            print(client_list_csv)
             self.client_list.pop("client")
             actual_result = ''
             for i in list(self.client_list.items()):

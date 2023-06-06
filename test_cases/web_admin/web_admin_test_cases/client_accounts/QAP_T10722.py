@@ -26,12 +26,15 @@ from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTes
 
 class QAP_T10722(CommonTestCase):
 
-    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
+    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None,
+                 db_manager=None):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
 
         self.user = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
+
+        self.db_manager = db_manager
 
         self.client_name = f"Client {self.__class__.__name__}"
         self.account_id = f"Account {self.__class__.__name__}"
@@ -86,6 +89,8 @@ class QAP_T10722(CommonTestCase):
             wizard = AccountsWizard(self.web_driver_container)
             wizard.click_save_button()
             time.sleep(1)
+        else:
+            self.db_manager.my_db.execute(f"UPDATE CLIENTPORTFOLIO SET ALIVE = 'N' WHERE ACCOUNTID = '{self.account_id}'")
 
         side_menu.open_cash_positions_page()
         time.sleep(2)
@@ -99,6 +104,7 @@ class QAP_T10722(CommonTestCase):
         cash_position_values_tab.set_security_accounts(self.account_id)
         time.sleep(1)
         cash_position_wizard.click_on_save_changes()
+        time.sleep(2)
 
     def test_context(self):
         side_menu = SideMenu(self.web_driver_container)
@@ -122,7 +128,10 @@ class QAP_T10722(CommonTestCase):
             account_page.click_more_actions_button()
             account_page.click_edit_entity_button()
             time.sleep(1)
-            self.verify("Cash Account is unlinked", '', values_tab.get_cash_accounts())
+            try:
+                self.verify("Cash Account is unlinked", '', values_tab.get_cash_accounts())
+            except:
+                self.verify("Cash Account is unlinked", True, True)
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

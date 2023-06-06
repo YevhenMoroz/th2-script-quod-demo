@@ -292,7 +292,7 @@ class RunClientsAccounts:
             QAP_T10617(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                        environment=configuration.environment).run()
             QAP_T10722(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                       environment=configuration.environment).run()
+                       environment=configuration.environment, db_manager=self.db_manager).run()
             QAP_T10724(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                        environment=configuration.environment).run()
             QAP_T10772(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,

@@ -29,7 +29,7 @@ class QAP_T8357(CommonTestCase):
         self.ext_id_client = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.disclose_exec = self.data_set.get_disclose_exec("disclose_exec_1")
         self.desks = ['DESK A', 'Quod Desk']
-        self.user_manager = 'acameron'
+        self.user_manager = 'Test_UMDS3'
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)

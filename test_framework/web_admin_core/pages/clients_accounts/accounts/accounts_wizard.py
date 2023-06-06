@@ -78,8 +78,8 @@ class AccountsWizard(CommonPage):
     def is_default_account_checked(self):
         return self.is_checkbox_selected(AccountsConstants.WIZARD_DEFAULT_ACCOUNT_CHECKBOX_XPATH)
 
-    def toggle_trade_confirm_eligibility(self):
-        self.toggle_checkbox(AccountsConstants.WIZARD_TRADE_CONFIRM_ELIGIBILITY_CHECKBOX_XPATH)
+    def click_on_trade_confirm_eligibility_checkbox(self):
+        self.find_by_xpath(AccountsConstants.WIZARD_TRADE_CONFIRM_ELIGIBILITY_CHECKBOX_XPATH).click()
 
     def is_trade_confirm_eligibility_checked(self):
         return self.is_checkbox_selected(AccountsConstants.WIZARD_TRADE_CONFIRM_ELIGIBILITY_CHECKBOX_XPATH)
@@ -120,8 +120,8 @@ class AccountsWizard(CommonPage):
     def get_bo_field_5(self):
         return self.get_text_by_xpath(AccountsConstants.WIZARD_BO_FILED_5_INPUT_XPATH)
 
-    def toggle_commission_exemption(self):
-        self.toggle_checkbox(AccountsConstants.WIZARD_COMMISSION_EXEMPTION_CHECKBOX_XPATH)
+    def click_on_commission_exemption(self):
+        self.find_by_xpath(AccountsConstants.WIZARD_COMMISSION_EXEMPTION_CHECKBOX_XPATH).click()
 
     def is_commission_exemption_checked(self):
         return self.is_checkbox_selected(AccountsConstants.WIZARD_COMMISSION_EXEMPTION_CHECKBOX_XPATH)

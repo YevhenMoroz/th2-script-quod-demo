@@ -188,7 +188,7 @@ class ClientsConstants:
     VENUES_TAB_DEFAULT_ROUTE_FILTER_XPATH = '(//nb-accordion-item-header[normalize-space()="Venues"]//..//thead//input)[4]'
     VENUES_TAB_ROUTING_PARAM_GROUP_XPATH = '//*[@placeholder="Routing Param Group"]'
     VENUES_TAB_ROUTING_PARAM_GROUP_FILTER_XPATH = '(//nb-accordion-item-header[normalize-space()="Venues"]//..//thead//input)[5]'
-    VENUES_TAB_MAX_COMMISSION_TYPE_XPATH = '//*[@placeholder="Max Commission Type"]'
+    VENUES_TAB_MAX_COMMISSION_TYPE_XPATH = '//*[@id="maxCommType"]'
     VENUES_TAB_MAX_COMMISSION_TYPE_FILTER_XPATH = '(//nb-accordion-item-header[normalize-space()="Venues"]//..//thead//input)[6]'
     VENUES_TAB_MAX_COMMISSION_VALUE_XPATH = '//*[@placeholder="Max Commission Value"]'
     VENUES_TAB_MAX_COMMISSION_VALUE_FILTER_XPATH = '(//nb-accordion-item-header[normalize-space()="Venues"]//..//thead//input)[7]'

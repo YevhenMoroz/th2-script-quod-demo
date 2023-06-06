@@ -31,14 +31,14 @@ class AccountsConstants:
     WIZARD_CLEARING_ACCOUNT_TYPE_COMBOBOX_XPATH = "//input[@id='clearingAccountType']"
     WIZARD_CLIENT_ID_SOURCE_COMBOBOX_XPATH = "//input[@id='clientAccountIDSource']"
     WIZARD_DEFAULT_ACCOUNT_CHECKBOX_XPATH = "//nb-checkbox[@formcontrolname='defaultAccount']"
-    WIZARD_TRADE_CONFIRM_ELIGIBILITY_CHECKBOX_XPATH = "//nb-checkbox[@formcontrolname='tradeConfirmEligibility']"
+    WIZARD_TRADE_CONFIRM_ELIGIBILITY_CHECKBOX_XPATH = '//nb-checkbox[@formcontrolname="tradeConfirmEligibility"]//span[contains(@class, "custom-checkbox")]'
     WIZARD_CLIENT_MATCHING_ID_INPUT_XPATH = "//input[@formcontrolname='clientMatchingID']"
     WIZARD_BO_FILED_1_INPUT_XPATH = "//input[@id='confirmationMisc0']"
     WIZARD_BO_FILED_2_INPUT_XPATH = "//input[@id='confirmationMisc1']"
     WIZARD_BO_FILED_3_INPUT_XPATH = "//input[@id='confirmationMisc2']"
     WIZARD_BO_FILED_4_INPUT_XPATH = "//input[@id='confirmationMisc3']"
     WIZARD_BO_FILED_5_INPUT_XPATH = "//input[@id='confirmationMisc4']"
-    WIZARD_COMMISSION_EXEMPTION_CHECKBOX_XPATH = "//nb-checkbox[@formcontrolname='brokerCommissionExemption']"
+    WIZARD_COMMISSION_EXEMPTION_CHECKBOX_XPATH = '//nb-checkbox[@formcontrolname="brokerCommissionExemption"]//span[contains(@class, "custom-checkbox")]'
     WIZARD_COUNTERPART_COMBOBOX_XPATH = "//input[@id='counterpart']"
     WIZARD_DEFAULT_ROUTE_COMBOBOX_XPATH = "//input[@id='defaultRoute']"
     WIZARD_SAVE_BUTTON_XPATH = "//button[text()='Save Changes']"
@@ -68,9 +68,9 @@ class AccountsConstants:
     DIMENSIONS_VENUE_COMBOBOX_XPATH = "//nb-accordion/nb-accordion-item[2]//input[@placeholder='Venue *']"
     DIMENSIONS_ACCOUNT_ID_SOURCE_COMBOBOX_XPATH = "//nb-accordion/nb-accordion-item[2]//input[@placeholder='Account ID Source *']"
     DIMENSIONS_DEFAULT_ROUTE_COMBOBOX_XPATH = "//nb-accordion/nb-accordion-item[2]//input[@placeholder='Default Route']"
-    DIMENSIONS_STAMP_EXEMPT_CHECKBOX_XPATH = "//nb-accordion/nb-accordion-item[2]//td[6]//nb-checkbox"
-    DIMENSIONS_LEVY_EXEMPT_CHECKBOX_XPATH = "//nb-accordion/nb-accordion-item[2]//td[7]//nb-checkbox"
-    DIMENSIONS_PER_TRANSAC_EXEMPT_CHECKBOX_XPATH = "//nb-accordion/nb-accordion-item[2]//td[8]//nb-checkbox"
+    DIMENSIONS_STAMP_EXEMPT_CHECKBOX_XPATH = '//nb-accordion/nb-accordion-item[2]//td[6]//nb-checkbox//span[contains(@class, "custom-checkbox")]'
+    DIMENSIONS_LEVY_EXEMPT_CHECKBOX_XPATH = '//nb-accordion/nb-accordion-item[2]//td[7]//nb-checkbox//span[contains(@class, "custom-checkbox")]'
+    DIMENSIONS_PER_TRANSAC_EXEMPT_CHECKBOX_XPATH = '//nb-accordion/nb-accordion-item[2]//td[8]//nb-checkbox//span[contains(@class, "custom-checkbox")]'
     DIMENSIONS_VENUE_CLIENT_ACCOUNT_NAME_INPUT_XPATH = "//nb-accordion/nb-accordion-item[2]//input[@placeholder='Venue Client Account Name']"
 
     ROUTES_ROUTE_ACCOUNT_NAME_FILTER_XPATH = '//*[normalize-space()="Routes"]//parent::nb-accordion-item//tr[2]//th[2]//input'

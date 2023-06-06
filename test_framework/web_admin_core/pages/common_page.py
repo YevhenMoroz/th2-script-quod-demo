@@ -132,6 +132,7 @@ class CommonPage:
         concatenates the xpath to the checkbox through its values
         """
         self.find_by_xpath(field_xpath).click()
+        time.sleep(0.5)
         if not self.is_element_present(CommonConstants.MULTISELECT_FORM_LOOK_UP):
             self.find_by_xpath(field_xpath).click()
         time.sleep(1)
