@@ -24,8 +24,7 @@ class FixRequestForPositionsFX(JavaApiMessage):
                 "PosReqType": "Positions",
                 "SubscriptionRequestType": "Subscribe",
                 "SettlDate": self.get_data_set().get_settle_date_by_name("spot_java_api"),
-                # "ClientAccountGroupID": self.get_data_set().get_client_by_name("client_mm_1"),
-                "ClientAccountGroupID": "Iridium1",
+                "ClientAccountGroupID": self.get_data_set().get_client_by_name("client_mm_1"),
                 "Currency": self.get_data_set().get_currency_by_name("currency_eur"),
 
             }
@@ -35,13 +34,13 @@ class FixRequestForPositionsFX(JavaApiMessage):
 
     def change_client(self, client):
         params = self.get_parameters()
-        params["QuoteRequestBlock"]["QuoteReqList"]["QuoteReqBlock"][0]["ClientAccountGroupID"] = client
+        params["RequestForPositionsBlock"]["ClientAccountGroupID"] = client
         return self
 
     def change_instrument(self, instrument, currency):
         params = self.get_parameters()
-        params["QuoteRequestBlock"]["QuoteReqList"]["QuoteReqBlock"][0]["InstrumentBlock"]["InstrSymbol"] = instrument
-        params["QuoteRequestBlock"]["QuoteReqList"]["QuoteReqBlock"][0]["Currency"] = currency
+        params["RequestForPositionsBlock"]["InstrumentBlock"] = instrument
+        params["RequestForPositionsBlock"]["Currency"] = currency
         return self
 
     def unsubscribe(self):
