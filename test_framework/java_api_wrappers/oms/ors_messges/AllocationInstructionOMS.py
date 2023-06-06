@@ -96,7 +96,7 @@ class AllocationInstructionOMS(AllocationInstruction):
 
         return self
 
-    def set_ament_book_with_multiply_execution(self, alloc_instr_id, exec_ids: list, exec_qty, exec_price):
+    def set_amend_book_with_multiply_execution(self, alloc_instr_id, exec_ids: list, exec_qty, exec_price):
         self.change_parameters(self.base_parameters)
         list_of_exec_alloc_block = []
         for exec_id in exec_ids:
