@@ -133,7 +133,7 @@ class QAP_T10487(TestCase):
 
         # region Check that the dark child didn't expire
         self.fix_verifier_buy.set_case_id(bca.create_event("Check that the dark child DMA order didn't expire", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([er_pending_new_dma_chix_order_params, er_new_dma_chix_order_params], [self.key_params_ER_child, self.key_params_ER_child], self.ToQuod, pre_filter=None)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([er_pending_new_dma_chix_order_params, er_new_dma_chix_order_params], [self.key_params_ER_child, self.key_params_ER_child], self.ToQuod, pre_filter=None)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

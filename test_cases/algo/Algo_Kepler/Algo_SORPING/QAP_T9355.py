@@ -225,7 +225,7 @@ class QAP_T9355(TestCase):
 
         # region Check these are no dark childs
         self.fix_verifier_buy.set_case_id(bca.create_event("Check these are no dark childs", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([self.dma_xpar_order], [None], self.FromQuod)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([self.dma_xpar_order], [None], self.FromQuod)
         # endregion
 
         time.sleep(10)

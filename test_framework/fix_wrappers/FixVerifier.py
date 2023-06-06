@@ -563,3 +563,6 @@ class FixVerifier:
                                  direction: DirectionEnum = DirectionEnum.FromQuod, message_name: str = None,
                                  ignored_fields: Union[list, tuple] = ('trailer', 'header', 'NoTradingSessions')):
         self.check_fix_message(fix_message, key_parameters, direction, message_name, ignored_fields)
+
+    def check_fix_message_sequence_kepler(self, fix_messages_list: list, key_parameters_list: list = None, direction: DirectionEnum = DirectionEnum.FromQuod, message_name: str = None, pre_filter: dict = None, check_order=True, ignored_fields: Union[list, tuple] = ('trailer', 'header', 'NoTradingSessions')):
+        self.check_fix_message_sequence(fix_messages_list, key_parameters_list, direction, message_name, pre_filter, check_order, ignored_fields)

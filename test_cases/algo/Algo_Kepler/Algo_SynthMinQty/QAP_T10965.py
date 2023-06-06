@@ -135,7 +135,7 @@ class QAP_T10965(TestCase):
 
         # region Check that the parent order is still Open
         self.fix_verifier_sell.set_case_id(bca.create_event("Check that the parent order is still Open", self.test_id))
-        self.fix_verifier_sell.check_fix_message_sequence([er_pending_new_synthMinQty_order_params, er_new_synthMinQty_order_params], [self.key_params_ER_parent, self.key_params_ER_parent], self.FromQuod, pre_filter=None)
+        self.fix_verifier_sell.check_fix_message_sequence_kepler([er_pending_new_synthMinQty_order_params, er_new_synthMinQty_order_params], [self.key_params_ER_parent, self.key_params_ER_parent], self.FromQuod, pre_filter=None)
         # endregion
         
         # region Check Read log

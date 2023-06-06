@@ -182,7 +182,7 @@ class QAP_T10591(TestCase):
         # endregion
 
         # region Check all childs on the venue DARKPOOL UK
-        self.fix_verifier_buy.check_fix_message_sequence([nos_chixlis_rfq, nos_trql_rfq, self.dma_1_chix_order, self.dma_2_chix_order], [self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child], self.FromQuod, pre_filter=self.pre_filter)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([nos_chixlis_rfq, nos_trql_rfq, self.dma_1_chix_order, self.dma_2_chix_order], [self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child], self.FromQuod, pre_filter=self.pre_filter)
         # endregion
 
         # region Modify parent MP Dark order
@@ -295,7 +295,7 @@ class QAP_T10591(TestCase):
         # Change value for NOS message for the 2nd dark child before the amend
         self.dma_2_chix_order.change_parameters(dict(OrderQty=self.qty))
 
-        self.fix_verifier_buy.check_fix_message_sequence([nos_chixlis_rfq, nos_trql_rfq, self.dma_1_chix_order, self.dma_2_chix_order, ocr_rfq_canceled_chix, ocr_rfq_canceled_trqx, ocrr_dma_2_chix_order, self.nos_2_chixlis_rfq, self.nos_2_trql_rfq, order_cancel_request_dma_2_chix_order, self.dma_bats_order, order_cancel_request_dma_bats_order, ocr_rfq_canceled_chix_2, ocr_rfq_canceled_trqx_2], [self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child], self.FromQuod, pre_filter=None)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([nos_chixlis_rfq, nos_trql_rfq, self.dma_1_chix_order, self.dma_2_chix_order, ocr_rfq_canceled_chix, ocr_rfq_canceled_trqx, ocrr_dma_2_chix_order, self.nos_2_chixlis_rfq, self.nos_2_trql_rfq, order_cancel_request_dma_2_chix_order, self.dma_bats_order, order_cancel_request_dma_bats_order, ocr_rfq_canceled_chix_2, ocr_rfq_canceled_trqx_2], [self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child], self.FromQuod, pre_filter=None)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

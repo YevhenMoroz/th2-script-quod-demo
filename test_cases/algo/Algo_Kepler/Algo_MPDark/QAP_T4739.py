@@ -191,7 +191,7 @@ class QAP_T4739(TestCase):
 
         # region Check that the rebalance didn`t happen after canceling an order
         self.fix_verifier_buy.set_case_id(bca.create_event("Check that is no new childs after order is canceled", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([self.dma_chix_order, self.dma_bats_order, self.dma_itg_order], key_parameters_list=[None, None, None], direction=self.FromQuod, pre_filter=None)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([self.dma_chix_order, self.dma_bats_order, self.dma_itg_order], key_parameters_list=[None, None, None], direction=self.FromQuod, pre_filter=None)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

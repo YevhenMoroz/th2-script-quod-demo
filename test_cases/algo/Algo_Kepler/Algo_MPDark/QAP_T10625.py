@@ -127,7 +127,7 @@ class QAP_T10625(TestCase):
         time.sleep(1)
 
         # region Check that the parent order didn't eliminate
-        self.fix_verifier_sell.check_fix_message_sequence([er_pending_new_MPDark_order_params, er_new_MPDark_order_params], [self.key_params_ER_parent, self.key_params_ER_parent], self.FromQuod, pre_filter=None)
+        self.fix_verifier_sell.check_fix_message_sequence_kepler([er_pending_new_MPDark_order_params, er_new_MPDark_order_params], [self.key_params_ER_parent, self.key_params_ER_parent], self.FromQuod, pre_filter=None)
         # endregion
 
         # region Check child DMA order on venue BATS DARKPOOL UK
