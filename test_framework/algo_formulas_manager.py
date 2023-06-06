@@ -860,3 +860,8 @@ class AlgoFormulasManager:
             return child_order_qty
         else:
             return (parent_qty - save_for_close_shares)
+
+
+    @staticmethod
+    def get_twap_child_qty_with_min_max_participation(max_part: float, ltq: int, ord_qty: int) -> int:
+            return min(math.floor((ltq * max_part) / (100 - max_part)), ord_qty)

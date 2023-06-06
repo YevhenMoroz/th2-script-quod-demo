@@ -59,8 +59,7 @@ class QAP_T4169(TestCase):
         self.ltq = 1000
         self.ltp = 1
 
-        # TODO Need to change the formula
-        self.slice_qty = AFM.get_pov_child_qty_on_ltq(self.max_part, self.ltq, self.qty, round='floor') - 1
+        self.slice_qty = AFM.get_twap_child_qty_with_min_max_participation(self.max_part, self.ltq, self.qty)
         self.auction_child_qty = AFM.get_child_qty_for_auction(self.indicative_volume, self.max_part, self.qty)
 
         self.passive_phase_price = self.price_bid - 0.005
@@ -90,22 +89,14 @@ class QAP_T4169(TestCase):
         # endregion
 
         # region Venue params
-        # self.instrument = self.data_set.get_fix_instrument_by_name("instrument_1")
-        # self.client = self.data_set.get_client_by_name("client_2")
-        # self.account = self.data_set.get_account_by_name("account_2")
-        # self.ex_destination_xpar = self.data_set.get_mic_by_name("mic_1")
-        # self.listing_id = self.data_set.get_listing_id_by_name("listing_36")
-        #
-        # self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile1")
+        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_1")
+        self.client = self.data_set.get_client_by_name("client_2")
+        self.account = self.data_set.get_account_by_name("account_2")
+        self.ex_destination_xpar = self.data_set.get_mic_by_name("mic_1")
+        self.listing_id = self.data_set.get_listing_id_by_name("listing_36")
+
+        self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile1")
         # endregion
-
-        self.instrument = self.data_set.get_fix_instrument_by_name("instrument_38")
-        self.client = self.data_set.get_client_by_name("client_3")
-        self.account = self.data_set.get_account_by_name("account_21")
-        self.ex_destination_xpar = self.data_set.get_mic_by_name("mic_47")
-        self.listing_id = self.data_set.get_listing_id_by_name("listing_58")
-
-        self.trading_phase_profile = self.data_set.get_trading_phase_profile("trading_phase_profile3")
 
         # region Key parameters
         self.key_params_NOS_parent = self.data_set.get_verifier_key_parameters_by_name("verifier_key_parameters_NOS_parent")
@@ -167,12 +158,12 @@ class QAP_T4169(TestCase):
 
         scheduler = sched.scheduler(time.time, time.sleep)
         send_algo_order_checkpoint = self.end_phase.timestamp() - 300
-        send_ltq_checkpoint = self.end_phase.timestamp() - 50
+        send_ltq_checkpoint = self.end_phase.timestamp() - 60
         send_incremental_refresh_pcl_checkpoint = self.end_phase.timestamp() + 1
 
         # region Send NewOrderSingle (35=D) for
         case_id_1 = bca.create_event("Create TWAP Order", self.test_id)
-        self.fix_verifier_sell.set_case_id(case_id_1)
+        scheduler.enterabs(send_algo_order_checkpoint, 1, self.fix_manager_sell.set_case_id, kwargs=dict(case_id=case_id_1))
 
         self.twap_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_TWAP_auction_params()
         self.twap_order.add_ClordId((os.path.basename(__file__)[:-3]))
@@ -193,7 +184,9 @@ class QAP_T4169(TestCase):
         # endregion
         
         # region Send LTQ
-        self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send LTQ", self.test_id))
+        case_id_3 = bca.create_event("Send LTQ incremental refresh", self.test_id)
+        scheduler.enterabs(send_ltq_checkpoint, 1, self.fix_manager_feed_handler.set_case_id, kwargs=dict(case_id=case_id_3))
+
         self.incremental_refresh_1 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id, self.fix_env1.feed_handler)
         self.incremental_refresh_1.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.ltp, MDEntrySize=self.ltq)
         scheduler.enterabs(send_ltq_checkpoint, 1, self.fix_manager_feed_handler.send_message, kwargs=dict(fix_message=self.incremental_refresh_1))
@@ -224,7 +217,7 @@ class QAP_T4169(TestCase):
         time.sleep(5)
 
         # region Check the 1st replacing of the 1st TWAP slice
-        self.fix_verifier_buy.set_case_id(bca.create_event("1st TWAP slice goes to the neutral phase", self.test_id))
+        self.fix_verifier_buy.set_case_id(bca.create_event("1st TWAP slice goes to the neutral phase", self.case_id_2))
 
         twap_slice_1_order.change_parameters(dict(Price=self.neutral_phase_price))
 
@@ -233,7 +226,7 @@ class QAP_T4169(TestCase):
         # endregion
 
         # region Check the 2nd replacing and eliminating of the 1st TWAP slice
-        self.fix_verifier_buy.set_case_id(bca.create_event("1st TWAP slice goes to the aggressive phase and eliminates", self.test_id))
+        self.fix_verifier_buy.set_case_id(bca.create_event("1st TWAP slice goes to the aggressive phase and eliminates", self.case_id_2))
 
         twap_slice_1_order.change_parameters(dict(Price=self.price, TimeInForce=self.tif_ioc))
 

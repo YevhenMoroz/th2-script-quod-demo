@@ -24,7 +24,7 @@ from test_framework.algo_mongo_manager import AlgoMongoManager as AMM
 from test_framework.formulas_and_calculation.trading_phase_manager import TradingPhaseManager, TimeSlot
 
 
-class QAP_T4172(TestCase):
+class QAP_T4170(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -48,6 +48,7 @@ class QAP_T4172(TestCase):
         self.qty = 1_000_000
         self.price = 40
         self.max_part = 10
+        self.max_part_open = 10
         self.scal_opt = False
 
         self.price_ask = 40
@@ -60,7 +61,7 @@ class QAP_T4172(TestCase):
         self.ltp = 1
 
         self.slice_qty = AFM.get_twap_child_qty_with_min_max_participation(self.max_part, self.ltq, self.qty)
-        self.auction_child_qty = AFM.get_child_qty_for_auction(self.indicative_volume, self.max_part, self.qty)
+        self.auction_child_qty = AFM.get_child_qty_for_auction(self.indicative_volume, self.max_part_open, self.qty)
 
         # Because of the bi-lateral behaviour the 1st auc child changed qty to 99. And the new child with the qty=1 is created
         self.cancel_auc_qty_1 = 99
@@ -153,7 +154,8 @@ class QAP_T4172(TestCase):
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
 
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data Incremental to clear the MarketDepth", self.test_id))
-        market_data_incremental_ind_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_MDReqID(self.listing_id, self.fix_env1.feed_handler).update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume).set_phase(TradingPhases.PreOpen)
+        market_data_incremental_ind_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative().update_MDReqID(self.listing_id, self.fix_env1.feed_handler).update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', self.indicative_volume).set_phase(
+            TradingPhases.PreOpen)
         self.fix_manager_feed_handler.send_message(market_data_incremental_ind_par)
         # endregion
 
@@ -170,7 +172,7 @@ class QAP_T4172(TestCase):
         self.twap_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_TWAP_auction_params()
         self.twap_order.add_ClordId((os.path.basename(__file__)[:-3]))
         self.twap_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.ex_destination_xpar))
-        self.twap_order.update_fields_in_component('QuodFlatParameters', dict(StartDate2=start_date, MaxParticipation=self.max_part))
+        self.twap_order.update_fields_in_component('QuodFlatParameters', dict(StartDate2=start_date, MaxParticipation=self.max_part, MaxParticipationOpen=self.max_part_open))
         scheduler.enterabs(send_algo_order_checkpoint, 1, self.fix_manager_sell.send_message_and_receive_response, kwargs=dict(fix_message=self.twap_order))
 
         # region Check Sell side
@@ -204,7 +206,7 @@ class QAP_T4172(TestCase):
         # region Send Open phase
         case_id_3 = bca.create_event("Send the Open phase", self.test_id)
         scheduler.enterabs(send_incremental_refresh_opn_checkpoint, 1, self.fix_manager_feed_handler.set_case_id, kwargs=dict(case_id=case_id_3))
-        
+
         self.incremental_refresh_1 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase(TradingPhases.Open)
         self.incremental_refresh_1.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=0, MDEntrySize=0)
         scheduler.enterabs(send_incremental_refresh_opn_checkpoint, 1, self.fix_manager_feed_handler.send_message, kwargs=dict(fix_message=self.incremental_refresh_1))
@@ -213,7 +215,7 @@ class QAP_T4172(TestCase):
         # region Send LTQ
         case_id_4 = bca.create_event("Send LTQ incremental refresh", self.test_id)
         scheduler.enterabs(send_incremental_refresh_ltq_checkpoint, 1, self.fix_manager_feed_handler.set_case_id, kwargs=dict(case_id=case_id_4))
-        
+
         self.incremental_refresh_1 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id, self.fix_env1.feed_handler)
         self.incremental_refresh_1.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.ltp, MDEntrySize=self.ltq)
         scheduler.enterabs(send_incremental_refresh_ltq_checkpoint, 1, self.fix_manager_feed_handler.send_message, kwargs=dict(fix_message=self.incremental_refresh_1))
