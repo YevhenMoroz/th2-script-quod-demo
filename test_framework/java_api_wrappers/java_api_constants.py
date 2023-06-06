@@ -23,6 +23,7 @@ class ExecutionReportConst(Enum):
     ExecOrigin_M = 'M'
     ExecOrigin_E = 'E'
     ExecType_Trade = 'Trade'
+    ExecType_Replaced = 'Replaced'
 
 
 class BasketMessagesConst(Enum):
