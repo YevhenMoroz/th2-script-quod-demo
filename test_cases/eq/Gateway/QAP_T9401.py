@@ -151,8 +151,6 @@ class QAP_T9401(TestCase):
         self.ssh_client.get_file('/Logs/quod317/logs2.txt', './logs.txt')
         with open('./logs.txt') as file:
             res: list = file.readlines()
-            print(res)
-            print('-----------------------------------------------------------')
             self.java_api_manager.compare_values({'WashBookPresent': self.dma_washbook},
                                                  {'WashBookPresent': res[-1]}, f'Verify that WashBook presents ({step})',VerificationMethod.CONTAINS)
         os.remove('./logs.txt')
