@@ -111,12 +111,15 @@ class QAP_T8742(TestCase):
                                   'GatingRuleName', 'GatingRuleCondName', 'LastExecutionPolicy', 'SecondaryOrderID',
                                   'SecondaryExecID', 'NoParty', 'MaxPriceLevels', 'Parties',
                                   'IndividualAllocID', 'AllocNetPrice', 'AllocQty', 'AllocPrice', 'OrderAvgPx',
-                                  'tag11245', 'ExecAllocGrp', 'SettlCurrency'
-                                  ]
+                                  'tag11245', 'ExecAllocGrp',
+                                  'SettlCurrFxRate', 'SettlCurrFxRateCalc', 'MatchStatus', 'ConfirmType',
+                                  'ConfirmID', 'ConfirmTransType', 'CpctyConfGrp', 'SettlCurrAmt', 'ConfirmStatus',
+                                  'AllocSettlCurrAmt']
         fix_new_order_single = FixMessageNewOrderSingleOMS(self.data_set)
         change_parameters = {
             'ClOrdID': order_id,
             'TransactTime': '*',
+            'SettlCurrency': '*',
             'PreAllocGrp': {'NoAllocs':
                 [{
                     'AllocSettlCurrency': currency_USD,
@@ -156,19 +159,22 @@ class QAP_T8742(TestCase):
             'Verifying that order fully filled (step 2)')
 
         # part 2: Check 35=8 (39=2) message for BackOffice
-        execution_report = FixMessageExecutionReportOMS(self.data_set, change_parameters)
         change_parameters['ClOrdID'] = cl_ord_id
+        change_parameters['M_PreAllocGrp'] = change_parameters.pop('PreAllocGrp')
+        execution_report = FixMessageExecutionReportOMS(self.data_set, change_parameters)
         execution_report.change_parameters({'ExecType': 'F', "OrdStatus": "2"})
+        list_of_ignored_fields.append('PreAllocGrp')
         self.fix_verifier.check_fix_message_fix_standard(execution_report, ignored_fields=list_of_ignored_fields)
+        list_of_ignored_fields.remove('PreAllocGrp')
         # end_of_part
         # endregion
 
         # region step 3: Book DMA order
         self.allocation_instruction.set_default_book(order_id)
-        self.allocation_instruction.update_fields_in_component('AllocationInstructionBlock',
+        self.allocation_instruction.update_fields_in_component(JavaApiFields.AllocationInstructionBlock.value,
                                                                {
-                                                                   'Qty': self.qty,
-                                                                   'AccountGroupID': self.client,
+                                                                   JavaApiFields.Qty.value: self.qty,
+                                                                   JavaApiFields.AccountGroupID.value: self.client,
                                                                })
         self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
         order_update = self.java_api_manager.get_last_message(ORSMessageType.OrdUpdate.value).get_parameters()[
@@ -182,7 +188,7 @@ class QAP_T8742(TestCase):
              JavaApiFields.DoneForDay.value: OrderReplyConst.DoneForDay_YES.value},
             order_update, 'Verifying that order Booked (step 3)')
         # endregion
-        #
+
         # region step 4: Approve block
         self.approve_block.set_default_approve(alloc_id)
         self.java_api_manager.send_message_and_receive_response(self.approve_block)
@@ -198,6 +204,8 @@ class QAP_T8742(TestCase):
 
         # region step 5-6: Allocate block
         self.confirmation_request.set_default_allocation(alloc_id)
+        self.confirmation_request.remove_fields_from_component(JavaApiFields.ConfirmationBlock.value,
+                                                               [JavaApiFields.AllocAccountID.value])
         self.confirmation_request.update_fields_in_component(JavaApiFields.ConfirmationBlock.value,
                                                              {JavaApiFields.AllocQty.value: self.qty,
                                                               JavaApiFields.AllocFreeAccountID.value: dummy_account,
@@ -220,6 +228,11 @@ class QAP_T8742(TestCase):
             'NoOrders': [{
                 'ClOrdID': cl_ord_id,
                 'OrderID': order_id
+            }],
+            'NoAllocs': [{
+                'AllocSettlCurrency': currency_USD,
+                'SettlCurrency': currency_USD,
+                'AllocAccount': dummy_account
             }]}
         allocation_report = FixMessageAllocationInstructionReportOMS(change_parameters)
         self.fix_verifier.check_fix_message_fix_standard(allocation_report, ignored_fields=list_of_ignored_fields)
@@ -227,6 +240,8 @@ class QAP_T8742(TestCase):
 
         # part 2 check 35 = AK message
         del change_parameters['AllocType']
+        del change_parameters['NoAllocs']
+        change_parameters['SettlCurrency'] = currency_USD
         change_parameters['AllocAccount'] = dummy_account
         confirmation_report = FixMessageConfirmationReportOMS(self.data_set, change_parameters)
         self.fix_verifier.check_fix_message_fix_standard(confirmation_report,
