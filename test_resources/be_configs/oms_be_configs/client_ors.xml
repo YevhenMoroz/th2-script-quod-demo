@@ -58,6 +58,7 @@ Copyright Quod Financial
 					<CancelReject>true</CancelReject>
 					<Cancelled>true</Cancelled>
 					<Replaced>true</Replaced>
+					<Rejected>true</Rejected>
 					<Eliminated>true</Eliminated>
 					<PendingOpen>true</PendingOpen>
 					<Calculated>true</Calculated>
