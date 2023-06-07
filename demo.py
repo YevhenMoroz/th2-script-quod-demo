@@ -5,12 +5,8 @@ from datetime import datetime
 from custom import basic_custom_actions as bca
 
 from stubs import Stubs
+from test_cases.fx.fx_mm_autohedging.QAP_T10300 import QAP_T10300
 
-from test_cases.fx.fx_mm_autohedging.QAP_T9220 import QAP_T9220
-from test_cases.fx.fx_mm_positions.QAP_T10649 import QAP_T10649
-from test_cases.fx.fx_mm_positions.QAP_T10840 import QAP_T10840
-from test_cases.fx.fx_mm_positions.QAP_T11216 import QAP_T11216
-from test_cases.fx.fx_mm_rfq.QAP_T8020 import QAP_T8020
 from test_framework.configurations.component_configuration import ComponentConfiguration
 
 logging.basicConfig(format='%(asctime)s - %(message)s')
@@ -26,11 +22,10 @@ def test_run():
     start_time = time.time()
     print(f"Test start")
     # endregion
-    Stubs.frontend_is_open = True
 
     try:
 
-        QAP_T8020(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10300(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
         # rule_manager = RuleManager(Simulators.connectivity)
         # # rule_manager.add_TRFQ("fix-bs-rfq-314-luna-standard")
