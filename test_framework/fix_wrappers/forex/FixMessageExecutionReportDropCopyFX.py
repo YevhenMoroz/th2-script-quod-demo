@@ -139,3 +139,43 @@ class FixMessageExecutionReportDropCopyFX(FixMessageExecutionReport):
         if response is not None and "Account" in response.get_parameters():
             self.add_tag({"Account": "*"})
         return self
+
+    def set_params_for_cancel(self, trade_request, response=None):
+        request = trade_request.get_parameters()["TradeEntryRequestBlock"]
+        temp = dict(
+            ClOrdID="*",
+            OrigClOrdID="*",
+            Account="*",
+            Currency=request["Currency"],
+            HandlInst="2",
+            LastQty="*",
+            OrderQty=trade_request.get_exec_qty(),
+            CxlQty=trade_request.get_exec_qty(),
+            CumQty="0",
+            SettlCurrency="*",
+            OrdType="1",
+            Side="1" if request["Side"] == "B" else "2",
+            SettlType=self.get_data_set().get_settle_type_by_name("spot"),
+            TimeInForce="*",
+            StrategyName="1555",
+            TargetStrategy="1008",
+            OrdStatus="4",
+            ExecRestatementReason="4",
+            TransactTime="*",
+            AvgPx="*",
+            ExecID="*",
+            LastPx="*",
+            OrderID="*",
+            SettlDate="*",
+            ExecType="4",
+            LeavesQty=0,
+
+            QtyType=0,
+            Instrument="*",
+            NoParty="*"
+        )
+        super().change_parameters(temp)
+
+        if response is not None and "Account" in response.get_parameters():
+            self.add_tag({"Account": "*"})
+        return self
