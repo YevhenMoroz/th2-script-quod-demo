@@ -31,19 +31,19 @@ class FixMessageMarketDataSnapshotFullRefreshAlgo(FixMessageMarketDataSnapshotFu
         return self
 
 
-    def set_market_data(self) -> FixMessageMarketDataSnapshotFullRefresh:
+    def set_market_data(self, best_bid = 30, best_ask = 40) -> FixMessageMarketDataSnapshotFullRefresh:
         base_parameters = {
             'MDReqID': "2754",
             'NoMDEntries': [
                 {
                     'MDEntryType': '0',
-                    'MDEntryPx': '30',
+                    'MDEntryPx': best_bid,
                     'MDEntrySize': '1000000',
                     'MDEntryPositionNo': '1',
                 },
                 {
                     'MDEntryType': '1',
-                    'MDEntryPx': '40',
+                    'MDEntryPx': best_ask,
                     'MDEntrySize': '1000000',
                     'MDEntryPositionNo': '1',
                 }
