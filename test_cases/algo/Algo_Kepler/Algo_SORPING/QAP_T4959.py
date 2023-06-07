@@ -236,7 +236,7 @@ class QAP_T4959(TestCase):
 
         # region Check that the parent is still Open
         self.fix_verifier_sell.set_case_id(bca.create_event("Check that the parent is still Open", self.test_id))
-        self.fix_verifier_sell.check_fix_message_sequence([er_pending_new_SORPING_order_params, er_new_SORPING_order_params], key_parameters_list=[None, None], direction=self.FromQuod, pre_filter=None)
+        self.fix_verifier_sell.check_fix_message_sequence_kepler([er_pending_new_SORPING_order_params, er_new_SORPING_order_params], key_parameters_list=[None, None], direction=self.FromQuod, pre_filter=None)
         # endregion
 
         # region Check Read log

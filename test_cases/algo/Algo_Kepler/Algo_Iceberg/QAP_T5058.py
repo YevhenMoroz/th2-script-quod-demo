@@ -162,12 +162,12 @@ class QAP_T5058(TestCase):
 
         # region Check that are no modification or cancel request on child
         self.fix_verifier_buy.set_case_id(bca.create_event("Check that are no modification or cancel request on child", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([self.dma_1_order], key_parameters_list=[None], direction=self.FromQuod, pre_filter=None)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([self.dma_1_order], key_parameters_list=[None], direction=self.FromQuod, pre_filter=None)
         # endregion
 
         # region Check that are no ER replaced on parent
         self.fix_verifier_sell.set_case_id(bca.create_event("Check that are no ER replaced on parent", self.test_id))
-        self.fix_verifier_sell.check_fix_message_sequence([er_pending_new_Iceberg_order_params, er_new_Iceberg_order_params, er_reject_replaced_Iceberg_order_params], key_parameters_list=[None, None, None], direction=self.FromQuod, pre_filter=None)
+        self.fix_verifier_sell.check_fix_message_sequence_kepler([er_pending_new_Iceberg_order_params, er_new_Iceberg_order_params, er_reject_replaced_Iceberg_order_params], key_parameters_list=[None, None, None], direction=self.FromQuod, pre_filter=None)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

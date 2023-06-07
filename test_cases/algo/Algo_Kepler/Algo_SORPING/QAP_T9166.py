@@ -186,7 +186,7 @@ class QAP_T9166(TestCase):
 
         # region Check that it is no CancelReject
         self.fix_verifier_sell.set_case_id(bca.create_event("Check that it is no CancelReject", self.test_id))
-        self.fix_verifier_sell.check_fix_message_sequence([er_pending_new_SORPING_order_params, er_new_SORPING_order_params, er_cancel_SORPING_order_params], [self.key_params_ER_parent, self.key_params_ER_parent, self.key_params_ER_parent], self.FromQuod, pre_filter=None)
+        self.fix_verifier_sell.check_fix_message_sequence_kepler([er_pending_new_SORPING_order_params, er_new_SORPING_order_params, er_cancel_SORPING_order_params], [self.key_params_ER_parent, self.key_params_ER_parent, self.key_params_ER_parent], self.FromQuod, pre_filter=None)
         # endregion
 
         # region Check Read log
