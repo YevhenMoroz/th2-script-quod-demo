@@ -42,7 +42,7 @@ class QAP_T7571(TestCase):
         self.accept_request = CDOrdAckBatchRequest()
         self.qty = '100000'
         self.price = str(random.randint(3, 15))
-        self.price_transfer = '2.0'
+        self.price_precondition = '2.0'
         self.qty_to_transfer = '50.0'
         self.request_for_position = RequestForPositions()
         self.pos_trans = PositionTransferInstructionOMS(data_set)
