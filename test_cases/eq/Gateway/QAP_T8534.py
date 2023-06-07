@@ -108,16 +108,17 @@ class QAP_T8534(TestCase):
         executing_firm_counterpart = self.data_set.get_counterpart_id_java_api('counterpart_executing_firm')
         contra_firm_counterpart = self.data_set.get_counterpart_id_java_api('counterpart_contra_firm')
         contra_firm_counterpart2 = self.data_set.get_counterpart_id_java_api('counterpart_contra_firm_2')
-        contra_firm2_for_es = self.data_set.get_counterpart_java_api_for_es('counterpart_contra_firm')
+        contra_firm2_for_es = self.data_set.get_counterpart_java_api_for_es('counterpart_contra_firm2')
         counterpart_list.remove(contra_firm_for_es)
         counterpart_list.append(contra_firm2_for_es)
+
         self.execution_report.update_fields_in_component(JavaApiFields.ExecutionReportBlock.value,
                                                          {
                                                              JavaApiFields.LeavesQty.value: '0.0',
                                                              JavaApiFields.VenueExecID.value: bca.client_orderid(9),
-                                                             JavaApiFields.PartiesList.value: {
-                                                                 JavaApiFields.PartiesBlock.value:
-                                                                     counterpart_list}
+                                                             # JavaApiFields.PartiesList.value: {
+                                                             #     JavaApiFields.PartiesBlock.value:
+                                                             #         counterpart_list}
 
                                                          })
         self.java_api_manager.send_message_and_receive_response(self.execution_report)
@@ -135,6 +136,8 @@ class QAP_T8534(TestCase):
             {JavaApiFields.LastCapacity.value: ExecutionReportConst.LastCapacity_Agency.value},
             execution_report_calculated,
             f'Verifying that calculated execution has properly defined {JavaApiFields.LastCapacity.value} (step 2)')
+        execution_report_calculated = execution_report_calculated[JavaApiFields.CounterpartList.value][
+                                                        JavaApiFields.CounterpartBlock.value]
         self._verify_that_counterpart_is_present(contra_firm_counterpart, execution_report_calculated,
                                                  VerificationMethod.NOT_CONTAINS)
         self._verify_that_counterpart_is_present(contra_firm_counterpart2, execution_report_calculated,
