@@ -116,10 +116,6 @@ class QAP_T8534(TestCase):
                                                          {
                                                              JavaApiFields.LeavesQty.value: '0.0',
                                                              JavaApiFields.VenueExecID.value: bca.client_orderid(9),
-                                                             # JavaApiFields.PartiesList.value: {
-                                                             #     JavaApiFields.PartiesBlock.value:
-                                                             #         counterpart_list}
-
                                                          })
         self.java_api_manager.send_message_and_receive_response(self.execution_report)
         execution_report = \
