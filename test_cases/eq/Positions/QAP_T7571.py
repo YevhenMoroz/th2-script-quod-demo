@@ -211,7 +211,7 @@ class QAP_T7571(TestCase):
                                                      {JavaApiFields.AccountGroupID.value: self.client,
                                                       JavaApiFields.Side.value: side,
                                                       JavaApiFields.OrdQty.value: self.qty,
-                                                      JavaApiFields.Price.value: self.price_transfer,
+                                                      JavaApiFields.Price.value: self.price_precondition,
                                                       JavaApiFields.PreTradeAllocationBlock.value: {
                                                           JavaApiFields.PreTradeAllocationList.value: {JavaApiFields.PreTradeAllocAccountBlock.value: [
                                                               {JavaApiFields.AllocAccountID.value: self.acc1,
@@ -226,6 +226,6 @@ class QAP_T7571(TestCase):
         # end of part
 
         # part 2: Manual Execute CO order
-        self.trade_entry.set_default_trade(order_id, self.price_transfer, self.qty)
+        self.trade_entry.set_default_trade(order_id, self.price_precondition, self.qty)
         self.ja_manager.send_message_and_receive_response(self.trade_entry)
         # end of part
