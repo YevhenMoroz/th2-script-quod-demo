@@ -66,30 +66,34 @@ class QAP_T7573(TestCase):
         # endregion
         # region Step 3-4
         self.pos_trans.set_default_transfer(self.source_acc, self.dest_acc, self.qty)
-        self.pos_trans.update_fields_in_component("PositionTransferInstructionBlock",
-                                                  {"InstrID": self.data_set.get_instrument_id_by_name('instrument_1')})
+        price = self.pos_trans.get_parameters()[JavaApiFields.PositionTransferInstructionBlock.value][JavaApiFields.ClearingTradePrice.value]
+        self.pos_trans.update_fields_in_component(JavaApiFields.PositionTransferInstructionBlock.value,
+                                                  {JavaApiFields.InstrID.value: self.data_set.get_instrument_id_by_name('instrument_1')})
         self.ja_manager.send_message_and_receive_response(self.pos_trans)
-        trans_id = self.ja_manager.get_last_message(ORSMessageType.PositionTransferReport.value).get_parameters()[
-            "PositionTransferReportBlock"]["PositionTransferID"]
-        exec = self.ja_manager.get_last_message(ORSMessageType.ExecutionReport.value, trans_id).get_parameters()[
-            JavaApiFields.ExecutionReportBlock.value]
         # endregion
         # region Step 5-7
         result_for_wb1_new = self._extract_cum_values_for_washbook(self.source_acc)
         result_for_wb2_new = self._extract_cum_values_for_washbook(self.dest_acc)
-        exp_pos_qty = str(float(result_for_wb1["PositQty"]) - float(self.qty))
-        exp_pos_qty2 = str(float(result_for_wb2["PositQty"]) + float(self.qty))
-        exp_transferred_out_amt = str(float(result_for_wb1["TransferredOutAmt"]) + (float(self.qty) * float(self.price)))
+        exp_pos_qty = str(float(result_for_wb1[0][JavaApiFields.PositQty.value]) - float(self.qty))
+        exp_pos_qty2 = str(float(result_for_wb2[0][JavaApiFields.PositQty.value]) + float(self.qty))
+        exp_transferred_out_amt = str(float(result_for_wb1[0][JavaApiFields.TransferredOutAmt.value]) + (float(self.qty) * float(self.price)))
 
-        exp_transferred_out_amt2 = result_for_wb2["TransferredOutAmt"]
-        self.ja_manager.compare_values({"PositQty": exp_pos_qty, "TransferredOutAmt": exp_transferred_out_amt},
-                                       result_for_wb1_new, "Step 5")
-        self.ja_manager.compare_values({"PositQty": exp_pos_qty2, "TransferredOutAmt": exp_transferred_out_amt2},
-                                       result_for_wb2_new, "Step 6")
-        exp_net_weighted_avg_px_acc = self.pos_manager.calculate_gross_weighted_avg_px_buy_side_execution(
-            result_for_wb2["NetWeightedAvgPx"], result_for_wb2["PositQty"], self.qty, self.price)
-        self.ja_manager.compare_values({"NetWeightedAvgPx": exp_net_weighted_avg_px_acc},
-                                       result_for_wb2_new, "Step 7")
+        exp_transferred_in_amt = str(float(result_for_wb2[0][JavaApiFields.TransferredInAmt.value]) + (float(self.qty) * float(self.price)))
+        self.ja_manager.compare_values({JavaApiFields.PositQty.value: exp_pos_qty, JavaApiFields.TransferredOutAmt.value: exp_transferred_out_amt},
+                                       result_for_wb1_new[0], "Step 5")
+        self.ja_manager.compare_values({JavaApiFields.PositQty.value: exp_pos_qty2, JavaApiFields.TransferredInAmt.value: exp_transferred_in_amt},
+                                       result_for_wb2_new[0], "Step 6")
+
+        today_net_pl_actually = result_for_wb1_new[0][JavaApiFields.DailyRealizedNetPL.value]
+        net_weighted_avg_px_before = result_for_wb1[0][JavaApiFields.NetWeightedAvgPx.value]
+        daily_pl_actually = result_for_wb1_new[1]
+        realized_pl = PositionCalculationManager.calculate_realized_pl_for_transfer_sell(result_for_wb1[0][JavaApiFields.PositQty.value], self.qty, price, net_weighted_avg_px_before)
+        today_net_pl_expected = str(float(result_for_wb1[0][JavaApiFields.DailyRealizedNetPL.value]) + float(realized_pl))
+        daily_pl_expected = str(float(result_for_wb1[1]) + float(realized_pl))
+        self.ja_manager.compare_values({JavaApiFields.DailyRealizedNetPL.value: today_net_pl_expected,
+                                       JavaApiFields.TodayRealizedPL: daily_pl_expected},
+                                       {JavaApiFields.DailyRealizedNetPL.value: today_net_pl_actually,
+                                       JavaApiFields.TodayRealizedPL: daily_pl_actually}, 'Step 7')
         # endregion
 
     def _extract_cum_values_for_washbook(self, washbook):
@@ -98,8 +102,12 @@ class QAP_T7573(TestCase):
                                               washbook)
         self.ja_manager.send_message_and_receive_response(self.request_for_position)
         request_for_position_ack = self.ja_manager.get_last_message(PKSMessageType.RequestForPositionsAck.value). \
-            get_parameters()[JavaApiFields.RequestForPositionsAckBlock.value][JavaApiFields.PositionReportBlock.value] \
-            [JavaApiFields.PositionList.value][JavaApiFields.PositionBlock.value]
-        for position_record in request_for_position_ack:
+            get_parameters()[JavaApiFields.RequestForPositionsAckBlock.value][JavaApiFields.PositionReportBlock.value]
+        position_report = request_for_position_ack[JavaApiFields.PositionList.value][JavaApiFields.PositionBlock.value]
+        daily_pl = request_for_position_ack[JavaApiFields.SecurityAccountPLBlock.value][
+            JavaApiFields.TodayRealizedPL.value]
+        for position_record in position_report:
             if self.instrument_id == position_record[JavaApiFields.InstrID.value]:
-                return position_record
+                return position_record, daily_pl
+
+

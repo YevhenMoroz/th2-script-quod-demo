@@ -162,6 +162,7 @@ class QtyPercentageProfile(Enum):
 class JavaApiFields(Enum):
     ExecCommission = 'ExecCommission'
     SettlDate = 'SettlDate'
+    ClearingTradePrice = 'ClearingTradePrice'
     AllocationInstructionBlock = 'AllocationInstructionBlock'
     RequestForOverdueRetailPositionsAckBlock = 'RequestForOverdueRetailPositionsAckBlock'
     TransExecStatus = 'TransExecStatus'

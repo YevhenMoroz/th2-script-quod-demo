@@ -154,14 +154,38 @@ class OrderSubmitOMS(OrderSubmit):
                                          'ClOrdID': cl_ord_id, 'ExecutionPolicy': 'DMA'})
         if external_algo_twap:
             algo_params = {"AlgoParametersBlock": {"AlgoType": "External",
-                                                   "ScenarioID": "101",
+                                                   "ScenarioID": "1001",
                                                    "AlgoPolicyID": "1000131"},
                            "ExternalAlgoParametersBlock": {"ExternalAlgoParameterListBlock":
                                {"ExternalAlgoParameterBlock": [
                                    {'AlgoParameterName': "StrategyTag",
                                     "AlgoParamString": "TWAP",
                                     'VenueScenarioParameterID': "7505"}]},
-                               'ScenarioID': "101",
+                               'ScenarioID': "1001",
+                               "ScenarioIdentifier": "8031",
+                               "VenueScenarioID": "TWAP",
+                               "VenueScenarioVersionID": "9682",
+                               "VenueScenarioVersionValue": "ATDLEQ5.3.1"}}
+            self.update_fields_in_component('NewOrderSingleBlock', algo_params)
+        return self
+
+    def set_default_child_dma_market(self,  parent_id: str, client_order_id: str = None, external_algo_twap=False):
+        cl_ord_id = client_order_id or basic_custom_actions.client_orderid(9)
+        self.change_parameters(deepcopy(self.base_parameters))
+        parent_params = {"ParentOrdrBlock": [{"ParentOrdID": parent_id}]}
+        self.update_fields_in_component('NewOrderSingleBlock',
+                                        {"OrdType": 'Market', "ParentOrdrList": parent_params,
+                                         'ClOrdID': cl_ord_id, 'ExecutionPolicy': 'DMA'})
+        if external_algo_twap:
+            algo_params = {"AlgoParametersBlock": {"AlgoType": "External",
+                                                   "ScenarioID": "1001",
+                                                   "AlgoPolicyID": "1000131"},
+                           "ExternalAlgoParametersBlock": {"ExternalAlgoParameterListBlock":
+                               {"ExternalAlgoParameterBlock": [
+                                   {'AlgoParameterName': "StrategyTag",
+                                    "AlgoParamString": "TWAP",
+                                    'VenueScenarioParameterID': "7505"}]},
+                               'ScenarioID': "1001",
                                "ScenarioIdentifier": "8031",
                                "VenueScenarioID": "TWAP",
                                "VenueScenarioVersionID": "9682",
