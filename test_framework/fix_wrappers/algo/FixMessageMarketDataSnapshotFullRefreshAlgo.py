@@ -51,3 +51,24 @@ class FixMessageMarketDataSnapshotFullRefreshAlgo(FixMessageMarketDataSnapshotFu
         }
         super().change_parameters(base_parameters)
         return self
+
+    def set_market_data_empty(self) -> FixMessageMarketDataSnapshotFullRefresh:
+        base_parameters = {
+            'MDReqID': "2754",
+            'NoMDEntries': [
+                {
+                    'MDEntryType': '0',
+                    'MDEntryPx': '0',
+                    'MDEntrySize': '0',
+                    'MDEntryPositionNo': '1',
+                },
+                {
+                    'MDEntryType': '1',
+                    'MDEntryPx': '0',
+                    'MDEntrySize': '0',
+                    'MDEntryPositionNo': '1',
+                }
+            ]
+        }
+        super().change_parameters(base_parameters)
+        return self
