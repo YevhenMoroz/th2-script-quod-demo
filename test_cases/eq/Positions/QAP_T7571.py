@@ -40,7 +40,7 @@ class QAP_T7571(TestCase):
             desk=self.desk,
             role=SubmitRequestConst.USER_ROLE_1.value)
         self.accept_request = CDOrdAckBatchRequest()
-        self.qty = '100000'
+        self.qty = self.order_submit.get_parameter("NewOrderSingleBlock")['OrdQty']
         self.price = str(random.randint(3, 15))
         self.price_precondition = '2.0'
         self.qty_to_transfer = '50.0'
