@@ -1,4 +1,5 @@
 import logging
+import random
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
@@ -40,9 +41,9 @@ class QAP_T7572(TestCase):
             role=SubmitRequestConst.USER_ROLE_1.value)
         self.accept_request = CDOrdAckBatchRequest()
         self.qty = self.order_submit.get_parameter("NewOrderSingleBlock")['OrdQty']
-        self.price = '4.0'
+        self.price = str(random.randint(3, 15))
+        self.price_precondition = '2.0'
         self.qty_to_transfer = '50.0'
-        self.qty_to_transfer_second = '20.0'
         self.qty_to_transfer_third = '10.0'
         self.request_for_position = RequestForPositions()
         self.pos_trans = PositionTransferInstructionOMS(data_set)
@@ -79,7 +80,7 @@ class QAP_T7572(TestCase):
         # endregion
 
         # region step 3-4 : Perform Position Transfer
-        self.pos_trans.set_default_transfer(self.acc1, self.acc2, self.qty_to_transfer_second, self.price)
+        self.pos_trans.set_default_transfer(self.acc1, self.acc2, self.qty_to_transfer, self.price)
         self.pos_trans.update_fields_in_component("PositionTransferInstructionBlock",
                                                   {"InstrID": self.instrument_id})
         self.ja_manager.send_message_and_receive_response(self.pos_trans)
@@ -100,7 +101,7 @@ class QAP_T7572(TestCase):
 
         # region step 7: Check Today Net Pl and Common Daily PL:
         self._check_common_daily_pl_and_today_daily_pl(posit_acc1_before_transfer, common_daily_pl_before_transfer,
-                                                       self.qty_to_transfer_second, 'step 7')
+                                                       self.qty_to_transfer, 'step 7')
         # endregion
 
         # region step 8 : Amend Position Transfer
@@ -155,8 +156,8 @@ class QAP_T7572(TestCase):
         posit_qty_after = currently_position[JavaApiFields.PositQty.value]
         transferred_amt_before = position_for_account[column]
         transferred_amt_after = currently_position[column]
-        expected_transferred_amt = str(float(self.qty_to_transfer_second) * float(self.price))
-        expected_result = {JavaApiFields.PositQty.value: self.qty_to_transfer_second,
+        expected_transferred_amt = str(float(self.qty_to_transfer) * float(self.price))
+        expected_result = {JavaApiFields.PositQty.value: self.qty_to_transfer,
                            column: expected_transferred_amt}
         values_for_check = [
             {column: str(float(transferred_amt_after) - float(transferred_amt_before))},
@@ -177,15 +178,15 @@ class QAP_T7572(TestCase):
 
     def _precondition(self, side):
         # part 1: Create and accept CO order
-        self.order_submit.update_fields_in_component('NewOrderSingleBlock',
-                                                     {'AccountGroupID': self.client,
-                                                      'Side': side,
-                                                      'OrdQty': self.qty,
-                                                      "Price": self.price,
-                                                      'PreTradeAllocationBlock': {
-                                                          'PreTradeAllocationList': {'PreTradeAllocAccountBlock': [
-                                                              {'AllocAccountID': self.acc1,
-                                                               'AllocQty': self.qty}]}}})
+        self.order_submit.update_fields_in_component(JavaApiFields.NewOrderSingleBlock.value,
+                                                     {JavaApiFields.AccountGroupID.value: self.client,
+                                                      JavaApiFields.Side.value: side,
+                                                      JavaApiFields.OrdQty.value: self.qty,
+                                                      JavaApiFields.Price.value: self.price,
+                                                      JavaApiFields.PreTradeAllocationBlock.value: {
+                                                          JavaApiFields.PreTradeAllocationList.value: {JavaApiFields.PreTradeAllocAccountBlock.value: [
+                                                              {JavaApiFields.AllocAccountID.value: self.acc1,
+                                                               JavaApiFields.AllocQty.value: self.qty}]}}})
         self.ja_manager_second.send_message_and_receive_response(self.order_submit)
         cd_ord_notif = self.ja_manager_second.get_last_message(CSMessageType.CDOrdNotif.value).get_parameters()[
             JavaApiFields.CDOrdNotifBlock.value]
@@ -196,7 +197,7 @@ class QAP_T7572(TestCase):
         # end of part
 
         # part 2: Manual Execute CO order
-        self.trade_entry.set_default_trade(order_id, self.price, self.qty)
+        self.trade_entry.set_default_trade(order_id, self.price_precondition, self.qty)
         self.ja_manager.send_message_and_receive_response(self.trade_entry)
         # end of part
 
@@ -210,15 +211,10 @@ class QAP_T7572(TestCase):
             JavaApiFields.TodayRealizedPL.value]
         posit_qty_source_acc_before_transfer = posit_before_transfer[JavaApiFields.PositQty.value]
         net_weighted_avg_px_before_transfer = posit_before_transfer[JavaApiFields.NetWeightedAvgPx.value]
-        net_weighted_avg_px_after_transfer = PositionCalculationManager.calculate_net_weighted_avg_px_for_position_transfer_source_acc(
-            posit_qty_source_acc_before_transfer,
-            qty_to_transfer,
-            net_weighted_avg_px_before_transfer,
-            self.price)
         today_net_pl_before_transfer = posit_before_transfer[JavaApiFields.DailyRealizedNetPL.value]
         realized_pl = PositionCalculationManager.calculate_realized_pl_for_transfer_sell(
             posit_qty_source_acc_before_transfer, qty_to_transfer, self.price,
-            net_weighted_avg_px_after_transfer)
+            net_weighted_avg_px_before_transfer)
         today_net_pl_after_transfer = str(float(
             today_net_pl_before_transfer) + float(realized_pl))
         expected_daily_pl = str(float(common_daily_pl_before_transfer) + float(realized_pl))
