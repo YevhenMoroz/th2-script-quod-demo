@@ -261,8 +261,14 @@ class MDAMessageType(Enum):
 class AQSMessageType(Enum):
     FrontendQuery = 'Order_FrontendQuery'
     FrontendQueryReply = 'Order_FrontendQueryReply'
+    AutoHedgerInstrSymbolStatus = "Adminmonitoring_AutoHedgerInstrSymbolStatusManagementRequest"
+    AutoHedgerStatusManagementRequest = "Adminmonitoring_AutoHedgerStatusManagementRequest"
 
 
 class StoredProcedureNamesForAqs(Enum):
     FEExecutionTransferList = 'FE_ExecutionTransfer_List'
     FE_OrdrFromOrdID_List = 'FE_OrdrFromOrdID_List'
+
+
+class MPASMessageType(Enum):
+    AutoHedgerInstrSymbolBatchUpdate = "Order_AutoHedgerInstrSymbolBatchUpdate"
