@@ -1,8 +1,9 @@
 import logging
 from pathlib import Path
+import random
 
 from custom import basic_custom_actions as bca
-from test_cases.eq.Positions.PreConditionForPosition import PreConditionForPosition
+from test_framework.pre_condition_for_position import PreConditionForPosition
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.message_types import PKSMessageType, CSMessageType, ORSMessageType
@@ -39,8 +40,9 @@ class QAP_T7571(TestCase):
             desk=self.desk,
             role=SubmitRequestConst.USER_ROLE_1.value)
         self.accept_request = CDOrdAckBatchRequest()
-        self.qty = self.order_submit.get_parameter("NewOrderSingleBlock")['OrdQty']
-        self.price = '4.0'
+        self.qty = '100000'
+        self.price = str(random.randint(3, 15))
+        self.price_transfer = '2.0'
         self.qty_to_transfer = '50.0'
         self.request_for_position = RequestForPositions()
         self.pos_trans = PositionTransferInstructionOMS(data_set)
@@ -105,15 +107,10 @@ class QAP_T7571(TestCase):
             JavaApiFields.TodayRealizedPL.value]
         posit_qty_source_acc_before_transfer = posit_acc1_before_transfer[JavaApiFields.PositQty.value]
         net_weighted_avg_px_before_transfer = posit_acc1_before_transfer[JavaApiFields.NetWeightedAvgPx.value]
-        net_weighted_avg_px_after_transfer = PositionCalculationManager.calculate_net_weighted_avg_px_for_position_transfer_source_acc(
-            posit_qty_source_acc_before_transfer,
-            self.qty_to_transfer,
-            net_weighted_avg_px_before_transfer,
-            self.price)
         today_net_pl_before_transfer = posit_acc1_before_transfer[JavaApiFields.DailyRealizedNetPL.value]
         realized_pl = PositionCalculationManager.calculate_realized_pl_for_transfer_sell(
             posit_qty_source_acc_before_transfer, self.qty_to_transfer, self.price,
-            net_weighted_avg_px_after_transfer)
+            net_weighted_avg_px_before_transfer)
         today_net_pl_after_transfer = str(float(
             today_net_pl_before_transfer) + float(realized_pl))
         expected_daily_pl = str(float(common_daily_pl_before_transfer) + float(realized_pl))
@@ -210,16 +207,15 @@ class QAP_T7571(TestCase):
         return common_daily_pl
 
     def _precondition(self, side):
-        # part 1: Create and accept CO order
-        self.order_submit.update_fields_in_component('NewOrderSingleBlock',
-                                                     {'AccountGroupID': self.client,
-                                                      'Side': side,
-                                                      'OrdQty': self.qty,
-                                                      "Price": self.price,
-                                                      'PreTradeAllocationBlock': {
-                                                          'PreTradeAllocationList': {'PreTradeAllocAccountBlock': [
-                                                              {'AllocAccountID': self.acc1,
-                                                               'AllocQty': self.qty}]}}})
+        self.order_submit.update_fields_in_component(JavaApiFields.NewOrderSingleBlock.value,
+                                                     {JavaApiFields.AccountGroupID.value: self.client,
+                                                      JavaApiFields.Side.value: side,
+                                                      JavaApiFields.OrdQty.value: self.qty,
+                                                      JavaApiFields.Price.value: self.price_transfer,
+                                                      JavaApiFields.PreTradeAllocationBlock.value: {
+                                                          JavaApiFields.PreTradeAllocationList.value: {JavaApiFields.PreTradeAllocAccountBlock.value: [
+                                                              {JavaApiFields.AllocAccountID.value: self.acc1,
+                                                               JavaApiFields.AllocQty.value: self.qty}]}}})
         self.ja_manager_second.send_message_and_receive_response(self.order_submit)
         cd_ord_notif = self.ja_manager_second.get_last_message(CSMessageType.CDOrdNotif.value).get_parameters()[
             JavaApiFields.CDOrdNotifBlock.value]
@@ -230,6 +226,6 @@ class QAP_T7571(TestCase):
         # end of part
 
         # part 2: Manual Execute CO order
-        self.trade_entry.set_default_trade(order_id, self.price, self.qty)
+        self.trade_entry.set_default_trade(order_id, self.price_transfer, self.qty)
         self.ja_manager.send_message_and_receive_response(self.trade_entry)
         # end of part
