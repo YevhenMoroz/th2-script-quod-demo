@@ -139,7 +139,7 @@ class QAP_T10750(TestCase):
         self.sleep(3)
         # endregion
         # region Step 3
-        self.trade_request.set_default_params()
+        self.trade_request.set_params_for_fwd()
         self.trade_request.remove_fields_from_component("TradeEntryRequestBlock", ["SettlDate"])
         self.trade_request.update_fields_in_component("TradeEntryRequestBlock", {"ClientAccountGroupID": self.client_ext})
         # TODO Wait for PFX-6531
