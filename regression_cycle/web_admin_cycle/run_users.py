@@ -24,6 +24,7 @@ from test_cases.web_admin.web_admin_test_cases.users.QAP_T3658 import QAP_T3658
 from test_cases.web_admin.web_admin_test_cases.users.QAP_T3659 import QAP_T3659
 from test_cases.web_admin.web_admin_test_cases.users.QAP_T3679 import QAP_T3679
 from test_cases.web_admin.web_admin_test_cases.users.QAP_T3688 import QAP_T3688
+from test_cases.web_admin.web_admin_test_cases.users.QAP_T3690 import QAP_T3690
 from test_cases.web_admin.web_admin_test_cases.users.QAP_T3693 import QAP_T3693
 from test_cases.web_admin.web_admin_test_cases.users.QAP_T3718 import QAP_T3718
 from test_cases.web_admin.web_admin_test_cases.users.QAP_T3720 import QAP_T3720
@@ -46,6 +47,10 @@ from test_cases.web_admin.web_admin_test_cases.users.QAP_T4009 import QAP_T4009
 from test_cases.web_admin.web_admin_test_cases.users.QAP_T4010 import QAP_T4010
 from test_cases.web_admin.web_admin_test_cases.users.QAP_T7871 import QAP_T7871
 from test_cases.web_admin.web_admin_test_cases.users.QAP_T7874 import QAP_T7874
+from test_cases.web_admin.web_admin_test_cases.users.QAP_T11206 import QAP_T11206
+from test_cases.web_admin.web_admin_test_cases.users.QAP_T11215 import QAP_T11215
+from test_cases.web_admin.web_admin_test_cases.users.QAP_T11232 import QAP_T11232
+from test_cases.web_admin.web_admin_test_cases.users.QAP_T11585 import QAP_T11585
 
 
 class RunUsers:
@@ -97,6 +102,8 @@ class RunUsers:
                       environment=configuration.environment).run()
             QAP_T3688(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
+            QAP_T3690(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                      environment=configuration.environment, db_manager=self.db_manager).run()
             QAP_T3693(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3718(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
@@ -139,6 +146,14 @@ class RunUsers:
                       environment=configuration.environment).run()
             QAP_T7874(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
+            QAP_T11206(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                       environment=configuration.environment, db_manager=self.db_manager).run()
+            QAP_T11215(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                       environment=configuration.environment).run()
+            QAP_T11232(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                       environment=configuration.environment, db_manager=self.db_manager).run()
+            QAP_T11585(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                       environment=configuration.environment).run()
 
             end_time = time.monotonic()
             print("Run Users ~execution time~ = " + str(timedelta(seconds=end_time - start_time)))

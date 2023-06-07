@@ -25,6 +25,8 @@ class UsersConstants:
     NOT_FOUND_OPTION_XPATH = '//*[normalize-space(text())="Not found"]'
     WARNING_MESSAGE = '//*[@outline="danger"]'
     DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span'
+    USERS_LOOK_UP_INPUT = '//nb-card-header//form//input[contains(@class, "lookup-input")]'
+    LOAD_BUTTON = '//nb-card-header//form//button'
 
     # filters
     USER_ID_FILTER_AT_MAIN_PAGE = "//ag-grid-angular/div/div[1]/div/div[1]/div[2]/div/div[2]/div[1]/div[1]/div/input"
@@ -167,8 +169,10 @@ class UsersConstants:
     CANCEL_AT_ROUTES_SUB_WIZARD = '//*[normalize-space()="Routes"]//..//*[@data-name="close"]'
     EDIT_AT_ROUTES_SUB_WIZARD = '//*[normalize-space()="Routes"]//..//*[@data-name="edit"]'
     DELETE_AT_ROUTES_WIZARD = '//*[normalize-space()="Routes"]//..//*[@data-name="trash-2"]'
+    DELETE_LAST_ENTRY_AT_ROUTE_WIZARD = '(//*[normalize-space()="Routes"]//..//*[@data-name="trash-2"])[last()]'
 
     ROUTE_AT_ROUTES_SUB_WIZARD = '//*[@placeholder="Route *"]'
     ROUTE_USER_NAME_AT_ROUTES_SUB_WIZARD = '//*[@placeholder="Route User Name *"]'
     ROUTE_FILTER_AT_ROUTES_SUB_WIZARD = '(//*[normalize-space()="Routes"]//..//*[@placeholder="Filter"])[1]'
     ROUTE_USER_NAME_FILTER_AT_ROUTES_SUB_WIZARD = '(//*[normalize-space()="Routes"]//..//*[@placeholder="Filter"])[2]'
+    ROUTE_IN_ROUTE_TABLE_SUB_WIZARD = '//*[normalize-space()="Routes"]//..//p-table//tbody//td[2]//span'
