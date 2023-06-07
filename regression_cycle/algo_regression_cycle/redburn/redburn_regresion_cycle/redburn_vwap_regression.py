@@ -2,6 +2,7 @@ import logging
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_cases.algo.Algo_Redburn.Algo_VWAP import QAP_T4285
+from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T10427 import QAP_T10427
 from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T10943 import QAP_T10943
 from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T10944 import QAP_T10944
 from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T11220 import QAP_T11220
@@ -50,6 +51,7 @@ def test_run(parent_id=None, version=None):
         # region Buy-back
         QAP_T9462(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T9463(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10427(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
     except Exception:
