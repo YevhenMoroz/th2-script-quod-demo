@@ -15,6 +15,7 @@ from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T11355 import QAP_T11355
 from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T11373 import QAP_T11373
 from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T11374 import QAP_T11374
 from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T4218 import QAP_T4218
+from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T7958 import QAP_T7958
 from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T8801 import QAP_T8801
 from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T9462 import QAP_T9462
 from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T9463 import QAP_T9463
@@ -50,6 +51,7 @@ def test_run(parent_id=None, version=None):
         QAP_T11220(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
         # region Buy-back
+        QAP_T7958(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T9462(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T9463(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10427(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
