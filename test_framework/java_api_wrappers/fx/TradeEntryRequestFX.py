@@ -145,6 +145,18 @@ class TradeEntryRequestFX(JavaApiMessage):
         if not trigger:
             raise AttributeError("AH order not found")
 
+    def get_ah_ord_id_int(self, response) -> str:
+        self.check_response(response)
+        trigger = False
+        for msg in response:
+            if msg.get_message_type() == ORSMessageType.OrdNotification.value:
+                if msg.get_parameters()["OrdNotificationBlock"]["OrdID"].startswith("AO"):
+                    ah_order_id = msg.get_parameters()["OrdNotificationBlock"]["OrdID"]
+                    trigger = True
+                    return ah_order_id
+        if not trigger:
+            raise AttributeError("AH order not found")
+
     def get_ord_id_from_held(self, response) -> str:
         self.check_response(response)
         for msg in response:
