@@ -176,12 +176,12 @@ class QAP_T4431(TestCase):
         rfq_cancel_trqx = FixMessageOrderCancelRequestAlgo().set_cancel_RFQ(nos_trql_rfq).change_parameter("ExDestination", self.ex_destination_trqx).add_header().add_DeliverToCompID(self.ex_destination_trql)
         rfq_cancel_chixlis = FixMessageOrderCancelRequestAlgo().set_cancel_RFQ(nos_trql_rfq).change_parameter("ExDestination", self.ex_destination_trqx).add_header().add_DeliverToCompID(self.ex_destination_chixlis)
         order_cancel_chixdelta = FixMessageOrderCancelRequestAlgo().set_cancel_params_for_child_kepler(self.dma_chix_order)
-        self.fix_verifier_buy.check_fix_message_sequence([order_cancel_chixdelta, rfq_cancel_chixlis, rfq_cancel_trqx], key_parameters_list=[None, None, None], direction=self.FromQuod, pre_filter=self.pre_filter_1)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([order_cancel_chixdelta, rfq_cancel_chixlis, rfq_cancel_trqx], key_parameters_list=[None, None, None], direction=self.FromQuod, pre_filter=self.pre_filter_1)
         # endregion
         
         # region Check there are no LIS child orders
         self.fix_verifier_buy.set_case_id(bca.create_event("Check there are no LIS child orders", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([nos_chixlis_rfq, nos_trql_rfq, self.dma_chix_order, self.dma_bats_order], key_parameters_list=[None, None, None, None], direction=self.FromQuod, pre_filter=self.pre_filter_2)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([nos_chixlis_rfq, nos_trql_rfq, self.dma_chix_order, self.dma_bats_order], key_parameters_list=[None, None, None, None], direction=self.FromQuod, pre_filter=self.pre_filter_2)
         # endregion
         
         # region Check partial fill algo order
