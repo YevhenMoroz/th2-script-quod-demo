@@ -202,7 +202,7 @@ class FixVerifier:
             self.__verifier.submitCheckRule(
                 basic_custom_actions.create_check_rule(
                     message_name,
-                    basic_custom_actions.filter_to_grpc("MarketDataRequestReject", fix_message.get_parameters(),
+                    basic_custom_actions.filter_to_grpc_nfu("MarketDataRequestReject", fix_message.get_parameters(),
                                                         key_parameters, ignored_fields),
                     self.__checkpoint,
                     self.__session_alias,

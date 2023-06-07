@@ -7,11 +7,12 @@ from test_framework.environments.full_environment import FullEnvironment
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestRejectFX import FixMessageMarketDataRequestRejectFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
     FixMessageMarketDataSnapshotFullRefreshSellFX
 
 
-class QAP_T2624(TestCase):
+class QAP_T7935(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
         super().__init__(report_id, session_id, data_set, environment)
@@ -20,20 +21,21 @@ class QAP_T2624(TestCase):
         self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
         self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
         self.md_request = FixMessageMarketDataRequestFX(data_set=self.data_set)
+        self.md_reject = FixMessageMarketDataRequestRejectFX()
         self.md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
-        self.eur_usd = self.data_set.get_symbol_by_name("symbol_1")
+        self.uss_myr = self.data_set.get_symbol_by_name("unsupported_symbol")
         self.security_type_spo = self.data_set.get_security_type_by_name("fx_spot")
         self.settle_date_spot = self.data_set.get_settle_date_by_name("spot")
         self.settle_type_spot = self.data_set.get_settle_type_by_name("spot")
-        self.venue = self.data_set.get_venue_by_name("venue_1")
-        self.market_id_hsbc_sw = self.data_set.get_market_id_by_name("market_1")
+        self.venue = self.data_set.get_venue_by_name("venue_2")
+        self.market_id_hsbc_sw = self.data_set.get_market_id_by_name("market_2")
         self.rand_id = bca.client_orderid(3)
-        self.md_req_id = f"{self.eur_usd}:SPO:REG:{self.venue}_{self.rand_id}"
+        self.md_req_id = f"{self.uss_myr}:SPO:REG:{self.venue}_{self.rand_id}"
 
         self.instrument = {
             "SecurityIDSource": "8",
             "CFICode": self.market_id_hsbc_sw,
-            "Symbol": self.eur_usd,
+            "Symbol": self.uss_myr,
             "SecurityType": self.security_type_spo,
             "Product": "4"
         }
@@ -44,22 +46,19 @@ class QAP_T2624(TestCase):
             "MarketID": self.market_id_hsbc_sw
         }]
         self.bands = []
+        self.text = "no listing found"
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region step 1
         self.md_request.set_md_req_parameters_taker().change_parameter("MDReqID", self.md_req_id)
-        # self.md_request.update_repeating_group("NoRelatedSymbols", self.no_related_symbols)
-        response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
-        # region adapting for flexible market data
-        number_of_bands = len(response[0].get_parameter("NoMDEntries")) / 2
-        for i in range(int(number_of_bands)):
-            self.bands.append("*")
+        self.md_request.update_repeating_group("NoRelatedSymbols", self.no_related_symbols)
+        self.fix_manager_gtw.send_message(self.md_request)
         # endregion
-        # endregion
-        # region step 2
-        self.md_snapshot.set_params_for_md_response_taker_spo(self.md_request, self.bands)
-        self.fix_verifier.check_fix_message(self.md_snapshot, ignored_fields=["trailer", "header", "CachedUpdate"])
+        # region step 2-3
+        self.md_reject.set_md_reject_params(self.md_request, text=self.text)
+        self.md_reject.change_parameter("MDReqRejReason", "0")
+        self.fix_verifier.check_fix_message(self.md_reject, key_parameters=["MDReqID"])
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

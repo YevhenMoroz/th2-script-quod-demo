@@ -21,7 +21,7 @@ from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleTaker import FixM
 from test_framework.ssh_wrappers.ssh_client import SshClient
 
 
-class QAP_T2601(TestCase):
+class QAP_T9060(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
         super().__init__(report_id, session_id, data_set, environment)
@@ -105,7 +105,7 @@ class QAP_T2601(TestCase):
                 "MDEntryTime": datetime.utcnow().strftime("%H:%M:%S")
             }
         ]
-        self.passed = 0
+        self.passed = str()
         self.verifier = Verifier()
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -124,15 +124,11 @@ class QAP_T2601(TestCase):
                                             ignored_fields=["GatingRuleCondName", "GatingRuleName", "trailer",
                                                             "header"])
         # endregion
-        result = self.ssh_client.find_regex_pattern("/Logs/quod314/QUOD.FIXSELLQUODTH2.log", rf"^.*ClientScenarioID=.*{order_id}.*$")
-        if result:
-            self.passed += 1
-        result = self.ssh_client.find_regex_pattern("/Logs/quod314/QUOD.FIXSELLQUODTH2.log", rf"^.*{order_id}.*10014=.*$")
-        if result:
-            self.passed += 1
-        if self.passed == 2:
+        result = self.ssh_client.find_regex_pattern("/Logs/quod314/QUOD.FIXSELLQUODTH2.log",
+                                           rf"^.*{order_id}.*SettlCurrFxRateCalc.*$")
+        if not result:
             result = "ok"
         self.verifier.set_parent_id(self.test_id)
-        self.verifier.set_event_name("Check \"ClientScenarioID\" tag")
+        self.verifier.set_event_name("Check \"SettlCurrFxRate/Calc\" absence")
         self.verifier.compare_values("status", "ok", result)
         self.verifier.verify()
