@@ -195,18 +195,20 @@ class QAP_T9462(TestCase):
 
         er_new_dma = FixMessageExecutionReportAlgo().set_params_from_new_order_single(dma_order, self.gateway_side_buy, self.status_new)
 
-        replace1 = FixMessageOrderCancelReplaceRequestAlgo(dma_order).change_parameters(dict(Price=self.price_bbid)).add_tag(dict(QtyType=0))
+        replace1 = FixMessageOrderCancelReplaceRequestAlgo(dma_order).change_parameters(dict(Price=self.price_bbid, TransactTime=f'>{(self.start_date + timedelta(seconds=20)).isoformat()[:-6]}' )).add_tag(dict(QtyType=0))
+        replace2 = deepcopy(replace1)
+        replace2.change_parameters(dict(TransactTime=f'<{(self.start_date + timedelta(seconds=21)).isoformat()[:-6]}'))
         cancel_dma = FixMessageOrderCancelRequest(dma_order).change_parameters(dict(OrderQty=self.vwap_child[0], Instrument='*', OrderID='*'))
         er_cancel_dma = FixMessageExecutionReportAlgo().set_params_from_new_order_single(dma_order, self.gateway_side_buy, self.status_cancel)
 
 
         list_multilisted_childs = []
         for i in range(0,6):
-            a = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_RB_params()
-            a.change_parameters(dict(Account=self.account, ExDestination=self.mic, OrderQty=self.vwap_child[0], Price=self.price_bask, Instrument=self.instrument, TimeInForce=3))
-            a.change_parameter('TransactTime', f'>{self.start_date.isoformat()[:-6]}')
+            temp_message = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_RB_params()
+            temp_message.change_parameters(dict(Account=self.account, ExDestination=self.mic, OrderQty=self.vwap_child[0], Price=self.price_bask, Instrument=self.instrument, TimeInForce=3))
+            temp_message.change_parameter('TransactTime', f'<{(self.start_date + timedelta(seconds=41 + i)).isoformat()[:-6]}')
 
-            list_multilisted_childs.append(a)
+            list_multilisted_childs.append(temp_message)
         self.fix_verifier_buy.set_case_id(bca.create_event("Check child order", self.test_id))
 
         scheduler = sched.scheduler(time.time, time.sleep)
@@ -227,6 +229,11 @@ class QAP_T9462(TestCase):
             message_name="Buy side ExecutionReport New child order"))
         scheduler.enterabs(self.start_date.timestamp() + 65, 4, self.fix_verifier_buy.check_fix_message, kwargs=dict(
             fix_message=replace1,
+            key_parameters=self.key_params,
+            direction=self.FromQuod,
+            message_name="Buy side OrderCancelReplaceRequest neutral phase"))
+        scheduler.enterabs(self.start_date.timestamp() + 65, 4, self.fix_verifier_buy.check_fix_message, kwargs=dict(
+            fix_message=replace2,
             key_parameters=self.key_params,
             direction=self.FromQuod,
             message_name="Buy side OrderCancelReplaceRequest neutral phase"))
