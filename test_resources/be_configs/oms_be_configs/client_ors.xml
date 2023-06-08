@@ -67,6 +67,7 @@ Copyright Quod Financial
 					<TradeCaptureReport>true</TradeCaptureReport>
 					<TradeCaptureRequest>true</TradeCaptureRequest>
                 </type>
+				<clientLists><clientList></clientList></clientLists>
 				<users>
 					<!--<user>gtwbo</user>-->
 				</users>
@@ -99,6 +100,7 @@ Copyright Quod Financial
                     <PositionTradeCancel>true</PositionTradeCancel>
 					<DoneForDay>true</DoneForDay>
                 </type>
+				<clientLists><clientList></clientList></clientLists>
             </nonFIX>
 			<mapping>
 			    <ClientAccountGroupID>
@@ -143,6 +145,7 @@ Copyright Quod Financial
 				<TradeCaptureRequest>true</TradeCaptureRequest>
 				<ModifyReject>true</ModifyReject>
 			</type>
+			<clientLists><clientList></clientList></clientLists>
 		</FIX>
 		<nonFIX>
 			<users>
@@ -168,6 +171,7 @@ Copyright Quod Financial
                 <PositionTradeCancel>true</PositionTradeCancel>
                 <DoneForDay>true</DoneForDay>
             </type>
+			<clientLists><clientList></clientList></clientLists>
         </nonFIX>
         <mapping>
 			<ClientAccountGroupID>
