@@ -121,6 +121,7 @@ class UsersConstants:
     PERM_ROLE_AT_ROLE_SUB_WIZARD = '//*[text()="Perm Role"]/preceding-sibling::input'
     GROUP_AT_ROLE_SUB_WIZARD = '//*[text()="Group"]/preceding-sibling::input'
     PERM_OP_AT_ROLE_SUB_WIZARD = '//*[@id="permOp"]'
+    PERMISSION_PROFILES = '//*[@id="Permission Profiles"]'
 
     # Must not be visible
     ROLE_ID_AT_ROLE_SUB_WIZARD = '//*[text()="Role Id"]/preceding-sibling::input'
@@ -135,6 +136,7 @@ class UsersConstants:
     TYPE_AT_CLIENT_SUB_WIZARD = '//nb-accordion-item-header[normalize-space()="Clients"]//..//nb-select'
     CLIENT_FILTER_AT_CLIENT_SUB_WIZARD = '(//*[text()=" Client "]//following-sibling::nb-accordion-item-body//thead//input)[1]'
     TYPE_FILTER_AT_CLIENT_SUB_WIZARD = '//*[text()=" Client "]//following-sibling::nb-accordion-item-body//thead//input)[2]'
+    CLIENT_IN_TABLE_AT_CLIENT_SUB_WIZARD = '//*[normalize-space()="Clients"]//..//tbody//td[2]//span'
 
     # Venue trader
     PLUS_BUTTON_AT_VENUE_TRADER_SUB_WIZARD = '//*[text()="Manage Trader Groups"]/ancestor::*[@class="expanded"]//*[@data-name="plus"]'

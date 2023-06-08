@@ -34,6 +34,9 @@ class UsersClientSubWizard(CommonPage):
     def get_client(self):
         return self.get_text_by_xpath(UsersConstants.CLIENT_AT_CLIENT_SUB_WIZARD)
 
+    def get_all_clients_in_table(self) -> list:
+        return self.get_all_items_from_table_column(UsersConstants.CLIENT_IN_TABLE_AT_CLIENT_SUB_WIZARD)
+
     def set_type(self, value):
         self.find_by_xpath(UsersConstants.TYPE_AT_CLIENT_SUB_WIZARD).click()
         time.sleep(0.5)

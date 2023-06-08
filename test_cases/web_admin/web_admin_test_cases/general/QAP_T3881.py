@@ -33,7 +33,7 @@ class QAP_T3881(CommonTestCase):
             common_page.open_new_browser_tab_and_set_url(current_url)
             common_page.click_on_user_icon()
             common_page.click_on_logout()
-            common_page.switch_to_browser_tab(0)
+            common_page.switch_to_browser_tab_or_window(0)
             side_menu = SideMenu(self.web_driver_container)
             side_menu.click_on_settings_tab()
             time.sleep(2)

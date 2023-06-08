@@ -19,6 +19,9 @@ class UsersWizard(CommonPage):
     def click_on_clear_changes(self):
         self.find_by_xpath(UsersConstants.REVERT_CHANGES_BUTTON).click()
 
+    def click_on_user_header_link(self):
+        self.find_by_xpath(UsersConstants.USER_WIZARD_HEADER_LINK).click()
+
     def is_revert_changes_button_enabled(self):
         return self.find_by_xpath(UsersConstants.REVERT_CHANGES_BUTTON).is_enabled()
 

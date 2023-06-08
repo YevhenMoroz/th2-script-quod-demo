@@ -134,10 +134,14 @@ class CommonPage(CP):
         self.web_driver_container.get_driver().switch_to.new_window('tab')
         self.web_driver_container.get_driver().get(url)
 
+    def open_new_browser_window_and_set_url(self, url: str):
+        self.web_driver_container.get_driver().switch_to.new_window('window')
+        self.web_driver_container.get_driver().get(url)
+
     def get_current_page_url(self):
         return self.web_driver_container.get_driver().current_url
 
-    def switch_to_browser_tab(self, tab: int):
+    def switch_to_browser_tab_or_window(self, tab: int):
         """
         The current method for switching between open tabs.
         Where 0 - first tab, 1 - second, 2 - third, etc...

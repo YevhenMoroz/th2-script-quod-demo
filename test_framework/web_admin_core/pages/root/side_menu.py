@@ -104,7 +104,7 @@ from test_framework.web_admin_core.pages.root.root_constants import RootConstant
 from test_framework.web_admin_core.pages.site.locations.locations_constants import LocationsConstants
 from test_framework.web_admin_core.pages.site.zones.zones_constants import ZonesConstants
 
-from test_framework.web_admin_core.pages.users.user_sessions.user_sessions_constants import UserSessionsConstants
+from test_framework.web_admin_core.pages.users.user_sessions.constants import Constants as UserSessionsConstants
 from test_framework.web_admin_core.pages.users.users.users_constants import UsersConstants
 from test_framework.web_admin_core.pages.users.user_lists.constants import Constants as UserListsConstants
 
@@ -458,6 +458,9 @@ class SideMenu(CommonPage):
         self.open_page(RootConstants.USER_LISTS_ITEM_XPATH, RootConstants.USERS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(UserListsConstants.MainPage.PAGE_TITLE)
+
+    def click_user_lists_tab(self):
+        self.click_menu_item(RootConstants.USER_LISTS_ITEM_XPATH)
 
     def open_order_velocity_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.ORDER_VELOCITY_LIMIT_ITEM_XPATH, RootConstants.RISK_LIMITS_TOGGLE_CSS_SELECTOR,

@@ -17,6 +17,7 @@ class WebAdminUsers(Enum):
     user_13 = "QAP-T3920"
     user_14 = "inst_user_autotest"
     user_15 = "Test_UMDS1"
+    user_16 = "adm04"
 
 
 class WebAdminPasswords(Enum):
@@ -27,6 +28,7 @@ class WebAdminPasswords(Enum):
     password_5 = "adm_inst"
     password_11 = "adm01"
     password_14 = "Qwerty123!"
+    password_16 = "adm04"
 
 
 # region WaGeneral

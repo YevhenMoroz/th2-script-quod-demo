@@ -205,3 +205,6 @@ class UsersPage(CommonPage):
 
     def is_load_users_look_up_displayed(self):
         return self.is_element_present(UsersConstants.USERS_LOOK_UP_INPUT)
+
+    def is_main_page_open(self):
+        return self.is_element_present(UsersConstants.USERS_PAGE_TITLE_XPATH)
