@@ -3,7 +3,11 @@ from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T11327 import QAP_T11327
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T4225 import QAP_T4225
+from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T4226 import QAP_T4226
+from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T4227 import QAP_T4227
+from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T7748 import QAP_T7748
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T8728 import QAP_T8728
+from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T8789 import QAP_T8789
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T8791 import QAP_T8791
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T8792 import QAP_T8792
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T8793 import QAP_T8793
@@ -32,7 +36,6 @@ def test_run(parent_id=None, version=None):
         configuration = ComponentConfigurationAlgo("Participation")
         # QAP_T8728(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T11327(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T4225(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4350(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4351(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8791(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
@@ -44,9 +47,18 @@ def test_run(parent_id=None, version=None):
         QAP_T8845(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8751(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T8752(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T8789(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4227(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T7748(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
         # region config change sats -> maxChildren = 3
         QAP_T8749(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # endregion
+
+        # region config change sats -> POV -> level = 3
+        QAP_T4225(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # config change sats -> POV -> level = 4
+        QAP_T4226(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
         pass
