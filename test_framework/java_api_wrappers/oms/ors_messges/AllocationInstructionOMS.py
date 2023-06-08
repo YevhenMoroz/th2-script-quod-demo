@@ -47,6 +47,14 @@ class AllocationInstructionOMS(AllocationInstruction):
                                         {"OrdAllocList": {"OrdAllocBlock": [{"OrdID": ord_id}]}})
         return self
 
+    def set_book_by_ord_list(self, ord_id_list):
+        self.change_parameters(self.base_parameters)
+        alloc_ord_id_list = [{"OrdID": ord_id} for ord_id in ord_id_list]
+        self.update_fields_in_component('AllocationInstructionBlock',
+                                        {"OrdAllocList": {"OrdAllocBlock": alloc_ord_id_list}})
+        self.print_parameters()
+        return self
+
     def set_recompute_book(self, ord_id, settl_type="REG", settl_currency="UAH", settl_curr_fx_rate="2",
                            settl_curr_fx_rate_calc="M"):
         self.change_parameters(self.base_parameters)
@@ -88,7 +96,7 @@ class AllocationInstructionOMS(AllocationInstruction):
 
         return self
 
-    def set_ament_book_with_multiply_execution(self, alloc_instr_id, exec_ids: list, exec_qty, exec_price):
+    def set_amend_book_with_multiply_execution(self, alloc_instr_id, exec_ids: list, exec_qty, exec_price):
         self.change_parameters(self.base_parameters)
         list_of_exec_alloc_block = []
         for exec_id in exec_ids:

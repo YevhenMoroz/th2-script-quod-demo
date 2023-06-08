@@ -50,8 +50,6 @@ class FixMessageExecutionReportDropCopyFX(FixMessageExecutionReport):
             LeavesQty=0,
             GrossTradeAmt="*",
             ExDestination="*",
-            GatingRuleCondName="*",
-            GatingRuleName="*",
             QtyType=0,
             Instrument="*",
             SecondaryExecID="*",
