@@ -65,9 +65,9 @@ class QAP_T10933(TestCase):
 
         # region steps 4 Amend first order:
         pre_trade_dict1 = {'PreTradeAllocationBlock': {
-                                                         'PreTradeAllocationList': {'PreTradeAllocAccountBlock': [
-                                                             {'AllocAccountID': self.acc1,
-                                                              'AllocQty': str(float(self.qty1))}]}}}
+            'PreTradeAllocationList': {'PreTradeAllocAccountBlock': [
+                {'AllocAccountID': self.acc1,
+                 'AllocQty': str(float(self.qty1))}]}}}
         self.order_modify.set_change_params(order_id1)
         self.order_modify.update_fields_in_component('OrderModificationRequestBlock', pre_trade_dict1)
         self.java_api_manager.send_message_and_receive_response(self.order_modify)
@@ -182,5 +182,6 @@ class QAP_T10933(TestCase):
             get_parameters()[JavaApiFields.RequestForPositionsAckBlock.value][JavaApiFields.PositionReportBlock.value] \
             [JavaApiFields.PositionList.value][JavaApiFields.PositionBlock.value]
         for position_record in request_for_position_ack:
-            if self.instrument_id == position_record[JavaApiFields.InstrID.value]:
+            if self.instrument_id == position_record[JavaApiFields.InstrID.value] and position_record[
+                JavaApiFields.PositionType.value] == 'N':
                 return position_record
