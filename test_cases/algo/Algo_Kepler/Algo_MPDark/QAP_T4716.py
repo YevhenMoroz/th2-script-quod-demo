@@ -193,7 +193,7 @@ class QAP_T4716(TestCase):
         # region Check RFQs
         case_id_2 = bca.create_event("Check that 3 RFQs was received", self.test_id)
         self.fix_verifier_buy.set_case_id(case_id_2)
-        self.fix_verifier_buy.check_fix_message_sequence([nos_chixlis_rfq, nos_trql_rfq, self.nos_chixlis_order, nos_trql_rfq], key_parameters_list=[None, None, None, None], direction=self.FromQuod, pre_filter=self.pre_filter)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([nos_chixlis_rfq, nos_trql_rfq, self.nos_chixlis_order, nos_trql_rfq], key_parameters_list=[None, None, None, None], direction=self.FromQuod, pre_filter=self.pre_filter)
         # endregion
 
         time.sleep(6)

@@ -314,7 +314,7 @@ class FixVerifier:
 
     def check_fix_message_sequence(self, fix_messages_list: list, key_parameters_list: list = None,
                                    direction: DirectionEnum = DirectionEnum.FromQuod,
-                                   message_name: str = None, pre_filter: dict = None, check_order=True):
+                                   message_name: str = None, pre_filter: dict = None, check_order=True, ignored_fields: list = None):
         if pre_filter is None:
             pre_filter = {
                 'header': {
@@ -333,8 +333,7 @@ class FixVerifier:
                 raise ValueError("Not correct object type at fix_messages_list, expect only FixMessages")
             message_filters_req.append(
                 basic_custom_actions.filter_to_grpc(message.get_message_type(), message.get_parameters(),
-                                                    key_parameters_list[index]))
-
+                                                    key_parameters_list[index], ignored_fields))
         if message_name is None:
             message_name = "Check banch of messages"
 
@@ -564,3 +563,6 @@ class FixVerifier:
                                  direction: DirectionEnum = DirectionEnum.FromQuod, message_name: str = None,
                                  ignored_fields: Union[list, tuple] = ('trailer', 'header', 'NoTradingSessions')):
         self.check_fix_message(fix_message, key_parameters, direction, message_name, ignored_fields)
+
+    def check_fix_message_sequence_kepler(self, fix_messages_list: list, key_parameters_list: list = None, direction: DirectionEnum = DirectionEnum.FromQuod, message_name: str = None, pre_filter: dict = None, check_order=True, ignored_fields: Union[list, tuple] = ('trailer', 'header', 'NoTradingSessions')):
+        self.check_fix_message_sequence(fix_messages_list, key_parameters_list, direction, message_name, pre_filter, check_order, ignored_fields)

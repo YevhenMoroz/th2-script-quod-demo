@@ -194,6 +194,12 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
+
+    def set_VWAP_buy_back_params(self):
+        self.set_VWAP_params()
+        self.update_fields_in_component('QuodFlatParameters', dict(Custom='Passive'))
+        return self
+
     def set_VWAP_Redburn_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             'Account': self.get_data_set().get_account_by_name("account_1"),

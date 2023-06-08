@@ -222,7 +222,7 @@ class QAP_T10702(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Check those are no new RFQs", self.test_id))
 
         self.dma_chix_order.change_parameters(dict(Price=self.price))
-        self.fix_verifier_buy.check_fix_message_sequence([nos_chixlis_rfq, nos_trql_rfq, self.dma_chix_order, self.dma_bats_order], [self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child], self.FromQuod, pre_filter=self.pre_filter, check_order=False)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([nos_chixlis_rfq, nos_trql_rfq, self.dma_chix_order, self.dma_bats_order], [self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child], self.FromQuod, pre_filter=self.pre_filter, check_order=False)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

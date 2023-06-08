@@ -138,7 +138,7 @@ class QAP_T9198(TestCase):
         er_fill_dma_1_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_1_order, self.gateway_side_buy, self.status_fill)
         er_fill_dma_2_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_2_order, self.gateway_side_buy, self.status_fill)
 
-        self.fix_verifier_buy.check_fix_message_sequence([er_fill_dma_1_order, er_fill_dma_2_order], key_parameters_list=[None, None], direction=self.ToQuod, pre_filter=self.pre_filter)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([er_fill_dma_1_order, er_fill_dma_2_order], key_parameters_list=[None, None], direction=self.ToQuod, pre_filter=self.pre_filter)
         # endregion
 
         # region Check Fill Iceberg algo order
