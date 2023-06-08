@@ -225,7 +225,6 @@ class QAP_T7081(TestCase):
             records = file.readlines()
             file.close()
             os.remove('./logs.txt')
-        print(records)
         return records
 
     def _verify_that_message_present(self, expected_result, template, message, template_for_finding_gateway):
