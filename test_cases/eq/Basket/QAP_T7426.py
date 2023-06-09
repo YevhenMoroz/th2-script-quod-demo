@@ -6,7 +6,8 @@ from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
 from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
-from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, OrdListNotificationConst, BasketMessagesConst
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, OrdListNotificationConst, \
+    BasketMessagesConst
 from test_framework.java_api_wrappers.oms.ors_messges.NewOrderListOMS import NewOrderListOMS
 from test_framework.java_api_wrappers.ors_messages.OrderListWaveCreationRequest import OrderListWaveCreationRequest
 from test_framework.java_api_wrappers.ors_messages.OrderListWaveModificationRequest import \
@@ -59,12 +60,11 @@ class QAP_T7426(TestCase):
                            {"ExternalAlgoParameterBlock": [
                                {'AlgoParameterName': "Urgency",
                                 "AlgoParamString": "MEDIUM",
-                                'VenueScenarioParameterID': "7504"}]},
-                           'ScenarioID': "101",
+                                'VenueScenarioParameterID': "7505"}]},
+                           'ScenarioID': "1001",
                            "ScenarioIdentifier": "11799",
-                           "VenueScenarioID": "TWAP",
-                           "VenueScenarioVersionID": "11945",
-                           "VenueScenarioVersionValue": "ATDLEQ5.5"}}
+                           "VenueScenarioID": "TWAPAS",
+                           "VenueScenarioVersionID": "11945"}}
         self.create_wave_request.update_fields_in_component('OrderListWaveCreationRequestBlock', algo_params)
         self.java_api_manager.send_message_and_receive_response(self.create_wave_request)
         # endregion
@@ -77,8 +77,9 @@ class QAP_T7426(TestCase):
             wave_notif_block,
             "Check Wave sts values")
         self.java_api_manager.compare_values(
-            {'ScenarioID': '101'},
-            wave_notif_block['ExternalAlgoParametersBlock'],
+            {'AlgoParamString': 'MEDIUM', 'AlgoParameterName': 'Urgency'},
+            wave_notif_block['ExternalAlgoParametersBlock']['ExternalAlgoParameterListBlock'][
+                'ExternalAlgoParameterBlock'][0],
             "Check Waves External Algo values")
         wave_id = wave_notif_block['OrderListWaveID']
         # endregion
@@ -86,24 +87,24 @@ class QAP_T7426(TestCase):
         # region modifying wave
         self.list_wave_modify_request.set_default(wave_id, [ord_id_1, ord_id_2], list_id)
         algo_params = {"AlgoParametersBlock": {"AlgoType": "External",
-                                               "ScenarioID": "102",
-                                               "AlgoPolicyID": "1000132"},
+                                               "ScenarioID": "101",
+                                               "AlgoPolicyID": "1000131"},
                        "ExternalAlgoParametersBlock": {"ExternalAlgoParameterListBlock":
                            {"ExternalAlgoParameterBlock": [
                                {'AlgoParameterName': "Urgency",
-                                "AlgoParamString": "MEDIUM",
-                                'VenueScenarioParameterID': "7504"}]},
-                           'ScenarioID': "102",
+                                "AlgoParamString": "LOW",
+                                'VenueScenarioParameterID': "7505"}]},
+                           'ScenarioID': "1001",
                            "ScenarioIdentifier": "11799",
-                           "VenueScenarioID": "TWAP",
-                           "VenueScenarioVersionID": "11945",
-                           "VenueScenarioVersionValue": "ATDLEQ5.5"}}
+                           "VenueScenarioID": "TWAPAS",
+                           "VenueScenarioVersionID": "11945"}}
         self.list_wave_modify_request.update_fields_in_component('OrderListWaveModificationRequestBlock', algo_params)
         self.java_api_manager.send_message_and_receive_response(self.list_wave_modify_request)
         list_wave_notif = self.java_api_manager.get_last_message(ORSMessageType.OrderListWaveNotification.value)
         wave_notif_block = list_wave_notif.get_parameter(JavaApiFields.OrderListWaveNotificationBlock.value)
         self.java_api_manager.compare_values(
-            {'ScenarioID': '102'},
-            wave_notif_block['ExternalAlgoParametersBlock'],
+            {'AlgoParamString': 'LOW', 'AlgoParameterName': 'Urgency'},
+            wave_notif_block['ExternalAlgoParametersBlock']['ExternalAlgoParameterListBlock'][
+                'ExternalAlgoParameterBlock'][0],
             "Check Waves modified External Algo values")
         # endregion

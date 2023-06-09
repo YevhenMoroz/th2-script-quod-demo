@@ -58,7 +58,9 @@ Copyright Quod Financial
 					<CancelReject>true</CancelReject>
 					<Cancelled>true</Cancelled>
 					<Replaced>true</Replaced>
+					<Rejected>true</Rejected>
 					<Eliminated>true</Eliminated>
+					<PendingOpen>true</PendingOpen>
 					<Calculated>true</Calculated>
 					<TradeCancel>true</TradeCancel>
                     <PositionTrade>true</PositionTrade>
@@ -66,6 +68,7 @@ Copyright Quod Financial
                     <PositionTradeCancel>true</PositionTradeCancel>
 					<TradeCaptureReport>true</TradeCaptureReport>
 					<TradeCaptureRequest>true</TradeCaptureRequest>
+					<ModifyReject>true</ModifyReject>
                 </type>
 				<clientLists><clientList></clientList></clientLists>
 				<users>
@@ -244,6 +247,75 @@ Copyright Quod Financial
 			</ClientAccountGroupID>
 		</mapping>
      </FIXNotif2>
+		  <FIXNotif3>
+		<gtw>gtwquod4</gtw>
+		<makingInternal>true</makingInternal>
+		<makingExternal>true</makingExternal>
+		<taking>true</taking>
+		<FIX>
+			<!--policies>
+				<policy>D</policy>
+			</policies-->
+			<type>
+
+				<AllocationReportCalculated>true</AllocationReportCalculated>
+				<AllocationReportPreliminary>true</AllocationReportPreliminary>
+				<AllocationReportReadyToBook>true</AllocationReportReadyToBook>
+                <Confirmation>true</Confirmation>
+				<Trade>true</Trade>
+				<New>true</New>
+				<Open>true</Open>
+				<Cancel>true</Cancel>
+				<CancelReject>true</CancelReject>
+                <Modify>true</Modify>
+				<Cancelled>true</Cancelled>
+				<Replaced>true</Replaced>
+				<Rejected>true</Rejected>
+				<Eliminated>true</Eliminated>
+				<Calculated>true</Calculated>
+				<PositionTrade>true</PositionTrade>
+				<PositionTradeCorrect>true</PositionTradeCorrect>
+				<PositionTradeCancel>true</PositionTradeCancel>
+				<TradeCaptureReport>true</TradeCaptureReport>
+				<TradeCaptureRequest>true</TradeCaptureRequest>
+				<ModifyReject>true</ModifyReject>
+			</type>
+		</FIX>
+		<nonFIX>
+			<users>
+			</users>
+			<venues>
+			</venues>
+			<type>
+				<AllocationReportCalculated>true</AllocationReportCalculated>
+				<AllocationReportPreliminary>true</AllocationReportPreliminary>
+				<AllocationReportReadyToBook>true</AllocationReportReadyToBook>
+				<Confirmation>true</Confirmation>
+				<Trade>true</Trade>
+				<New>true</New>
+				<Open>true</Open>
+				<Cancelled>true</Cancelled>
+				<CancelReject>true</CancelReject>
+                <Replaced>true</Replaced>
+                <Eliminated>true</Eliminated>
+                <Calculated>true</Calculated>
+                <TradeCancel>true</TradeCancel>
+                <PositionTrade>true</PositionTrade>
+                <PositionTradeCorrect>true</PositionTradeCorrect>
+                <PositionTradeCancel>true</PositionTradeCancel>
+                <DoneForDay>true</DoneForDay>
+            </type>
+        </nonFIX>
+        <mapping>
+			<ClientAccountGroupID>
+				<default>VenueClientAccountName</default>
+				<OrdReply>VenueClientAccountName</OrdReply>
+				<ExecutionReport>VenueClientAccountName</ExecutionReport>
+				<AllocationReport>AccountGroupID</AllocationReport>
+				<Confirmation>AccountGroupID</Confirmation>
+			</ClientAccountGroupID>
+		</mapping>
+     </FIXNotif3>
 	</AddFIXNotif>
 		<FrontToBack>
 			<setSettlementModel>false</setSettlementModel>
