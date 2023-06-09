@@ -55,3 +55,27 @@ class FixMessageNewOrderSingleTakerDC(FixMessageNewOrderSingle):
         }
         super().change_parameters(base_parameters)
         return self
+
+    def set_default_from_request(self, quote_request, side: str = None):
+
+        base_parameters = {
+            "ClOrdID": "*",
+            "Account": "*",
+            "NoParty": "*",
+            "HandlInst": "2",
+            "Side": side if "Side" not in quote_request.get_parameter("NoRelatedSymbols")[0] else
+            quote_request.get_parameter("NoRelatedSymbols")[0]["Side"],
+            "OrderQty": quote_request.get_parameter("NoRelatedSymbols")[0]["OrderQty"],
+            "TimeInForce": "0",
+            "OrdType": "1",
+            "Currency": quote_request.get_parameter("NoRelatedSymbols")[0]["Currency"],
+            "SettlCurrency": "*",
+            "Instrument": "*",
+            "StrategyName": "*",
+            "SettlDate": self.get_data_set().get_settle_date_by_name("spot"),
+            "SettlType": self.get_data_set().get_settle_type_by_name("spot"),
+            # "Misc0": trade_request.get_exec_misc_0()
+
+        }
+        super().change_parameters(base_parameters)
+        return self

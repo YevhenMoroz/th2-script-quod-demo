@@ -68,7 +68,7 @@ class QAP_T9291(TestCase):
                                                       JavaApiFields.OrdQty.value: qty,
                                                       'RouteList': route_params,
                                                       "AlgoParametersBlock": {"AlgoType": "External",
-                                                                              "ScenarioID": "101",
+                                                                              "ScenarioID": "1001",
                                                                               "AlgoPolicyID": "1000131"},
                                                       "ExternalAlgoParametersBlock": {
                                                           "ExternalAlgoParameterListBlock":

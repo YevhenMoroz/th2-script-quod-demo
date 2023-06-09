@@ -78,7 +78,7 @@ class OrderSubmitOMS(OrderSubmit):
                     'ExternalAlgoParameterBlock': [{'AlgoParameterName': "StrategyTag",
                                                     'AlgoParamString': "TWAP",
                                                     'VenueScenarioParameterID': '7505'}]},
-                                                'ScenarioID': '102',
+                                                'ScenarioID': '1001',
                                                 'ExternalAlgoPolicyID': '1000132',
                                                 'ScenarioIdentifier': "848",
                                                 'VenueScenarioID': "TWAP",
@@ -129,14 +129,14 @@ class OrderSubmitOMS(OrderSubmit):
                                          "ParentOrdrList": parent_params})
         if external_algo_twap:
             algo_params = {"AlgoParametersBlock": {"AlgoType": "External",
-                                                   "ScenarioID": "101",
+                                                   "ScenarioID": "1001",
                                                    "AlgoPolicyID": "1000131"},
                            "ExternalAlgoParametersBlock": {"ExternalAlgoParameterListBlock":
                                {"ExternalAlgoParameterBlock": [
                                    {'AlgoParameterName': "StrategyTag",
                                     "AlgoParamString": "TWAP",
                                     'VenueScenarioParameterID': "7505"}]},
-                               'ScenarioID': "101",
+                               'ScenarioID': "1001",
                                "ScenarioIdentifier": "8031",
                                "VenueScenarioID": "TWAP",
                                "VenueScenarioVersionID": "9682",
@@ -154,14 +154,14 @@ class OrderSubmitOMS(OrderSubmit):
                                          'ClOrdID': cl_ord_id, 'ExecutionPolicy': 'DMA'})
         if external_algo_twap:
             algo_params = {"AlgoParametersBlock": {"AlgoType": "External",
-                                                   "ScenarioID": "101",
+                                                   "ScenarioID": "1001",
                                                    "AlgoPolicyID": "1000131"},
                            "ExternalAlgoParametersBlock": {"ExternalAlgoParameterListBlock":
                                {"ExternalAlgoParameterBlock": [
                                    {'AlgoParameterName': "StrategyTag",
                                     "AlgoParamString": "TWAP",
                                     'VenueScenarioParameterID': "7505"}]},
-                               'ScenarioID': "101",
+                               'ScenarioID': "1001",
                                "ScenarioIdentifier": "8031",
                                "VenueScenarioID": "TWAP",
                                "VenueScenarioVersionID": "9682",
