@@ -66,10 +66,12 @@ class QAP_T7512(TestCase):
         self.rest_commission_sender.set_modify_fees_message(fee=self.fee,
                                                             comm_profile=self.comm_profile).change_message_params(
             {'venueID': self.venue}).send_post_request()
-        responses = self.__send_fix_orders()
-        order_id = responses[0].get_parameter("OrderID")
-        cl_order_id = responses[0].get_parameter("ClOrdID")
-        exec_id = responses[2].get_parameters()["ExecID"]
+        self.__send_fix_orders()
+        response = self.fix_manager.get_last_message('ExecutionReport',"'ExecType': 'F'").get_parameters()
+        print(response)
+        order_id = response["OrderID"]
+        cl_order_id = response["ClOrdID"]
+        exec_id = response['ExecID']
         # endregion
 
         # region check execution report
@@ -191,12 +193,11 @@ class QAP_T7512(TestCase):
                                                                                             int(self.price),
                                                                                             int(self.qty), 2)
             self.fix_message.change_parameters(self.params)
-            response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
+            self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
         finally:
             time.sleep(2)
             self.rule_manager.remove_rule(nos_rule)
             self.rule_manager.remove_rule(trade_rule)
-        return response
 
     def __return_result(self, responses, message_type):
         for response in responses:
