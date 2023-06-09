@@ -23,6 +23,7 @@ class ExecutionReportConst(Enum):
     ExecOrigin_M = 'M'
     ExecOrigin_E = 'E'
     ExecType_Trade = 'Trade'
+    ExecType_Replaced = 'Replaced'
 
 
 class BasketMessagesConst(Enum):
@@ -160,13 +161,22 @@ class QtyPercentageProfile(Enum):
 
 class JavaApiFields(Enum):
     ExecCommission = 'ExecCommission'
+    SettlDate = 'SettlDate'
+    ClearingTradePrice = 'ClearingTradePrice'
     AllocationInstructionBlock = 'AllocationInstructionBlock'
     RequestForOverdueRetailPositionsAckBlock = 'RequestForOverdueRetailPositionsAckBlock'
     TransExecStatus = 'TransExecStatus'
     BookingType = 'BookingType'
+    BenchmarkList = 'BenchmarkList'
+    BenchmarkBlock = 'BenchmarkBlock'
+    StartBenchmarkTimestamp = 'StartBenchmarkTimestamp'
+    EndBenchmarkTimestamp = 'EndBenchmarkTimestamp'
     RetailPositList = 'RetailPositList'
+    BenchmarkNotificationBlock = 'BenchmarkNotificationBlock'
     RetailPositBlock = 'RetailPositBlock'
     CDOrdAckBatchRequestBlock = 'CDOrdAckBatchRequestBlock'
+    HeldOrderAckBlock = 'HeldOrderAckBlock'
+    HeldOrderAckType = 'HeldOrderAckType'
     ModifyChildren = 'ModifyChildren'
     CancelChildren = ' CancelChildren'
     PositionType = 'PositionType'
@@ -237,6 +247,7 @@ class JavaApiFields(Enum):
     ClOrdID = 'ClOrdID'
     OrdReplyBlock = 'OrdReplyBlock'
     ListingList = 'ListingList'
+    CrossAnnouncementBlock = 'CrossAnnouncementBlock'
     EffectiveDate = 'EffectiveDate'
     CashAccountID = 'CashAccountID'
     OrdStatus = 'OrdStatus'

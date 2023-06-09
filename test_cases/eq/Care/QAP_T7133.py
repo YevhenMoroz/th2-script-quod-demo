@@ -76,7 +76,7 @@ class QAP_T7133(TestCase):
         # endergion
 
         # region  step 1: create CO order via FIX
-        desk = self.environment.get_list_fe_environment()[0].desk_ids[0]
+        desk = self.environment.get_list_fe_environment()[0].desk_ids[1]
         self.new_order.set_default_care_limit(account='client_2')
         self.new_order.add_tag({'header': {
             JavaApiFields.SenderSubID.value: 'SENDER_SUB_ID',
