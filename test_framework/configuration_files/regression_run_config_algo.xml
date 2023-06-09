@@ -257,6 +257,14 @@
                         </ssh_client_environments>
                     </environments>
                 </component>
+                <component name="Matching_Engine" run="True">
+                    <data_set>AlgoDataSet</data_set>
+                    <environments>
+                        <fix_environments>
+                            <fix_environment>quod310_columbia_standard</fix_environment>
+                        </fix_environments>
+                    </environments>
+                </component>
             </components>
         </product_line>
     </product_lines>
