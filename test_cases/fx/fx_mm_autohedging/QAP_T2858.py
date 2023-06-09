@@ -60,7 +60,8 @@ class QAP_T2858(TestCase):
         self.ah_order.change_parameters({"Account": self.client_int, "ClOrdID": ah_order_id,
                                          "StrategyName": "1556"})
         self.ah_order.remove_parameters(["Misc0"])
-        self.fix_drop_copy_verifier.check_fix_message(self.ah_order, message_name="Check that we create AH order")
+        self.fix_drop_copy_verifier.check_fix_message(self.ah_order,
+                                                      message_name="Check that we create AH order with correct StrategyName")
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
