@@ -31,7 +31,7 @@ def print_message(message, responses):
         logger.info(i.get_parameters())
 
 
-class QAP_T10208(TestCase):
+class QAP_T10216(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
@@ -54,9 +54,10 @@ class QAP_T10208(TestCase):
         best_ask = "11.0"
         size = "200"
         spread = "0.1"
-        bid_size = "1000.0"
-        offer_size = "1000.0"
+        not_amt = "5000.0"
         last_trd_px = "10.4"
+        bid_size = "486.0"
+        offer_size = "477.0"
 
         # region Precondition
         md_req_id = self.market_data_refresh.get_MDReqID(self.listing_id, self.fix_env.feed_handler)
@@ -64,7 +65,7 @@ class QAP_T10208(TestCase):
         self.fix_manager_fh.send_message(self.market_data_refresh)
         self.market_data_refresh.set_market_data_incr_refresh(md_req_id, "1", "0", best_bid, size)  # update BestBid
         self.fix_manager_fh.send_message(self.market_data_refresh)
-        self.market_data_refresh.set_market_data_incr_refresh(md_req_id, "2", "2", last_trd_px, size)  # update LTPx
+        self.market_data_refresh.set_market_data_incr_refresh(md_req_id, "1", "2", last_trd_px, size)  # update LTPx
         self.fix_manager_fh.send_message(self.market_data_refresh)
         # endregion
 
@@ -76,7 +77,7 @@ class QAP_T10208(TestCase):
         # region Step 2
         bid_px: str = str(float(last_trd_px) - float(spread))
         offer_px: str = str(float(last_trd_px) + float(spread))
-        self.quote_request.set_default(self.listing_id, offer_px, bid_px, offer_size, bid_size)
+        self.quote_request.set_default(self.listing_id, offer_px, bid_px, notional_amt=not_amt)
         responses = self.java_api_manager.send_message_and_receive_response(self.quote_request)
         print_message("Create Quote", responses)
         quote_rep = self.java_api_manager.get_last_message(QSMessageType.QuoteStatusReport.value).get_parameters()[

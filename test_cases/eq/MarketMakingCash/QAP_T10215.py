@@ -6,12 +6,13 @@ from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from test_framework.data_sets.message_types import QSMessageType
+from test_framework.data_sets.message_types import QSMessageType, ORSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.oms.FixMessageMarketDataIncrementalRefreshOMS import (
     FixMessageMarketDataIncrementalRefreshOMS,
 )
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields
 from test_framework.java_api_wrappers.qs_messages.ListingQuotingModificationRequest import (
     ListingQuotingModificationRequest,
 )
@@ -31,7 +32,7 @@ def print_message(message, responses):
         logger.info(i.get_parameters())
 
 
-class QAP_T10208(TestCase):
+class QAP_T10215(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
@@ -53,10 +54,10 @@ class QAP_T10208(TestCase):
         best_bid = "10.0"
         best_ask = "11.0"
         size = "200"
-        spread = "0.1"
+        spread = "1.0"
         bid_size = "1000.0"
         offer_size = "1000.0"
-        last_trd_px = "10.4"
+        close_px = "10.2"
 
         # region Precondition
         md_req_id = self.market_data_refresh.get_MDReqID(self.listing_id, self.fix_env.feed_handler)
@@ -64,18 +65,22 @@ class QAP_T10208(TestCase):
         self.fix_manager_fh.send_message(self.market_data_refresh)
         self.market_data_refresh.set_market_data_incr_refresh(md_req_id, "1", "0", best_bid, size)  # update BestBid
         self.fix_manager_fh.send_message(self.market_data_refresh)
-        self.market_data_refresh.set_market_data_incr_refresh(md_req_id, "2", "2", last_trd_px, size)  # update LTPx
+        self.market_data_refresh.set_market_data_incr_refresh(md_req_id, "2", "2", "0", "0")  # delete LTPx
+        self.fix_manager_fh.send_message(self.market_data_refresh)
+        self.market_data_refresh.set_market_data_incr_refresh(md_req_id, "1", "5", close_px, size) # update ClosingPX
         self.fix_manager_fh.send_message(self.market_data_refresh)
         # endregion
 
         # region Step 1
-        self.listing_quote.set_default(self.listing_id, spread_px_type="PRC", bid_spread=spread, offer_spead=spread)
-        self.java_api_manager.send_message_and_receive_response(self.listing_quote)
+        self.listing_quote.set_default(
+            self.listing_id, spread_px_type="PRC", bid_spread=spread, offer_spead=spread
+        )
+        responses = self.java_api_manager.send_message_and_receive_response(self.listing_quote)
+        print_message("Check quote setup", responses)
         # endregion
-
         # region Step 2
-        bid_px: str = str(float(last_trd_px) - float(spread))
-        offer_px: str = str(float(last_trd_px) + float(spread))
+        bid_px: str = str(float(close_px) - float(spread))
+        offer_px: str = str(float(close_px) + float(spread))
         self.quote_request.set_default(self.listing_id, offer_px, bid_px, offer_size, bid_size)
         responses = self.java_api_manager.send_message_and_receive_response(self.quote_request)
         print_message("Create Quote", responses)
@@ -83,6 +88,7 @@ class QAP_T10208(TestCase):
             "QuoteStatusReportBlock"
         ]
         # endregion
+
         # region Step 3
         exp_res = {"ListingID": self.listing_id, "QuoteStatus": "ACK", "BidPx": bid_px, "OfferPx": offer_px,
                    "BidSize": bid_size, "OfferSize": offer_size}
