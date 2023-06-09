@@ -41,6 +41,8 @@ class QAP_T10861(TestCase):
                                     self.ssh_client_env.su_password)
         self.local_path_ors = resource_filename("test_resources.be_configs.oms_be_configs", "client_ors.xml")
         self.remote_path_ors = f"/home/{self.ssh_client_env.su_user}/quod/cfg/client_ors.xml"
+        self.local_path_bs = resource_filename("test_resources.be_configs.oms_be_configs", "client_bs.xml")
+        self.remote_path_bs = f"/home/{self.ssh_client_env.su_user}/quod/cfg/client_bs.xml"
         self.db_manager = DBManager(environment.get_list_data_base_environment()[0])
         self.desk = self.environment.get_list_fe_environment()[0].desk_ids[0]
 
@@ -52,10 +54,11 @@ class QAP_T10861(TestCase):
         tree_ors.write('temp_ors.xml')
         self.ssh_client.send_command('~/quod/script/site_scripts/change_permission_script')
         self.ssh_client.put_file(self.remote_path_ors, 'temp_ors.xml')
+        self.ssh_client.put_file(self.remote_path_bs, self.local_path_bs)
         self.db_manager.execute_query("UPDATE venue SET timezone = 'Asia/Tokyo', opentime = '08:00:00',closetime='15:40:00' WHERE venueid ='PARIS'")
         self.ssh_client.send_command('qstart BS')
-        self.ssh_client.send_command("qrestart all")
-        time.sleep(140)
+        self.ssh_client.send_command("qrestart QUOD.ORS QUOD.AQS QUOD.RDS, QUOD.ESBUYTH2TEST, QUOD.CS")
+        time.sleep(110)
         # # endregion
 
         # region step 1
@@ -88,8 +91,9 @@ class QAP_T10861(TestCase):
         self.ssh_client.put_file(self.remote_path_ors, self.local_path_ors)
         self.db_manager.execute_query(
             "UPDATE venue SET timezone = 'Europe/Paris', opentime = '01:00:00',closetime='00:00:00' WHERE venueid ='PARIS'")
-        self.ssh_client.send_command("qrestart all")
+        self.ssh_client.send_command("qrestart QUOD.ORS QUOD.AQS QUOD.ESBUYTH2TEST QUOD.RDS, QUOD.CS")
+        self.ssh_client.send_command('qstop -id QUOD.BS')
         os.remove('temp_ors.xml')
-        time.sleep(140)
+        time.sleep(110)
         self.db_manager.close_connection()
         self.ssh_client.close()

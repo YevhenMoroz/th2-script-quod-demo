@@ -51,7 +51,7 @@ class QAP_T8157(TestCase):
         self.rest_api_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
         self.rest_api_manager = RestApiManager(session_alias=self.rest_api_connectivity, case_id=self.test_id)
         self.unmatch_request = UnMatchRequest()
-        self.db_manager = DBManager(self.environment.get_list_data_base_environment()[0])
+        self.db_manager = DBManager(environment.get_list_data_base_environment()[0])
         self.cancel_transfer = PositionTransferCancelRequest()
         self.rest_wash_book_message = RestApiWashBookRuleMessages(self.data_set)
 
@@ -65,6 +65,7 @@ class QAP_T8157(TestCase):
         qty = self.new_order_single.get_parameter('OrderQtyData')['OrderQty']
         price = self.new_order_single.get_parameter('Price')
         self.fix_manager.send_message_and_receive_response_fix_standard(self.new_order_single)
+        cl_ord_id = self.new_order_single.get_parameter('ClOrdID')
         order_id = self.fix_manager.get_last_message("ExecutionReport").get_parameter("OrderID")
         # end_of_part
 
@@ -142,21 +143,15 @@ class QAP_T8157(TestCase):
         self.java_api_manager.send_message(self.cancel_transfer)
         # endregion
 
-        # # region check that sellside does not have TradeCancel Execution_Report
-        execution_report_fix = FixMessageExecutionReportOMS(self.data_set)
-        execution_report_fix.change_parameters({"ExecType": "H", "ClOrdID": position_transfer_id})
+        # region step 2: check that sellside does not have TradeCancel Execution_Report
         self.fix_verifier_ss.check_no_message_found(message_timeout=10000, message_name='ExecutionReport',
                                                     pre_filter={
                                                         "ExecType": "H",
                                                         "ClOrdID": position_transfer_id
                                                     })
-
-        # region step 3: check that backOffice has PositionTradeCancel message:
-        ignored_fields = ['NoParty', 'CumQty', 'LastPx', 'ExecID', 'OrderQtyData', 'tag5120', 'ExecRefID', 'LastQty',
-                          'OrderID', 'TransactTime', 'Side', 'AvgPx', 'QuodTradeQualifier', 'ExecBroker', 'OrdStatus',
-                          'Currency', 'Instrument', 'TrdType', 'LeavesQty', 'GrossTradeAmt']
-        self.fix_verifier_dc.check_fix_message_fix_standard(execution_report_fix, ['ExecType', 'ClOrdID'],
-                                                            ignored_fields=ignored_fields)
+        execution_report_fix = FixMessageExecutionReportOMS(self.data_set)
+        execution_report_fix.change_parameters({"ExecType": "H", "ClOrdID": cl_ord_id, 'OrdStatus':'0'})
+        self.fix_verifier_ss.check_fix_message_fix_standard(execution_report_fix, ['ExecType', 'ClOrdID', 'OrdStatus'])
         # endregion
 
     def _set_up_wash_book_rule(self):

@@ -50,7 +50,8 @@ class JavaApiManager:
                 request=ActJavaSubmitMessageRequest(
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
-                    parent_event_id=self.get_case_id(), response_time=response_time, filterFields=filter_dict,responseFilter=response_filter_dict))
+                    parent_event_id=self.get_case_id(), response_time=response_time, filterFields=filter_dict,
+                    responseFilter=response_filter_dict))
         elif message.get_message_type() == ORSMessageType.TradeEntryRequest.value:
             if "OrdID" in message.get_parameter("TradeEntryRequestBlock"):
                 response = self.act.submitTradeEntry(
@@ -300,7 +301,7 @@ class JavaApiManager:
                 request=ActJavaSubmitMessageRequest(
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
-                    parent_event_id=self.get_case_id(), response_time=response_time))
+                    parent_event_id=self.get_case_id(), response_time=response_time, responseFilter=response_filter_dict))
         elif message.get_message_type() == ORSMessageType.MarkOrderRequest.value:
             response = self.act.submitMarkOrderRequest(
                 request=ActJavaSubmitMessageRequest(
@@ -505,6 +506,13 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id(), filterFields=filter_dict, response_time=response_time))
+        elif message.get_message_type() == ORSMessageType.CrossAnnouncement.value:
+            response = self.act.submitCrossAnnouncementRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict, response_time=response_time,
+                    responseFilter=response_filter_dict))
         else:
             response = None
         return self.parse_response(response)

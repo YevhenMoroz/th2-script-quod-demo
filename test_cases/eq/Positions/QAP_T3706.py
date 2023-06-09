@@ -57,8 +57,8 @@ class QAP_T3706(TestCase):
         self.db_manager.execute_query(
             f"UPDATE institution SET posflatteningtime='{(tm(datetime.datetime.utcnow().isoformat()) + datetime.timedelta(minutes=5)).strftime('%Y-%m-%dT %H:%M:%S')}' WHERE institutionname ='QUOD FINANCIAL 1'")
         self.db_manager.execute_query(f"DELETE FROM retailposit WHERE instrid = '{self.instr_id}' AND accountid='{self.account}'")
-        self.ssh_client.send_command('qrestart all')
-        time.sleep(200)
+        self.ssh_client.send_command('qrestart QUOD.ORS QUOD.PKS QUOD.AQS QUOD.RDS')
+        time.sleep(100)
         # endregion
 
         # region Step 1: Create DMA orders

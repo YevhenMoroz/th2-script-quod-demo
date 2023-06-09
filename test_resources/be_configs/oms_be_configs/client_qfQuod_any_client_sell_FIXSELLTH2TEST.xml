@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<quod>
+    <includes>
+            <include>${CFG_DIR}/${CFG_PREFIX}backend.xml</include>
+            <include>${CFG_DEFAULT}/backend.xml</include>
+            <include>${CFG_DEFAULT}/default_connectivity.xml</include>
+    </includes>
+
+     <logging>
+     <level>DEBUG</level><!-- default level -->
+      <levels>
+         <cpp>
+             <ultramessaging>DEBUG</ultramessaging>
+             <mip_common>DEBUG</mip_common>
+         </cpp>
+      </levels>
+     </logging>
+
+    <quickfixgtw>
+               <tsmQuery>TSMQ</tsmQuery>
+         <tsmUpdate>TSMU</tsmUpdate>
+                  <sellside>
+             <userInfo>
+                  <querySessionKey>true</querySessionKey>
+                  <userId>gtwquod4</userId>
+                  <userRole>FIX</userRole>
+                  <userPassword>gtwquod4</userPassword>
+                  <sessionKey>0</sessionKey>
+             </userInfo>
+             <logout>
+                     <logoutSessionName>frontend</logoutSessionName>
+                     <doLogout>false</doLogout>
+                     <logoutTimeout>10</logoutTimeout>
+            </logout>
+            <login>
+                     <loginHost>someloginhost</loginHost>
+            </login>
+             <businessRejects>
+                     <sendBRIfMessageNotSupported>true</sendBRIfMessageNotSupported>
+             </businessRejects>
+             <aspMode>
+                     <aspModeEnabled>false</aspModeEnabled>
+                     <aspSendSubjectTemplate>${PREFIX}ORS.FIX</aspSendSubjectTemplate>
+                     <aspDestinationCount>2</aspDestinationCount>
+             </aspMode>
+             <asynchronousFixRequest>true</asynchronousFixRequest>
+         </sellside>
+                 <fix_sessions>
+                     <fix_session db_name="QFQUOD">FIXT.1.1:QUOD_S->QUOD_T</fix_session>
+                 </fix_sessions>
+
+          <adminName>admin</adminName>
+                  <pluginPath>${QUOD}/lib/qfQuod_any_client_sell.so</pluginPath>
+              </quickfixgtw>
+                  <middleware>
+                     <subjects>
+                        <subscribe>
+                          <orsFixReplySubject>${PREFIX}FIX_REPLY.gtwquod4</orsFixReplySubject>
+                         </subscribe>
+                      </subjects>
+                 </middleware>
+                <connectivity>
+                        <middleware><sessions></sessions></middleware>
+                        <session>backend</session>
+                        <enabled>false</enabled>
+                        <primary>true</primary>
+                        <VenueID>Not necessary here</VenueID>
+         <quickfix>
+         <settings>
+             <setting>
+                <NAME>DEFAULT</NAME>
+                <ConnectionType>acceptor</ConnectionType>
+                <SocketAcceptPort>14073</SocketAcceptPort>
+                <SocketReuseAddress>Y</SocketReuseAddress>
+                <FileStorePath>store</FileStorePath>
+                <StartTime>00:00:00</StartTime>
+                <EndTime>00:00:00</EndTime>
+                <DataDictionary>${CFG_DEFAULT}/spec/FIX50SP2_qfQuod_any_client_sell.xml</DataDictionary>
+                <RefreshOnLogon>Y</RefreshOnLogon>
+                <TransportDataDictionary>${CFG_DEFAULT}/spec/FIXT11_qfQuod_any_client_sell.xml</TransportDataDictionary>
+                <AppDataDictionary>${CFG_DEFAULT}/spec/FIX50SP2_qfQuod_any_client_sell.xml</AppDataDictionary>
+                <HeartBtInt>5</HeartBtInt>
+            </setting>
+            <setting>
+            <DBName>QFQUOD</DBName>
+                <NAME>SESSION</NAME>
+                <BeginString>FIXT.1.1</BeginString>
+                <DefaultApplVerID>FIX.5.0SP2</DefaultApplVerID>
+                <SenderCompID>QUOD_S</SenderCompID>
+                <TargetCompID>QUOD_T</TargetCompID>
+            </setting>
+        </settings>
+
+        <persistence enabled="true"> <!-- turn it off to store FIX messages in QuickFix file store, else will be stored in REDIS DB -->
+                <dbvendor>MONGO</dbvendor>
+                <host>127.0.0.1</host> <!-- address where redis server is running -->
+                <port>${MONGO_PORT}</port> <!-- Port used to communicate with redis server -->
+                <index>0</index>
+
+                <!--sentinelss>
+                <master_name>rsjlp</master_name>
+                <sentinel>
+                    <s1 host="10.40.45.51" port="30940" />
+                    <s2 host="10.40.45.52" port="30940" />
+                    <s3 host="10.40.45.52" port="30941" />
+                </sentinel>
+                </sentinelss-->
+        </persistence>
+        <fix_sessions>
+                 <!--fix_session db_name="QFQUOD">FIXT.1.1:QUOD_S->QUOD_T</fix_session-->
+        </fix_sessions>
+        <resetSeqNum>false</resetSeqNum>
+        <acceptor>true</acceptor>
+        <executionReportExecBroker>false</executionReportExecBroker>
+
+    <mapClientAccount toFix="true" fromFix="true" enabled="true">
+                <defaultValue>UNION</defaultValue>
+                <tagList><tag header="false">1</tag></tagList>
+                </mapClientAccount>
+
+                <mapAllocAccount toFix="true" fromFix="true" enabled="true"><tag header="false">78</tag></mapAllocAccount>
+
+
+
+    </quickfix>
+    <recipientUser></recipientUser>
+    </connectivity>
+    <sessions>
+        <asSessionName>frontend</asSessionName>
+        <orsSessionName>fixCM</orsSessionName>
+        <adminName>admin</adminName>
+
+  </sessions>
+<!-- <sellSideAlgo enabled="true">
+         <AlgoType internal="false">847</AlgoType>
+         <algos>
+            <algo scenario="1021"></algo>
+            <algo scenario="1023"></algo>
+             <algo scenario="1024"></algo>
+         </algos>
+    </sellSideAlgo> -->
+
+</quod>
