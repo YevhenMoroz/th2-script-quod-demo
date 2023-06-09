@@ -151,6 +151,8 @@ class ORSMessageType(Enum):
     GatewayAllocationInstruction = 'Gateway_AllocationInstruction'
     BlockChangeConfirmationServiceReply = 'Order_BlockChangeConfirmationServiceReply'
     BenchmarkNotification = 'Order_BenchmarkNotification'
+    CrossAnnouncementReply = 'Order_CrossAnnouncementReply'
+    CrossAnnouncement = 'Order_CrossAnnouncement'
 
 
 class TradingRestApiMessageType(Enum):
