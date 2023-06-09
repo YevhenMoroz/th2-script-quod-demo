@@ -68,6 +68,7 @@ Copyright Quod Financial
                     <PositionTradeCancel>true</PositionTradeCancel>
 					<TradeCaptureReport>true</TradeCaptureReport>
 					<TradeCaptureRequest>true</TradeCaptureRequest>
+					<ModifyReject>true</ModifyReject>
                 </type>
 				<users>
 					<!--<user>gtwbo</user>-->
