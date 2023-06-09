@@ -49,6 +49,7 @@ class OrderReplyConst(Enum):
     OrdStatus_HLD = 'HLD'
     OrdStatus_REJ = 'REJ'
     OrdStatus_CXL = 'CXL'
+    OrdStatus_SUB = 'SUB'
     ExecStatus_OPN = 'OPN'
     TransStatus_CXL = 'CXL'
     TransStatus_TER = 'TER'
@@ -151,6 +152,7 @@ class OrdListNotificationConst(Enum):
     OrderListWaveStatus_TER = 'TER'
     OrderListWaveStatus_NEW = 'NEW'
     OrderListWaveStatus_CXL = 'CXL'
+    OrdStatus_SUB = 'SUB'
 
 
 class QtyPercentageProfile(Enum):
@@ -463,6 +465,8 @@ class JavaApiFields(Enum):
     ExecQty = 'ExecQty'
     OrderListWaveID = 'OrderListWaveID'
     SubCounterpartList = "SubCounterpartList"
+    OrdIDList = "OrdIDList"
+    OrdIDBlock = "OrdIDBlock"
 
     # fields of Bag
     OrderBagStatus = 'OrderBagStatus'
