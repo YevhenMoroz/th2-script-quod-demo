@@ -5,7 +5,6 @@ from pathlib import Path
 from custom import basic_custom_actions as bca, basic_custom_actions
 from custom.basic_custom_actions import timestamps
 from custom.verifier import VerificationMethod
-from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.message_types import ORSMessageType
@@ -28,8 +27,6 @@ class QAP_T11183(TestCase):
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
-        self.fix_env = self.environment.get_list_fix_environment()[0]
-        self.bs_connectivity = self.fix_env.buy_side
         self.client = self.data_set.get_client("client_pt_1")  # MOClient
         self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
@@ -47,9 +44,6 @@ class QAP_T11183(TestCase):
                                     self.ssh_client_env.password, self.ssh_client_env.su_user,
                                     self.ssh_client_env.su_password)
         self.cross_announcement = CrossAnnouncement(self.data_set)
-        self.rule_manager = RuleManager(Simulators.equity)
-        self.mic = self.data_set.get_mic_by_name("mic_2")
-        self.rule_client = self.data_set.get_venue_client_names_by_name("client_pt_1_venue_2")  # MOClient_EUREX
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
