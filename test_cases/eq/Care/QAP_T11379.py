@@ -74,7 +74,7 @@ class QAP_T11379(TestCase):
         # endregion
 
     def _create_co_orders(self):
-        self.ja_manager.send_message_and_receive_response(self.order_submit)
+        self.ja_manager.send_message_and_receive_response(self.order_submit, response_filter_dict={"Order_OrdNotification": "OrdNotificationBlock/OrdID"})
         order_reply = self.ja_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
             JavaApiFields.OrdReplyBlock.value]
         return order_reply[JavaApiFields.OrdID.value]
