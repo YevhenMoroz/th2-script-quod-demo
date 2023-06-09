@@ -68,7 +68,6 @@ class QAP_T7512(TestCase):
             {'venueID': self.venue}).send_post_request()
         self.__send_fix_orders()
         response = self.fix_manager.get_last_message('ExecutionReport',"'ExecType': 'F'").get_parameters()
-        print(response)
         order_id = response["OrderID"]
         cl_order_id = response["ClOrdID"]
         exec_id = response['ExecID']
