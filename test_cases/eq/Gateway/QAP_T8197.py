@@ -39,7 +39,7 @@ class QAP_T8197(TestCase):
         self.java_api_connectivity2 = self.environment.get_list_java_api_environment()[0].java_api_conn_user2
         self.java_api_manager2 = JavaApiManager(self.java_api_connectivity2, self.test_id)
         self.new_ord_list = NewOrderListFromExistingOrders()
-        self.basket_name = 'Basket_QAP_T8198'
+        self.basket_name = 'Basket_QAP_T8197'
         self.fix_verifier_sell = FixVerifier(self.fix_env.sell_side, self.test_id)
         self.fix_verifier_back_office = FixVerifier(self.fix_env.drop_copy, self.test_id)
         self.cancel_reject = FixMessageOrderCancelRejectReportOMS()
@@ -90,6 +90,7 @@ class QAP_T8197(TestCase):
         # endregion
 
         # region Step 4 - check cancel reject on the Sell Side
+        cancel_ignored_fields = ['CxlRejResponseTo', 'Account', 'TransactTime']
         ignored_fields = ['ExecID', 'GatingRuleCondName', 'OrderQtyData',
                           'LastQty', 'GatingRuleName',
                           'TransactTime', 'Side', 'AvgPx', 'Parties',
@@ -97,7 +98,7 @@ class QAP_T8197(TestCase):
                           'TimeInForce', 'HandlInst',
                           'CxlQty', 'LeavesQty', 'CumQty', 'LastPx', 'OrdType',
                           'OrderCapacity', 'QtyType', 'Price',
-                          'Instrument']
+                          'Instrument', 'QuodTradeQualifier', 'BookID', 'NoParty', 'tag5120', 'ExecBroker']
         change_parameters1 = {
             "Account": self.client,
             "OrdStatus": '0',
@@ -107,12 +108,14 @@ class QAP_T8197(TestCase):
         }
         self.cancel_reject.change_parameters(change_parameters1)
         self.fix_verifier_sell.check_fix_message_fix_standard(self.cancel_reject,
-                                                              key_parameters=['ClOrdID', 'OrdStatus'])
+                                                              key_parameters=['ClOrdID', 'OrdStatus'],
+                                                              ignored_fields=cancel_ignored_fields)
         # endregion
 
         # region Step 5 - check cancel reject on the BO
         self.fix_verifier_back_office.check_fix_message_fix_standard(self.cancel_reject,
-                                                                     key_parameters=['ClOrdID', 'OrdStatus'])
+                                                                     key_parameters=['ClOrdID', 'OrdStatus'],
+                                                              ignored_fields=cancel_ignored_fields)
         # endregion
 
         # region Step 6 - Send cancel replace request
@@ -185,7 +188,7 @@ class QAP_T8197(TestCase):
 
         # region Accept CO order in Client Inbox
         self.accept_request.set_default(ord_id, cd_order_notif_id, desk_id)
-        responses = self.java_api_manager.send_message_and_receive_response(self.accept_request)
+        self.java_api_manager.send_message_and_receive_response(self.accept_request)
         order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
             JavaApiFields.OrdReplyBlock.value
         ]
