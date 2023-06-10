@@ -273,11 +273,7 @@ class QAP_T7284(TestCase):
         self.java_api_manager.compare_values({JavaApiFields.ExecType.value: ExecutionReportConst.ExecType_CAN.value,
                                               JavaApiFields.UnmatchedQty.value: str(float(self.qty))},
                                              execution_report, 'Verify that expected result is achieved (step 10)')
-        position_report = self.java_api_manager.get_last_message_by_multiple_filter(PKSMessageType.PositionReport.value,
-                                                                                    [JavaApiFields.PositQty.value,
-                                                                                     self.security_account]).get_parameters()[
-            JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
-            JavaApiFields.PositionBlock.value][0]
+        position_report = self._extract_position(self.security_account, instrument)
         self.java_api_manager.compare_values(
             {JavaApiFields.PositQty.value: str(float(posit_qty_before) + float(self.qty))},
             position_report, f'Verify that posit Qty of {self.security_account} increased on {self.qty} (step 10)')
