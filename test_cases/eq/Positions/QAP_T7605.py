@@ -33,8 +33,6 @@ class QAP_T7605(TestCase):
         self.ja_manager = JavaApiManager(environment.get_list_java_api_environment()[0].java_api_conn, self.test_id)
         self.ja_manager_second = JavaApiManager(environment.get_list_java_api_environment()[0].java_api_conn_user2,
                                                 self.test_id)
-        self.wa_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
-        self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
         self.client = self.data_set.get_client_by_name("client_pos_1")
         self.client_2 = self.data_set.get_client_by_name('client_1')
         self.desk = self.environment.get_list_fe_environment()[0].desk_ids[0]
@@ -42,11 +40,12 @@ class QAP_T7605(TestCase):
             recipient=self.environment.get_list_fe_environment()[0].user_1,
             desk=self.desk,
             role=SubmitRequestConst.USER_ROLE_1.value)
-
         self.accept_request = CDOrdAckBatchRequest()
         self.price = self.order_submit.get_parameter(JavaApiFields.NewOrderSingleBlock.value)[JavaApiFields.Price.value]
         self.instrument_id = self.order_submit.get_parameter(JavaApiFields.NewOrderSingleBlock.value)[
             JavaApiFields.InstrID.value]
+        self.venue_client_2 = self.data_set.get_venue_client_names_by_name('client_1_venue_1')
+        self.venue_client_1 = self.data_set.get_venue_client_names_by_name('client_pos_1_venue_1')
         self.trade_entry = TradeEntryOMS(self.data_set)
         self.wash_book = self.data_set.get_washbook_account_by_name('washbook_account_2')
         self.dma_wash_book = self.data_set.get_washbook_account_by_name('washbook_account_1')
@@ -56,8 +55,6 @@ class QAP_T7605(TestCase):
         self.allocation_instruction = AllocationInstructionOMS(self.data_set)
         self.booking_cancel_request = BookingCancelRequest()
         self.mic = self.data_set.get_mic_by_name('mic_1')
-        self.complete_request = DFDManagementBatchOMS(self.data_set)
-        self.allocation_instruction = AllocationInstructionOMS(self.data_set)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -79,8 +76,8 @@ class QAP_T7605(TestCase):
         # region step  4-7: Create Child DMA order and trade it
         route_params = {JavaApiFields.RouteBlock.value: [
             {JavaApiFields.RouteID.value: self.data_set.get_route_id_by_name("route_1")}]}
-        self._trade_child_dma_order(first_qty, order_id, self.client, cl_ord_id, 'step 4', route_params)
-        position_report_first = self.ja_manager.get_last_message(PKSMessageType.PositionReport.value, [self.wash_book,
+        self._trade_child_dma_order(first_qty, order_id, self.venue_client_1, cl_ord_id, 'step 4', route_params, self.client)
+        position_report_first = self.ja_manager.get_last_message_by_multiple_filter(PKSMessageType.PositionReport.value, [self.wash_book,
                                                                                                        JavaApiFields.PositQty.value]).get_parameters()[
             JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
             JavaApiFields.PositionBlock.value][0]
@@ -90,12 +87,12 @@ class QAP_T7605(TestCase):
             JavaApiFields.PositQty.value: first_qty}, {
             JavaApiFields.CumSellQty.value: str(
                 float(position_report_first[JavaApiFields.CumSellQty.value]) - float(cum_sell_qty_initial)),
-            JavaApiFields.PositQty.value: float(posit_qty_initial) - float(
-                position_report_first[JavaApiFields.PositQty.value])},
+            JavaApiFields.PositQty.value: str(float(posit_qty_initial) - float(
+                position_report_first[JavaApiFields.PositQty.value]))},
             f'Verify that {JavaApiFields.CumSellQty.value} increased and {JavaApiFields.PositQty.value} decreased on {first_qty} (step 5)')
 
-        self._trade_child_dma_order(second_qty, order_id_second, self.client_2, cl_ord_id_second, 'step 6', route_params)
-        position_report_second = self.ja_manager.get_last_message(PKSMessageType.PositionReport.value, [self.wash_book,
+        self._trade_child_dma_order(second_qty, order_id_second, self.venue_client_2, cl_ord_id_second, 'step 6', route_params, self.client_2)
+        position_report_second = self.ja_manager.get_last_message_by_multiple_filter(PKSMessageType.PositionReport.value, [self.wash_book,
                                                                                                         JavaApiFields.PositQty.value]).get_parameters()[
             JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
             JavaApiFields.PositionBlock.value][0]
@@ -145,8 +142,8 @@ class QAP_T7605(TestCase):
                                                                  self.wash_book]).get_parameters()[
                 JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
                 JavaApiFields.PositionBlock.value][0]
-        self.ja_manager.compare_values({JavaApiFields.PositQty.value: first_qty,
-                                        JavaApiFields.CumSellQty.value: first_qty},
+        self.ja_manager.compare_values({JavaApiFields.PositQty.value: second_qty,
+                                        JavaApiFields.CumSellQty.value: second_qty},
                                        {JavaApiFields.PositQty.value: str(
                                            float(position_report_second_block[JavaApiFields.PositQty.value]) - float(
                                                position_report_first_block[JavaApiFields.PositQty.value])),
@@ -154,7 +151,7 @@ class QAP_T7605(TestCase):
                                                float(
                                                    position_report_first_block[JavaApiFields.CumSellQty.value]) - float(
                                                    position_report_second_block[JavaApiFields.CumSellQty.value]))},
-                                       f'Verify that {JavaApiFields.CumSellQty.value} decreased and {JavaApiFields.PositQty.value} increased on {first_qty} (step 11)')
+                                       f'Verify that {JavaApiFields.CumSellQty.value} decreased and {JavaApiFields.PositQty.value} increased on {second_qty} (step 11)')
         # endregion
 
     def _create_co_orders(self, step, qty, client):
@@ -179,12 +176,12 @@ class QAP_T7605(TestCase):
                                        f'Verifying that order has properly status ({step})')
         return order_id, cl_ord_id
 
-    def _trade_child_dma_order(self, qty, order_id, client, cl_ord_id, step, route_params):
+    def _trade_child_dma_order(self, qty, order_id, client_venue, cl_ord_id, step, route_params, client):
         try:
             new_order_single = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(
                 self.fix_env.buy_side, self.client, self.mic, float(self.price))
             trade_rule = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.fix_env.buy_side,
-                                                                                            client, self.mic,
+                                                                                            client_venue, self.mic,
                                                                                             float(self.price),
                                                                                             int(qty), 0)
             self.order_submit.get_parameters().clear()
@@ -199,7 +196,7 @@ class QAP_T7605(TestCase):
                                                              JavaApiFields.WashBookAccountID.value: self.dma_wash_book
                                                          })
             self.ja_manager.send_message_and_receive_response(self.order_submit, {cl_ord_id: cl_ord_id})
-            execution_report = self.ja_manager_second.get_last_message_by_multiple_filter(
+            execution_report = self.ja_manager.get_last_message_by_multiple_filter(
                 ORSMessageType.ExecutionReport.value, [order_id]).get_parameters()[
                 JavaApiFields.ExecutionReportBlock.value]
             self.ja_manager.compare_values(
@@ -217,7 +214,8 @@ class QAP_T7605(TestCase):
         self.allocation_instruction.update_fields_in_component(JavaApiFields.AllocationInstructionBlock.value,
                                                                {
                                                                    JavaApiFields.Qty.value: qty,
-                                                                   JavaApiFields.AccountGroupID.value: client
+                                                                   JavaApiFields.AccountGroupID.value: client,
+                                                                   JavaApiFields.Side.value: SubmitRequestConst.Side_Sell.value
                                                                })
         self.ja_manager.send_message_and_receive_response(self.allocation_instruction)
         order_update = self.ja_manager.get_last_message(ORSMessageType.OrdUpdate.value).get_parameters()[
@@ -235,5 +233,5 @@ class QAP_T7605(TestCase):
             JavaApiFields.PositionReportBlock.value] \
             [JavaApiFields.PositionList.value][JavaApiFields.PositionBlock.value]
         for position_record in request_for_position_ack:
-            if self.instrument_id == position_record[JavaApiFields.InstrID.value]:
+            if self.instrument_id == position_record[JavaApiFields.InstrID.value] and position_record[JavaApiFields.PositionType.value] == 'N':
                 return position_record

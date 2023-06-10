@@ -35,7 +35,7 @@ class QAP_T7250(TestCase):
         self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
         self.java_api_manager_2 = JavaApiManager(self.java_api_connectivity_2, self.test_id)
         self.new_order = FixNewOrderSingleOMS(self.data_set)
-        self.client = self.data_set.get_client_by_name("client_2_ext_id")
+        self.client = self.data_set.get_client_by_name("client_2")
         self.accept_request = CDOrdAckBatchRequest()
         self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
         self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,

@@ -44,7 +44,7 @@ class QAP_T8125(TestCase):
         self.submit_request_2 = OrderSubmitOMS(self.data_set)
         self.modification_request = OrderModificationRequest()
         self.washbook1 = self.data_set.get_washbook_account_by_name("washbook_account_2")  # CareWB
-        self.washbook2 = self.data_set.get_washbook_account_by_name("washbook_account_3")  # DefaultWashBook
+        self.washbook2 = self.data_set.get_washbook_account_by_name("washbook_account_1")  # DMAWashBook
         self.manual_cross = ManualOrderCrossRequest()
         # endregion
 
