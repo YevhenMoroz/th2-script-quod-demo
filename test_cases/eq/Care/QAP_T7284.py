@@ -271,7 +271,7 @@ class QAP_T7284(TestCase):
                                                    parent_exec_id).get_parameters()[
                 JavaApiFields.ExecutionReportBlock.value]
         self.java_api_manager.compare_values({JavaApiFields.ExecType.value: ExecutionReportConst.ExecType_CAN.value,
-                                              JavaApiFields.UnmatchedQty.value: str(float(self.qty_))},
+                                              JavaApiFields.UnmatchedQty.value: str(float(self.qty))},
                                              execution_report, 'Verify that expected result is achieved (step 10)')
         position_report = self.java_api_manager.get_last_message_by_multiple_filter(PKSMessageType.PositionReport.value,
                                                                                     [JavaApiFields.PositQty.value,
