@@ -265,7 +265,7 @@ class QAP_T7284(TestCase):
         posit_qty_before = pos_record[JavaApiFields.PositQty.value]
         self.unmatch_request.set_default(self.data_set, parent_exec_id, self.qty)
         self.unmatch_request.set_default_unmatch_and_transfer(self.security_account)
-        self.java_api_manager.send_message_and_receive_response(self.security_account)
+        self.java_api_manager.send_message_and_receive_response(self.unmatch_request)
         execution_report = \
             self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value,
                                                    parent_exec_id).get_parameters()[
