@@ -60,7 +60,7 @@ class QAP_T3563(TestCase):
         self.db_manager.execute_query(
             f"DELETE FROM retailposit WHERE accountid = '{self.account}' AND instrid = '{self.instrument_id}'")
         self.ssh_client.send_command('qrestart QUOD.ORS QUOD.PKS')
-        time.sleep(120)
+        time.sleep(80)
         # endregion
         # region precondition part 2
         route_params = {'RouteBlock': [{'RouteID': self.data_set.get_route_id_by_name("route_1")}]}
@@ -93,7 +93,7 @@ class QAP_T3563(TestCase):
         self.db_manager.execute_query(
             f"UPDATE retailposit SET posgoodtilldate='{(tm(datetime.datetime.utcnow().isoformat()) + datetime.timedelta(days=-1)).date().strftime('%Y%m%d')}' WHERE accountid = '{self.account}' AND instrid = '{self.instrument_id}'")
         self.ssh_client.send_command('qrestart QUOD.PKS QUOD.ORS')
-        time.sleep(120)
+        time.sleep(80)
         # endregion
 
         # region step 1: Send RequestForOverdueRetailPositions

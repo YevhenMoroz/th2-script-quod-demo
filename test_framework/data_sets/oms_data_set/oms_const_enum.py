@@ -663,6 +663,12 @@ class OMSCounterParty_JavaAPI_FOR_ES(Enum):
     counterpart_contra_firm = {'PartyID': "ContraFirm",
                                'PartyIDSource': 'AcceptedMarketParticipant',
                                'PartyRole': 'ContraFirm'}
+    counterpart_executing_firm = {'PartyID': "ExecutingFirm",
+                                   'PartyIDSource': 'AcceptedMarketParticipant',
+                                   'PartyRole': 'ExecutingFirm'}
+    counterpart_contra_firm2 = {'PartyID': "ContraFirm2",
+                               'PartyIDSource': 'AcceptedMarketParticipant',
+                               'PartyRole': 'ContraFirm'}
 
 
 class OMSGatingRuleIDs(Enum):

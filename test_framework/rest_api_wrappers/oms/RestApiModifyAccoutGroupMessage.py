@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from test_framework.environments.full_environment import FullEnvironment
 from test_framework.rest_api_wrappers.RestApiMessages import RestApiMessages
 
@@ -34,7 +36,7 @@ class RestApiModifyAccountGroupMessage(RestApiMessages):
                                 "managerDesk": [{"deskID": enviroment.get_list_fe_environment()[0].desk_ids[1]}]}
 
     def set_default(self):
-        self.parameters.update(self._base_parametes)
+        self.parameters.update(deepcopy(self._base_parametes))
 
     def set_params_for_comm_client(self, agent_fee_for_route=False):
         base_parameters = {

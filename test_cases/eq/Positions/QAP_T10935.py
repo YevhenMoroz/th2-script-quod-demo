@@ -92,7 +92,6 @@ class QAP_T10935(TestCase):
         order_bag_notification = \
             self.java_api_manager.get_last_message(ORSMessageType.OrderBagNotification.value).get_parameters()[
                 JavaApiFields.OrderBagNotificationBlock.value]
-        bag_id = order_bag_notification['OrderBagID']
         expected_result = {JavaApiFields.OrderBagName.value: self.name_of_bag,
                            JavaApiFields.OrderBagStatus.value: OrderBagConst.OrderBagStatus_NEW.value}
         self.java_api_manager.compare_values(expected_result, order_bag_notification,
@@ -118,7 +117,7 @@ class QAP_T10935(TestCase):
 
         # region Verify wave
         list_wave_notify_block = self.java_api_manager.get_last_message(
-            ORSMessageType.OrderListWaveNotification.value).get_parameter(
+            ORSMessageType.OrderListWaveNotification.value,OrderBagConst.OrderWaveStatus_NEW.value).get_parameter(
             JavaApiFields.OrderListWaveNotificationBlock.value)
         self.java_api_manager.compare_values(
             {JavaApiFields.OrderListWaveStatus.value: OrderBagConst.OrderWaveStatus_NEW.value},
@@ -167,5 +166,5 @@ class QAP_T10935(TestCase):
             get_parameters()[JavaApiFields.RequestForPositionsAckBlock.value][JavaApiFields.PositionReportBlock.value] \
             [JavaApiFields.PositionList.value][JavaApiFields.PositionBlock.value]
         for position_record in request_for_position_ack:
-            if self.instrument_id == position_record[JavaApiFields.InstrID.value]:
+            if self.instrument_id == position_record[JavaApiFields.InstrID.value] and position_record[JavaApiFields.PositionType.value] == 'N':
                 return position_record

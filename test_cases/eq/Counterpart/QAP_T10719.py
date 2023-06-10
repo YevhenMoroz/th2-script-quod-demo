@@ -77,7 +77,7 @@ class QAP_T10719(TestCase):
 
         # region step 2: Fully ManualExecute CO order:
         self.trade_entry.set_default(self.data_set, order_id)
-        self.java_api_manager.send_message_and_receive_response(self.trade_entry)
+        self.java_api_manager.send_message(self.trade_entry)
         parties = {
             'NoParty': [
                 self.data_set.get_counterpart_id_fix('counterpart_id_investment_firm_cl_counterpart'),
@@ -99,7 +99,8 @@ class QAP_T10719(TestCase):
                                   'CumQty', 'LastPx', 'OrdType',
                                   'tag5120', 'LastMkt', 'OrderCapacity',
                                   'QtyType', 'ExecBroker', 'Price',
-                                  'VenueType', 'Instrument',
+                                  'VenueType', 'Instrument', 'NoMiscFees',
+                                  'CommissionData',
                                   'ExDestination', 'GrossTradeAmt']
         execution_report = FixMessageExecutionReportOMS(self.data_set).change_parameters(
             {"NoParty": parties,

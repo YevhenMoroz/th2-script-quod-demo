@@ -61,12 +61,13 @@ class QAP_T7433(TestCase):
                                {'AlgoParameterName': "StrategyTag",
                                 "AlgoParamString": "TWAP",
                                 'VenueScenarioParameterID': "7505"}]},
-                           'ScenarioID': "101",
-                           "ScenarioIdentifier": "8031",
-                           "VenueScenarioID": "TWAP",
-                           "VenueScenarioVersionID": "9682",
-                           "VenueScenarioVersionValue": "ATDLEQ5.3.1"}, "RouteID": self.route_id}
+                           'ScenarioID': "1001",
+                           "ScenarioIdentifier": "11799",
+                           "VenueScenarioID": "TWAPAS",
+                           "VenueScenarioVersionID": "11945"}, "RouteID": self.route_id}
         self.create_wave_request.update_fields_in_component('OrderListWaveCreationRequestBlock', algo_params)
+        nos_rule = None
+        trade_rule = None
         try:
             nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(self.bs_connectivity,
                                                                                                   self.rule_client,
@@ -86,7 +87,6 @@ class QAP_T7433(TestCase):
         # region check wave
         list_wave_notif = self.java_api_manager.get_last_message(ORSMessageType.OrderListWaveNotification.value)
         wave_notif_block = list_wave_notif.get_parameter(JavaApiFields.OrderListWaveNotificationBlock.value)
-        print(wave_notif_block)
         self.java_api_manager.compare_values(
             {JavaApiFields.OrderListWaveStatus.value: OrdListNotificationConst.OrderListWaveStatus_TER.value,
              JavaApiFields.PercentQtyToRelease.value: '1.0', JavaApiFields.RouteID.value: str(self.route_id)}, {
