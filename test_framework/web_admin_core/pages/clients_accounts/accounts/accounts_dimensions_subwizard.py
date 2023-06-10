@@ -54,19 +54,19 @@ class AccountsDimensionsSubWizard(CommonPage):
         return self.get_text_by_xpath(AccountsConstants.DIMENSIONS_DEFAULT_ROUTE_COMBOBOX_XPATH)
 
     def set_stamp_exempt(self):
-        self.toggle_checkbox(AccountsConstants.DIMENSIONS_STAMP_EXEMPT_CHECKBOX_XPATH)
+        self.find_by_xpath(AccountsConstants.DIMENSIONS_STAMP_EXEMPT_CHECKBOX_XPATH).click()
 
     def get_stamp_exempt(self):
         return self.is_checkbox_selected(AccountsConstants.DIMENSIONS_STAMP_EXEMPT_CHECKBOX_XPATH)
 
     def set_levy_exempt(self):
-        self.toggle_checkbox(AccountsConstants.DIMENSIONS_LEVY_EXEMPT_CHECKBOX_XPATH)
+        self.find_by_xpath(AccountsConstants.DIMENSIONS_LEVY_EXEMPT_CHECKBOX_XPATH).click()
 
     def get_levy_exempt(self):
         return self.is_checkbox_selected(AccountsConstants.DIMENSIONS_LEVY_EXEMPT_CHECKBOX_XPATH)
 
     def set_per_transac_exempt(self):
-        self.toggle_checkbox(AccountsConstants.DIMENSIONS_PER_TRANSAC_EXEMPT_CHECKBOX_XPATH)
+        self.find_by_xpath(AccountsConstants.DIMENSIONS_PER_TRANSAC_EXEMPT_CHECKBOX_XPATH).click()
 
     def get_per_transac_exempt(self):
         return self.is_checkbox_selected(AccountsConstants.DIMENSIONS_PER_TRANSAC_EXEMPT_CHECKBOX_XPATH)

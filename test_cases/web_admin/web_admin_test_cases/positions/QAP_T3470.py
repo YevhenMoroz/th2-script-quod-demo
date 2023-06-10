@@ -62,6 +62,7 @@ class QAP_T3470(CommonTestCase):
         # Now only done for Postgres, needs to be completed for Oracle
         self.db_manager.my_db.execute(f"SELECT temporarycash FROM cashaccount WHERE cashaccountname = '{self.name}'")
         self.temporary_cash = self.db_manager.my_db.fetchall()[0][0]
+        if self.temporary_cash is None: self.temporary_cash = 0
         common_act.refresh_page(True)
         cash_positions_page.set_name(self.name)
         time.sleep(1)

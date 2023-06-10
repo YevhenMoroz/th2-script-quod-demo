@@ -1,11 +1,14 @@
+import string
 import sys
 import time
 import traceback
+import random
 
 from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.market_data_sources.main_page import \
     MarketDataSourcesPage
+from test_framework.web_admin_core.pages.markets.market_data_sources.wizard import MarketDataSourcesWizard
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
@@ -17,16 +20,28 @@ class QAP_T4011(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
+        self.symbol = self.data_set.get_symbol_by_name("symbol_6")
+        self.user = self.data_set.get_user("user_12")
+        self.venue = self.data_set.get_venue_by_name("venue_1")
+        self.md_source = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
-        time.sleep(2)
         side_menu.open_market_data_source_page()
         main_page = MarketDataSourcesPage(self.web_driver_container)
-        main_page.click_on_more_actions()
+        main_page.click_on_new_button()
+        wizard = MarketDataSourcesWizard(self.web_driver_container)
+        wizard.set_symbol(self.symbol)
+        wizard.set_user(self.user)
+        wizard.set_venue(self.venue)
+        wizard.set_md_source(self.md_source)
+        wizard.click_on_save_changes()
+        time.sleep(1)
+        main_page.set_md_source_at_filter(self.md_source)
         time.sleep(2)
+        main_page.click_on_more_actions()
 
     def test_context(self):
         try:

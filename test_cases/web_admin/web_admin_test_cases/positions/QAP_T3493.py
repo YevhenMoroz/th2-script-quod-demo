@@ -17,12 +17,12 @@ from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTes
 class QAP_T3493(CommonTestCase):
 
     def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None,
-                 db_manage=None):
+                 db_manager=None):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.db_manager = db_manage
+        self.db_manager = db_manager
 
         self.name = self.__class__.__name__
         self.client_cash_account_id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
@@ -71,12 +71,16 @@ class QAP_T3493(CommonTestCase):
             cash_positions_page.click_on_more_actions()
             cash_positions_page.click_on_edit()
             time.sleep(1)
-            cash_loan = self.db_manager.my_db.execute(
-                f"SELECT cashloaned  FROM cashaccount WHERE cashaccountname = '{self.name}'")
+            # TODO
+            # Now only done for Postgres, needs to be completed for Oracle
+            self.db_manager.my_db.execute(f"SELECT cashloaned  FROM cashaccount WHERE cashaccountname = '{self.name}'")
+            cash_loan = self.db_manager.my_db.fetchall()[0][0]
             self.verify(f"Cash Loan is increased on entered Amount value. {self.amount}.",
                         "{:.2f}".format(int(cash_loan)), str(positions_tab.get_cash_loan()))
 
             wizard.click_on_close()
+            if wizard.is_confirmation_of_leave_wizard_displayed():
+                wizard.click_on_ok_button()
             cash_positions_page.set_name(self.name)
             time.sleep(1)
             cash_positions_page.click_on_transaction()
@@ -87,8 +91,8 @@ class QAP_T3493(CommonTestCase):
             cash_positions_page.click_on_more_actions()
             cash_positions_page.click_on_edit()
             time.sleep(1)
-            cash_loan = self.db_manager.my_db.execute(
-                f"SELECT cashloaned  FROM cashaccount WHERE cashaccountname = '{self.name}'")
+            self.db_manager.my_db.execute(f"SELECT cashloaned  FROM cashaccount WHERE cashaccountname = '{self.name}'")
+            cash_loan = self.db_manager.my_db.fetchall()[0][0]
             self.verify(f"Cash Loan is decreased on entered Amount value. {self.amount}.",
                         "{:.2f}".format(int(cash_loan)), str(positions_tab.get_cash_loan()))
 

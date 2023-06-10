@@ -37,7 +37,7 @@ class QAP_T3627(CommonTestCase):
                 "user_id": 'QAP-T3627',
                 "ext_id_client": ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6)),
                 "email": '2@2',
-                "institution": self.data_set.get_institution("institution_3")
+                "institution": self.data_set.get_institution("institution_2")
             },
             "desk_user": self.data_set.get_user("user_3"),
             "zone_user": self.data_set.get_user("user_4"),

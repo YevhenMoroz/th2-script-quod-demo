@@ -60,10 +60,10 @@ class QAP_T3953(CommonTestCase):
         values_tab.set_id(self.id)
         values_tab.set_ext_id_client(self.ext_id_client)
         values_tab.set_client(self.client)
-        values_tab.set_description(self.description)
+        values_tab.set_name(self.description)
         values_tab.set_client_id_source(self.client_id_source)
         values_tab.set_bo_field_5(self.bo_field_5)
-        values_tab.toggle_commission_exemption()
+        values_tab.click_on_commission_exemption()
         values_tab.set_counterpart(self.counterpart)
 
         dimensions_tab = AccountsDimensionsSubWizard(self.web_driver_container)
@@ -107,7 +107,7 @@ class QAP_T3953(CommonTestCase):
                                self.venue_client_account_name, self.route_account_name, self.route, "True",
                                self.default_route]
 
-            actual_result = [values_tab.get_client(), values_tab.get_description(), values_tab.get_client_id_source(),
+            actual_result = [values_tab.get_client(), values_tab.get_name(), values_tab.get_client_id_source(),
                              values_tab.get_bo_field_5(), str(values_tab.is_commission_exemption_checked()),
                              values_tab.get_counterpart(), dimensions_tab.get_venue_account(),
                              dimensions_tab.get_venue(), dimensions_tab.get_account_id_source(),

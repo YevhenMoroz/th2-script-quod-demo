@@ -3,7 +3,22 @@ from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T11233 import QAP_T11233
 from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T11234 import QAP_T11234
+from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T4150 import QAP_T4150
+from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T4173 import QAP_T4173
+from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T4174 import QAP_T4174
+from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T4176 import QAP_T4176
+from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T4177 import QAP_T4177
+from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T4232 import QAP_T4232
 from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T4386 import QAP_T4386
+from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T4487 import QAP_T4487
+from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T4488 import QAP_T4488
+from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T4524 import QAP_T4524
+from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T4526 import QAP_T4526
+from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T4527 import QAP_T4527
+from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T4533 import QAP_T4533
+from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T4534 import QAP_T4534
+from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T4535 import QAP_T4535
+from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T4536 import QAP_T4536
 from test_cases.algo.Algo_Redburn.POV_Auction.QAP_T8719 import QAP_T8719
 from test_framework.configurations.component_configuration import ComponentConfigurationAlgo
 
@@ -25,7 +40,21 @@ def test_run(parent_id=None, version=None):
         QAP_T8719(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T11233(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T11234(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        pass
+        QAP_T4534(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4526(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4524(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4527(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4536(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4535(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4533(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4177(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4176(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4173(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4174(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4150(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4488(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4487(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T4232(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
     except Exception:
         # bca.create_event('Fail test event', status='FAILED', parent_id=parent_id)

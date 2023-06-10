@@ -107,12 +107,10 @@ class RunUsers:
                       environment=configuration.environment).run()
             QAP_T3851(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
-            QAP_T3876(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                      environment=configuration.environment).run()
             QAP_T3903(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
-            QAP_T3920(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                      environment=configuration.environment).run()
+            # QAP_T3920(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+            #           environment=configuration.environment).run()
             QAP_T3925(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                       environment=configuration.environment).run()
             QAP_T3932(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,

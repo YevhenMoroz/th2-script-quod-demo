@@ -52,7 +52,7 @@ class ClientsValuesSubWizard(CommonPage):
         return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_DISCLOSE_EXEC_XPATH)
 
     def set_client_group(self, value):
-        self.set_text_by_xpath(ClientsConstants.VALUES_TAB_CLIENT_GROUP_XPATH, value)
+        self.set_combobox_value(ClientsConstants.VALUES_TAB_CLIENT_GROUP_XPATH, value)
 
     def get_client_group(self):
         return self.get_text_by_xpath(ClientsConstants.VALUES_TAB_CLIENT_GROUP_XPATH)

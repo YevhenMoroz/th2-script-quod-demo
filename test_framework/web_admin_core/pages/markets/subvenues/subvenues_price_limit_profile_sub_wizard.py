@@ -45,7 +45,7 @@ class SubVenuesPriceLimitProfilesSubWizard(CommonPage):
                                value)
 
     def set_price_limit_type(self, value):
-        self.set_text_by_xpath(SubVenuesConstants.PRICE_LIMIT_PROFILE_TAB_PRICE_LIMIT_TYPE_XPATH, value)
+        self.set_combobox_value(SubVenuesConstants.PRICE_LIMIT_PROFILE_TAB_PRICE_LIMIT_TYPE_XPATH, value)
 
     def get_price_limit_type(self):
         self.get_text_by_xpath(SubVenuesConstants.PRICE_LIMIT_PROFILE_TAB_PRICE_LIMIT_TYPE_XPATH)

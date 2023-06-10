@@ -49,6 +49,7 @@ class QAP_T3724(CommonTestCase):
             wizard.click_save_button()
             time.sleep(1)
             main_page.set_id(self.id)
+            time.sleep(1)
             
             self.verify("Account with the same Ext Id Client created",
                         True, main_page.is_searched_account_found(self.id))

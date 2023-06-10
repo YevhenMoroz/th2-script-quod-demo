@@ -34,11 +34,11 @@ class AccountsWizard(CommonPage):
         time.sleep(1)
         return self.get_all_items_from_drop_down(AccountsConstants.DROP_DOWN_MENU_XPATH)
 
-    def set_description(self, value: str):
-        self.set_text_by_xpath(AccountsConstants.WIZARD_DESCRIPTION_INPUT_XPATH, value)
+    def set_name(self, value: str):
+        self.set_text_by_xpath(AccountsConstants.WIZARD_NAME_INPUT_XPATH, value)
 
-    def get_description(self):
-        return self.get_text_by_xpath(AccountsConstants.WIZARD_DESCRIPTION_INPUT_XPATH)
+    def get_name(self):
+        return self.get_text_by_xpath(AccountsConstants.WIZARD_NAME_INPUT_XPATH)
 
     def set_position_source(self, value: str):
         self.set_combobox_value(AccountsConstants.WIZARD_POSITION_SOURCE_COMBOBOX_XPATH, value)
@@ -78,8 +78,8 @@ class AccountsWizard(CommonPage):
     def is_default_account_checked(self):
         return self.is_checkbox_selected(AccountsConstants.WIZARD_DEFAULT_ACCOUNT_CHECKBOX_XPATH)
 
-    def toggle_trade_confirm_eligibility(self):
-        self.toggle_checkbox(AccountsConstants.WIZARD_TRADE_CONFIRM_ELIGIBILITY_CHECKBOX_XPATH)
+    def click_on_trade_confirm_eligibility_checkbox(self):
+        self.find_by_xpath(AccountsConstants.WIZARD_TRADE_CONFIRM_ELIGIBILITY_CHECKBOX_XPATH).click()
 
     def is_trade_confirm_eligibility_checked(self):
         return self.is_checkbox_selected(AccountsConstants.WIZARD_TRADE_CONFIRM_ELIGIBILITY_CHECKBOX_XPATH)
@@ -120,8 +120,8 @@ class AccountsWizard(CommonPage):
     def get_bo_field_5(self):
         return self.get_text_by_xpath(AccountsConstants.WIZARD_BO_FILED_5_INPUT_XPATH)
 
-    def toggle_commission_exemption(self):
-        self.toggle_checkbox(AccountsConstants.WIZARD_COMMISSION_EXEMPTION_CHECKBOX_XPATH)
+    def click_on_commission_exemption(self):
+        self.find_by_xpath(AccountsConstants.WIZARD_COMMISSION_EXEMPTION_CHECKBOX_XPATH).click()
 
     def is_commission_exemption_checked(self):
         return self.is_checkbox_selected(AccountsConstants.WIZARD_COMMISSION_EXEMPTION_CHECKBOX_XPATH)
@@ -156,3 +156,15 @@ class AccountsWizard(CommonPage):
 
     def is_unable_to_unassign_cash_account_warning_displayed(self):
         return self.is_element_present(AccountsConstants.UNABLE_UNASSIGN_CASH_ACCOUNT_MESSAGE)
+
+    def click_on_close_button(self):
+        self.find_by_xpath(AccountsConstants.CLOSE_WIZARD_BUTTON).click()
+
+    def click_on_cancel_button(self):
+        self.find_by_xpath(AccountsConstants.CANCEL_BUTTON).click()
+
+    def click_on_no_button(self):
+        self.find_by_xpath(AccountsConstants.NO_BUTTON).click()
+
+    def click_on_ok_button(self):
+        self.find_by_xpath(AccountsConstants.OK_BUTTON).click()

@@ -10,7 +10,7 @@ class ClientsPoliciesSubWizard(CommonPage):
         super().__init__(web_driver_container)
 
     def set_default_execution_strategy_type(self, value):
-        self.set_combobox_value(ClientsConstants.POLICIES_TAB_DEFAULT_EXECUTION_STRATEGY_TYPE_XPATH, value)
+        self.select_value_from_dropdown_list(ClientsConstants.POLICIES_TAB_DEFAULT_EXECUTION_STRATEGY_TYPE_XPATH, value)
 
     def get_default_execution_strategy_type(self):
         return self.get_text_by_xpath(ClientsConstants.POLICIES_TAB_DEFAULT_EXECUTION_STRATEGY_TYPE_XPATH)
@@ -28,7 +28,7 @@ class ClientsPoliciesSubWizard(CommonPage):
         return self.get_text_by_xpath(ClientsConstants.POLICIES_TAB_DEFAULT_CHILD_EXECUTION_STRATEGY_XPATH)
 
     def set_default_routing_instruction(self, value):
-        self.set_combobox_value(ClientsConstants.POLICIES_TAB_DEFAULT_ROUTING_INSTRUCTION_XPATH, value)
+        self.select_value_from_dropdown_list(ClientsConstants.POLICIES_TAB_DEFAULT_ROUTING_INSTRUCTION_XPATH, value)
 
     def get_default_routing_instruction(self):
         return self.get_text_by_xpath(ClientsConstants.POLICIES_TAB_DEFAULT_ROUTING_INSTRUCTION_XPATH)
