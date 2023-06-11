@@ -6,9 +6,10 @@ from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.message_types import ORSMessageType, PKSMessageType
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
-from test_framework.java_api_wrappers.java_api_constants import JavaApiFields
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, SubscriptionRequestTypes, PosReqTypes
 from test_framework.java_api_wrappers.oms.es_messages.ExecutionReportOMS import ExecutionReportOMS
 from test_framework.java_api_wrappers.oms.es_messages.NewOrderReplyOMS import NewOrderReplyOMS
+from test_framework.java_api_wrappers.pks_messages.RequestForPositions import RequestForPositions
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -25,10 +26,12 @@ class QAP_T9196(TestCase):
         self.washbook_acc = self.data_set.get_washbook_account_by_name('washbook_account_1')
         self.order_submit = NewOrderReplyOMS(data_set).set_unsolicited_dma_limit()
         self.exec_rep = ExecutionReportOMS(data_set)
+        self.request_for_position = RequestForPositions()
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Create order
+        self._request_for_positions(self.washbook_acc)
         self.order_submit.update_fields_in_component("NewOrderReplyBlock",
                                                      {"VenueAccount": {"VenueActGrpName": self.client}})
         self.ja_manager.send_message_and_receive_response(self.order_submit)
@@ -50,3 +53,9 @@ class QAP_T9196(TestCase):
         exp_posit_qty = str(float(posit_qty) + 100)
         self.ja_manager.compare_values({"PositQty": exp_posit_qty}, posit, "Check PositQty decreased")
         # endregion
+
+    def _request_for_positions(self, account):
+        self.request_for_position.set_default(SubscriptionRequestTypes.SubscriptionRequestType_SUB.value,
+                                              PosReqTypes.PosReqType_POS.value,
+                                              account)
+        self.ja_manager.send_message(self.request_for_position)
