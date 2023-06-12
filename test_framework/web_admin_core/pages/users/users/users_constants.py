@@ -85,10 +85,12 @@ class UsersConstants:
     COUNTERPART_AT_LOGIN_SUB_WIZARD = '//*[text()="Counterpart"]/preceding-sibling::input'
     MANAGE_AT_LOGIN_SUB_WIZARD = '//*[text()="Manage"]'
     NON_VISIBLE_POSITION_FLATTENING_PERIODS = '//*[@id="Non-Visible Position Flattening Periods"]//p-multiselect//div'
-    CHANGE_PASSWORD_BUTTON_AT_LOGIN_SUB_WIZARD = '//button[text()="Change Password"]'
+    CHANGE_PASSWORD_BUTTON_AT_LOGIN_SUB_WIZARD = '//button[normalize-space()="Change Password"]'
     NEW_PASSWORD_AT_LOGIN_SUB_WIZARD = '//*[@formcontrolname="newPassword"]'
     CONFIRM_NEW_PASSWORD_AT_LOGIN_SUB_WIZARD = '//*[@formcontrolname="confirmNewPassword"]'
     CHANGE_PASSWORD_BUTTON_AT_POP_UP_LOGIN_SUB_WIZARD = '//div[@class="change-password"]//button[@status="primary"]'
+    CHANGE_PASSWORD_POP_UP = '//div[@class="change-password"]'
+    CHANGE_PASSWORD_POP_UP_ERROR_TEXT = '//div[@class="change-password"]//*[@class="alert-message ng-star-inserted"]'
 
     GENERATE_PIN_CODE_CHECKBOX_AT_LOGIN_SUB_WIZARD = '//*[text()="Generate PIN Code"]/preceding-sibling::span'
     GENERATE_PASSWORD_CHECKBOX_AT_LOGIN_SUB_WIZARD = '//*[text()="Generate Password"]/preceding-sibling::span'

@@ -77,7 +77,7 @@ class QAP_T3565(CommonTestCase):
             self.read_password_from_file()
             values_tab.set_new_password(self.current_password)
             values_tab.set_confirm_new_password(self.current_password)
-            values_tab.click_on_change_password()
+            values_tab.accept_or_cancel_confirmation_new_password(True)
             values_tab.set_first_time_login_checkbox()
             users_wizard.click_on_save_changes()
         else:
@@ -112,7 +112,7 @@ class QAP_T3565(CommonTestCase):
             common_page.set_old_password_at_login_page(self.current_password)
             common_page.set_new_password_at_login_page(self.new_password)
             common_page.set_confirm_new_password(self.new_password)
-            common_page.click_on_change_password()
+            common_page.click_on_change_password_button()
             time.sleep(2)
             login_page.login_to_web_admin(self.user_id, self.new_password)
             time.sleep(2)

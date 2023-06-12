@@ -108,3 +108,15 @@ class UsersValuesSubWizard(CommonPage):
     def accept_or_cancel_confirmation_new_password(self, confirm: bool):
         self.find_by_xpath(UsersConstants.CHANGE_PASSWORD_BUTTON_AT_POP_UP_LOGIN_SUB_WIZARD).click() if confirm \
             else self.find_by_xpath(UsersConstants.CANCEL_BUTTON_XPATH).click()
+
+    def get_error_message_text_in_change_password_pop_up(self):
+        return self.find_by_xpath(UsersConstants.CHANGE_PASSWORD_POP_UP_ERROR_TEXT).text
+
+    def is_change_password_pop_up_displayed(self):
+        return self.is_element_present(UsersConstants.CHANGE_PASSWORD_POP_UP)
+
+    def is_new_password_filed_displayed(self):
+        return self.is_element_present(UsersConstants.NEW_PASSWORD_AT_LOGIN_SUB_WIZARD)
+
+    def is_confirm_new_password_field_displayed(self):
+        return self.is_element_present(UsersConstants.CONFIRM_NEW_PASSWORD_AT_LOGIN_SUB_WIZARD)

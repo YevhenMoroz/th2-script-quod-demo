@@ -447,7 +447,7 @@ class SideMenu(CommonPage):
     def open_user_sessions_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.USER_SESSIONS_ITEM_XPATH, RootConstants.USERS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(UserSessionsConstants.USER_SESSIONS_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(UserSessionsConstants.MainPage.PAGE_TITLE)
 
     def open_users_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.USERS_ITEM_XPATH, RootConstants.USERS_TOGGLE_CSS_SELECTOR,
