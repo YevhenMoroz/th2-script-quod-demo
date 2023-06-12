@@ -2,7 +2,7 @@ import time
 import traceback
 
 from datetime import timedelta
-from test_framework.configurations.component_configuration import ComponentConfiguration
+from test_framework.configurations.component_configuration import WebAdminComponentConfiguration
 from test_framework.db_wrapper.db_manager import DBManager
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from custom import basic_custom_actions as bca
@@ -58,7 +58,7 @@ class RunPositions:
 
     def execute(self):
         try:
-            configuration = ComponentConfiguration("WA_Positions")  # look at xml (component name="web_admin_general")
+            configuration = WebAdminComponentConfiguration("WA_Positions")  # look at xml (component name="web_admin_general")
             self.web_driver_container = WebDriverContainer(
                 configuration.environment.get_list_web_admin_environment()[0].web_browser,
                 configuration.environment.get_list_web_admin_environment()[0].site_url)
