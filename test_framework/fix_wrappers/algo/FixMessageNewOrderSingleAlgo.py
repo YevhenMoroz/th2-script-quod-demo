@@ -37,6 +37,26 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
+    # set_DMA_ME_params
+    def set_DMA_ME_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": "CLIENT2",
+            'ClOrdID': '*',
+            'Currency': 'EUR',
+            'HandlInst': '1',
+            'OrderQty': '1000',
+            'OrdType': '2',
+            'Price': '20',
+            'Side': '1',
+            'Instrument': Instrument.BUI.value,
+            'TimeInForce': '0',
+            "TransactTime": datetime.utcnow().isoformat(),
+            'ExDestination': "XMCE",
+            'OrderCapacity': 'A'
+        }
+        super().change_parameters(base_parameters)
+        return self
+
     def set_DMA_RB_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": "XPAR_CLIENT2",
@@ -540,6 +560,31 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'QuodFlatParameters': {
                 'WouldInAuction': '0',
                 'ExcludePricePoint2': '1'
+            }
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_MOO_Would_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            'Account': self.get_data_set().get_account_by_name("account_1"),
+            'ClOrdID': basic_custom_actions.client_orderid(9),
+            "HandlInst": "2",
+            "Side": "1",
+            "OrderQty": "500000",
+            "TimeInForce": "0",
+            "OrdType": "2",
+            "TransactTime": datetime.utcnow().isoformat(),
+            "OrderCapacity": "A",
+            "Price": "30",
+            'Currency': self.get_data_set().get_currency_by_name("currency_1"),
+            'ExDestination': self.get_data_set().get_mic_by_name("mic_1"),
+            "Instrument": self.get_data_set().get_fix_instrument_by_name("instrument_1"),
+            "TargetStrategy": "1012",
+            'QuodFlatParameters': {
+                'WouldInAuction': '1',
+                'ExcludePricePoint2': '1',
+                'TriggerPriceRed': '29'
             }
         }
         super().change_parameters(base_parameters)

@@ -29,7 +29,7 @@ from test_framework.formulas_and_calculation.trading_phase_manager import Tradin
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
 
 
-class QAP_T9462(TestCase):
+class QAP_T10427(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -54,7 +54,7 @@ class QAP_T9462(TestCase):
         self.price = 130
         self.price_bbid = 30
         self.price_bask = 40
-        self.ltp_price = 120
+        self.ltp_price = 100
         self.child_price = AFM.calc_ticks_offset_minus(self.price_bbid, 1, 0.005)
         self.historical_volume = 1000.0
 
@@ -108,6 +108,9 @@ class QAP_T9462(TestCase):
         self.pre_fileter_35_D = self.data_set.get_pre_filter('pre_filer_equal_D')
         self.pre_fileter_35_D_multilisted = self.data_set.get_pre_filter('pre_filer_equal_D')
         self.pre_fileter_35_D_multilisted['Price'] = (self.price_bask, "EQUAL")
+        self.pre_fileter_35_D_passive = deepcopy(self.data_set.get_pre_filter('pre_filer_equal_D'))
+        self.pre_fileter_35_D_passive['Price'] = (self.child_price, "EQUAL")
+
         self.pre_fileter_35_8_Pending_new = self.data_set.get_pre_filter('pre_filer_equal_ER_pending_new')
         self.pre_fileter_35_8_New = self.data_set.get_pre_filter('pre_filer_equal_ER_new')
         self.pre_fileter_35_8_Fill = self.data_set.get_pre_filter('pre_filer_equal_ER_fill')
@@ -117,11 +120,12 @@ class QAP_T9462(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
-        nos = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.mic, self.child_price)
+        nos = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.mic, self.price_bbid)
+        nos_2 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.mic, self.child_price)
         ocrr1 = rule_manager.add_OrderCancelReplaceRequest(self.fix_env1.buy_side, self.account, self.mic, True, 0)
         ioc = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.mic, False, 0, 40, 0)
         ocr = rule_manager.add_OCR(self.fix_env1.buy_side)
-        self.rule_list = [nos, ocrr1, ioc, ocr]
+        self.rule_list = [nos, nos_2, ocrr1, ioc, ocr]
         # endregion
 
         # region Update Trading Phase
@@ -145,9 +149,12 @@ class QAP_T9462(TestCase):
         # region Send MarketDate
         self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send MarketData", self.test_id))
 
+        self.snapshot_full_refresh_empty = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data_empty()\
+            .update_MDReqID(self.listing_id, self.fix_env1.feed_handler)
         self.snapshot_full_refresh = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data(self.price_bbid, self.price_bask)\
             .update_MDReqID(self.listing_id, self.fix_env1.feed_handler)
-        self.fix_manager_feed_handler.send_message(fix_message=self.snapshot_full_refresh)
+
+        self.fix_manager_feed_handler.send_message(fix_message=self.snapshot_full_refresh_empty)
 
         self.incremental_refresh = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq() \
             .update_value_in_repeating_group('NoMDEntriesIR', 'MDEntryPx', self.ltp_price) \
@@ -187,16 +194,13 @@ class QAP_T9462(TestCase):
         self.vwap_child = AFM.get_vwap_childs(curve, self.start_date, self.end_date, self.qty)
 
         dma_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_RB_params()
-        dma_order.change_parameters(dict(Account=self.account, ExDestination=self.mic, OrderQty=self.vwap_child[0], Price=self.child_price, Instrument=self.instrument))
+        dma_order.change_parameters(dict(Account=self.account, ExDestination=self.mic, OrderQty=self.vwap_child[0], Price=self.price_bbid, Instrument=self.instrument))
         dma_order.change_parameter('TransactTime', f'>{self.start_date.isoformat()[:-6]}')
 
         er_pending_new = FixMessageExecutionReportAlgo().set_params_from_new_order_single(dma_order, self.gateway_side_buy, self.status_pending)
 
         er_new_dma = FixMessageExecutionReportAlgo().set_params_from_new_order_single(dma_order, self.gateway_side_buy, self.status_new)
 
-        replace1 = FixMessageOrderCancelReplaceRequestAlgo(dma_order).change_parameters(dict(Price=self.price_bbid, TransactTime=f'>{(self.start_date + timedelta(seconds=20)).isoformat()[:-6]}' )).add_tag(dict(QtyType=0))
-        replace2 = deepcopy(replace1)
-        replace2.change_parameters(dict(TransactTime=f'<{(self.start_date + timedelta(seconds=21)).isoformat()[:-6]}'))
         cancel_dma = FixMessageOrderCancelRequest(dma_order).change_parameters(dict(OrderQty=self.vwap_child[0], Instrument='*', OrderID='*'))
         er_cancel_dma = FixMessageExecutionReportAlgo().set_params_from_new_order_single(dma_order, self.gateway_side_buy, self.status_cancel)
 
@@ -211,31 +215,23 @@ class QAP_T9462(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Check child order", self.test_id))
 
         scheduler = sched.scheduler(time.time, time.sleep)
-        scheduler.enterabs(self.start_date.timestamp() + 5, 1, self.fix_verifier_buy.check_fix_message, kwargs=dict(
+        scheduler.enterabs(self.start_date.timestamp() + 5, 1, self.fix_manager_feed_handler.send_message, kwargs=dict(
+            fix_message=self.snapshot_full_refresh))
+        scheduler.enterabs(self.start_date.timestamp() + 30, 1, self.fix_verifier_buy.check_fix_message, kwargs=dict(
             fix_message=dma_order,
             key_parameters=self.key_params,
             direction=self.FromQuod,
-            message_name="Buy side NewOrderSingle child order"))
-        scheduler.enterabs(self.start_date.timestamp() + 5, 2, self.fix_verifier_buy.check_fix_message, kwargs=dict(
+            message_name="Buy side NewOrderSingle Neutral child order"))
+        scheduler.enterabs(self.start_date.timestamp() + 30, 2, self.fix_verifier_buy.check_fix_message, kwargs=dict(
             fix_message=er_pending_new,
             key_parameters=self.key_params,
             direction=self.ToQuod,
             message_name="Buy side ExecutionReport PendingNew child order"))
-        scheduler.enterabs(self.start_date.timestamp() + 5, 3, self.fix_verifier_buy.check_fix_message, kwargs=dict(
+        scheduler.enterabs(self.start_date.timestamp() + 30, 3, self.fix_verifier_buy.check_fix_message, kwargs=dict(
             fix_message=er_new_dma,
             key_parameters=self.key_params,
             direction=self.ToQuod,
             message_name="Buy side ExecutionReport New child order"))
-        scheduler.enterabs(self.start_date.timestamp() + 65, 4, self.fix_verifier_buy.check_fix_message, kwargs=dict(
-            fix_message=replace1,
-            key_parameters=self.key_params,
-            direction=self.FromQuod,
-            message_name="Buy side OrderCancelReplaceRequest neutral phase"))
-        scheduler.enterabs(self.start_date.timestamp() + 65, 4, self.fix_verifier_buy.check_fix_message, kwargs=dict(
-            fix_message=replace2,
-            key_parameters=self.key_params,
-            direction=self.FromQuod,
-            message_name="Buy side OrderCancelReplaceRequest neutral phase"))
         scheduler.enterabs(self.start_date.timestamp() + 65, 5, self.fix_verifier_buy.check_fix_message, kwargs=dict(
             fix_message=cancel_dma,
             key_parameters=self.key_params,
@@ -246,6 +242,11 @@ class QAP_T9462(TestCase):
             key_parameters=self.key_params,
             direction=self.ToQuod,
             message_name="Buy side Canceled child after neutral phase"))
+        scheduler.enterabs(self.start_date.timestamp() + 66, 1, self.fix_verifier_buy.check_no_message_found, kwargs=dict(
+            message_timeout=60000,
+            direction=self.FromQuod,
+            pre_filter=self.pre_fileter_35_D_passive,
+            message_name="Buy side check that there is no passive child on first slice"))
         scheduler.enterabs(self.start_date.timestamp() + 66, 1, self.fix_verifier_buy.check_fix_message_sequence, kwargs=dict(
             fix_messages_list=list_multilisted_childs,
             key_parameters_list=[self.key_params,self.key_params,self.key_params,self.key_params,self.key_params,self.key_params],

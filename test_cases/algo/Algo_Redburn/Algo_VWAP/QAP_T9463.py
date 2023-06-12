@@ -29,7 +29,7 @@ from test_framework.formulas_and_calculation.trading_phase_manager import Tradin
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
 
 
-class QAP_T9462(TestCase):
+class QAP_T9463(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -54,7 +54,7 @@ class QAP_T9462(TestCase):
         self.price = 130
         self.price_bbid = 30
         self.price_bask = 40
-        self.ltp_price = 120
+        self.ltp_price = 0
         self.child_price = AFM.calc_ticks_offset_minus(self.price_bbid, 1, 0.005)
         self.historical_volume = 1000.0
 
@@ -201,13 +201,13 @@ class QAP_T9462(TestCase):
         er_cancel_dma = FixMessageExecutionReportAlgo().set_params_from_new_order_single(dma_order, self.gateway_side_buy, self.status_cancel)
 
 
-        list_multilisted_childs = []
-        for i in range(0,6):
-            temp_message = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_RB_params()
-            temp_message.change_parameters(dict(Account=self.account, ExDestination=self.mic, OrderQty=self.vwap_child[0], Price=self.price_bask, Instrument=self.instrument, TimeInForce=3))
-            temp_message.change_parameter('TransactTime', f'<{(self.start_date + timedelta(seconds=41 + i)).isoformat()[:-6]}')
-
-            list_multilisted_childs.append(temp_message)
+        # list_multilisted_childs = []
+        # for i in range(0,6):
+        #     temp_message = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_RB_params()
+        #     temp_message.change_parameters(dict(Account=self.account, ExDestination=self.mic, OrderQty=self.vwap_child[0], Price=self.price_bask, Instrument=self.instrument, TimeInForce=3))
+        #     temp_message.change_parameter('TransactTime', f'<{(self.start_date + timedelta(seconds=41 + i)).isoformat()[:-6]}')
+        #
+        #     list_multilisted_childs.append(temp_message)
         self.fix_verifier_buy.set_case_id(bca.create_event("Check child order", self.test_id))
 
         scheduler = sched.scheduler(time.time, time.sleep)
@@ -246,12 +246,11 @@ class QAP_T9462(TestCase):
             key_parameters=self.key_params,
             direction=self.ToQuod,
             message_name="Buy side Canceled child after neutral phase"))
-        scheduler.enterabs(self.start_date.timestamp() + 66, 1, self.fix_verifier_buy.check_fix_message_sequence, kwargs=dict(
-            fix_messages_list=list_multilisted_childs,
-            key_parameters_list=[self.key_params,self.key_params,self.key_params,self.key_params,self.key_params,self.key_params],
+        scheduler.enterabs(self.start_date.timestamp() + 66, 1, self.fix_verifier_buy.check_no_message_found, kwargs=dict(
+            message_timeout=60000,
             direction=self.FromQuod,
             pre_filter=self.pre_fileter_35_D_multilisted,
-            message_name="Buy side check multilisted child"))
+            message_name="Buy side check that there is no multilisted child"))
 
         scheduler.run()
 
