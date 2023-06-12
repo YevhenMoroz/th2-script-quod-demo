@@ -33,7 +33,7 @@ class FixPositionTransferInstructionFX(JavaApiMessage):
                 },
                 "ExternalTransferID": bca.client_orderid(12),
                 "TransferTransType": "NEW",
-                "PositionType": "L",
+                "PositionType": "N",
                 "QtyToTransfer": "1000000",
                 "SettlDate": self.get_data_set().get_settle_date_by_name("spot_java_api"),
 
@@ -44,6 +44,11 @@ class FixPositionTransferInstructionFX(JavaApiMessage):
 
     def change_instrument(self, instrument):
         self.update_fields_in_component("PositionTransferInstructionBlock", {"InstrumentBlock": instrument})
+        return self
+
+    def change_symbol(self, symbol):
+        instr_block = self.get_parameter("PositionTransferInstructionBlock")["InstrumentBlock"]
+        instr_block["InstrSymbol"] = symbol
         return self
 
     def change_qty(self, qty):
