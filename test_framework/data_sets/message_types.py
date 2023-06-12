@@ -196,6 +196,7 @@ class ResAPIMessageType(Enum):
     DeleteOrderCompression = "DeleteOrderCompression"
     FindAllOrderPricing = "FindAllOrderPricing"
     FindAllOrderCompression = "FindAllOrderCompression"
+    ManageListingCounterpart = "ManageListingCounterpart"
 
 
 class PKSMessageType(Enum):
