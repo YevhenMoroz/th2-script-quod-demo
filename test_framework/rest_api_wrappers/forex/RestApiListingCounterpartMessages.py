@@ -7,6 +7,7 @@ class RestApiListingCounterpartMessages(RestApiMessages):
 
     def set_default_params(self, listing_id=None):
         if not listing_id:
+            self.clear_message()
             self.parameters = {
                 "listingID": "100000939"
             }
