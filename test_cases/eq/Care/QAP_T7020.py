@@ -73,7 +73,7 @@ class QAP_T7020(TestCase):
             "Step 1 - Comparing AlgoType of Care order",
         )
         self.java_api_manager.compare_values(
-            {"ScenarioID": "101", "VenueScenarioID": "TWAP"},
+            {"ScenarioID": "1001", "VenueScenarioID": "TWAP"},
             order_reply["ExternalAlgoParametersBlock"],
             "Step 1 - Comparing Algo params of Care order",
         )
@@ -122,7 +122,7 @@ class QAP_T7020(TestCase):
             "Step 2 - Comparing AlgoType of Child DMA after Split",
         )
         self.java_api_manager.compare_values(
-            {"ScenarioID": "101", "VenueScenarioID": "TWAP"},
+            {"ScenarioID": "1001", "VenueScenarioID": "TWAP"},
             order_reply["ExternalAlgoParametersBlock"],
             "Step 2 - Comparing Algo params of Child DMA after Split",
         )

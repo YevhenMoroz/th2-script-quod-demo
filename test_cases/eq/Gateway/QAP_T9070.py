@@ -72,7 +72,7 @@ class QAP_T9070(TestCase):
                                   'Account', 'TransactTime', 'SettlDate']
         fix_execution_report = FixMessageExecutionReportOMS(self.data_set)
         fix_execution_report.set_default_new(self.fix_message)
-        gross_trade_amt = floor(float(self.price) * float(self.qty))
+        gross_trade_amt = float(self.price) * float(self.qty)
         self.fix_verifier_dc.check_fix_message_fix_standard(fix_execution_report, ignored_fields=list_of_ignore_fields)
         fix_execution_report.change_parameters({"ExecType": "F", "OrdStatus": "2", 'GrossTradeAmt': gross_trade_amt})
         self.fix_verifier_dc.check_fix_message_fix_standard(fix_execution_report, ignored_fields=list_of_ignore_fields)

@@ -105,5 +105,6 @@ class QAP_T7583(TestCase):
             get_parameters()[JavaApiFields.RequestForPositionsAckBlock.value][JavaApiFields.PositionReportBlock.value] \
             [JavaApiFields.PositionList.value][JavaApiFields.PositionBlock.value]
         for position_record in request_for_position_ack:
-            if self.instrument_id == position_record[JavaApiFields.InstrID.value]:
+            if self.instrument_id == position_record[JavaApiFields.InstrID.value] and position_record[
+                JavaApiFields.PositionType.value] == 'N':
                 return position_record

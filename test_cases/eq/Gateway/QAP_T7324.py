@@ -56,7 +56,7 @@ class QAP_T7324(TestCase):
         # region set up configuration on BackEnd(precondition)
         self.ssh_client.send_command("/home/quod317/quod/script/site_scripts/change_book_agent_misk_fee_type_on_Y")
         self.ssh_client.send_command("qrestart QUOD.ORS QUOD.ESBUYTH2TEST QUOD.CS")
-        time.sleep(60)
+        time.sleep(80)
         # endregion
 
         # region create CO  order (precondition)

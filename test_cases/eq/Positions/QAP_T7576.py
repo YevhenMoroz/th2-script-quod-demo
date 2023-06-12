@@ -77,8 +77,6 @@ class QAP_T7576(TestCase):
 
         # region step 1-4
         self.posit_transfer.set_default_transfer(self.source_acc, self.destination_acc, self.qty, self.price)
-        self.posit_transfer.update_fields_in_component(JavaApiFields.PositionTransferInstructionBlock.value, {
-            JavaApiFields.InstrID.value: self.instrument_id})
         self.java_api_manager.send_message_and_receive_response(self.posit_transfer)
 
         position_transfer_report = self.java_api_manager.get_last_message(ORSMessageType.PositionTransferReport.value). \
@@ -178,7 +176,7 @@ class QAP_T7576(TestCase):
                 return position_record
 
     def _get_common_unrealized_pls(self, account):
-        report = self.java_api_manager.get_last_message(PKSMessageType.PositionReport.value, account). \
+        report = self.java_api_manager.get_last_message(PKSMessageType.PositionReport.value, f"AccountID': '{account}'"). \
             get_parameters()[JavaApiFields.PositionReportBlock.value]
         unrealized_pl_common = report[JavaApiFields.SecurityAccountPLBlock.value][JavaApiFields.UnrealizedPL.value]
         unrealized_pl_specify = None

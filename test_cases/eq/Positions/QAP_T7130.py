@@ -8,10 +8,11 @@ from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.message_types import PKSMessageType
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
-from test_framework.java_api_wrappers.java_api_constants import JavaApiFields
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, SubscriptionRequestTypes, PosReqTypes
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
 from test_framework.java_api_wrappers.oms.ors_messges.PositionTransferInstructionOMS import \
     PositionTransferInstructionOMS
+from test_framework.java_api_wrappers.pks_messages.RequestForPositions import RequestForPositions
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -36,11 +37,15 @@ class QAP_T7130(TestCase):
         self.pos_trans = PositionTransferInstructionOMS(data_set)
         self.price = self.order_submit.get_parameter("NewOrderSingleBlock")["Price"]
         self.qty = self.order_submit.get_parameter("NewOrderSingleBlock")["OrdQty"]
+        self.request_for_position = RequestForPositions()
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Step 1-2
-        self.order_submit.update_fields_in_component("NewOrderSingleBlock", {"AccountGroupID": self.client})
+        self._subscription_on_position()
+        self.order_submit.update_fields_in_component(JavaApiFields.NewOrderSingleBlock.value,
+                                                     {JavaApiFields.AccountGroupID.value: self.client,
+                                                      JavaApiFields.WashBookAccountID.value: self.washbook})
         try:
             trd_rule = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.bs_connectivity,
                                                                                           self.venue_client_name,
@@ -52,19 +57,27 @@ class QAP_T7130(TestCase):
             self.rule_manager.remove_rule(trd_rule)
 
         posit_qty = \
-        self.ja_manager.get_last_message(PKSMessageType.PositionReport.value, "PositQty").get_parameters()[
-            JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
-            JavaApiFields.PositionBlock.value][0]["PositQty"]
+            self.ja_manager.get_last_message(PKSMessageType.PositionReport.value,
+                                             JavaApiFields.PositQty.value).get_parameters()[
+                JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
+                JavaApiFields.PositionBlock.value][0][JavaApiFields.PositQty.value]
         # endregion
         # region Step 3
         self.pos_trans.set_default_transfer(self.washbook, self.dest_acc, self.qty)
-        self.pos_trans.update_fields_in_component("PositionTransferInstructionBlock",
-                                                  {"InstrID": self.data_set.get_instrument_id_by_name('instrument_1')})
+        self.pos_trans.update_fields_in_component(JavaApiFields.PositionTransferInstructionBlock.value,
+                                                  {JavaApiFields.InstrID.value: self.data_set.get_instrument_id_by_name(
+                                                      'instrument_1')})
         self.ja_manager.send_message_and_receive_response(self.pos_trans)
         posit_block = \
-        self.ja_manager.get_first_message(PKSMessageType.PositionReport.value, self.washbook).get_parameters()[
-            JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
-            JavaApiFields.PositionBlock.value][0]
+            self.ja_manager.get_first_message(PKSMessageType.PositionReport.value, self.washbook).get_parameters()[
+                JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
+                JavaApiFields.PositionBlock.value][0]
         exp_posit_qty = str(float(posit_qty) - int(self.qty))
-        self.ja_manager.compare_values({"PositQty": exp_posit_qty}, posit_block, "Check PositQty")
+        self.ja_manager.compare_values({JavaApiFields.PositQty.value: exp_posit_qty}, posit_block, "Check PositQty")
         # endregion
+
+    def _subscription_on_position(self):
+        self.request_for_position.set_default(SubscriptionRequestTypes.SubscriptionRequestType_SUB.value,
+                                              PosReqTypes.PosReqType_POS.value,
+                                              self.washbook)
+        self.ja_manager.send_message(self.request_for_position)

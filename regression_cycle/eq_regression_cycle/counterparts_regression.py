@@ -21,7 +21,7 @@ def check_ssh(file):
 
 
 def test_run(parent_id=None, version=None, skip_ssh=False, only_ssh=False):
-    report_id = bca.create_event(f"Counterpart Analysis" if version is None else f"Counterparts Analysis  | {version}",
+    report_id = bca.create_event(f"Counterparts" if version is None else f"Counterparts  | {version}",
                                  parent_id)
     seconds, nanos = timestamps()  # Store case start time
     configuration = ComponentConfiguration("Counterparts")
@@ -43,5 +43,5 @@ def test_run(parent_id=None, version=None, skip_ssh=False, only_ssh=False):
 
 
 if __name__ == '__main__':
-    test_run(version="5.1.178.192.RC")
+    test_run(version="5.1.180.193", skip_ssh=True)
     Stubs.factory.close()

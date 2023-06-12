@@ -63,14 +63,14 @@ class QAP_T6956(TestCase):
         # region wave basket
         self.wave_creation_request.set_default(lis_id, [order_id1, order_id2])
         params = {"AlgoParametersBlock": {"AlgoType": "External",
-                                          "ScenarioID": "102",
+                                          "ScenarioID": "1000",
                                           "AlgoPolicyID": "1000132"},
                   "ExternalAlgoParametersBlock": {"ExternalAlgoParameterListBlock":
                       {"ExternalAlgoParameterBlock": [
                           {'AlgoParameterName': "Urgency",
                            "AlgoParamString": "MEDIUM",
-                           'VenueScenarioParameterID': "7504"}]},
-                      'ScenarioID': "102",
+                           'VenueScenarioParameterID': "7505"}]},
+                      'ScenarioID': "1000",
                       "ScenarioIdentifier": "11799",
                       "VenueScenarioID": "TWAP",
                       "VenueScenarioVersionID": "11945",
@@ -91,7 +91,7 @@ class QAP_T6956(TestCase):
         self.return_result(responses, ORSMessageType.OrdReply.value)
         algo_param_block = self.result.get_parameter('OrdReplyBlock')['ExternalAlgoParametersBlock']
         self.java_api_manager.compare_values(
-            {'ScenarioID': '102'},
+            {'ScenarioID': '1000'},
             algo_param_block, 'Check child order algo')
         # endregion
 
