@@ -35,12 +35,14 @@ class ORSMessageType(Enum):
     OrderSubmit = 'Order_OrderSubmit'
     FixNewOrderSingle = 'Fix_NewOrderSingle'
     TradeEntryRequest = 'Order_TradeEntryRequest'
+    Fix_TradeEntryRequest = 'Fix_TradeEntryRequest'
     OrderListWaveCreationRequest = 'Order_OrderListWaveCreationRequest'
     UnMatchRequest = 'Order_UnMatchRequest'
     ManualOrderCrossRequest = 'Order_ManualOrderCrossRequest'
     OrderModificationRequest = 'Order_OrderModificationRequest'
     OrderCancelRequest = 'Order_OrderCancelRequest'
     OrdReply = 'Order_OrdReply'
+    HeldOrderNotif = 'Order_HeldOrderNotif'
     OrdNotification = 'Order_OrdNotification'
     ExecutionReport = 'Order_ExecutionReport'
     DFDManagementBatch = 'Order_DFDManagementBatch'
@@ -140,6 +142,8 @@ class ORSMessageType(Enum):
     MatchCptyMOBlocksReply = 'Order_MatchCptyMOBlocksReply'
     MatchCptyMOBlocksRequest = 'Order_MatchCptyMOBlocksRequest'
     FixAllocationInstructionAck = 'Fix_AllocationInstructionAck'
+    AssignInstrumentRequest = 'Order_AssignInstrumentRequest'
+    FixPositionTransferInstruction = 'Fix_PositionTransferInstruction'
 
 
 class TradingRestApiMessageType(Enum):
@@ -203,11 +207,13 @@ class PKSMessageType(Enum):
     RequestForPositions = "Order_RequestForPositions"
     RequestForFXPositions = "Order_RequestForFXPositions"
     FixRequestForPositions = "Fix_RequestForPositions"
+    FixRequestForPositionsAck = "Fix_RequestForPositionsAck"
     FixPositionReport = "Fix_PositionReport"
     FixPositionMaintenanceRequest = "Fix_PositionMaintenanceRequest"
     PositionReport = "Order_PositionReport"
     RetailPositionConversionRequest = "Order_RetailPositionConversionRequest"
     RequestForPositionsAck = "Order_RequestForPositionsAck"
+    FixPositionMassCancelRequest = "Fix_PositionMassCancelRequest"
     RequestForOverdueRetailPositions = 'Order_RequestForOverdueRetailPositions'
     RequestForOverdueRetailPositionsAck = 'Order_RequestForOverdueRetailPositionsAck'
 

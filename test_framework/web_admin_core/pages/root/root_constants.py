@@ -8,6 +8,7 @@ class RootConstants:
     ENTITLEMENTS_ITEM_XPATH = "//a[@title='Entitlements']"
     SYSTEM_COMMANDS_ITEM_XPATH = "//a[@title='System Commands']"
     SYSTEM_COMPONENTS_ITEM_XPATH = '//a[@title="System Components"]'
+    INTERFACE_PREFERENCES_XPATH = '//a[@title="Interface Preferences"]'
 
     SITE_TOGGLE_CSS_SELECTOR = "a[title='Site']"
     SITE_TAB_XPATH = '//*[@title="Site"]'
@@ -39,6 +40,7 @@ class RootConstants:
     CLIENTS_ITEM_XPATH = "//a[@title='Clients']"
     CLIENT_GROUPS_ITEM_XPATH = "//a[@title='Client Groups']"
     CLIENT_LISTS_ITEM_XPATH = "//a[@title='Client Lists']"
+    ACCOUNT_LISTS_ITEM_XPATH = "//a[@title='Account Lists']"
     CASH_ACCOUNTS_ITEM_XPATH = "//a[@title='CashAccounts']"
     EXTERNAL_CLIENT_GROUP_IDS_ITEM_XPATH = "//a[@title='External Client Group IDs']"
 

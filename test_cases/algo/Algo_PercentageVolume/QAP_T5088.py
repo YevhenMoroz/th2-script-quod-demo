@@ -145,7 +145,6 @@ class QAP_T5088(TestCase):
         self.fix_verifier_sell.check_fix_message(pending_POV_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew')
 
         new_POV_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.POV_order, self.gateway_side_sell, self.status_new)
-        new_POV_order_params.change_parameter('NoParty', '*')
         self.fix_verifier_sell.check_fix_message(new_POV_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
 
@@ -181,7 +180,6 @@ class QAP_T5088(TestCase):
         self.fix_verifier_sell.check_fix_message(self.POV_order_replace_params, direction=self.ToQuod, message_name='Sell side OrderCancelReplaceRequest')
 
         replaced_twap_order_params = FixMessageExecutionReportAlgo().set_params_from_order_cancel_replace(self.POV_order_replace_params, self.gateway_side_sell, self.status_cancel_replace)
-        replaced_twap_order_params.change_parameter('NoParty', '*')
         self.fix_verifier_sell.check_fix_message(replaced_twap_order_params, key_parameters=self.key_params_cl, message_name='Sell Side ExecReport Replace Request')
         # endregion
 
@@ -220,7 +218,7 @@ class QAP_T5088(TestCase):
 
         # region check cancellation parent POV order
         cancel_pov_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.POV_order, self.gateway_side_sell, self.status_cancel)
-        cancel_pov_order.change_parameters({'NoParty': '*', 'OrderQty': self.dec_qty, 'SettlType': 'B'})
+        cancel_pov_order.change_parameters({'OrderQty': self.dec_qty, 'SettlType': 'B'})
         self.fix_verifier_sell.check_fix_message(cancel_pov_order, key_parameters=self.key_params_cl,  message_name='Sell side ExecReport Canceled')
         # endregion
         

@@ -143,7 +143,6 @@ class QAP_T4266(TestCase):
         self.fix_verifier_sell.check_fix_message(pending_POV_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport PendingNew')
 
         new_POV_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.POV_order, self.gateway_side_sell, self.status_new)
-        new_POV_order_params.change_parameter('NoParty', '*')
         self.fix_verifier_sell.check_fix_message(new_POV_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
 
@@ -174,7 +173,7 @@ class QAP_T4266(TestCase):
         self.fix_verifier_sell.check_fix_message(cancel_request_POV_order, direction=self.ToQuod, message_name='Sell side Cancel Request')
 
         er_cancel_request_POV_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.POV_order, self.gateway_side_sell, self.status_cancel)
-        er_cancel_request_POV_order.change_parameters(dict(NoParty='*', NoStrategyParameters='*', TargetStrategy='*'))
+        er_cancel_request_POV_order.change_parameters(dict(NoStrategyParameters='*', TargetStrategy='*'))
         self.fix_verifier_sell.check_fix_message(er_cancel_request_POV_order, key_parameters=self.key_params_cl, message_name='Sell side ExecReport Cancel')
         # endregion
 

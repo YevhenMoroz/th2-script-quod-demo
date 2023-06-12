@@ -1,6 +1,8 @@
 import datetime
 import logging
+import sys
 import time
+import traceback
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
@@ -65,8 +67,13 @@ class QAP_T7005(TestCase):
                 {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value,
                  JavaApiFields.ExpireDate.value: expected_expire_date},
                 order_reply, f'Verifying that order created and has properly {JavaApiFields.ExpireDate.value}')
+            raise Exception()
         except Exception:
-            logger.error('Error execution', exc_info=True)
+            bca.create_event("TEST FAILED before or after verifier", self.test_id,
+                                              status='FAILED')
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            print(" Search in ->  " + self.__class__.__name__)
         finally:
             time.sleep(2)
             self.rule_manager.remove_rule(nos_rule)
@@ -76,10 +83,10 @@ class QAP_T7005(TestCase):
     def _set_up_holiday(self, holiday_date):
         self.db_manager.execute_query(f"INSERT INTO holidaycalendar (holidayid, holidaydate,holidaydescription, alive, "
                                       f"tradingallowed) VALUES ('3', {holiday_date}, 'gvnch', 'Y','N')")
-        self.ssh_client.send_command("qrestart all")
-        time.sleep(180)
+        self.ssh_client.send_command("qrestart QUOD.ORS, QUOD.ESBUYTH2TEST")
+        time.sleep(60)
 
     def _remove_holiday(self):
         self.db_manager.execute_query(f"DELETE FROM holidaycalendar WHERE holidayid = '3'")
-        self.ssh_client.send_command("qrestart all")
-        time.sleep(180)
+        self.ssh_client.send_command("qrestart QUOD.ORS, QUOD.ESBUYTH2TEST")
+        time.sleep(60)

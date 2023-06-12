@@ -27,8 +27,8 @@ class QAP_T3582(CommonTestCase):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
 
-        self.login = self.data_set.get_user("user_1")
-        self.password = self.data_set.get_password("password_1")
+        self.login = self.data_set.get_user("user_4")
+        self.password = self.data_set.get_password("password_4")
         self.zone = self.data_set.get_zone("zone_2")
         self.location_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.desk_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
@@ -47,11 +47,11 @@ class QAP_T3582(CommonTestCase):
             side_menu.open_locations_page()
             time.sleep(2)
             self.verify("Only Locations and Desks tab displayed",
+                        [False, False, True, True],
                         [side_menu.is_institutions_page_tab_displayed(),
                          side_menu.is_zones_page_tab_displayed(),
                          side_menu.is_locations_page_tab_displayed(),
-                         side_menu.is_desks_page_tab_displayed()],
-                        [False, False, True, True])
+                         side_menu.is_desks_page_tab_displayed()])
 
             location_page = LocationsPage(self.web_driver_container)
             main_page_displayed_locations = location_page.get_list_of_all_zones()

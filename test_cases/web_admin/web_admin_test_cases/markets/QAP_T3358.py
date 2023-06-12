@@ -30,7 +30,7 @@ class QAP_T3358(CommonTestCase):
         side_menu.open_listings_page()
         time.sleep(2)
         listing_page = ListingsPage(self.web_driver_container)
-        listing_page.search_listing_and_click_edit_btn("a")
+        listing_page.search_listing_and_click_edit_btn("us")
         time.sleep(2)
         listing_market_identifier_tab = ListingsMarketIdentifiersSubWizard(self.web_driver_container)
         listing_market_identifier_tab.set_product_complex(self.product_complex)
@@ -43,7 +43,7 @@ class QAP_T3358(CommonTestCase):
         try:
             self.precondition()
             listing_page = ListingsPage(self.web_driver_container)
-            listing_page.search_listing_and_click_edit_btn("a")
+            listing_page.search_listing_and_click_edit_btn("us")
             listing_market_identifier_tab = ListingsMarketIdentifiersSubWizard(self.web_driver_container)
             self.verify("\"Product Complex\" field set correctly", self.product_complex,
                         listing_market_identifier_tab.get_product_complex())

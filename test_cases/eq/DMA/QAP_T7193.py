@@ -54,7 +54,7 @@ class QAP_T7193(TestCase):
         finally:
             time.sleep(3)
             self.rule_manager.remove_rule(rule)
-        exec_rep = self.fix_manager.get_first_message("ExecutionReport").get_parameters()
+        exec_rep = self.fix_manager.get_last_message("ExecutionReport").get_parameters()
         self.fix_manager.compare_values({"OrdStatus": "2", 'ExecType': 'F'}, exec_rep, "Check Order")
         # endregion
         # region Step 3

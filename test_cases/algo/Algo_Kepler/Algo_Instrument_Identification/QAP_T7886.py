@@ -40,7 +40,7 @@ class QAP_T7886(TestCase):
         self.currency = self.data_set.get_currency_by_name("currency_4")
         self.algopolicy = constants.ClientAlgoPolicy.qa_sorping_13.value
         self.text_1 = constants.RejectMessages.no_listing_1.value
-        self.text_2 = constants.RejectMessages.no_listing_12.value
+        self.text_2 = constants.RejectMessages.no_listing_10.value
         # endregion
 
         # region Gateway Side
@@ -65,7 +65,7 @@ class QAP_T7886(TestCase):
         self.client = self.data_set.get_client_by_name("client_4")
         self.account = self.data_set.get_account_by_name("account_9")
         self.listing_id_xetr = self.data_set.get_listing_id_by_name("listing_51")
-        self.listing_id_lse = self.data_set.get_listing_id_by_name("listing_52")
+        self.listing_id_cceu = self.data_set.get_listing_id_by_name("listing_52")
         # endregion
 
         # region Key parameters
@@ -86,10 +86,10 @@ class QAP_T7886(TestCase):
         market_data_snap_shot_xetr.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_for_md)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_xetr)
 
-        market_data_snap_shot_lse = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_lse, self.fix_env1.feed_handler)
-        market_data_snap_shot_lse.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_for_md)
-        market_data_snap_shot_lse.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_for_md)
-        self.fix_manager_feed_handler.send_message(market_data_snap_shot_lse)
+        market_data_snap_shot_cceu = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_cceu, self.fix_env1.feed_handler)
+        market_data_snap_shot_cceu.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_for_md)
+        market_data_snap_shot_cceu.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_for_md)
+        self.fix_manager_feed_handler.send_message(market_data_snap_shot_cceu)
 
         time.sleep(3)
         # endregion

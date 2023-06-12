@@ -35,6 +35,7 @@ class QAP_T10613(TestCase):
         self.gbp_cad = self.data_set.get_symbol_by_name("symbol_synth_5")
         self.sec_type = self.data_set.get_security_type_by_name("fx_spot")
         self.sec_type_java = self.data_set.get_fx_instr_type_ja("fx_spot")
+        self.instr_type_spo = self.data_set.get_fx_instr_type_ja("fx_spot")
         self.instrument = {
             "SecurityType": self.sec_type,
             "Symbol": self.gbp_cad
@@ -46,8 +47,8 @@ class QAP_T10613(TestCase):
         # region Step 1
         self.trade_request.set_default_params()
         self.trade_request.update_fields_in_component("TradeEntryRequestBlock",
-                                                          {"AccountGroupID": self.client,
-                                                           "ListingID": self.listing_gbp_cad})
+                                                      {"ClientAccountGroupID": self.client})
+        self.trade_request.change_instrument(self.gbp_cad, self.instr_type_spo)
         response: list = self.java_api_manager.send_message_and_receive_response(self.trade_request)
         exec_id = self.trade_request.get_exec_id(response)
         self.sleep(3)

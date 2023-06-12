@@ -1,6 +1,7 @@
 class UsersConstants:
     USERS_PAGE_TITLE_XPATH = '//*[@class="entity-title left"][normalize-space(text())="Users"]'
     USER_ICON_AT_RIGHT_CORNER = "//*[@class='control-item icon-btn context-menu-host']"
+    USER_WIZARD_HEADER_LINK = '//div[@class="breadcrumbs entity-title user-breadcrumbs"]//span[normalize-space()="Users"]'
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     DISABLED_ENABLED_SUCCESSFUL_MESSAGE = "//*[@class='title subtitle']"
     RECORD_EXIST_EXCEPTION = "//*[text()='Such a record already exists']"
