@@ -164,7 +164,7 @@ class RuleManager:
                 delay=delay))
 
     def add_NewOrdSingleExecutionReportTradeByOrdQty(self, session: str, account: str, exdestination: str, price: float,
-                                                     traded_price: float, qty: int, traded_qty: int, delay: int):
+                                                     traded_price: float, qty: int, traded_qty: int, delay: int = 0):
         return self.sim.createNewOrdSingleExecutionReportTradeByOrdQty(
             request=TemplateNewOrdSingleExecutionReportTradeByOrdQty(connection_id=ConnectionID(session_alias=session),
                                                                      account=account,
