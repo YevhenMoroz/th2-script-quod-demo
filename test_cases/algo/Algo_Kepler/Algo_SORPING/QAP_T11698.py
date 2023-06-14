@@ -1,5 +1,6 @@
 import os
 import time
+from datetime import datetime, timedelta
 from pathlib import Path
 
 from test_framework.core.try_exept_decorator import try_except
@@ -34,20 +35,23 @@ class QAP_T11698(TestCase):
 
         # region order parameters
         self.qty = 220
-        self.price = 39
+        self.price = 45
         self.dark_price = 44
         self.traded_qty = 0
         self.qty_for_md = 1000
-        self.price_ask_qdl8 = 44
-        self.price_bid = 30
-        self.new_price_bid_qdl9 = 39.5
-        self.price_ask_qdl9 = 40
-        self.price_ask_qdl10 = 40
+        self.price_ask = 50
+        self.price_bid_qdl8 = 32
+        self.price_bid_qdl9 = 35
+        self.price_bid_qdl10 = 30
+        self.new_price_ask_qdl9 = 40
         self.px_for_incr = 0
         self.qty_for_incr = 0
         self.tif_ioc = constants.TimeInForce.ImmediateOrCancel.value
+        self.tif_gtd = constants.TimeInForce.GoodTillDate.value
         self.algopolicy = constants.ClientAlgoPolicy.qa_sorping_9.value
-        self.sell = constants.OrderSide.Sell.value
+
+        now = datetime.today() - timedelta(hours=3)
+        self.ExpireDate = (now + timedelta(days=2)).strftime("%Y%m%d")
         # endregion
 
         # region Gateway Side
@@ -109,8 +113,8 @@ class QAP_T11698(TestCase):
         # region Send_MarkerData
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
         market_data_snap_shot_qdl8 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_qdl8, self.fix_env1.feed_handler)
-        market_data_snap_shot_qdl8.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_for_md)
-        market_data_snap_shot_qdl8.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask_qdl8, MDEntrySize=self.qty_for_md)
+        market_data_snap_shot_qdl8.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid_qdl8, MDEntrySize=self.qty_for_md)
+        market_data_snap_shot_qdl8.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_for_md)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl8)
 
         market_data_snap_shot_qdl8 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_qdl8, self.fix_env1.feed_handler)
@@ -119,8 +123,8 @@ class QAP_T11698(TestCase):
 
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
         market_data_snap_shot_qdl9 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_qdl9, self.fix_env1.feed_handler)
-        market_data_snap_shot_qdl9.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_for_md)
-        market_data_snap_shot_qdl9.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask_qdl9, MDEntrySize=self.qty_for_md)
+        market_data_snap_shot_qdl9.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid_qdl9, MDEntrySize=self.qty_for_md)
+        market_data_snap_shot_qdl9.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_for_md)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl9)
 
         market_data_snap_shot_qdl9 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_qdl9, self.fix_env1.feed_handler)
@@ -129,8 +133,8 @@ class QAP_T11698(TestCase):
 
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
         market_data_snap_shot_qdl10 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_qdl10, self.fix_env1.feed_handler)
-        market_data_snap_shot_qdl10.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_for_md)
-        market_data_snap_shot_qdl10.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask_qdl10, MDEntrySize=self.qty_for_md)
+        market_data_snap_shot_qdl10.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid_qdl10, MDEntrySize=self.qty_for_md)
+        market_data_snap_shot_qdl10.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_for_md)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl10)
 
         market_data_snap_shot_qdl10 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_qdl10, self.fix_env1.feed_handler)
@@ -146,7 +150,7 @@ class QAP_T11698(TestCase):
 
         self.SORPING_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_SORPING_Kepler_params()
         self.SORPING_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.SORPING_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, ClientAlgoPolicyID=self.algopolicy, Side=self.sell, Instrument=self.instrument))
+        self.SORPING_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, ClientAlgoPolicyID=self.algopolicy, Instrument=self.instrument, TimeInForce=self.tif_gtd)).add_tag(dict(ExpireDate=self.ExpireDate))
 
         self.fix_manager_sell.send_message_and_receive_response(self.SORPING_order, case_id_1)
 
@@ -167,7 +171,7 @@ class QAP_T11698(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Lit child DMA order on the MTF", self.test_id))
 
         self.dma_qdl9_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_Kepler_params()
-        self.dma_qdl9_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit9, OrderQty=self.qty, Price=self.price, Side=self.sell, Instrument=self.instrument))
+        self.dma_qdl9_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit9, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
         self.fix_verifier_buy.check_fix_message_kepler(self.dma_qdl9_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA order on MTF')
 
         er_pending_new_dma_qdl9_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_qdl9_order, self.gateway_side_buy, self.status_pending)
@@ -196,7 +200,7 @@ class QAP_T11698(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Lit child DMA order on the Primary venue", self.test_id))
 
         self.dma_qdl8_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Child_of_SORPING_Kepler_params()
-        self.dma_qdl8_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit8, OrderQty=self.qty, Price=self.price, Side=self.sell, Instrument=self.instrument))
+        self.dma_qdl8_order.change_parameters(dict(Account=self.account, ExDestination=self.ex_destination_quodlit8, OrderQty=self.qty, Price=self.price, Instrument=self.instrument))
         self.fix_verifier_buy.check_fix_message_kepler(self.dma_qdl8_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA order on primary venue')
 
         er_pending_new_dma_qdl8_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_qdl8_order, self.gateway_side_buy, self.status_pending)
@@ -210,11 +214,17 @@ class QAP_T11698(TestCase):
 
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
         market_data_snap_shot_qdl9 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_qdl9, self.fix_env1.feed_handler)
-        market_data_snap_shot_qdl9.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.new_price_bid_qdl9, MDEntrySize=self.qty_for_md)
-        market_data_snap_shot_qdl9.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask_qdl9, MDEntrySize=self.qty_for_md)
+        market_data_snap_shot_qdl9.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid_qdl9, MDEntrySize=self.qty_for_md)
+        market_data_snap_shot_qdl9.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.new_price_ask_qdl9, MDEntrySize=self.qty_for_md)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl9)
 
         time.sleep(30)
+
+        # region Set up CLO phase
+        market_data_snap_shot_qdl8 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_qdl8, self.fix_env1.feed_handler)
+        market_data_snap_shot_qdl8.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.px_for_incr, MDEntrySize=self.qty_for_incr, TradingSessionSubID=1, SecurityTradingStatus=2)
+        self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl8)
+        # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
