@@ -49,6 +49,10 @@ class QAP_T4227(TestCase):
         self.price_ltq = 0
         self.qty_ltq = 0
 
+        self.default_bid_qty = self.default_ask_qty = 1_000_000
+        self.default_bid_price = 30
+        self.default_ask_price = 40
+
         self.price_ask = 30
         self.qty_ask = 10_000
 
@@ -217,10 +221,10 @@ class QAP_T4227(TestCase):
         # region Clear Market Data
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data SnapShot to clear the MarketDepth", self.test_id))
         market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id, self.fix_env1.feed_handler)
-        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid_1, MDEntrySize=self.qty_bid_0, MDEntryPositionNo=1)
-        market_data_snap_shot_par.add_fields_into_repeating_group('NoMDEntries',  [dict(MDEntryType=0, MDEntryPx=self.price_bid_2, MDEntrySize=self.qty_bid_0, MDEntryPositionNo=2)])
-        market_data_snap_shot_par.add_fields_into_repeating_group('NoMDEntries',  [dict(MDEntryType=0, MDEntryPx=self.price_bid_3, MDEntrySize=self.qty_bid_0, MDEntryPositionNo=3)])
-        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.default_bid_price, MDEntrySize=self.default_bid_qty, MDEntryPositionNo=1)
+        market_data_snap_shot_par.add_fields_into_repeating_group('NoMDEntries', [dict(MDEntryType=0, MDEntryPx=self.price_bid_2, MDEntrySize=self.qty_bid_0, MDEntryPositionNo=2)])
+        market_data_snap_shot_par.add_fields_into_repeating_group('NoMDEntries', [dict(MDEntryType=0, MDEntryPx=self.price_bid_3, MDEntrySize=self.qty_bid_0, MDEntryPositionNo=3)])
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.default_ask_price, MDEntrySize=self.default_ask_qty)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
         # endregion
 
