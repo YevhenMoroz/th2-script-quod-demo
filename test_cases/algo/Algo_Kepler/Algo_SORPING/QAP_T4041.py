@@ -7,6 +7,7 @@ from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
 from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
+from test_framework.fix_wrappers.algo.FixMessageMarketDataIncrementalRefreshAlgo import FixMessageMarketDataIncrementalRefreshAlgo
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
 from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import FixMessageMarketDataSnapshotFullRefreshAlgo
@@ -67,8 +68,6 @@ class QAP_T4041(TestCase):
         self.client = self.data_set.get_client_by_name("client_4")
         self.account = self.data_set.get_account_by_name("account_9")
         self.listing_id_qdl2 = self.data_set.get_listing_id_by_name("listing_39")
-        self.listing_id_qdl1 = self.data_set.get_listing_id_by_name("listing_40")
-        self.feed_handler = 'fix-feed-handler-319-kuiper'
         # endregion
 
         # region Key parameters
@@ -82,13 +81,10 @@ class QAP_T4041(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Rule creation
-        # The default rule will be changed (for manual executing restart the FH after the deleting the default rule and adding a new market data rule)
         rule_manager = RuleManager(Simulators.algo)
-        # special_market_rule = rule_manager.add_MarketDataRequestWithTimeout(self.feed_handler, [self.listing_id_qdl1])
-        nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit1, False, 0, self.price)
         nos_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit1, self.price)
         ocr_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account, self.ex_destination_quodlit1, True)
-        self.rule_list = [nos_ioc_rule, nos_rule, ocr_rule]
+        self.rule_list = [nos_rule, ocr_rule]
 
         rule_manager.remove_rule_by_id(2)
         # endregion
@@ -98,18 +94,16 @@ class QAP_T4041(TestCase):
         # region Send_MarkerData
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data", self.test_id))
 
-        # market_data_snap_shot_qdl1 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_qdl1, self.fix_env1.feed_handler)
-        # market_data_snap_shot_qdl1.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=10, MDEntrySize=100)
-        # market_data_snap_shot_qdl1.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=0)
-        # self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl1)
-
         market_data_snap_shot_qdl2 = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id_qdl2, self.fix_env1.feed_handler)
         market_data_snap_shot_qdl2.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_for_md)
         market_data_snap_shot_qdl2.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_for_md)
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl2)
 
-        time.sleep(3)
+        market_data_snap_shot_qdl2 = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id_qdl2, self.fix_env1.feed_handler)
+        market_data_snap_shot_qdl2.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.px_for_incr, MDEntrySize=self.qty_for_incr)
+        self.fix_manager_feed_handler.send_message(market_data_snap_shot_qdl2)
 
+        time.sleep(3)
         # endregion
 
         # region Send NewOrderSingle (35=D) for SynthMinQty order
@@ -149,7 +143,7 @@ class QAP_T4041(TestCase):
         self.fix_verifier_buy.check_fix_message_kepler(er_new_dma_qdl1_order_params, key_parameters=self.key_params_ER_child, direction=self.ToQuod, message_name='Buy side ExecReport New Child DMA 1 order')
         # endregion
 
-        time.sleep(10)
+        time.sleep(120)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
@@ -174,4 +168,3 @@ class QAP_T4041(TestCase):
 
         rule_manager = RuleManager(Simulators.algo)
         rule_manager.remove_rules(self.rule_list)
-        rule_manager.add_MDRule(self.feed_handler)

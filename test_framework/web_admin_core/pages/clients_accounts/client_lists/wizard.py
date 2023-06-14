@@ -83,3 +83,6 @@ class ClientListsWizard(CommonPage):
 
     def click_on_cancel_button(self):
         self.find_by_xpath(ClientListsConstants.CANCEL_BUTTON_XPATH).click()
+
+    def is_client_present(self):
+        return self.is_element_present(ClientListsConstants.DELETE_XPATH)

@@ -49,6 +49,7 @@ class OrderReplyConst(Enum):
     OrdStatus_HLD = 'HLD'
     OrdStatus_REJ = 'REJ'
     OrdStatus_CXL = 'CXL'
+    OrdStatus_SUB = 'SUB'
     ExecStatus_OPN = 'OPN'
     TransStatus_CXL = 'CXL'
     TransStatus_TER = 'TER'
@@ -151,6 +152,7 @@ class OrdListNotificationConst(Enum):
     OrderListWaveStatus_TER = 'TER'
     OrderListWaveStatus_NEW = 'NEW'
     OrderListWaveStatus_CXL = 'CXL'
+    OrdStatus_SUB = 'SUB'
 
 
 class QtyPercentageProfile(Enum):
@@ -248,6 +250,9 @@ class JavaApiFields(Enum):
     OrdReplyBlock = 'OrdReplyBlock'
     ListingList = 'ListingList'
     CrossAnnouncementBlock = 'CrossAnnouncementBlock'
+    CrossAnnouncementReplyBlock = 'CrossAnnouncementReplyBlock'
+    CrossAnnouncementStatus = 'CrossAnnouncementStatus'
+    CrossAnnouncementID = 'CrossAnnouncementID'
     EffectiveDate = 'EffectiveDate'
     CashAccountID = 'CashAccountID'
     OrdStatus = 'OrdStatus'
@@ -463,6 +468,8 @@ class JavaApiFields(Enum):
     ExecQty = 'ExecQty'
     OrderListWaveID = 'OrderListWaveID'
     SubCounterpartList = "SubCounterpartList"
+    OrdIDList = "OrdIDList"
+    OrdIDBlock = "OrdIDBlock"
 
     # fields of Bag
     OrderBagStatus = 'OrderBagStatus'
@@ -552,3 +559,8 @@ class PositionValidities(Enum):
     PosValidity_TP5 = 'TP5'
     PosValidity_TP6 = 'TP6'
     PosValidity_TP7 = 'TP7'
+
+
+class CrossAnnouncementReplyConst(Enum):
+    CrossAnnouncementStatus_ACK = 'ACK'
+    CrossAnnouncementStatus_NEW = 'NEW'

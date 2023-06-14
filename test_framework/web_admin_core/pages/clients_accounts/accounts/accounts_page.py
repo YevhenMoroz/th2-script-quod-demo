@@ -78,3 +78,9 @@ class AccountsPage(CommonPage):
 
     def get_client_matching_id(self):
         return self.find_by_xpath(AccountsConstants.MAIN_PAGE_CLIENT_MATCHING_ID_XPATH).text
+
+    def click_on_download_csv_button_and_get_content(self):
+        self.clear_download_directory()
+        self.find_by_xpath(AccountsConstants.DOWNLOAD_CSV_BUTTON_XPATH).click()
+        time.sleep(1)
+        return self.get_csv_context()

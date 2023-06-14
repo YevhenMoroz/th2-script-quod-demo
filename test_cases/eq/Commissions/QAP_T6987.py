@@ -100,7 +100,6 @@ class QAP_T6987(TestCase):
                      'AllocQty': self.qty}]}}})
         nos_rule = None
         trade_rule1 = None
-        trade_rule2 = None
         try:
             nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(
                 self.bs_connectivity,
@@ -112,25 +111,19 @@ class QAP_T6987(TestCase):
                                                                                             self.mic,
                                                                                             int(self.price),
                                                                                             int(int(self.qty) / 2), 2)
-            trade_rule2 = self.rule_manager.add_NewOrdSingleExecutionReportTrade_FIXStandard(self.bs_connectivity,
-                                                                                            self.client_for_rule,
-                                                                                            self.mic,
-                                                                                            int(self.price),
-                                                                                            int(int(self.qty) / 2), 2)
             self.java_api_manager.send_message_and_receive_response(self.order_submit)
         finally:
             time.sleep(2)
             self.rule_manager.remove_rule(nos_rule)
             self.rule_manager.remove_rule(trade_rule1)
-            self.rule_manager.remove_rule(trade_rule2)
         # endregion
 
         # region check calculated execution (step 3)
         fee_list = {JavaApiFields.MiscFeeType.value: ExecutionReportConst.MiscFeeType_AGE.value,
-                    JavaApiFields.MiscFeeAmt.value: '5.0',
+                    JavaApiFields.MiscFeeAmt.value: '10.0',
                     JavaApiFields.MiscFeeCurr.value: self.cur,
                     JavaApiFields.MiscFeeBasis.value: ExecutionReportConst.MiscFeeBasis_A.value,
-                    JavaApiFields.MiscFeeRate.value: '5.0'}
+                    JavaApiFields.MiscFeeRate.value: '10.0'}
         calc_exec_report = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value,
                                                                   ExecutionReportConst.ExecType_CAL.value).get_parameter(
             JavaApiFields.ExecutionReportBlock.value)
@@ -151,7 +144,7 @@ class QAP_T6987(TestCase):
                         'TargetStrategy', 'Instrument', 'ExDestination', 'GrossTradeAmt', 'CommissionData', 'SecondaryOrderID']
         params = {"Account": self.client, "ExecType": "B",
                   "OrdStatus": "B", "ClOrdID": cl_ord_id, 'OrderID': ord_id,
-                  'NoMiscFees': {'NoMiscFees': [{'MiscFeeAmt': '5', 'MiscFeeCurr': self.cur, 'MiscFeeType': '12'}]}}
+                  'NoMiscFees': {'NoMiscFees': [{'MiscFeeAmt': '10', 'MiscFeeCurr': self.cur, 'MiscFeeType': '12'}]}}
         fix_execution_report = FixMessageExecutionReportOMS(self.data_set, params)
         self.fix_verifier.check_fix_message_fix_standard(fix_execution_report, ignored_fields=ignored_list)
         # endregion

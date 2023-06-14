@@ -15,6 +15,7 @@ from rule_management import RuleManager, Simulators
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, TradingPhases, TimeInForce
 from test_framework.db_wrapper.db_manager import DBManager
 from test_framework.fix_wrappers.algo.FixMessageMarketDataIncrementalRefreshAlgo import FixMessageMarketDataIncrementalRefreshAlgo
+from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import FixMessageMarketDataSnapshotFullRefreshAlgo
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
 from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
@@ -120,6 +121,9 @@ class QAP_T10704(TestCase):
 
         # region Send MarketDate
         self.fix_manager_feed_handler.set_case_id(case_id=bca.create_event("Send trading phase - Open", self.test_id))
+        self.snapshot_full_refresh = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data()\
+            .update_MDReqID(self.listing_id, self.fix_env1.feed_handler)
+        self.fix_manager_feed_handler.send_message(fix_message=self.snapshot_full_refresh)
         self.incremental_refresh = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_indicative() \
             .update_value_in_repeating_group('NoMDEntriesIR', 'MDEntrySize', 0) \
             .update_MDReqID(self.listing_id, self.fix_env1.feed_handler) \

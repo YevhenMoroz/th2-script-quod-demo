@@ -18,6 +18,7 @@ def test_run(parent_id=None, version=None):
     try:
         # region Multiple Emulation additional
         configuration = ComponentConfiguration("Sorping")
+        QAP_T4041(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4061(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4078(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion

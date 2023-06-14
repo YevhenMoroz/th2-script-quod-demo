@@ -64,9 +64,9 @@ class QAP_T3672(CommonTestCase):
 
         self.user_manager = self.data_set.get_user("user_6")
         self.desk = self.data_set.get_desk("desk_3")
-        self.fix_order_recipient_user = self.data_set.get_user("user_6")
+        self.fix_order_recipient_user = self.data_set.get_user("user_15")
         self.fix_order_recipient_desk = self.data_set.get_desk("desk_1")
-        self.middle_office_user = self.data_set.get_user("user_6")
+        self.middle_office_user = self.data_set.get_user("user_15")
         self.middle_office_desk = self.data_set.get_desk("desk_1")
 
         self.bic = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
@@ -82,8 +82,8 @@ class QAP_T3672(CommonTestCase):
         self.booking_field_5 = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
 
         self.default_execution_strategy_type = 'Auction'
-        self.default_execution_strategy = 'BasicMaker'
-        self.default_child_execution_strategy_type = 'AdvancedMaker'
+        self.default_execution_strategy = 'TC_VWAP'
+        self.default_child_execution_strategy_type = 'TCA_TWAP'
         self.default_routing_instruction = 'BlockDiscovery'
         self.custom_validation_rules = 'HeldRule'
 
@@ -102,7 +102,7 @@ class QAP_T3672(CommonTestCase):
         self.venue_client_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.venue_client_account_group_name = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.default_route = self.data_set.get_route("route_1")
-        self.max_commission_type = 'BasisPoint'
+        self.max_commission_type = 'BasisPoints'
         self.max_commission_value = '987'
 
         self.route = self.data_set.get_route("route_1")
@@ -170,6 +170,7 @@ class QAP_T3672(CommonTestCase):
             external_source_tab.set_dtcc_venue_act_grp_name(self.dtcc)
             external_source_tab.set_omgeo_venue_act_grp_name(self.omgeo)
             external_source_tab.set_other_venue_act_grp_name(self.other)
+            external_source_tab.set_sid_venue_act_grp_name(self.sid)
             external_source_tab.set_tfm_venue_act_grp_name(self.tfm)
             external_source_tab.set_bo_field_1(self.booking_field_1)
             external_source_tab.set_bo_field_2(self.booking_field_2)

@@ -16,6 +16,7 @@ class WebAdminUsers(Enum):
     user_12 = "adm02"
     user_13 = "QAP-T3920"
     user_14 = "inst_user_autotest"
+    user_15 = "Test_UMDS1"
 
 
 class WebAdminPasswords(Enum):

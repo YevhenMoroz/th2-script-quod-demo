@@ -154,6 +154,8 @@ class QAP_T7797(CommonTestCase):
                         True, values_tab.is_default_cash_position_checkbox_selected())
             wizard.click_on_close()
             time.sleep(1)
+            if wizard.is_confirmation_of_leave_wizard_displayed():
+                wizard.click_on_ok_button()
 
             main_page.set_name(self.test_data['cash_position_2']['name'])
             time.sleep(1)
@@ -172,6 +174,8 @@ class QAP_T7797(CommonTestCase):
                         True, values_tab.is_default_cash_position_checkbox_selected())
             wizard.click_on_close()
             time.sleep(1)
+            if wizard.is_confirmation_of_leave_wizard_displayed():
+                wizard.click_on_ok_button()
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

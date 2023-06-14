@@ -49,7 +49,7 @@ class QAP_T7374(TestCase):
         # endregion
         # region Step 1 2
         self.wave_request.set_default(bag_id, "200", "LMT", "DAY")
-        params = {"AlgoParametersBlock": {"AlgoType": "TWP", "ScenarioID": "2", "AlgoPolicyID": "1000029"},
+        params = {"AlgoParametersBlock": {"AlgoType": "TWP", "ScenarioID": "2", "AlgoPolicyID": "2"},
                   "Price": "5"}
         self.wave_request.update_fields_in_component("OrderBagWaveRequestBlock", params)
         self.java_api_manager.send_message_and_receive_response(self.wave_request)
@@ -60,10 +60,17 @@ class QAP_T7374(TestCase):
                                              "compare Algo parameters")
         self.wave_modification_request.set_default(wave_notify["OrderBagWaveID"], "LMT", "DAY")
 
-        params = {"AlgoParametersBlock": {"AlgoType": "TYP", "ScenarioID": "3", "AlgoPolicyID": "1000029"},
-                  "Price": "5"}
+        params = {"AlgoParametersBlock": {
+            "AlgoParameterListBlock": {
+                "AlgoParameterBlock": [
+                    {"AlgoParameterName": "TriggerPriceType", "AlgoParameterStringValue": "PrimaryBestBidOffer"}]},
+            'AlgoType': 'TYP', 'ScenarioID': '3', 'AlgoPolicyID': '3'},
+            "Price": "5"}
         self.wave_modification_request.update_fields_in_component("OrderBagWaveModificationRequestBlock", params)
         self.java_api_manager.send_message_and_receive_response(self.wave_modification_request)
+        wave_notify = \
+            self.java_api_manager.get_last_message(ORSMessageType.OrderBagWaveNotification.value).get_parameters()[
+                "OrderBagWaveNotificationBlock"]
         self.java_api_manager.compare_values(params["AlgoParametersBlock"], wave_notify["AlgoParametersBlock"],
                                              "compare Algo parameters")
         # endregion
