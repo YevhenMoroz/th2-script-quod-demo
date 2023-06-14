@@ -140,7 +140,6 @@ class QAP_T4227(TestCase):
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data Incremental to clear the MarketDepth", self.test_id))
         market_data_incremental_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase(TradingPhases.Open)
         market_data_incremental_par.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.price_ltq, MDEntrySize=self.price_ltq)
-        self.fix_manager_feed_handler.send_message(market_data_incremental_par)
 
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data SnapShot to clear the MarketDepth", self.test_id))
         market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id, self.fix_env1.feed_handler)
@@ -148,14 +147,12 @@ class QAP_T4227(TestCase):
         market_data_snap_shot_par.add_fields_into_repeating_group('NoMDEntries',  [dict(MDEntryType=0, MDEntryPx=self.price_bid_2, MDEntrySize=self.qty_bid_2, MDEntryPositionNo=2)])
         market_data_snap_shot_par.add_fields_into_repeating_group('NoMDEntries',  [dict(MDEntryType=0, MDEntryPx=self.price_bid_3, MDEntrySize=self.qty_bid_3, MDEntryPositionNo=3)])
         market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
-        self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
 
-        time.sleep(3)
         # resend the Market data to 100% be sure that the new MD will be found by the algo
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
         self.fix_manager_feed_handler.send_message(market_data_incremental_par)
 
-        time.sleep(3)
+        time.sleep(1)
         # endregion
 
         # region Send NewOrderSingle (35=D) for POV order
