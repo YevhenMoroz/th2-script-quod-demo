@@ -25,7 +25,7 @@ class QAP_T11379(TestCase):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.ja_manager = JavaApiManager(environment.get_list_java_api_environment()[0].java_api_conn, self.test_id)
-        self.order_submit = OrderSubmitOMS(data_set).set_default_iceberg_limit()
+        self.order_submit = OrderSubmitOMS(data_set)
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.cross_announcement = CrossAnnouncement(self.data_set)
         self.db_manager = DBManager(self.environment.get_list_data_base_environment()[0])

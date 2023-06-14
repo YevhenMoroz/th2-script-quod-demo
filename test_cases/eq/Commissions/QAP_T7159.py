@@ -52,18 +52,17 @@ class QAP_T7159(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region set agent fees precondition
-        new_order_single = trade_rule =  cancel_rule = None
+        new_order_single = trade_rule = cancel_rule = None
         fee_type = self.data_set.get_misc_fee_type_by_name('regulatory')
         commission_profile = self.data_set.get_comm_profile_by_name('bas_amt')
         fee = self.data_set.get_fee_by_name('fee3')
-        instr_type = self.data_set.get_instr_type('equity')
         venue_id = self.data_set.get_venue_id('eurex')
         self.rest_commission_sender.clear_fees()
         on_calculated_exec_scope = self.data_set.get_fee_exec_scope_by_name('on_calculated')
         self.rest_commission_sender.set_modify_fees_message(fee_type=fee_type, comm_profile=commission_profile,
                                                             fee=fee)
         self.rest_commission_sender.change_message_params(
-            {'commExecScope': on_calculated_exec_scope, 'instrType': instr_type, "venueID": venue_id})
+            {'commExecScope': on_calculated_exec_scope, "venueID": venue_id})
         self.rest_commission_sender.send_post_request()
         # endregion
 
@@ -120,7 +119,7 @@ class QAP_T7159(TestCase):
         # region check 35=8 150 = B message
         self.fix_message_execution_report.set_default_calculated(self.fix_message)
         self.fix_message_execution_report.remove_parameter('Parties')
-        amount = str(round((5 / 1000000) * 1000, 3))
+        amount = str(round((1 / 1000000) * 5000, 3))
         self.fix_message_execution_report.remove_parameter('TradeReportingIndicator')
         self.fix_message_execution_report.change_parameters({'QuodTradeQualifier': '*', 'BookID': '*',
                                                              'Currency': self.currency, 'NoParty': '*',
@@ -140,6 +139,7 @@ class QAP_T7159(TestCase):
         self.rest_commission_sender.clear_fees()
 
     def __compare_ord_status(self, expected_result):
-        ord_status = self.responses[len(self.responses)-1].get_parameters()['OrdStatus']
+        ord_status = self.responses[len(self.responses) - 1].get_parameters()['OrdStatus']
         key = "OrderStatus"
-        self.java_api_manager.compare_values({key:expected_result}, {key: ord_status}, f"Comparing values for step of OrdStatus for {expected_result}")
+        self.java_api_manager.compare_values({key: expected_result}, {key: ord_status},
+                                             f"Comparing values for step of OrdStatus for {expected_result}")
