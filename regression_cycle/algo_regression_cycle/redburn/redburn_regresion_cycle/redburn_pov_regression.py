@@ -2,6 +2,7 @@ import logging
 from custom import basic_custom_actions as bca
 from stubs import Stubs
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T11327 import QAP_T11327
+from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T11720 import QAP_T11720
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T4180 import QAP_T4180
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T4225 import QAP_T4225
 from test_cases.algo.Algo_Redburn.Algo_POV.QAP_T4226 import QAP_T4226
@@ -56,6 +57,7 @@ def test_run(parent_id=None, version=None):
         QAP_T8927(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4252(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4180(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T11720(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
         # region config change sats -> maxChildren = 3
         QAP_T8749(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
