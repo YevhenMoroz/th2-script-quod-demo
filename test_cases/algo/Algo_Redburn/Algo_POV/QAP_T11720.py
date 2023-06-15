@@ -151,6 +151,7 @@ class QAP_T11720(TestCase):
         market_data_snap_shot_trqx_clear.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ltq, MDEntrySize=self.qty_ltq_1)
         # endregion
 
+        # region Send MarketData on PARIS
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data SnapShot setup MarketDepth on PARIS", case_id_0))
         market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
         market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid, MDEntrySize=self.qty_bid_par)
