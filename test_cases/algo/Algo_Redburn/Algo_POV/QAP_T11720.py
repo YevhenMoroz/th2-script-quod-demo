@@ -139,6 +139,7 @@ class QAP_T11720(TestCase):
         # region Send MarketData on XPAR
         case_id_0 = bca.create_event("Send MarketData", self.test_id)
 
+        # region Clear MarketData
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Clear Market Data SnapShot on PARIS", case_id_0))
         market_data_snap_shot_par_clear = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
         market_data_snap_shot_par_clear.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_ltq, MDEntrySize=self.qty_ltq_1)
@@ -148,7 +149,7 @@ class QAP_T11720(TestCase):
         market_data_snap_shot_trqx_clear = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_trqx, self.fix_env1.feed_handler)
         market_data_snap_shot_trqx_clear.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_ltq, MDEntrySize=self.qty_ltq_1)
         market_data_snap_shot_trqx_clear.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ltq, MDEntrySize=self.qty_ltq_1)
-
+        # endregion
 
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data SnapShot setup MarketDepth on PARIS", case_id_0))
         market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
