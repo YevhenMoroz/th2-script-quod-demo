@@ -294,8 +294,8 @@ class QAP_T7023(TestCase):
                                  'LastPx', 'LastCapacity', 'tag5120', 'LastMkt', 'OrderCapacity''QtyType', 'ExecBroker',
                                  'QtyType', 'Price', 'OrderCapacity', 'VenueType', 'CommissionData', 'Text',
                                  'AllocQty', 'ConfirmType', 'ConfirmID',
-                                 'AllocID', 'NetMoney', 'MatchStatus',
-                                 'ConfirmStatus', 'AllocInstructionMiscBlock1', 'Account'
+                                 'AllocID', 'NetMoney', 'MatchStatus', 'Parties',
+                                 'ConfirmStatus', 'AllocInstructionMiscBlock1', 'Account',
                                  'CpctyConfGrp', 'ReportedPx', 'OrderAvgPx', 'tag11245', 'GatingRuleName',
                                  'GatingRuleCondName']
         params = {'ConfirmTransType': "0",
