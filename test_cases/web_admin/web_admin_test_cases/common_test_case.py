@@ -11,7 +11,7 @@ class CommonTestCase:
     def __init__(self, web_driver_container: WebDriverContainer, test_case_id, root_id, data_set: BaseDataSet = None,
                  environment: FullEnvironment = None):
         self.web_driver_container = web_driver_container
-        self.test_case_id = bca.create_event(test_case_id, root_id)
+        self.test_id = bca.create_event(test_case_id, root_id)
         self.data_set = data_set
         self.environment = environment
 
