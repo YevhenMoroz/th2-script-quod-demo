@@ -21,7 +21,8 @@ from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApi
 from test_framework.ssh_wrappers.ssh_client import SshClient
 from test_framework.formulas_and_calculation.trading_phase_manager import TradingPhaseManager, TimeSlot
 
-class QAP_T4227(TestCase):
+
+class QAP_T4252(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -40,37 +41,25 @@ class QAP_T4227(TestCase):
         # region order parameters
         self.order_type = constants.OrderType.Limit.value
         self.tif_day = constants.TimeInForce.Day.value
-        
+
         self.percentage_volume = 10
-        
+
         self.qty = 1_000_000
-        self.price = 25
+        self.price = 130
 
         self.price_ltq = 0
         self.qty_ltq = 0
+
+        self.price_ask = 10000
+        self.qty_ask = 40
 
         self.default_bid_qty = self.default_ask_qty = 1_000_000
         self.default_bid_price = 30
         self.default_ask_price = 40
 
-        self.price_ask = 30
-        self.qty_ask = 10_000
-
-        self.price_bid_1 = 22.005
-        self.qty_bid_1 = 1000
-
-        self.price_bid_2 = 21.995
-        self.qty_bid_2 = 1000
-
-        self.price_bid_3 = 21.99
-        self.qty_bid_3 = 1000
-
-        self.qty_bid_0 = 0
-
-        self.qty_child_1 = AFM.get_pov_child_qty(self.percentage_volume, self.qty_bid_1, self.qty)
-        self.qty_child_2 = AFM.get_pov_child_qty(self.percentage_volume, self.qty_bid_2, self.qty)
-
         self.check_order_sequence = False
+
+        self.pre_filter_new_order_single = self.data_set.get_pre_filter('pre_filer_equal_D')
         # endregion
 
         # region Gateway Side
@@ -119,13 +108,14 @@ class QAP_T4227(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Rule creation
-        rule_manager = RuleManager(Simulators.algo)
-        nos_ioc_rule_1 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.mic, self.price_bid_1)
-        nos_ioc_rule_2 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.mic, self.price_bid_2)
-        nos_ioc_rule_3 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.mic, self.price_bid_3)
-        ocr_rule = rule_manager.add_OCR(self.fix_env1.buy_side)
-        ocrr_rule = rule_manager.add_OrderCancelReplaceRequest(self.fix_env1.buy_side, self.account, self.mic)
-        self.rule_list = [nos_ioc_rule_1, nos_ioc_rule_2, nos_ioc_rule_3, ocr_rule, ocrr_rule]
+        # rule_manager = RuleManager(Simulators.algo)
+        # nos_rule_1 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.mic, self.price_bid_1)
+        # nos_rule_2 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.mic, self.price_bid_2)
+        # nos_rule_3 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.mic, self.price_bid_3)
+        # nos_rule_4 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.mic, self.price_bid_4)
+        # ocr_rule = rule_manager.add_OCR(self.fix_env1.buy_side)
+        # ocrr_rule = rule_manager.add_OrderCancelReplaceRequest(self.fix_env1.buy_side, self.account, self.mic)
+        # self.rule_list = [nos_rule_1, nos_rule_2, nos_rule_3, nos_rule_4, ocr_rule, ocrr_rule]
         # endregion
 
         # region Update Trading Phase
@@ -138,15 +128,15 @@ class QAP_T4227(TestCase):
 
         # region Clear Market Data
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data Incremental to clear the MarketDepth", self.test_id))
-        market_data_incremental_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase(TradingPhases.Open)
+        market_data_incremental_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id, self.fix_env1.feed_handler).remove_fields_in_repeating_group('NoMDEntriesIR', ['TradingSessionSubID']).set_phase(TradingPhases.Open)
         market_data_incremental_par.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.price_ltq, MDEntrySize=self.price_ltq)
+        self.fix_manager_feed_handler.send_message(market_data_incremental_par)
 
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data SnapShot to clear the MarketDepth", self.test_id))
         market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id, self.fix_env1.feed_handler)
-        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid_1, MDEntrySize=self.qty_bid_1, MDEntryPositionNo=1)
-        market_data_snap_shot_par.add_fields_into_repeating_group('NoMDEntries',  [dict(MDEntryType=0, MDEntryPx=self.price_bid_2, MDEntrySize=self.qty_bid_2, MDEntryPositionNo=2)])
-        market_data_snap_shot_par.add_fields_into_repeating_group('NoMDEntries',  [dict(MDEntryType=0, MDEntryPx=self.price_bid_3, MDEntrySize=self.qty_bid_3, MDEntryPositionNo=3)])
-        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.default_bid_price, MDEntrySize=self.default_bid_qty, MDEntryPositionNo=1)
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.default_ask_price, MDEntrySize=self.default_ask_qty)
+        self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
 
         # resend the Market data to 100% be sure that the new MD will be found by the algo
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
@@ -178,42 +168,8 @@ class QAP_T4227(TestCase):
         new_pov_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.pov_order, self.gateway_side_sell, self.status_new)
         self.fix_verifier_sell.check_fix_message(new_pov_order_params, key_parameters=self.key_params_cl, message_name='Sell side ExecReport New')
         # endregion
-        
-        # region Check the POV algo generates 2 child order
-        # region POV DMA child order 1
-        self.case_id_2 = bca.create_event("Check 2 POV DMA child order via sequence", self.test_id)
-        self.fix_verifier_buy.set_case_id(self.case_id_2)
-        
-        self.passive_child_order_1 = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()
-        self.passive_child_order_1.change_parameters(dict(Account=self.account, OrderQty=self.qty_child_1, Price=self.price_bid_1, Instrument='*', ExDestination=self.mic))
 
-        pending_passive_child_order_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.passive_child_order_1, self.gateway_side_buy, self.status_pending)
-
-        new_passive_child_order_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.passive_child_order_1, self.gateway_side_buy, self.status_new)
-        # endregion
-
-        # region POV DMA child order 2
-        self.passive_child_order_2 = FixMessageNewOrderSingleAlgo().set_DMA_RB_params()
-        self.passive_child_order_2.change_parameters(dict(Account=self.account, OrderQty=self.qty_child_2, Price=self.price_bid_2, Instrument='*', ExDestination=self.mic))
-
-        pending_passive_child_order_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.passive_child_order_2, self.gateway_side_buy, self.status_pending)
-
-        new_passive_child_order_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.passive_child_order_2, self.gateway_side_buy, self.status_new)
-        # endregion
-
-        # region NewOrderSingle
-        self.fix_verifier_buy.check_fix_message_sequence([self.passive_child_order_1, self.passive_child_order_2], [self.key_params, self.key_params], direction=self.FromQuod, pre_filter=self.pre_fileter_35_D, check_order=self.check_order_sequence, message_name='Check NewOrderSingle for POV DMA child orders 1 and 2')
-        # endregion
-
-        # region ExecutionReportPendingNew
-        self.fix_verifier_buy.check_fix_message_sequence([pending_passive_child_order_1_params, pending_passive_child_order_2_params], [self.key_params, self.key_params], direction=self.ToQuod, pre_filter=self.pre_fileter_35_8_Pending_new, check_order=self.check_order_sequence, message_name='Check ExecReport PendingNew for POV DMA child orders 1 and 2')
-        # endregion
-
-        # region ExecutionReportNew
-        self.fix_verifier_buy.check_fix_message_sequence([new_passive_child_order_1_params, new_passive_child_order_2_params], [self.key_params, self.key_params], direction=self.ToQuod, pre_filter=self.pre_fileter_35_8_New, check_order=self.check_order_sequence, message_name='Check ExecReport New for POV DMA child orders 1 and 2')
-        # endregion
-
-        # endregion
+        self.fix_verifier_buy.check_no_message_found(message_timeout=5000, direction=self.ToQuod, pre_filter=self.pre_filter_new_order_single, message_name='Buy side No NewOrderSingle message')
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
@@ -228,7 +184,7 @@ class QAP_T4227(TestCase):
 
         time.sleep(3)
 
-        RuleManager(Simulators.algo).remove_rules(self.rule_list)
+        # RuleManager(Simulators.algo).remove_rules(self.rule_list)
 
         # region Update Trading Phase
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Revert trading phase profile", self.test_id))
@@ -238,26 +194,7 @@ class QAP_T4227(TestCase):
         self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
         # endregion
 
-        # region Cancel POV DMA child orders
-        self.fix_verifier_buy.set_case_id(self.case_id_2)
-        cancel_dma_child_1_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.passive_child_order_1, self.gateway_side_buy, self.status_cancel)
-
-        cancel_dma_child_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.passive_child_order_2, self.gateway_side_buy, self.status_cancel)
-
-        self.fix_verifier_buy.check_fix_message_sequence([cancel_dma_child_1_params, cancel_dma_child_2_params], [self.key_params, self.key_params], direction=self.ToQuod, pre_filter=self.pre_fileter_35_8_Eliminate, check_order=self.check_order_sequence, message_name='Check ExecReport Cancel for POV DMA child orders 1 and 2')
-        # endregion
-
         # region check cancellation parent POV order
         cancel_pov_order = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.pov_order, self.gateway_side_sell, self.status_cancel)
         self.fix_verifier_sell.check_fix_message(cancel_pov_order, key_parameters=self.key_params_cl, message_name='Sell side ExecReport Cancel')
-        # endregion
-
-        # region Clear Market Data
-        self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data SnapShot to clear the MarketDepth", self.test_id))
-        market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id, self.fix_env1.feed_handler)
-        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.default_bid_price, MDEntrySize=self.default_bid_qty, MDEntryPositionNo=1)
-        market_data_snap_shot_par.add_fields_into_repeating_group('NoMDEntries', [dict(MDEntryType=0, MDEntryPx=self.price_bid_2, MDEntrySize=self.qty_bid_0, MDEntryPositionNo=2)])
-        market_data_snap_shot_par.add_fields_into_repeating_group('NoMDEntries', [dict(MDEntryType=0, MDEntryPx=self.price_bid_3, MDEntrySize=self.qty_bid_0, MDEntryPositionNo=3)])
-        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.default_ask_price, MDEntrySize=self.default_ask_qty)
-        self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
         # endregion

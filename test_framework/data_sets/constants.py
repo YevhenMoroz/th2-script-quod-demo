@@ -616,3 +616,7 @@ class TriggerPriceTypeScope(Enum):
 class TriggerPriceDirection(Enum):
     PriceGoesUp='U'
     PriceGoesDown='D'
+
+class Rounding(Enum):
+    Ceil = '1'
+    Floor = '2'
