@@ -19,7 +19,7 @@ class RoutesConstants:
     DISPLAYED_ROUTE_XPATH = '//*[text()="{}"]'
 
     # -at more actions-
-    NEW_BUTTON_XPATH = '//button[text()="New"]'
+    NEW_BUTTON_XPATH = '//button[normalize-space()="New"]'
     REFRESH_PAGE_XPATH = '//*[@data-name="refresh"]'
     MORE_ACTIONS_XPATH = '//*[@data-name="more-vertical"]'
     EDIT_AT_MORE_ACTIONS_XPATH = '//*[@data-name="edit"]'
@@ -27,14 +27,14 @@ class RoutesConstants:
     DELETE_AT_MORE_ACTIONS_XPATH = '//*[@nbtooltip="Delete"]'
     DOWNLOAD_PDF_XPATH = '//*[@class="nb-overlay-left"]//*[@data-name="download"]'
     PIN_ROW_AT_MORE_ACTIONS_XPATH = '//*[@nbtooltip = "Click to Pin Row"]'
-    OK_BUTTON_AT_MORE_ACTIONS_XPATH = '//*[text()="Ok"]'
-    CANCEL_BUTTON_AT_MORE_ACTIONS_XPATH = '//*[text()="Cancel"]'
+    OK_BUTTON_AT_MORE_ACTIONS_XPATH = '//*[normalize-space()="Ok"]'
+    CANCEL_BUTTON_AT_MORE_ACTIONS_XPATH = '//*[normalize-space()="Cancel"]'
     # ------Edit------
 
     # --Values tab--
     DOWNLOAD_PDF_AT_ROUTES_WIZARD = '//*[@data-name="download"]'
     CLOSE_PAGE_AT_ROUTES_WIZARD = '//*[@data-name="close"]'
-    SAVE_CHANGES_AT_VALUES_TAB_XPATH = '//*[text()="Save Changes"]'
+    SAVE_CHANGES_AT_VALUES_TAB_XPATH = '//*[normalize-space()="Save Changes"]'
     REVERT_CHANGES_AT_VALUES_TAB_XPATH = '//*[text()="Revert Changes"]'
     NAME_AT_VALUES_TAB_XPATH = '//*[@formcontrolname="routeName"]'
     CLIENT_ID_AT_VALUES_TAB_XPATH = '//*[@formcontrolname="clientRouteID"]'
@@ -45,7 +45,7 @@ class RoutesConstants:
     MANAGE_AT_VALUES_TAB_XPATH = '//*[text()="Manage"]'
     EXPECTED_ERROR_FOR_VALUE_FIELD_AT_VALUES_TAB_XPATH = "//*[text()='Incorrect or missing values']"
     # -Counterpart tab-
-    NEW_BUTTON_AT_COUNTERPARTS_TAB_XPATH = '//*[text()="New"]'
+    NEW_BUTTON_AT_COUNTERPARTS_TAB_XPATH = '//*[normalize-space()="New"]'
     REFRESH_PAGE_AT_COUNTERPARTS_TAB_XPATH = '//*[@data-name="refresh"]'
     DOWNLOAD_CSV_AT_COUNTERPARTS_TAB_XPATH = '//*[@data-name="download"]'
     NAME_FILTER_AT_COUNTERPARTS_TAB_XPATH = '//*[@class="ag-floating-filter-input"]'
@@ -115,7 +115,7 @@ class RoutesConstants:
     TIME_IN_FORCE_FILTER_AT_MANAGE_TYPE_TIF_WIZARD_XPATH = '//*[@class="ng2-smart-th timeInForce ng-star-inserted"]//input'
     ORD_TYPE_AT_FILTER_MANAGE_TYPE_TIF_WIZARD_XPATH = '//*[@class="ng2-smart-th ordType ng-star-inserted"]//input'
     SUPPORT_DISPLAY_QUANTITY_FILTER_AT_MANAGE_TYPE_TIF_WIZARD_XPATH = '//*[@class="ng2-smart-th supportDisplayQty ng-star-inserted"]//input'
-    OK_AT_MANAGE_TYPE_TIF_WIZARD_XPATH = '//*[text()="OK"]'
+    OK_AT_MANAGE_TYPE_TIF_WIZARD_XPATH = '//*[normalize-space()="Ok"]'
 
     TIME_IN_FORCE_VALUE_AT_MANAGE_TYPE_TIF_WIZARD_XPATH = '//*[@class="ng2-smart-row ng-star-inserted"]//td[2]//div[@class="ng-star-inserted"]'
     ORD_TYPE_VALUE_AT_MANAGE_TYPE_TIF_WIZARD_XPATH = '//*[@class="ng2-smart-row ng-star-inserted"]//td[3]//div[@class="ng-star-inserted"]'

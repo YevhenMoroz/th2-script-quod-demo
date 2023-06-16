@@ -1,12 +1,12 @@
 class DesksConstants:
     DESKS_PAGE_TITLE_XPATH = "//*[@class='entity-title left'][normalize-space()='Desks']"
-    NEW_BUTTON_XPATH = '//button[text()="New"]'
+    NEW_BUTTON_XPATH = '//button[normalize-space()="New"]'
     REFRESH_BUTTON_XPATH = '//*[@data-name="refresh"]'
     MORE_ACTIONS_XPATH = "//*[@row-index = '0']//*[@data-name = 'more-vertical']"
     EDIT_AT_MORE_ACTIONS_XPATH = '//*[@data-name="edit"]'
     CLONE_AT_MORE_ACTIONS_XPATH = '//*[@data-name="copy"]'
     DELETE_AT_MORE_ACTIONS_XPATH = '//*[@data-name="trash-2"]'
-    CANCEL_BUTTON_XPATH = '//*[text()="Cancel"]'
+    CANCEL_BUTTON_XPATH = '//*[normalize-space()="Cancel"]'
     CLOSE_WIZARD_XPATH = "//*[@data-name='close']"
     OK_BUTTON_XPATH = '//*[text()="Ok" or text()="OK"]'
     NO_BUTTON_XPATH = '//*[normalize-space()="No"]'
@@ -34,5 +34,5 @@ class DesksConstants:
     ASSIGNMENTS_TAB_USER_LINK_XPATH = '//*[normalize-space(text())="{}"]'
     ASSIGNMENTS_TAB_USERS_XPATH = '//*[@class="linked-entities-label"][normalize-space()="Users"]//..//a'
 
-    SAVE_CHANGES_BUTTON_XPATH = "//*[text()='Save Changes']"
+    SAVE_CHANGES_BUTTON_XPATH = "//*[normalize-space()='Save Changes']"
     REVERT_CHANGES_BUTTON_XPATH = "//*[text()='Revert Changes']"

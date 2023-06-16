@@ -3,7 +3,7 @@ class WashBookConstants:
     PAGE_ICON = '//span[@class="entity-title left"]//*[@data-name="bar-chart"]//*[@d]'
 
     # region ~~~MAIN PAGE~~~
-    NEW_BUTTON_XPATH = '//*[normalize-space()="Wash Books"]//..//*[text()="New"]'
+    NEW_BUTTON_XPATH = '//*[normalize-space()="Wash Books"]//..//*[normalize-space()="New"]'
     EDIT_BUTTON_XPATH = '//*[@data-name="edit"]'
     ENABLE_DISABLE_BUTTON_XPATH = "//div[contains(@class, 'toggle')]"
     MORE_ACTIONS_XPATH = "//nb-icon[@title='More Actions']"
@@ -11,7 +11,7 @@ class WashBookConstants:
     CLONE_AT_MORE_ACTIONS_XPATH = '//*[@data-name="copy"]'
     DOWNLOAD_PDF_AT_MORE_ACTIONS_XPATH = "//nb-icon[@icon='download-outline']//*[@data-name='download']"
     PIN_TO_ROW_AT_MORE_ACTIONS_XPATH = '//*[@nbtooltip="Click to Pin Row"]'
-    OK_BUTTON_XPATH = "//*[text()='Ok']"
+    OK_BUTTON_XPATH = "//*[normalize-space()='Ok']"
 
     # -FIELDS WITH VALUES AT MAIN PAGE-
     ID_AT_MAIN_PAGE_XPATH = '//*[@class="ag-center-cols-container"]//div//div[1]//*[@class="ag-group-value"]'
@@ -41,14 +41,14 @@ class WashBookConstants:
     WEEK_PL = '//*[text()="Week PL"]/preceding-sibling::input'
     QUARTER_PL = '//*[text()="Quarter PL"]/preceding-sibling::input'
     YEAR_PL = '//*[text()="Year PL"]/preceding-sibling::input'
-    SAVE_CHANGES_AT_EDIT_SUB_WIZARD = '//*[text()="Save Changes"]'
+    SAVE_CHANGES_AT_EDIT_SUB_WIZARD = '//*[normalize-space()="Save Changes"]'
     REVERT_CHANGES_AT_EDIT_SUB_WIZARD = '//*[text()="Revert Changes"]'
     CLOSE_AT_EDIT_SUB_WIZARD = '//*[@nbtooltip="Close"]'
     # endregion
 
     # region ~~~WIZARD~~~
-    SAVE_CHANGES_AT_WIZARD = '//*[text()="Save Changes"]'
-    CLEAR_CHANGES_AT_WIZARD = '//*[text()="Clear Changes"]'
+    SAVE_CHANGES_AT_WIZARD = '//*[normalize-space()="Save Changes"]'
+    CLEAR_CHANGES_AT_WIZARD = '//*[normalize-space()="Clear Changes"]'
     NO_BUTTON_AT_WIZARD = '//button[normalize-space()="No"]'
     WIZARD_DOWNLOAD_PDF_BUTTON = '//*[@nbtooltip="Download PDF"]'
 

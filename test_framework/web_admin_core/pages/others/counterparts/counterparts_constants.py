@@ -10,8 +10,8 @@ class CounterpartsConstants:
     CLONE_AT_MORE_ACTIONS_XPATH = '//*[@data-name="copy"]'
     DELETE_AT_MORE_ACTIONS_XPATH = '//*[@data-name="trash-2"]'
     DOWNLOAD_PDF_AT_MORE_ACTIONS_XPATH = '//*[@class="nb-overlay-left"]//*[@data-name="download"]'
-    CANCEL_BUTTON_XPATH = '//*[text()="Cancel"]'
-    OK_BUTTON_XPATH = '//*[text()="Ok"]'
+    CANCEL_BUTTON_XPATH = '//*[normalize-space()="Cancel"]'
+    OK_BUTTON_XPATH = '//*[normalize-space()="Ok"]'
     COUNTERPARTS_NAME_AT_MAIN_PAGE_XPATH = '//*[text()="{}"]'
 
     # ----------------COUNTERPARTS WIZARD---------------
@@ -24,8 +24,8 @@ class CounterpartsConstants:
     DELETE_AT_COUNTERPARTS_TABS_XPATH = '//div[@class="counterpart-detail-settings"]//nb-accordion-item[2]//*[@data-name="trash-2"]'
     DELETE_AT_PARTY_ROLES_TABS_XPATH = '//div[@class="counterpart-detail-settings"]//nb-accordion-item[3]//*[@data-name="trash-2"]'
     REVERT_CHANGES_AT_COUNTERPARTS_TAB_XPATH = '//button[text()="Revert Changes"]'
-    SAVE_CHANGES_XPATH = '//*[text()="Save Changes"]'
-    CLEAR_CHANGES_XPATH = '//button[text()="Clear Changes"]'
+    SAVE_CHANGES_XPATH = '//*[normalize-space()="Save Changes"]'
+    CLEAR_CHANGES_XPATH = '//button[normalize-space()="Clear Changes"]'
     DOWNLOAD_PDF_XPATH = '//*[@data-name="download"]'
     DOWNLOAD_PDF_IN_EDIT_WIZARD_XPATH = '//*[@data-name="download"]'
     FOOTER_WARNING_XPATH = '//nb-card-footer//*[@status="danger"]//following-sibling::span'

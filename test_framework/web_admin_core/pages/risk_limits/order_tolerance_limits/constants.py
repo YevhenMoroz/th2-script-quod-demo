@@ -2,10 +2,10 @@ class OrderToleranceLimitsConstants:
     ORDER_TOLERANCE_LIMITS_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][normalize-space()='Order Tolerance Limits']"
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"
-    SAVE_CHANGES_BUTTON_XPATH = "//*[text()='Save Changes']"
-    CLEAR_CHANGES_BUTTON_XPATH = "//*[text()='Clear Changes']"
+    SAVE_CHANGES_BUTTON_XPATH = "//*[normalize-space()='Save Changes']"
+    CLEAR_CHANGES_BUTTON_XPATH = "//*[normalize-space()='Clear Changes']"
     CLOSE_WIZARD_XPATH = "//*[@data-name='close']"
-    OK_BUTTON_XPATH = '//*[text()="Ok"]'
+    OK_BUTTON_XPATH = '//*[normalize-space()="Ok"]'
     CANCEL_BUTTON_XPATH = '//*[normalize-space()="Cancel"]'
     REVERT_CHANGES_XPATH = "//*[normalize-space()='Revert Changes']"
     MORE_ACTIONS_XPATH = "//*[@data-name = 'more-vertical']"
@@ -13,7 +13,7 @@ class OrderToleranceLimitsConstants:
     CLONE_XPATH = "//*[@data-name = 'copy']"
     DELETE_XPATH = "//*[@data-name = 'trash-2']"
     PIN_ROW_XPATH = "//*[@nbtooltip ='Click to Pin Row']"
-    NEW_BUTTON_XPATH = '//*[text()="New"]'
+    NEW_BUTTON_XPATH = '//*[normalize-space()="New"]'
     USER_ICON_AT_RIGHT_CORNER = "//*[@class='control-item icon-btn context-menu-host']"
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
@@ -92,7 +92,7 @@ class OrderToleranceLimitsConstants:
     DYNAMIC_PROFILE_SUB_WIZARD_REFERENCE_PRICE_TYPE_3_XPATH = '//*[@placeholder="Reference Price Type 3"]'
     DYNAMIC_PROFILE_SUB_WIZARD_REFERENCE_PRICE_TYPE_4_FILTER_XPATH = '//*[@class="ng2-smart-th referencePriceType4 ng-star-inserted"]//input'
     DYNAMIC_PROFILE_SUB_WIZARD_REFERENCE_PRICE_TYPE_4_XPATH = '//*[@placeholder="Reference Price Type 4"]'
-    DYNAMIC_PROFILE_SUB_WIZARD_OK_BUTTON_XPATH = '//*[text()="OK"]'
+    DYNAMIC_PROFILE_SUB_WIZARD_OK_BUTTON_XPATH = '//*[normalize-space()="Ok"]'
 
     # Price control profile points
 

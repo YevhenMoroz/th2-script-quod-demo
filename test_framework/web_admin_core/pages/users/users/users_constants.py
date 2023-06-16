@@ -6,7 +6,7 @@ class UsersConstants:
     DISABLED_ENABLED_SUCCESSFUL_MESSAGE = "//*[@class='title subtitle']"
     RECORD_EXIST_EXCEPTION = "//*[text()='Such a record already exists']"
     INCORRECT_OR_MISSING_VALUES_EXCEPTION = "//*[text()='Incorrect or missing values']"
-    NEW_BUTTON_XPATH = '//*[text()="New"]'
+    NEW_BUTTON_XPATH = '//*[normalize-space()="New"]'
     ENABLE_DISABLE_BUTTON_XPATH = "//div[contains(@class, 'toggle')]"
     MORE_ACTIONS_XPATH = "//nb-icon[@title='More Actions']"
     EDIT_AT_MORE_ACTIONS_XPATH = '//*[@data-name="edit"]'
@@ -16,7 +16,7 @@ class UsersConstants:
     PIN_TO_ROW_AT_MORE_ACTIONS_XPATH = '//*[@nbtooltip="Click to Pin Row"]'
     UNPIN_TO_ROW_AT_MORE_ACTIONS_XPATH = '//*[@nbtooltip="Click to Unpin Row"]'
     OK_BUTTON_XPATH = '//*[text()="OK" or text()="Ok"]'
-    CANCEL_BUTTON_XPATH = '//*[text()="Cancel"]'
+    CANCEL_BUTTON_XPATH = '//*[normalize-space()="Cancel"]'
     LOCK_UNLOCK_BUTTON_XPATH = "//*[@data-name='lock' or @data-name='unlock']"
     REQUEST_FAILED_MESSAGE_XPATH = "//nb-toast[contains(@class, 'danger')]"
     DISPLAYED_USER_XPATH = "//*[text()='{}']"
@@ -68,7 +68,7 @@ class UsersConstants:
     CONNECTED_AT_MAIN_PAGE = "//*[@col-id='1']//*[@class='custom-checkbox']"
 
     # Wizard
-    SAVE_CHANGES_BUTTON = "//*[text()='Save Changes']"
+    SAVE_CHANGES_BUTTON = "//*[normalize-space()='Save Changes']"
     REVERT_CHANGES_BUTTON = '//button[normalize-space()="Revert Changes"]'
     ERROR_MESSAGE_IN_FOOTER = "//*[@outline='danger']"
     CONFIRM_POP_UP = '(//nb-card)[2]'

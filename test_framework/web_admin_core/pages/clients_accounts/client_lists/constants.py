@@ -3,11 +3,11 @@ class ClientListsConstants:
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//nb-icon[@icon='download-outline']//*[@data-name='download']"
     DOWNLOAD_CSV_BUTTON = '//nb-card-header//*[@data-name="download"]'
-    SAVE_CHANGES_BUTTON_XPATH = "//*[text()='Save Changes']"
-    CLEAR_CHANGES_BUTTON_XPATH = "//*[text()='Clear Changes']"
+    SAVE_CHANGES_BUTTON_XPATH = "//*[normalize-space()='Save Changes']"
+    CLEAR_CHANGES_BUTTON_XPATH = "//*[normalize-space()='Clear Changes']"
     CLOSE_WIZARD_XPATH = "//*[@data-name='close']"
     OK_BUTTON_XPATH = '//*[normalize-space()="Ok" or normalize-space()="OK"]'
-    CANCEL_BUTTON_XPATH = '//*[text()="Cancel"]'
+    CANCEL_BUTTON_XPATH = '//*[normalize-space()="Cancel"]'
     NO_BUTTON_XPATH = '//button[normalize-space()="No"]'
     REVERT_CHANGES_XPATH = "//*[normalize-space()='Revert Changes']"
     MORE_ACTIONS_XPATH = "//*[@data-name = 'more-vertical']"

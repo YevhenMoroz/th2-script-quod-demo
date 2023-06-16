@@ -2,11 +2,11 @@ class ListingGroupsConstants:
     LISTING_GROUPS_PAGE_TITLE_XPATH = "//*[@title='Listing Groups']//span"
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"
-    SAVE_CHANGES_BUTTON_XPATH = "//*[text()='Save Changes']"
-    CLEAR_CHANGES_BUTTON_XPATH = "//*[text()='Clear Changes']"
+    SAVE_CHANGES_BUTTON_XPATH = "//*[normalize-space()='Save Changes']"
+    CLEAR_CHANGES_BUTTON_XPATH = "//*[normalize-space()='Clear Changes']"
     CLOSE_WIZARD_XPATH = "//*[@data-name='close']"
-    OK_BUTTON_XPATH = '//*[text()="Ok"]'
-    CANCEL_BUTTON_XPATH = '//*[text()="Cancel"]'
+    OK_BUTTON_XPATH = '//*[normalize-space()="Ok"]'
+    CANCEL_BUTTON_XPATH = '//*[normalize-space()="Cancel"]'
     REVERT_CHANGES_XPATH = "//*[text()='Revert Changes']"
     MORE_ACTIONS_XPATH = "//*[@data-name = 'more-vertical']"
     EDIT_XPATH = "//*[@data-name = 'edit']"
