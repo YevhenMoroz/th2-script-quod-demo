@@ -65,6 +65,7 @@ class QAP_T8157(TestCase):
         qty = self.new_order_single.get_parameter('OrderQtyData')['OrderQty']
         price = self.new_order_single.get_parameter('Price')
         self.fix_manager.send_message_and_receive_response_fix_standard(self.new_order_single)
+        cl_ord_id = self.new_order_single.get_parameter('ClOrdID')
         order_id = self.fix_manager.get_last_message("ExecutionReport").get_parameter("OrderID")
         # end_of_part
 
@@ -142,17 +143,15 @@ class QAP_T8157(TestCase):
         self.java_api_manager.send_message(self.cancel_transfer)
         # endregion
 
-        # # region check that sellside does not have TradeCancel Execution_Report
-        execution_report_fix = FixMessageExecutionReportOMS(self.data_set)
-        execution_report_fix.change_parameters({"ExecType": "H", "ClOrdID": position_transfer_id})
+        # region step 2: check that sellside does not have TradeCancel Execution_Report
         self.fix_verifier_ss.check_no_message_found(message_timeout=10000, message_name='ExecutionReport',
                                                     pre_filter={
                                                         "ExecType": "H",
                                                         "ClOrdID": position_transfer_id
                                                     })
-
-        # region step 3: check that backOffice has PositionTradeCancel message:
-        self.fix_verifier_dc.check_fix_message_fix_standard(execution_report_fix, ['ExecType', 'ClOrdID'])
+        execution_report_fix = FixMessageExecutionReportOMS(self.data_set)
+        execution_report_fix.change_parameters({"ExecType": "H", "ClOrdID": cl_ord_id, 'OrdStatus':'0'})
+        self.fix_verifier_ss.check_fix_message_fix_standard(execution_report_fix, ['ExecType', 'ClOrdID', 'OrdStatus'])
         # endregion
 
     def _set_up_wash_book_rule(self):

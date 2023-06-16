@@ -148,6 +148,7 @@ class CommonPage:
         concatenates the xpath to the checkbox through its values
         """
         self.find_by_xpath(field_xpath).click()
+        time.sleep(0.5)
         if not self.is_element_present(CommonConstants.MULTISELECT_FORM_LOOK_UP):
             self.find_by_xpath(field_xpath).click()
         time.sleep(1)
@@ -157,7 +158,8 @@ class CommonPage:
             self.set_text_by_xpath(CommonConstants.MULTISELECT_FORM_LOOK_UP, i)
             time.sleep(0.2)
             self.find_by_xpath(CommonConstants.MULTISELECT_ITEM_XPATH.format(i)).click()
-        self.find_by_xpath(field_xpath).click()
+            time.sleep(1)
+        self.find_by_xpath(CommonConstants.MULTISELECT_DROP_DOWN_CLOSE_BUTTON).click()
         time.sleep(1)
 
     def select_value_from_dropdown_list(self, xpath: str, value: str):

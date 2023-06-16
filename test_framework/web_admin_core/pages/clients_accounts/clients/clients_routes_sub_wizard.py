@@ -49,3 +49,6 @@ class ClientsRoutesSubWizard(CommonPage):
 
     def is_agent_fee_exemption_selected(self):
         return self.is_checkbox_selected(ClientsConstants.ROUTES_TAB_ROUTE_AGENT_FEE_EXEMPTION)
+
+    def is_route_present(self):
+        return self.is_element_present(ClientsConstants.DELETE_XPATH)

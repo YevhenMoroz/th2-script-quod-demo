@@ -39,8 +39,8 @@ class Wizard(CommonPage):
     def click_on_checkmark(self):
         self.find_by_xpath(Constants.Wizard.CHECKMARK_BUTTON).click()
 
-    def click_on_close(self):
-        self.find_by_xpath(Constants.Wizard.CLOSE_WIZARD_BUTTON).click()
+    def click_on_cancel(self):
+        self.find_by_xpath(Constants.Wizard.CLOSE_BUTTON).click()
 
     def click_on_edit(self):
         self.find_by_xpath(Constants.Wizard.EDIT_BUTTON).click()
@@ -71,3 +71,6 @@ class Wizard(CommonPage):
 
     def click_on_cancel_button(self):
         self.find_by_xpath(Constants.Wizard.CANCEL_BUTTON).click()
+
+    def is_account_present(self):
+        return self.is_element_present(Constants.Wizard.DELETE_BUTTON)

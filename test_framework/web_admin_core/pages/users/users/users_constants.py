@@ -25,6 +25,8 @@ class UsersConstants:
     NOT_FOUND_OPTION_XPATH = '//*[normalize-space(text())="Not found"]'
     WARNING_MESSAGE = '//*[@outline="danger"]'
     DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span'
+    USERS_LOOK_UP_INPUT = '//nb-card-header//form//input[contains(@class, "lookup-input")]'
+    LOAD_BUTTON = '//nb-card-header//form//button'
 
     # filters
     USER_ID_FILTER_AT_MAIN_PAGE = "//ag-grid-angular/div/div[1]/div/div[1]/div[2]/div/div[2]/div[1]/div[1]/div/input"
@@ -83,10 +85,12 @@ class UsersConstants:
     COUNTERPART_AT_LOGIN_SUB_WIZARD = '//*[text()="Counterpart"]/preceding-sibling::input'
     MANAGE_AT_LOGIN_SUB_WIZARD = '//*[text()="Manage"]'
     NON_VISIBLE_POSITION_FLATTENING_PERIODS = '//*[@id="Non-Visible Position Flattening Periods"]//p-multiselect//div'
-    CHANGE_PASSWORD_BUTTON_AT_LOGIN_SUB_WIZARD = '//button[text()="Change Password"]'
+    CHANGE_PASSWORD_BUTTON_AT_LOGIN_SUB_WIZARD = '//button[normalize-space()="Change Password"]'
     NEW_PASSWORD_AT_LOGIN_SUB_WIZARD = '//*[@formcontrolname="newPassword"]'
     CONFIRM_NEW_PASSWORD_AT_LOGIN_SUB_WIZARD = '//*[@formcontrolname="confirmNewPassword"]'
     CHANGE_PASSWORD_BUTTON_AT_POP_UP_LOGIN_SUB_WIZARD = '//div[@class="change-password"]//button[@status="primary"]'
+    CHANGE_PASSWORD_POP_UP = '//div[@class="change-password"]'
+    CHANGE_PASSWORD_POP_UP_ERROR_TEXT = '//div[@class="change-password"]//*[@class="alert-message ng-star-inserted"]'
 
     GENERATE_PIN_CODE_CHECKBOX_AT_LOGIN_SUB_WIZARD = '//*[text()="Generate PIN Code"]/preceding-sibling::span'
     GENERATE_PASSWORD_CHECKBOX_AT_LOGIN_SUB_WIZARD = '//*[text()="Generate Password"]/preceding-sibling::span'
@@ -119,6 +123,7 @@ class UsersConstants:
     PERM_ROLE_AT_ROLE_SUB_WIZARD = '//*[text()="Perm Role"]/preceding-sibling::input'
     GROUP_AT_ROLE_SUB_WIZARD = '//*[text()="Group"]/preceding-sibling::input'
     PERM_OP_AT_ROLE_SUB_WIZARD = '//*[@id="permOp"]'
+    PERMISSION_PROFILES = '//*[@id="Permission Profiles"]'
 
     # Must not be visible
     ROLE_ID_AT_ROLE_SUB_WIZARD = '//*[text()="Role Id"]/preceding-sibling::input'
@@ -133,6 +138,7 @@ class UsersConstants:
     TYPE_AT_CLIENT_SUB_WIZARD = '//nb-accordion-item-header[normalize-space()="Clients"]//..//nb-select'
     CLIENT_FILTER_AT_CLIENT_SUB_WIZARD = '(//*[text()=" Client "]//following-sibling::nb-accordion-item-body//thead//input)[1]'
     TYPE_FILTER_AT_CLIENT_SUB_WIZARD = '//*[text()=" Client "]//following-sibling::nb-accordion-item-body//thead//input)[2]'
+    CLIENT_IN_TABLE_AT_CLIENT_SUB_WIZARD = '//*[normalize-space()="Clients"]//..//tbody//td[2]//span'
 
     # Venue trader
     PLUS_BUTTON_AT_VENUE_TRADER_SUB_WIZARD = '//*[text()="Manage Trader Groups"]/ancestor::*[@class="expanded"]//*[@data-name="plus"]'
@@ -167,8 +173,10 @@ class UsersConstants:
     CANCEL_AT_ROUTES_SUB_WIZARD = '//*[normalize-space()="Routes"]//..//*[@data-name="close"]'
     EDIT_AT_ROUTES_SUB_WIZARD = '//*[normalize-space()="Routes"]//..//*[@data-name="edit"]'
     DELETE_AT_ROUTES_WIZARD = '//*[normalize-space()="Routes"]//..//*[@data-name="trash-2"]'
+    DELETE_LAST_ENTRY_AT_ROUTE_WIZARD = '(//*[normalize-space()="Routes"]//..//*[@data-name="trash-2"])[last()]'
 
     ROUTE_AT_ROUTES_SUB_WIZARD = '//*[@placeholder="Route *"]'
     ROUTE_USER_NAME_AT_ROUTES_SUB_WIZARD = '//*[@placeholder="Route User Name *"]'
     ROUTE_FILTER_AT_ROUTES_SUB_WIZARD = '(//*[normalize-space()="Routes"]//..//*[@placeholder="Filter"])[1]'
     ROUTE_USER_NAME_FILTER_AT_ROUTES_SUB_WIZARD = '(//*[normalize-space()="Routes"]//..//*[@placeholder="Filter"])[2]'
+    ROUTE_IN_ROUTE_TABLE_SUB_WIZARD = '//*[normalize-space()="Routes"]//..//p-table//tbody//td[2]//span'

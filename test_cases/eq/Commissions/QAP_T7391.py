@@ -62,6 +62,7 @@ class QAP_T7391(TestCase):
         self.approve_block = ForceAllocInstructionStatusRequestOMS(self.data_set)
         self.confirmation_request = ConfirmationOMS(self.data_set)
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         new_avg_px = str(int(self.price) / 100)
         commission_rate = str(float(1))
@@ -69,18 +70,21 @@ class QAP_T7391(TestCase):
         self.__step_precondition()
         tuple_orders_indicators: tuple = self.__step_first(instrument_id)
         exec_id = self.__step_second(tuple_orders_indicators[0])
-        tuple_for_allocation = self.__step_third(tuple_orders_indicators[1], tuple_orders_indicators[0], exec_id, new_avg_px,
-                                     commission_rate, commission_rate, instrument_id)
+        tuple_for_allocation = self.__step_third(tuple_orders_indicators[1], tuple_orders_indicators[0], exec_id,
+                                                 new_avg_px,
+                                                 commission_rate, commission_rate, instrument_id)
         self.__step_fourth(tuple_for_allocation[0], new_avg_px, instrument_id, tuple_for_allocation[1])
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def __step_precondition(self):
         self.rest_commission_sender.clear_commissions()
         self.rest_commission_sender.set_modify_client_commission_message(recalculate=True).send_post_request()
         time.sleep(10)
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def __step_first(self, instrument_id):
         self.order_submit.set_default_dma_limit()
-        self.order_submit.remove_fields_from_component('NewOrderSingleBlock',['SettlCurrency'])
+        self.order_submit.remove_fields_from_component('NewOrderSingleBlock', ['SettlCurrency'])
         self.order_submit.update_fields_in_component('NewOrderSingleBlock', {
             'ListingList': {'ListingBlock': [{'ListingID': self.data_set.get_listing_id_by_name("listing_2")}]},
             'InstrID': instrument_id,
@@ -96,6 +100,7 @@ class QAP_T7391(TestCase):
             JavaApiFields.OrdReplyBlock.value][JavaApiFields.ClOrdID.value]
         return order_id, cl_ord_id
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def __step_second(self, order_id):
         self.execution_report.set_default_trade(order_id)
         self.execution_report.update_fields_in_component('ExecutionReportBlock',
@@ -131,6 +136,7 @@ class QAP_T7391(TestCase):
         exec_id = execution_report[JavaApiFields.ExecID.value]
         return exec_id
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def __step_third(self, cl_ord_id, order_id, exec_id, new_avg_px, commission_amount, commission_rate, instrument_id):
         tuple_for_allocation_instruction = self.__send_compute_misc_fee_request(cl_ord_id, order_id, exec_id,
                                                                                 new_avg_px, commission_amount,
@@ -138,6 +144,7 @@ class QAP_T7391(TestCase):
         return self.__send_allocation_instruction_request(order_id, tuple_for_allocation_instruction[0], new_avg_px,
                                                           tuple_for_allocation_instruction[1], exec_id, instrument_id)
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def __send_compute_misc_fee_request(self, cl_ord_id, order_id, exec_id, new_avg_px, commission_amount,
                                         commission_rate):
         self.compute_booking_fee_commission_request.set_list_of_order_alloc_block(cl_ord_id, order_id,
@@ -165,6 +172,7 @@ class QAP_T7391(TestCase):
                                              f'Check that Client Commission presents in {ORSMessageType.ComputeBookingFeesCommissionsReply.value}')
         return commission_for_allocation_instruction, expected_commission
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def __send_allocation_instruction_request(self, order_id, client_commisison, new_avg_px,
                                               client_commission_expected, exec_id, instrument_id):
         self.allocation_instruction.set_default_book(order_id)
@@ -185,7 +193,8 @@ class QAP_T7391(TestCase):
         responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
         print_message("Allocation Instruction", responses)
         allocation_report = \
-            self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+            self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                                   JavaApiFields.BookingAllocInstructionID.value).get_parameters()[
                 JavaApiFields.AllocationReportBlock.value]
         alloc_id = allocation_report[JavaApiFields.ClientAllocID.value]
         commission_actually = \
@@ -194,6 +203,7 @@ class QAP_T7391(TestCase):
                                              'Check Client Commission in Allocation Instruction')
         return alloc_id, client_commission_expected
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def __step_fourth(self, alloc_id, new_avg_px, instrument_id, commission_expected):
         self.approve_block.set_default_approve(alloc_id)
         responses = self.java_api_manager.send_message_and_receive_response(self.approve_block)
@@ -207,9 +217,13 @@ class QAP_T7391(TestCase):
         })
         responses = self.java_api_manager.send_message_and_receive_response(self.confirmation_request)
         print_message('Confirmation', responses)
-        confirmation_report = self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[JavaApiFields.ConfirmationReportBlock.value]
-        actual_commission = confirmation_report[JavaApiFields.ClientCommissionList.value][JavaApiFields.ClientCommissionBlock.value][0]
+        confirmation_report = \
+        self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[
+            JavaApiFields.ConfirmationReportBlock.value]
+        actual_commission = \
+        confirmation_report[JavaApiFields.ClientCommissionList.value][JavaApiFields.ClientCommissionBlock.value][0]
         self.java_api_manager.compare_values(commission_expected, actual_commission, 'Check commission from step 4')
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.rest_commission_sender.clear_commissions()

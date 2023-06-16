@@ -92,10 +92,13 @@ class QAP_T9012(TestCase):
         # region complete order
         self.dfd_batch_request.set_default_complete(order_id)
         self.java_api_manager.send_message_and_receive_response(self.dfd_batch_request)
-        exec_report_block = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameter(
+        exec_report_block = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value,
+                                                                   ExecutionReportConst.ExecType_CAL.value).get_parameter(
             JavaApiFields.ExecutionReportBlock.value)
-        self.java_api_manager.compare_values({JavaApiFields.DoneForDay.value: OrderReplyConst.DoneForDay_YES.value},
-                                             exec_report_block, 'Check dfd status execution after complete')
+        self.java_api_manager.compare_values(
+            {JavaApiFields.DoneForDay.value: OrderReplyConst.DoneForDay_YES.value, JavaApiFields.ExecPrice.value: '5.9',
+             JavaApiFields.ExecQty.value: self.qty + '.0'},
+            exec_report_block, 'Check dfd status execution after complete')
         # endregion
 
         # region 35=8 (39=B) message
@@ -141,19 +144,24 @@ class QAP_T9012(TestCase):
         # region complete order
         self.dfd_batch_request.set_default_complete(order_id)
         self.java_api_manager.send_message_and_receive_response(self.dfd_batch_request)
-        exec_report_block = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameter(
+        exec_report_block = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value,
+                                                                   ExecutionReportConst.ExecType_CAL.value).get_parameter(
             JavaApiFields.ExecutionReportBlock.value)
-        self.java_api_manager.compare_values({JavaApiFields.DoneForDay.value: OrderReplyConst.DoneForDay_YES.value},
-                                             exec_report_block, 'Check dfd status execution after complete')
+        self.java_api_manager.compare_values(
+            {JavaApiFields.DoneForDay.value: OrderReplyConst.DoneForDay_YES.value, JavaApiFields.ExecPrice.value: '4.1',
+             JavaApiFields.ExecQty.value: self.qty + '.0'},
+            exec_report_block, 'Check dfd status execution after complete')
         # endregion
 
         # region 35=8 (150=H) message
         ignored_list_canc = ['GatingRuleCondName', 'GatingRuleName', 'Parties', 'QuodTradeQualifier', 'BookID',
                              'SettlCurrency', 'LastExecutionPolicy', 'TradeDate', 'TradeReportingIndicator', 'NoParty',
-                             'tag5120', 'SecondaryOrderID', 'ExecBroker', 'SecondaryExecID']
+                             'tag5120', 'SecondaryOrderID', 'ExecBroker', 'SecondaryExecID', 'LastMkt', 'VenueType']
         self.exec_report.set_default_trade_cancel(self.fix_message)
-        self.exec_report.change_parameters({"OrdStatus": "2"})
-        self.fix_verifier.check_fix_message_fix_standard(self.exec_report, ignored_fields=ignored_list_canc)
+        self.exec_report.change_parameters({"OrdStatus": "1"})
+        self.fix_verifier.check_fix_message_fix_standard(self.exec_report,
+                                                         key_parameters=['ExecType', 'ClOrdID'],
+                                                         ignored_fields=ignored_list_canc)
         # endregion
 
         # region 35=8 (39=B) message

@@ -24,6 +24,7 @@ class QAP_T7328(TestCase):
         self.java_api_connectivity = self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
         self.nos = FixNewOrderSingleOMS(self.data_set).set_default_care_limit()
+        self.nos.change_parameters({'ClientAccountGroupID': data_set.get_client_by_name("client_pos_1")})
         self.new_washbook = self.data_set.get_washbook_account_by_name('washbook_account_2')
 
     @try_except(test_id=Path(__file__).name[:-3])

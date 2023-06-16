@@ -37,7 +37,7 @@ class QAP_T3687(CommonTestCase):
         default_result = DefaultResultEntity(self.web_driver_container)
 
         login_page.login_to_web_admin(self.login, self.password)
-        side_menu.click_on_order_management_rules_when_order_management_tab_is_open()
+        side_menu.click_on_order_management_rules_tab()
 
         main_page.click_on_new_button()
         values_tab.set_name(self.rule_name)

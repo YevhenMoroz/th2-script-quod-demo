@@ -30,7 +30,7 @@ class QAP_T3240(CommonTestCase):
         self.symbol = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.lookup_symbol = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.instr_symbol = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
-        self.instr_type = 'MultiLeg'
+        self.instr_type = 'Bond'
         self.security_exchange = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
 
         self.venue = self.data_set.get_venue_by_name("venue_3")
@@ -94,6 +94,7 @@ class QAP_T3240(CommonTestCase):
 
             attachment_tab.set_venue(self.venue)
             wizard.click_on_save_changes()
+            time.sleep(2)
             main_page.load_listing_from_global_filter(self.lookup_symbol)
             time.sleep(1)
             self.verify("Listing has been create with all required fields", True,

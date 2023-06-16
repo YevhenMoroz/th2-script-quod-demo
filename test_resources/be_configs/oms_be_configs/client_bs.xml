@@ -1,0 +1,26 @@
+<!--
+$HeadURL$
+$LastChangedDate$
+$LastChangedRevision$
+$LastChangedBy$
+
+Copyright Quod Financial
+-->
+<quod>
+    <includes>
+        <include>${CFG_DIR}/${CFG_PREFIX}backend.xml</include>
+        <include>${CFG_DIR}/${CFG_PREFIX}persistence.xml</include>
+        <include>${CFG_DIR}/${CFG_PREFIX}marketdata.xml</include>
+        <include>${CFG_DIR}/${CFG_PREFIX}routing.xml</include>
+        <include>${CFG_DEFAULT}/bs.xml</include>
+    </includes>
+     <bs>
+        <recovery>continue</recovery>
+        <watch>
+            <order>ESBUYTH2ETST></order>
+            <order>CS</order>
+            <order>SATS</order>
+            <replies>ORS</replies>
+        </watch>
+    </bs>
+</quod>

@@ -143,7 +143,7 @@ class QAP_T9390(TestCase):
         # endregion
 
         # region step 8: Check 35 = J message
-        last_user_conterpart = self.data_set.get_counterpart_id_fix('counterpart_id_custodian_user_2')
+        last_user_conterpart = self.data_set.get_counterpart_id_fix('counterpart_id_custodian_user')
         route_counterpart = self.data_set.get_counterpart_id_fix('counterpart_id_market_maker_th2_route')
         regulatory_body = self.data_set.get_counterpart_id_fix('counterpart_id_regulatory_body_venue_paris')
         entering_firm = self.data_set.get_counterpart_id_fix('entering_firm')

@@ -2,10 +2,10 @@ import logging
 import time
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from test_cases.eq.Positions.PreConditionForPosition import PreConditionForPosition
+from test_framework.pre_condition_for_position import PreConditionForPosition
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from test_framework.data_sets.message_types import CSMessageType, PKSMessageType
+from test_framework.data_sets.message_types import CSMessageType, PKSMessageType, ORSMessageType
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.cs_message.CDOrdAckBatchRequest import CDOrdAckBatchRequest
 from test_framework.java_api_wrappers.java_api_constants import SubmitRequestConst, JavaApiFields, \
@@ -53,6 +53,7 @@ class QAP_T8671(TestCase):
         self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
                                     self.ssh_client_env.password, self.ssh_client_env.su_user,
                                     self.ssh_client_env.su_password)
+        self.counterpart = self.data_set.get_counterpart_id_java_api('counterpart_contra_firm')
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -77,12 +78,10 @@ class QAP_T8671(TestCase):
         self.rest_commission_sender.send_post_request()
 
         # region step 1: Create CO order
-        self.order_submit.update_fields_in_component("NewOrderSingleBlock", {
-            "InstrID": self.instrument_id,
-            'ListingList': {'ListingBlock': [{'ListingID': self.data_set.get_listing_id_by_name("listing_2")}]},
-            "AccountGroupID": self.client,
-            'WashBookAccountID': self.washbook,
-            "ClOrdID": bca.client_orderid(9)})
+        self._create_precondition_co_order()
+        self.order_submit.update_fields_in_component(JavaApiFields.NewOrderSingleBlock.value, {
+            JavaApiFields.AccountGroupID.value: self.client,
+            JavaApiFields.ClOrdID.value: bca.client_orderid(9)})
         self.ja_manager_second.send_message_and_receive_response(self.order_submit)
         cd_ord_notif = self.ja_manager_second.get_last_message(CSMessageType.CDOrdNotif.value).get_parameters()[
             JavaApiFields.CDOrdNotifBlock.value]
@@ -103,11 +102,10 @@ class QAP_T8671(TestCase):
         # region step 2: Manual Execute CO order
         # part 1 : manual Execute CO order
         commission_and_fee_amt = float(self.commission_profile_rate) * float(self.qty) * float(self.price) / 100
-        counter_part = self.data_set.get_counterpart_id_java_api('counterpart_contra_firm')
         self.trade_entry.set_default_trade(order_id, self.price, self.qty)
-        self.trade_entry.update_fields_in_component('TradeEntryRequestBlock', {
-            'LastMkt': self.data_set.get_mic_by_name("mic_2"),
-            'CounterpartList': {'CounterpartBlock': [counter_part]}
+        self.trade_entry.update_fields_in_component(JavaApiFields.TradeEntryRequestBlock.value, {
+            JavaApiFields.LastMkt.value: self.data_set.get_mic_by_name("mic_2"),
+            JavaApiFields.CounterpartList.value: {JavaApiFields.CounterpartBlock.value: [self.counterpart]}
         })
         self.ja_manager.send_message_and_receive_response(self.trade_entry)
         # end_of_part
@@ -159,3 +157,20 @@ class QAP_T8671(TestCase):
     def run_post_conditions(self):
         self.rest_commission_sender.clear_commissions()
         self.rest_commission_sender.clear_fees()
+
+    def _create_precondition_co_order(self):
+        self.order_submit.update_fields_in_component("NewOrderSingleBlock", {
+            JavaApiFields.InstrID.value: self.instrument_id,
+            JavaApiFields.ListingList.value: {JavaApiFields.ListingBlock.value: [{JavaApiFields.ListingID.value: self.data_set.get_listing_id_by_name("listing_2")}]},
+            JavaApiFields.AccountGroupID.value: self.data_set.get_client_by_name('client_pt_1'),
+            JavaApiFields.WashBookAccountID.value: self.washbook,
+            JavaApiFields.ClOrdID.value: bca.client_orderid(9)})
+        self.ja_manager.send_message_and_receive_response(self.order_submit)
+        order_reply = self.ja_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[JavaApiFields.OrdReplyBlock.value]
+        order_id = order_reply[JavaApiFields.OrdID.value]
+        self.trade_entry.set_default_trade(order_id, self.price, self.qty)
+        self.trade_entry.update_fields_in_component(JavaApiFields.TradeEntryRequestBlock.value, {
+            JavaApiFields.LastMkt.value: self.data_set.get_mic_by_name("mic_2"),
+            JavaApiFields.CounterpartList.value: {JavaApiFields.CounterpartBlock.value: [self.counterpart]}
+        })
+        self.ja_manager.send_message_and_receive_response(self.trade_entry)

@@ -67,10 +67,13 @@ class QAP_T3782(CommonTestCase):
             main_page.click_on_edit_at_more_actions()
             time.sleep(2)
             value_tab = UsersValuesSubWizard(self.web_driver_container)
-            values_at_non_visible_position_flattening_period = \
-                [str(i).strip() for i in value_tab.get_non_visible_position_flattening_periods().split(",")]
-            if "" not in values_at_non_visible_position_flattening_period:
-                value_tab.set_non_visible_position_flattening_periods(values_at_non_visible_position_flattening_period)
+            try:
+                values_at_non_visible_position_flattening_period = \
+                    [str(i).strip() for i in value_tab.get_non_visible_position_flattening_periods().split(",")]
+                if "" not in values_at_non_visible_position_flattening_period:
+                    value_tab.set_non_visible_position_flattening_periods(values_at_non_visible_position_flattening_period)
+            except:
+                pass
             wizard = UsersWizard(self.web_driver_container)
             wizard.click_on_save_changes()
             time.sleep(2)

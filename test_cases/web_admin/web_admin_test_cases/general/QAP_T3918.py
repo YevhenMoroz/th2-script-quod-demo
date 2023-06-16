@@ -36,7 +36,7 @@ class QAP_T3918(CommonTestCase):
                 self.verify("Help icon not works", True, e.__class__.__name__)
 
             try:
-                main_page.switch_to_browser_tab(1)
+                main_page.switch_to_browser_tab_or_window(1)
                 get_url = main_page.get_current_page_url()
                 self.verify("New link is open", True, self.new_link and self.opened_page in get_url)
             except Exception as e:

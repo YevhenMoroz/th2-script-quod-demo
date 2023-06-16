@@ -5,6 +5,7 @@ class CommonConstants:
     MULTISELECT_FORM_LOOK_UP = '//input[@role="textbox"]'
     MULTISELECT_ITEM_XPATH = '//p-multiselectitem//li//span[@id][text()="{}"]'
     MULTISELECT_ENTITIES = '//div[contains(@class, "multiselect-values")]'
+    MULTISELECT_DROP_DOWN_CLOSE_BUTTON = '//a[contains(@class, "ui-multiselect-close")]'
     ENUM_DROP_DOWN = '//button'
     CHECKED_ATTRIBUTE = "checked"
     HORIZONTAL_SCROLL_ELEMENT_XPATH = '//*[@ref="eBodyHorizontalScrollViewport"]'

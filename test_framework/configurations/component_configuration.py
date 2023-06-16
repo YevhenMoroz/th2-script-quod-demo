@@ -39,3 +39,20 @@ class ComponentConfigurationAlgo(ComponentConfiguration):
 class ComponentConfigurationFX(ComponentConfiguration):
     def __init__(self, component_name: str):
         super().__init__(component_name, f"{ROOT_DIR}/test_framework/configuration_files/regression_run_config_fx.xml")
+
+
+class WebAdminComponentConfiguration:
+    def __init__(self, component_name: str):
+        xpath = f"{ROOT_DIR}/regression_run_config.xml"
+        tree = ElementTree.parse(xpath)
+        root = tree.getroot()
+        try:
+            self.name = root.find(f".//component[@name='{component_name}']").attrib["name"]
+        except Exception:
+            print(f"Can not find component with name {component_name}")
+
+        self.run = eval(root.find(f".//component[@name='{component_name}']").attrib["run"])
+        self.data_set = eval(root.find(f".//product_line[@name='web_admin']/data_set").text)()
+
+        component_environment = list(root.find(f".//product_line[@name='web_admin']/environments"))
+        self.environment = FullEnvironment(component_environment)

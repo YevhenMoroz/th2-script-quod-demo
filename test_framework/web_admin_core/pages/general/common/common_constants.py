@@ -32,4 +32,12 @@ class CommonConstants:
     INFO_POP_UP_TEXT = '//nb-toast//*[@class="title subtitle"]'
     LOADING_OVERLAY = '//*[@ref="eOverlayWrapper"]/span'
     CONFIRM_POP_UP = '(//nb-card)[2]'
+    CHANGE_PASSWORD_AT_USER_PANEL = '//*[normalize-space()="Change Password"]'
+    CHANGE_PASSWORD_POP_UP = '//div[@class="change-password"]'
+    CHANGE_PASSWORD_BUTTON_IN_POP_UP = '//button[normalize-space()="Change Password"]'
+    CURRENT_PASSWORD_IN_POP = '//input[@id="currentPassword"]'
+    NEW_PASSWORD_IN_POP_UP = '//input[@id="newPassword"]'
+    CONFIRM_NEW_PASSWORD_IN_POP_UP = '//input[@id="confirmNewPassword"]'
+    CHANGE_PASSWORD_POP_UP_ERROR_TEXT = '//div[@class="change-password"]//*[@class="alert-message ng-star-inserted"]'
+    CANCEL_BUTTON = '//button[normalize-space()="Cancel"]'
 

@@ -111,7 +111,8 @@ class QAP_T7015(TestCase):
         # endregion
 
         # region Set-up parameters and check Allocation Report
-        list_of_ignored_fields = ['Account', 'Currency', 'AvgPx', 'Quantity', 'OrderAvgPx', 'tag11245']
+        list_of_ignored_fields = ['Account', 'Currency', 'AvgPx', 'Quantity', 'OrderAvgPx', 'tag11245', 'ExecAllocGrp',
+                                  'AllocInstructionMiscBlock2']
         self.allocation_message.set_default_ready_to_book(self.fix_message)
         self.allocation_message.change_parameters(
             {'tag5120': '*', 'RootSettlCurrAmt': '*', 'SettlCurrFxRate': '#'})

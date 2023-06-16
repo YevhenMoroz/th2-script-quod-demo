@@ -6,11 +6,12 @@ from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.message_types import ORSMessageType, PKSMessageType
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
-from test_framework.java_api_wrappers.java_api_constants import JavaApiFields
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, SubscriptionRequestTypes, PosReqTypes
 from test_framework.java_api_wrappers.oms.es_messages.ExecutionReportOMS import ExecutionReportOMS
 from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS import AllocationInstructionOMS
 from test_framework.java_api_wrappers.oms.ors_messges.DFDManagementBatchOMS import DFDManagementBatchOMS
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
+from test_framework.java_api_wrappers.pks_messages.RequestForPositions import RequestForPositions
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -28,6 +29,7 @@ class QAP_T7601(TestCase):
         self.recipient = self.data_set.get_recipient_by_name("recipient_user_3")
         self.order_submit = OrderSubmitOMS(data_set).set_default_dma_limit()
         self.order_submit2 = OrderSubmitOMS(data_set).set_default_dma_limit()
+        self.request_for_position = RequestForPositions()
         self.trd_req = ExecutionReportOMS(data_set)
         self.dfd_manage_batch = DFDManagementBatchOMS(self.data_set)
         self.allocation_instruction = AllocationInstructionOMS(self.data_set)
@@ -35,6 +37,7 @@ class QAP_T7601(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Step 1
+        self._request_for_positions(self.washbook_acc)
         self.order_submit.update_fields_in_component("NewOrderSingleBlock", {"AccountGroupID": self.client})
         self.ja_manager.send_message_and_receive_response(self.order_submit)
         ord_rep = self.ja_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
@@ -49,14 +52,16 @@ class QAP_T7601(TestCase):
             JavaApiFields.OrderNotificationBlock.value]["OrdID"]
         self.trd_req.set_default_trade(ord_id2)
         self.ja_manager.send_message_and_receive_response(self.trd_req)
-        cum_buy_qty = self.ja_manager.get_last_message_by_multiple_filter(PKSMessageType.PositionReport.value,[JavaApiFields.PositQty.value]).get_parameters()[
+        cum_buy_qty = self.ja_manager.get_last_message_by_multiple_filter(PKSMessageType.PositionReport.value, [
+            JavaApiFields.PositQty.value]).get_parameters()[
             JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
             JavaApiFields.PositionBlock.value][0]["CumBuyQty"]
         # endregion
         # region Step 3
         self.trd_req.set_default_trade(ord_id)
         self.ja_manager.send_message_and_receive_response(self.trd_req)
-        posit = self.ja_manager.get_last_message_by_multiple_filter(PKSMessageType.PositionReport.value, [JavaApiFields.PositQty.value]).get_parameters()[
+        posit = self.ja_manager.get_last_message_by_multiple_filter(PKSMessageType.PositionReport.value,
+                                                                    [JavaApiFields.PositQty.value]).get_parameters()[
             JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
             JavaApiFields.PositionBlock.value][0]
         exp_cum_buy_qty = str(float(cum_buy_qty) + 100)
@@ -69,8 +74,15 @@ class QAP_T7601(TestCase):
         # region Step 5
         self.allocation_instruction.set_default_book(ord_id)
         self.ja_manager.send_message_and_receive_response(self.allocation_instruction)
-        posit = self.ja_manager.get_last_message_by_multiple_filter(PKSMessageType.PositionReport.value,[JavaApiFields.PositQty.value]).get_parameters()[
+        posit = self.ja_manager.get_last_message_by_multiple_filter(PKSMessageType.PositionReport.value,
+                                                                    [JavaApiFields.PositQty.value]).get_parameters()[
             JavaApiFields.PositionReportBlock.value][JavaApiFields.PositionList.value][
             JavaApiFields.PositionBlock.value][0]
         self.ja_manager.compare_values({"CumBuyQty": cum_buy_qty}, posit, "Check CumBuyQty decreased")
         # endregion
+
+    def _request_for_positions(self, account):
+        self.request_for_position.set_default(SubscriptionRequestTypes.SubscriptionRequestType_SUB.value,
+                                              PosReqTypes.PosReqType_POS.value,
+                                              account)
+        self.ja_manager.send_message(self.request_for_position)

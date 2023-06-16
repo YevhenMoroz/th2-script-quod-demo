@@ -38,3 +38,12 @@ class ClientsWizard(CommonPage):
 
     def is_wizard_open(self):
         return self.is_element_present(ClientsConstants.WIZARD_HEADER_LINK)
+
+    def click_on_cancel_button(self):
+        self.find_by_xpath(ClientsConstants.CANCEL_BUTTON).click()
+
+    def click_on_no_button(self):
+        self.find_by_xpath(ClientsConstants.NO_BUTTON).click()
+
+    def click_on_ok_button(self):
+        self.find_by_xpath(ClientsConstants.OK_BUTTON).click()

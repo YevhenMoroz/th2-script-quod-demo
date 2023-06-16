@@ -36,7 +36,7 @@ class QAP_T7590(TestCase):
         self.java_api_connectivity = self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
         self.posit_transfer = PositionTransferInstructionOMS(self.data_set)
-        self.instrument_id = self.data_set.get_instrument_id_by_name('instrument_1')
+        self.instrument_id = self.data_set.get_instrument_id_by_name('instrument_2')
         self.request_for_position = RequestForPositions()
         self.qty = '100'
         self.price = '2'
@@ -79,6 +79,7 @@ class QAP_T7590(TestCase):
                 JavaApiFields.PositionBlock.value][0]
         unrealized_pl_source_acc_before = self._get_common_unrealized_pls(self.source_acc)
         unrealized_pl_destination_acc_before = self._get_common_unrealized_pls(self.destination_acc)
+        print()
         # end_of_part
 
         # endregion
@@ -179,7 +180,7 @@ class QAP_T7590(TestCase):
                 return position_record
 
     def _get_common_unrealized_pls(self, account):
-        report = self.java_api_manager.get_last_message(PKSMessageType.PositionReport.value, account). \
+        report = self.java_api_manager.get_last_message(PKSMessageType.PositionReport.value, f"AccountID': '{account}'"). \
             get_parameters()[JavaApiFields.PositionReportBlock.value]
         unrealized_pl_common = report[JavaApiFields.SecurityAccountPLBlock.value][JavaApiFields.UnrealizedPL.value]
         unrealized_pl_specify = None

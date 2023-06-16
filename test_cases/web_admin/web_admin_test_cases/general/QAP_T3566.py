@@ -209,7 +209,7 @@ class QAP_T3566(CommonTestCase):
             self.step_check_full_screen_after_clone_btn("Institutions")
             self.step_check_full_screen_after_click_esc_btn("Institutions")
 
-            side_menu.click_on_zones_when_site_tab_is_open()
+            side_menu.click_on_zones_tab()
             time.sleep(1)
             self.step_check_only_click_at_full_screen_btn("Zones")
             self.step_check_full_screen_after_click_on_new_btn("Zones")
@@ -217,7 +217,7 @@ class QAP_T3566(CommonTestCase):
             self.step_check_full_screen_after_clone_btn("Zones")
             self.step_check_full_screen_after_click_esc_btn("Zones")
 
-            side_menu.click_on_locations_when_site_tab_is_open()
+            side_menu.click_on_locations_tab()
             time.sleep(1)
             self.step_check_only_click_at_full_screen_btn("Locations")
             self.step_check_full_screen_after_click_on_new_btn("Locations")
@@ -225,7 +225,7 @@ class QAP_T3566(CommonTestCase):
             self.step_check_full_screen_after_clone_btn("Locations")
             self.step_check_full_screen_after_click_esc_btn("Locations")
 
-            side_menu.click_on_desks_when_site_tab_is_open()
+            side_menu.click_on_desks_tab()
             time.sleep(1)
             self.step_check_only_click_at_full_screen_btn("Desks")
             self.step_check_full_screen_after_click_on_new_btn("Desks")
