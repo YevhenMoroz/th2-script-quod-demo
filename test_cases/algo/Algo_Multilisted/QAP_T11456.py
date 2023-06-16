@@ -60,7 +60,7 @@ class QAP_T11456(TestCase):
 
         # region Gateway Side
         self.gateway_side_buy = GatewaySide.Buy
-        self.gateway_side_sell = GatewaySide.KeplerSell
+        self.gateway_side_sell = GatewaySide.Sell
         # endregion
 
         # region Status

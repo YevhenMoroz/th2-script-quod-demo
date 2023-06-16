@@ -40,7 +40,7 @@ class QAP_T11596(TestCase):
         self.qty_for_md = 1500
         self.price_ask_qdl1 = 40
         self.price_bid_qdl1 = 30
-        self.price_ask_qdl2 = 44
+        self.price_ask_qdl2 = 50
         self.price_bid_qdl2 = 28
 
         self.price_ask_qlv34 = 50
@@ -52,7 +52,7 @@ class QAP_T11596(TestCase):
 
         # region Gateway Side
         self.gateway_side_buy = GatewaySide.Buy
-        self.gateway_side_sell = GatewaySide.KeplerSell
+        self.gateway_side_sell = GatewaySide.Sell
         # endregion
 
         # region Status
@@ -100,13 +100,7 @@ class QAP_T11596(TestCase):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
         nos_ioc_rule = rule_manager.add_NewOrdSingle_IOC(self.fix_env1.buy_side, self.account_qlv1, self.ex_destination_qlv1, True, self.qty, self.price_ask_qdl1)
-        nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_qlv1, self.ex_destination_qlv1, self.price)
-        nos_2_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_qlv2, self.ex_destination_qlv2, self.price)
-        nos_3_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_qlv3, self.ex_destination_qlv3, self.price)
-        ocr_1_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_qlv1, self.ex_destination_qlv1, True)
-        ocr_2_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_qlv2, self.ex_destination_qlv2, True)
-        ocr_3_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_qlv3, self.ex_destination_qlv3, True)
-        self.rule_list = [nos_ioc_rule, nos_1_rule, nos_2_rule, nos_3_rule, ocr_1_rule, ocr_2_rule, ocr_3_rule]
+        self.rule_list = [nos_ioc_rule]
         # endregion
 
         # region Send_MarkerData
@@ -143,7 +137,7 @@ class QAP_T11596(TestCase):
 
         self.Multilisted_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Multilisting_params()
         self.Multilisted_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.Multilisted_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument)).add_tag(dict(ClientAlgoPolicyID=self.algopolicy, DisplayInstruction=dict(DisplayQty=self.display_qty))).remove_parameter('NoStrategyParameters')
+        self.Multilisted_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument)).add_tag(dict(ClientAlgoPolicyID=self.algopolicy)).remove_parameter('NoStrategyParameters')
 
         self.fix_manager_sell.send_message_and_receive_response(self.Multilisted_order, case_id_1)
 
