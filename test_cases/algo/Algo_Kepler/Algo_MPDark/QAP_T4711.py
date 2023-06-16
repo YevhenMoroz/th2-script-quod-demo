@@ -216,7 +216,7 @@ class QAP_T4711(TestCase):
 
         # region Check that the LIS Phase was happened only after parent price modification
         self.fix_verifier_buy.set_case_id(bca.create_event("Check that the LIS Phase was happened only after parent price modification", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([self.dma_1_chix_order, self.dma_1_bats_order, self.nos_chixlis_rfq, self.nos_trql_rfq, self.dma_2_chix_order, self.dma_2_bats_order], key_parameters_list=[None, None, None, None, None, None], direction=self.FromQuod, pre_filter=self.pre_filter)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([self.dma_1_chix_order, self.dma_1_bats_order, self.nos_chixlis_rfq, self.nos_trql_rfq, self.dma_2_chix_order, self.dma_2_bats_order], key_parameters_list=[None, None, None, None, None, None], direction=self.FromQuod, pre_filter=self.pre_filter)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

@@ -149,12 +149,12 @@ class QAP_T4208(TestCase):
 
         # region Check that is only one child order
         self.fix_verifier_buy.set_case_id(bca.create_event("Check that is only one child order", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([self.dma_1_order], [self.key_params_NOS_child], self.FromQuod, pre_filter=self.pre_filter)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([self.dma_1_order], [self.key_params_NOS_child], self.FromQuod, pre_filter=self.pre_filter)
         # endregion
 
         # region Check that algo is still open
         self.fix_verifier_sell.set_case_id(bca.create_event("Check that algo is still open", self.test_id))
-        self.fix_verifier_sell.check_fix_message_sequence([er_pending_new_Synthetic_TIF_order_params, er_new_Synthetic_TIF_order_params], [self.key_params_ER_parent, self.key_params_ER_parent], self.FromQuod, pre_filter=None)
+        self.fix_verifier_sell.check_fix_message_sequence_kepler([er_pending_new_Synthetic_TIF_order_params, er_new_Synthetic_TIF_order_params], [self.key_params_ER_parent, self.key_params_ER_parent], self.FromQuod, pre_filter=None)
         # endregion
 
         time.sleep(10)

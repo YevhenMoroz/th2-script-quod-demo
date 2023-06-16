@@ -205,7 +205,7 @@ class QAP_T10299(TestCase):
 
         # region Check that all childs on the venue ITG were rejected
         self.fix_verifier_buy.set_case_id(bca.create_event("Check that all childs on the venue ITG were rejected", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([er_reject_dma_1_itg_order, er_reject_dma_2_itg_order, er_reject_dma_3_itg_order], [self.key_params_ER_child, self.key_params_ER_child, self.key_params_ER_child], self.ToQuod, pre_filter=self.pre_filter_2)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([er_reject_dma_1_itg_order, er_reject_dma_2_itg_order, er_reject_dma_3_itg_order], [self.key_params_ER_child, self.key_params_ER_child, self.key_params_ER_child], self.ToQuod, pre_filter=self.pre_filter_2)
         # endregion
 
         # region check cancel first dma child order on venue CHIX
@@ -256,7 +256,7 @@ class QAP_T10299(TestCase):
         
         # region Check all childs
         self.fix_verifier_buy.set_case_id(bca.create_event("Check all childs", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([self.dma_1_chix_order, self.dma_1_bats_order, self.dma_1_itg_order, self.dma_2_itg_order, self.dma_3_itg_order, self.dma_2_chix_order, self.dma_2_bats_order], [self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child], self.FromQuod, pre_filter=self.pre_filter_1)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([self.dma_1_chix_order, self.dma_1_bats_order, self.dma_1_itg_order, self.dma_2_itg_order, self.dma_3_itg_order, self.dma_2_chix_order, self.dma_2_bats_order], [self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child], self.FromQuod, pre_filter=self.pre_filter_1)
         # endregion
 
         time.sleep(3)

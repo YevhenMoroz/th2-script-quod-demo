@@ -111,7 +111,7 @@ class QAP_T4726(TestCase):
         time.sleep(5)
 
         self.fix_verifier_buy.set_case_id(bca.create_event("Check that there is no unexpected messages", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([nos_chixlis_order, nos_trql_order],
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([nos_chixlis_order, nos_trql_order],
                                                          [None, None], self.FromQuod, pre_filter=self.pre_filter)
 
     @try_except(test_id=Path(__file__).name[:-3])

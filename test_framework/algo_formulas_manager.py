@@ -6,7 +6,7 @@ from datetime import datetime as dt
 from math import ceil, floor
 from decimal import Decimal
 
-from test_framework.data_sets.constants import TradingPhases
+from test_framework.data_sets.constants import TradingPhases, Rounding
 
 class AlgoFormulasManager:
     # region offset calculation
@@ -49,11 +49,14 @@ class AlgoFormulasManager:
         return twap_slices
 
     @staticmethod
-    def get_pov_child_qty(per_vol: float, market_vol: int, ord_qty: int) -> int:
+    def get_pov_child_qty(per_vol: float, market_vol: int, ord_qty: int, round: str = Rounding.Ceil.value) -> int:
         if (per_vol > 0 and per_vol < 1):
             return min(math.ceil((market_vol * per_vol) / (1 - per_vol)), ord_qty)
         else:
-            return min(math.ceil((market_vol * per_vol) / (100 - per_vol)), ord_qty)
+            if round == Rounding.Ceil.value:
+                return min(math.ceil((market_vol * per_vol) / (100 - per_vol)), ord_qty)
+            elif round == Rounding.Floor.value:
+                return min(math.floor((market_vol * per_vol) / (100 - per_vol)), ord_qty)
 
     @staticmethod
     def get_twap_nav_child_qty(remaining_ord_qty: int, remaining_waves: int, ats: int = 10000, nav_percentage: float = 100) -> int:
@@ -860,3 +863,8 @@ class AlgoFormulasManager:
             return child_order_qty
         else:
             return (parent_qty - save_for_close_shares)
+
+
+    @staticmethod
+    def get_twap_child_qty_with_min_max_participation(max_part: float, ltq: int, ord_qty: int) -> int:
+            return min(math.floor((ltq * max_part) / (100 - max_part)), ord_qty)

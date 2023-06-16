@@ -2435,3 +2435,119 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
         )
         super().change_parameters(temp)
         return self
+
+    def set_params_from_new_order_single_dma(self, new_order_single: FixMessageNewOrderSingle, status: Status):
+        if status is Status.Pending:
+            self.__set_pending_new_buy_dma(new_order_single)
+        elif status is Status.New:
+            self.__set_new_buy_dma(new_order_single)
+        elif status is Status.Cancel:
+            self.__set_cancel_dma(new_order_single)
+        return self
+
+    def __set_pending_new_buy_dma(self, new_order_single):
+        temp = dict()
+        if new_order_single.is_parameter_exist("Price"):
+            temp.update(Price=new_order_single.get_parameter("Price"))
+        if new_order_single.is_parameter_exist('ExpireDate'):
+            temp.update(ExpireDate=new_order_single.get_parameter('ExpireDate'))
+        temp.update(
+            Account=new_order_single.get_parameter("Account"),
+            ClOrdID='*',
+            OrdType=new_order_single.get_parameter('OrdType'),
+            OrderQty=new_order_single.get_parameter("OrderQty"),
+            Side=new_order_single.get_parameter("Side"),
+            TimeInForce=new_order_single.get_parameter("TimeInForce"),
+            ExecType="A",
+            OrdStatus="A",
+            CumQty='0',
+            ExecID='*',
+            OrderID='*',
+            LeavesQty='*',
+            TransactTime='*',
+            AvgPx='*',
+            LastQty='0',
+            SettlDate='*',
+            HandlInst='1',
+            LastPx='0',
+            QtyType='0',
+            Instrument='*',
+            Currency=new_order_single.get_parameter("Currency"),
+            OrderCapacity=new_order_single.get_parameter('OrderCapacity')
+        )
+        super().change_parameters(temp)
+        return self
+
+    def __set_new_buy_dma(self, new_order_single):
+        temp = dict()
+        if new_order_single.is_parameter_exist("Price"):
+            temp.update(Price=new_order_single.get_parameter("Price"))
+        if new_order_single.is_parameter_exist('ExpireDate'):
+            temp.update(ExpireDate=new_order_single.get_parameter('ExpireDate'))
+        temp.update(
+            Account=new_order_single.get_parameter("Account"),
+            ClOrdID='*',
+            OrdType=new_order_single.get_parameter('OrdType'),
+            OrderQty=new_order_single.get_parameter("OrderQty"),
+            Side=new_order_single.get_parameter("Side"),
+            TimeInForce=new_order_single.get_parameter("TimeInForce"),
+            ExecType="0",
+            OrdStatus="0",
+            QtyType="0",
+            CumQty='0',
+            ExecID='*',
+            OrderID='*',
+            LeavesQty='*',
+            TransactTime='*',
+            AvgPx='*',
+            ReplyReceivedTime='*',
+            LastQty='0',
+            SettlDate='*',
+            HandlInst='1',
+            LastPx='0',
+            SecondaryOrderID='*',
+            Instrument='*',
+            Currency=new_order_single.get_parameter('Currency'),
+            LastMkt=new_order_single.get_parameter('ExDestination'),
+            OrderCapacity=new_order_single.get_parameter('OrderCapacity')
+        )
+        super().change_parameters(temp)
+        return self
+
+    def __set_cancel_dma(self, new_order_single):
+        temp = dict()
+        if new_order_single.get_parameter('OrdType') != 1 and new_order_single.get_parameter('OrdType') != 3:
+            temp.update(Price=new_order_single.get_parameter("Price"))
+        if new_order_single.get_parameter('OrdType') == 3 or new_order_single.get_parameter('OrdType') == 4:
+            temp.update(StopPx=new_order_single.get_parameter('StopPx'))
+        temp.update(
+            Account=new_order_single.get_parameter('Account'),
+            AvgPx='*',
+            ClOrdID='*',
+            CumQty='*',
+            Currency=new_order_single.get_parameter('Currency'),
+            ExecID='*',
+            HandlInst=new_order_single.get_parameter('HandlInst'),
+            LastPx=0,
+            LastQty=0,
+            OrderID='*',
+            OrderQty=new_order_single.get_parameter('OrderQty'),
+            OrdStatus=4,
+            OrdType=new_order_single.get_parameter('OrdType'),
+            OrigClOrdID=new_order_single.get_parameter('ClOrdID'),
+            Side=new_order_single.get_parameter('Side'),
+            TimeInForce=new_order_single.get_parameter('TimeInForce'),
+            TransactTime='*',
+            ExecType=4,
+            LeavesQty=0,
+            ReplyReceivedTime='*',
+            SecondaryOrderID='*',
+            SettlDate='*',
+            OrderCapacity=new_order_single.get_parameter('OrderCapacity'),
+            LastMkt=new_order_single.get_parameter('ExDestination'),
+            QtyType='*',
+            CxlQty='*',
+            Instrument='*'
+        )
+        super().change_parameters(temp)
+        return self
