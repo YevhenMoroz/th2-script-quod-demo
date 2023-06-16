@@ -63,7 +63,6 @@ class QAP_T8456(TestCase):
         self.venue_mic = self.data_set.get_mic_by_name('mic_2')
         self.client = self.data_set.get_client('client_fees_1')
         self.alloc_account = self.data_set.get_account_by_name('client_fees_1_acc_1')
-        self.venue_client_name = self.data_set.get_venue_client_names_by_name('client_com_1_venue_1')
         self.wa_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
         self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
         self.fix_verifier = FixVerifier(self.fix_env.drop_copy, self.test_id)
@@ -149,7 +148,7 @@ class QAP_T8456(TestCase):
         execution_report = \
             self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()
         execution_report_block = execution_report[
-                JavaApiFields.ExecutionReportBlock.value]
+            JavaApiFields.ExecutionReportBlock.value]
         exec_id = execution_report_block[JavaApiFields.ExecID.value]
         actually_exec_sts = execution_report_block[JavaApiFields.TransExecStatus.value]
         self.java_api_manager.compare_values(
@@ -292,7 +291,7 @@ class QAP_T8456(TestCase):
                                   'QtyType', 'ExecBroker', 'Price', 'VenueType',
                                   'Instrument', 'NoParty', 'ExDestination', 'GrossTradeAmt',
                                   'AllocInstructionMiscBlock2', 'CommissionData', 'GatingRuleName',
-                                  'GatingRuleCondName']
+                                  'GatingRuleCondName', 'ExecAllocGrp']
         fix_execution_report = FixMessageExecutionReportOMS(self.data_set, params_of_execution_report_message)
         self.fix_verifier.check_fix_message_fix_standard(fix_execution_report, ignored_fields=list_of_ignored_fields)
 
@@ -344,10 +343,10 @@ class QAP_T8456(TestCase):
 
         # endregion
 
-    @try_except(test_id=Path(__file__).name[:-3])
-    def run_post_conditions(self):
-        self.rest_commission_sender.clear_fees()
-        self.ssh_client.send_command('~/quod/script/site_scripts/change_book_agent_misc_fee_type_on_N')
-        self.ssh_client.send_command("qrestart QUOD.ORS QUOD.CS QUOD.ESBUYTH2TEST")
-        time.sleep(80)
-        self.ssh_client.close()
+    # @try_except(test_id=Path(__file__).name[:-3])
+    # def run_post_conditions(self):
+    #     self.rest_commission_sender.clear_fees()
+    #     self.ssh_client.send_command('~/quod/script/site_scripts/change_book_agent_misc_fee_type_on_N')
+    #     self.ssh_client.send_command("qrestart QUOD.ORS QUOD.CS QUOD.ESBUYTH2TEST")
+    #     time.sleep(80)
+    #     self.ssh_client.close()
