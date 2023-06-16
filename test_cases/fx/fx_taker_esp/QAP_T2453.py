@@ -4,7 +4,6 @@ from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
 from custom import basic_custom_actions as bca
-from test_framework.data_sets.constants import Status, DirectionEnum
 from test_framework.environments.full_environment import FullEnvironment
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
@@ -46,8 +45,7 @@ class QAP_T2453(TestCase):
         # endregion
 
         # region Step 2
-        self.fix_verifier.check_fix_message(fix_message=self.md_snapshot, direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
+        self.fix_verifier.check_fix_message(self.md_snapshot)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
