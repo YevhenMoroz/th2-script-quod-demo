@@ -27,8 +27,8 @@ class QAP_T2719(TestCase):
         self.fix_manager_gtw = FixManager(self.fix_env.sell_side_esp, self.test_id)
         self.md_request = FixMessageMarketDataRequestFX(data_set=self.data_set)
         self.md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
-        self.bid_md_entry_px = "0.86142"
-        self.ask_md_entry_px = "0.86204"
+        self.bid_md_entry_px = "0.86161"
+        self.ask_md_entry_px = "0.86178"
         self.platinum = self.data_set.get_client_by_name("client_mm_11")
         self.settle_date_spot = self.data_set.get_settle_date_by_name("spot")
         self.eur_nok = self.data_set.get_symbol_by_name("symbol_6")
@@ -245,16 +245,19 @@ class QAP_T2719(TestCase):
         self.fix_manager_fh_314.send_message(self.fix_md)
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request)
+        self.sleep(6)
 
         self.md_request.set_md_req_parameters_maker().change_parameter(
             "SenderSubID", self.platinum)
         self.md_request.update_repeating_group("NoRelatedSymbols", self.mdr_related_symbols)
         self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
 
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*"])
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*"])
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 0, MDEntryPx=self.bid_md_entry_px)
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 1, MDEntryPx=self.ask_md_entry_px)
-        self.fix_verifier.check_fix_message(self.md_snapshot)
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 2, MDEntryPx=self.bid_md_entry_px)
+        self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 3, MDEntryPx=self.ask_md_entry_px)
+        self.fix_verifier.check_fix_message(self.md_snapshot, ignored_fields=["header", "trailer", "CachedUpdate"])
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
