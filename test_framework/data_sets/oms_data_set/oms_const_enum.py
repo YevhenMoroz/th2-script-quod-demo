@@ -44,6 +44,14 @@ class OmsFixInstruments(Enum):
         SecurityExchange='XPAR',
         SecurityType='CS',
     )
+    instrument_convt_bond_paris = dict(
+        Symbol='FR0010436584_EUR_CVB',
+        SecurityID='FR0010436584_CVB',
+        SecurityIDSource='4',
+        SecurityExchange='XPAR',
+        SecurityType='CB',
+        SecurityDesc='DREAMNEX'
+    )
 
 
 class OmsJavaApiInstruments(Enum):
@@ -74,6 +82,13 @@ class OmsJavaApiInstruments(Enum):
         SecurityID="DUMMY_1",
         SecurityIDSource='ExchSymb',
         SecurityExchange="DUMMY_EXC"
+    )
+    instrument_cvb = dict(
+        InstrSymbol='FR0010436584_EUR_CVB',
+        SecurityID='FR0010436584_CVB',
+        InstrType='ConvertibleBond',
+        SecurityIDSource='ISI',
+        SecurityExchange='XPAR',
     )
 
 
@@ -664,11 +679,11 @@ class OMSCounterParty_JavaAPI_FOR_ES(Enum):
                                'PartyIDSource': 'AcceptedMarketParticipant',
                                'PartyRole': 'ContraFirm'}
     counterpart_executing_firm = {'PartyID': "ExecutingFirm",
-                                   'PartyIDSource': 'AcceptedMarketParticipant',
-                                   'PartyRole': 'ExecutingFirm'}
+                                  'PartyIDSource': 'AcceptedMarketParticipant',
+                                  'PartyRole': 'ExecutingFirm'}
     counterpart_contra_firm2 = {'PartyID': "ContraFirm2",
-                               'PartyIDSource': 'AcceptedMarketParticipant',
-                               'PartyRole': 'ContraFirm'}
+                                'PartyIDSource': 'AcceptedMarketParticipant',
+                                'PartyRole': 'ContraFirm'}
 
 
 class OMSGatingRuleIDs(Enum):
