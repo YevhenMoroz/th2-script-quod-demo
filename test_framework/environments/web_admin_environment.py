@@ -64,6 +64,16 @@ class WebAdminEnvironment(BaseEnvironment):
                 WebAdminEnvironment.environment_instances.update(
                     {EnvironmentType.test_site_web_admin_chrome.value: web_admin_environment})
             return WebAdminEnvironment.environment_instances[EnvironmentType.test_site_web_admin_chrome.value]
+        elif env.value == EnvironmentType.quod325_web_admin_venus_chrome.value:
+            if EnvironmentType.quod325_web_admin_venus_chrome.value not in WebAdminEnvironment.environment_instances.keys():
+                web_admin_environment = WebAdminEnvironment(
+                    environment_type=EnvironmentType.quod325_web_admin_venus_chrome.value,
+                    web_browser=WebBrowser.chrome.value,
+                    site_url=WebAdminURL.venus_325.value
+                )
+                WebAdminEnvironment.environment_instances.update(
+                    {EnvironmentType.quod324_web_admin_venus_chrome.value: web_admin_environment})
+            return WebAdminEnvironment.environment_instances[EnvironmentType.quod324_web_admin_venus_chrome.value]
         else:
             raise Exception('Environment not found')
 

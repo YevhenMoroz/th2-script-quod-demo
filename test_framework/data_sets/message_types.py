@@ -145,6 +145,7 @@ class ORSMessageType(Enum):
     MatchCptyMOBlocksRequest = 'Order_MatchCptyMOBlocksRequest'
     FixAllocationInstructionAck = 'Fix_AllocationInstructionAck'
     AssignInstrumentRequest = 'Order_AssignInstrumentRequest'
+    FixPositionTransferInstruction = 'Fix_PositionTransferInstruction'
     AssignInstrumentReply = 'Order_AssignInstrumentReply'
     TradeCaptureReportNotif = 'Order_TradeCaptureReportNotif'
     OrderMassCancelRequest = 'Order_OrderMassCancelRequest'
@@ -271,8 +272,14 @@ class MDAMessageType(Enum):
 class AQSMessageType(Enum):
     FrontendQuery = 'Order_FrontendQuery'
     FrontendQueryReply = 'Order_FrontendQueryReply'
+    AutoHedgerInstrSymbolStatus = "Adminmonitoring_AutoHedgerInstrSymbolStatusManagementRequest"
+    AutoHedgerStatusManagementRequest = "Adminmonitoring_AutoHedgerStatusManagementRequest"
 
 
 class StoredProcedureNamesForAqs(Enum):
     FEExecutionTransferList = 'FE_ExecutionTransfer_List'
     FE_OrdrFromOrdID_List = 'FE_OrdrFromOrdID_List'
+
+
+class MPASMessageType(Enum):
+    AutoHedgerInstrSymbolBatchUpdate = "Order_AutoHedgerInstrSymbolBatchUpdate"

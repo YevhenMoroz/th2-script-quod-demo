@@ -183,7 +183,7 @@ class QAP_T10428(TestCase):
 
         # region Check those are no new childs
         self.fix_verifier_buy.set_case_id(bca.create_event("Check those are no new childs", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([self.dma_1_order], [self.key_params_NOS_child], self.FromQuod)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([self.dma_1_order], [self.key_params_NOS_child], self.FromQuod)
         # endregion
 
         time.sleep(15)

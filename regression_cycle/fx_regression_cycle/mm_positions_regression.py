@@ -1,13 +1,18 @@
 from test_cases.fx.fx_mm_positions.QAP_T10400 import QAP_T10400
 from test_cases.fx.fx_mm_positions.QAP_T10411 import QAP_T10411
 from test_cases.fx.fx_mm_positions.QAP_T10457 import QAP_T10457
+from test_cases.fx.fx_mm_positions.QAP_T10612 import QAP_T10612
 from test_cases.fx.fx_mm_positions.QAP_T10613 import QAP_T10613
 from test_cases.fx.fx_mm_positions.QAP_T10614 import QAP_T10614
+from test_cases.fx.fx_mm_positions.QAP_T10635 import QAP_T10635
+from test_cases.fx.fx_mm_positions.QAP_T10636 import QAP_T10636
 from test_cases.fx.fx_mm_positions.QAP_T10649 import QAP_T10649
 from test_cases.fx.fx_mm_positions.QAP_T10760 import QAP_T10760
 from test_cases.fx.fx_mm_positions.QAP_T10840 import QAP_T10840
+from test_cases.fx.fx_mm_positions.QAP_T10845 import QAP_T10845
 from test_cases.fx.fx_mm_positions.QAP_T11053 import QAP_T11053
 from test_cases.fx.fx_mm_positions.QAP_T11080 import QAP_T11080
+from test_cases.fx.fx_mm_positions.QAP_T11216 import QAP_T11216
 from test_cases.fx.fx_mm_positions.QAP_T11217 import QAP_T11217
 from test_cases.fx.fx_mm_positions.QAP_T11218 import QAP_T11218
 from test_cases.fx.fx_mm_positions.QAP_T11222 import QAP_T11222
@@ -30,10 +35,10 @@ timeouts = False
 channels = dict()
 
 
-def test_run(parent_id=None, version="5.1.178.192"):
+def test_run(parent_id=None, version="5.1.178.193"):
     # report_id = bca.create_event(f"FX_MM_Positions" if version is None else f"FX_MM_Positions | {version}", parent_id)
-    report_id = bca.create_event(f"Positions_fx| {version}", parent_id)
-    configuration = ComponentConfigurationFX("ESP_MM_309")
+    report_id = bca.create_event(f"FX_MM_Positions | {version}", parent_id)
+    configuration = ComponentConfiguration("ESP_MM")
     try:
         # prepare_position()
         QAP_T11053(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
@@ -48,10 +53,15 @@ def test_run(parent_id=None, version="5.1.178.192"):
         QAP_T10400(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10411(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10457(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10612(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10613(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10614(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10635(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10636(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10760(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10840(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10845(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T11216(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T11217(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T11218(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T11222(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()

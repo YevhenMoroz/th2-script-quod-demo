@@ -152,7 +152,7 @@ class QAP_T10421(TestCase):
 
         # region Check that the algo didn't terminate
         self.fix_verifier_sell.set_case_id(bca.create_event("Check that the algo didn't terminate", self.test_id))
-        self.fix_verifier_sell.check_fix_message_sequence([er_pending_new_SORPING_order_params, er_new_SORPING_order_params], [self.key_params_ER_parent, self.key_params_ER_parent], self.FromQuod)
+        self.fix_verifier_sell.check_fix_message_sequence_kepler([er_pending_new_SORPING_order_params, er_new_SORPING_order_params], [self.key_params_ER_parent, self.key_params_ER_parent], self.FromQuod)
         # endregion
 
         time.sleep(2)

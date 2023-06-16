@@ -25,7 +25,7 @@ class TestCase(ABC):
         self.run_pre_conditions_and_steps()
         self.run_post_conditions()
 
-    def sleep(self, duration: int):
+    def sleep(self, duration):
         time.sleep(duration)
 
     def compare_values(self, test_id, expected_value: list, actual_value: list, event_name: str = "Compare values",

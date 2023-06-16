@@ -170,7 +170,7 @@ class QAP_T4707(TestCase):
 
         # region Check that is no cancel request for LIS child
         self.fix_verifier_buy.set_case_id(bca.create_event("Check that is no cancel request for LIS child", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([nos_chixlis_rfq, nos_trql_rfq, ocr_rfq_canceled, self.nos_chixlis_order], key_parameters_list=[None, None, None, None], direction=self.FromQuod, pre_filter=None)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([nos_chixlis_rfq, nos_trql_rfq, ocr_rfq_canceled, self.nos_chixlis_order], key_parameters_list=[None, None, None, None], direction=self.FromQuod, pre_filter=None)
         # endregion
 
         time.sleep(5)

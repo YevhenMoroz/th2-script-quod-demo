@@ -191,7 +191,7 @@ class QAP_T10714(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Check that is no new dark child until the LIS ResidentTime is over", self.test_id))
 
         self.dma_chix_order.change_parameters(dict(Price=self.price))
-        self.fix_verifier_buy.check_fix_message_sequence([self.dma_chix_order, nos_chixlis_rfq, nos_trql_rfq], [self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child], self.FromQuod, pre_filter=self.pre_filter, check_order=False)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([self.dma_chix_order, nos_chixlis_rfq, nos_trql_rfq], [self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child], self.FromQuod, pre_filter=self.pre_filter, check_order=False)
         # endregion
 
         time.sleep(35)

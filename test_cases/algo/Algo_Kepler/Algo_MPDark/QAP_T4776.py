@@ -145,7 +145,7 @@ class QAP_T4776(TestCase):
 
         # region Check that it is no child order on the venue with the weight = 0
         self.fix_verifier_buy.set_case_id(bca.create_event("Check that it is no child order on the venue with the weight = 0", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([self.dma_chix_order, self.dma_bats_order], [None, None], self.FromQuod, pre_filter=None)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([self.dma_chix_order, self.dma_bats_order], [None, None], self.FromQuod, pre_filter=None)
         # endregion
 
         time.sleep(10)

@@ -211,7 +211,7 @@ class QAP_T4785(TestCase):
 
         time.sleep(3)
         self.fix_verifier_buy.set_case_id(bca.create_event("Check that 2 rqf was canceled on trqx", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([ocr_rfq_canceled_trqx, ocr_rfq_canceled_trqx2], key_parameters_list=[self.key_params_rfq_cancel, self.key_params_rfq_cancel], direction=self.FromQuod,
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([ocr_rfq_canceled_trqx, ocr_rfq_canceled_trqx2], key_parameters_list=[self.key_params_rfq_cancel, self.key_params_rfq_cancel], direction=self.FromQuod,
                                                          pre_filter=self.pre_filter)
 
         # region MO on Venue ChixLis

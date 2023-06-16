@@ -195,7 +195,7 @@ class QAP_T4799(TestCase):
 
         # region Check that is no modification rejection
         self.fix_verifier_sell.set_case_id(bca.create_event("Check that is no modification rejection", self.test_id))
-        self.fix_verifier_sell.check_fix_message_sequence([er_pending_new_SORPING_order_params, er_new_SORPING_order_params, er_replaced_SORPING_order_params, er_fill_SORPING_order_params], key_parameters_list=[None, None, None, None], direction=self.FromQuod, pre_filter=None)
+        self.fix_verifier_sell.check_fix_message_sequence_kepler([er_pending_new_SORPING_order_params, er_new_SORPING_order_params, er_replaced_SORPING_order_params, er_fill_SORPING_order_params], key_parameters_list=[None, None, None, None], direction=self.FromQuod, pre_filter=None)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

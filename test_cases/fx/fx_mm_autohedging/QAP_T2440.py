@@ -62,6 +62,7 @@ class QAP_T2440(TestCase):
         self.ah_exec_report.change_parameter("OrderID", ord_id)
         self.ah_exec_report.change_parameter("Account", self.account_int)
         ah_exec_params = ["OrderID", "OrdStatus", "OrderQty"]
+        self.sleep(5)
         self.fix_drop_copy_verifier.check_fix_message(self.ah_exec_report,key_parameters=ah_exec_params, message_name=
         "Check AutoHedger ExecutionReport on DropCopy contains ReplyReceivedTime")
         # endregion

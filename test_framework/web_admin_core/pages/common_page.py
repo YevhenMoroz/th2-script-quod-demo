@@ -56,16 +56,32 @@ class CommonPage:
 
     @waiting_until_page_requests_to_be_load
     def find_by(self, location_strategy: By, locator: str):
-        return self.web_driver_wait.until(
-            expected_conditions.visibility_of_element_located((location_strategy, locator)))
+        element = None
+        try:
+            element = self.web_driver_wait.until(
+                expected_conditions.visibility_of_element_located((location_strategy, locator)))
+        except Exception:
+            pass
+        if element is None:
+            raise NoSuchElementException(f"Element by given path {locator} not found")
+        else:
+            return element
 
     def find_elements_by_xpath(self, xpath: str):
         return self.find_elements_by(By.XPATH, xpath)
 
     @waiting_until_page_requests_to_be_load
     def find_elements_by(self, location_strategy: By, locator: str):
-        return self.web_driver_wait.until(
-            expected_conditions.visibility_of_any_elements_located((location_strategy, locator)))
+        elements = None
+        try:
+            elements = self.web_driver_wait.until(
+                expected_conditions.visibility_of_any_elements_located((location_strategy, locator)))
+        except Exception:
+            pass
+        if elements is None:
+            raise NoSuchElementException(f"Elements by given path {locator} not found")
+        else:
+            return elements
 
     def get_text_by_xpath(self, xpath: str):
         if "button" in xpath:
@@ -269,7 +285,8 @@ class CommonPage:
                 action = ActionChains(self.web_driver)
                 action.move_to_element_with_offset(scr_elem, c, 5).click().perform()
                 c += 100
-                e = self.web_driver.find_element(By.XPATH, CommonConstants.HORIZONTAL_SCROLL_WHEEL).get_attribute('style')
+                e = self.web_driver.find_element(By.XPATH, CommonConstants.HORIZONTAL_SCROLL_WHEEL).get_attribute(
+                    'style')
                 if self.is_element_present(search_element) and 'transform' in e and '(0px)' not in e:
                     break
 

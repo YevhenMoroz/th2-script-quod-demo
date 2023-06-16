@@ -345,6 +345,13 @@ class AlgoFixInstruments(Enum):
         SecurityType='MLEG',
         SecuritySubType='PAIR',
     )
+    instrument_me = dict(
+        Symbol='ES0173516115',
+        SecurityID='ES0173516115',
+        SecurityIDSource='4',
+        SecurityExchange='XMCE',
+        SecurityType='CS'
+    )
 
 
 class AlgoFixLegInstruments(Enum):
@@ -528,6 +535,7 @@ class AlgoMic(Enum):
     mic_60 = "MCSE"   # COPENHAGENDARK
     mic_61 = "MSTO"   # STOCKHOLMDARK
     mic_62 = "TQEA"   # TQLITAUCTIONEU
+    mic_63 = "XMCE"   # MADRID
 
 
 class AlgoListingId(Enum):

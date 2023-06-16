@@ -51,6 +51,7 @@ class FxClients(Enum):
     client_3 = "ASPECT_BREAK"
     client_4 = "AH_TEST_CLIENT"
     client_5 = "TH2_Taker"
+    client_6 = "BUY_POC_Automation"
 
     """Dummy client"""
     client_dummy = "DUMMY"
@@ -268,6 +269,7 @@ class FxSymbols(Enum):
     symbol_25 = "GBP/DKK"
     symbol_26 = "AUD/GBP"
     symbol_27 = "USD/DKK"
+    unsupported_symbol = "USS/MYR"
 
     symbol_ndf_1 = "USD/PHP"
     symbol_ndf_2 = "EUR/PHP"
@@ -379,3 +381,5 @@ class InstrIDs(Enum):
     usd_jpy_spot = "Jbuei4sRIyA1Ttsa8mXiKg"
     gbp_myr_spot = "r6Rri_3WSHRtiA3JVZV4yg"
     eur_jpy_spot = "Twk5nricBHx4gkZ0Jm0wOg"
+    eur_usd_spot = "KExUjnMCR-wK6DgQBZpg8g"
+    eur_usd_1w = "us5tb5Ml30c-YAQOXVpmvA"

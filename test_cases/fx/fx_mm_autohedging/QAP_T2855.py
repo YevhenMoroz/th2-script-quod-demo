@@ -1,162 +1,114 @@
-import logging
 from pathlib import Path
-import time
-from test_cases.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
-from test_cases.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
-from custom.tenor_settlement_date import spo, m1
-from custom.verifier import Verifier
-from stubs import Stubs
 from custom import basic_custom_actions as bca
-from win_gui_modules.dealing_positions_wrappers import GetOrdersDetailsRequest, ExtractionPositionsFieldsDetails, \
-    ExtractionPositionsAction, PositionsInfo
-from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, OrderInfo, ExtractionAction
-from win_gui_modules.utils import get_base_request, call
-
-client = "AURUM1"
-account_client = "AURUM1_1"
-account_quod = "QUOD4_1"
-symbol = "USD/DKK"
-security_type_spo = "FXFWD"
-settle_date_spo = m1()
-qty_1 = "5000000"
-currency = "USD"
-settle_currency = "DKK"
-side = "1"
-settltype = 0
-expected_pos_client_1 = "5000000"
-expected_pos_quod_1 = "-1000000"
-client_quod = "QUOD4"
-ah_qty="4000000"
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.forex.FixMessageExecutionReportPrevQuotedFX import \
+    FixMessageExecutionReportPrevQuotedFX
+from test_framework.fix_wrappers.forex.FixMessageNewOrderSinglePrevQuotedFX import FixMessageNewOrderSinglePrevQuotedFX
+from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleTakerDC import FixMessageNewOrderSingleTakerDC
+from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
+from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
+from test_framework.fix_wrappers.forex.FixMessageRequestForPositionsAckFX import FixMessageRequestForPositionsAckFX
+from test_framework.fix_wrappers.forex.FixMessageRequestForPositionsFX import FixMessageRequestForPositionsFX
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.fx.FixPositionMassCancelRequestFX import FixPositionMassCancelRequestFX
 
 
-def send_rfq_order_1m(params_1m):
-    rfq = FixClientSellRfq(params_1m)
-    rfq.send_request_for_quote()
-    rfq.verify_quote_pending()
-    price = rfq.extract_filed("OfferPx")
-    rfq.send_new_order_single(price=price). \
-        verify_order_pending(). \
-        verify_order_filled_fwd()
+class QAP_T2855(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.java_api_env = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.pks_connectivity = self.environment.get_list_fix_environment()[0].sell_side_pks
+        self.dc_connectivity = self.environment.get_list_fix_environment()[0].drop_copy
+        self.ss_rfq_connectivity = self.environment.get_list_fix_environment()[0].sell_side_rfq
+        self.java_api_manager = JavaApiManager(self.java_api_env, self.test_id)
+        self.fix_manager = FixManager(self.pks_connectivity, self.test_id)
+        self.fix_manager_gtw = FixManager(self.ss_rfq_connectivity, self.test_id)
+        self.fix_verifier = FixVerifier(self.pks_connectivity, self.test_id)
+        self.fix_verifier_gtw = FixVerifier(self.ss_rfq_connectivity, self.test_id)
+        self.fix_drop_copy_verifier = FixVerifier(self.dc_connectivity, self.test_id)
+        self.request_for_position_ext = FixMessageRequestForPositionsFX()
+        self.request_for_position_int = FixMessageRequestForPositionsFX()
+        self.cancel_request = FixPositionMassCancelRequestFX()
+        self.pos_report_none = FixMessageRequestForPositionsAckFX()
+        self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
+        self.new_order_single = FixMessageNewOrderSinglePrevQuotedFX()
+        self.execution_report = FixMessageExecutionReportPrevQuotedFX()
+        self.ah_order = FixMessageNewOrderSingleTakerDC()
+        self.quote = FixMessageQuoteFX()
+        self.client_ext = self.data_set.get_client_by_name("client_mm_6")
+        self.account_ext = self.data_set.get_account_by_name("account_mm_6")
+        self.client_int = self.data_set.get_client_by_name("client_int_3")
+        self.account_int = self.data_set.get_account_by_name("account_int_3")
+        self.currency = self.data_set.get_currency_by_name("currency_eur")
+        self.eur_usd = self.data_set.get_symbol_by_name("symbol_1")
+        self.sec_type_fwd = self.data_set.get_security_type_by_name("fx_fwd")
+        self.qty = "3000000"
+        self.instrument = {
+            "SecurityType": self.sec_type_fwd,
+            "Symbol": self.eur_usd
+        }
 
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Clear position before start and check that they equal to 0
+        self.cancel_request.set_params(self.account_ext)
+        self.java_api_manager.send_message(self.cancel_request)
+        self.sleep(5)
+        self.cancel_request.set_params(self.account_int)
+        self.java_api_manager.send_message(self.cancel_request)
+        self.sleep(5)
 
-def get_dealing_positions_details(del_act, base_request, symbol, account):
-    dealing_positions_details = GetOrdersDetailsRequest()
-    dealing_positions_details.set_default_params(base_request)
-    extraction_id = bca.client_orderid(4)
-    dealing_positions_details.set_extraction_id(extraction_id)
-    dealing_positions_details.set_filter(["Symbol", symbol, "Account", account])
-    position = ExtractionPositionsFieldsDetails("dealingpositions.position", 'Position')
-    dealing_positions_details.add_single_positions_info(
-        PositionsInfo.create(
-            action=ExtractionPositionsAction.create_extraction_action(extraction_details=[position])))
+        self.request_for_position_ext.set_params_for_fwd()
+        self.request_for_position_ext.change_parameters({"Instrument": self.instrument, "Currency": self.currency,
+                                                         "Account": self.client_ext})
+        self.fix_manager.send_message_and_receive_response(self.request_for_position_ext, self.test_id)
+        self.pos_report_none.set_params_from_reqeust(self.request_for_position_ext)
+        self.fix_verifier.check_fix_message(self.pos_report_none,
+                                            message_name=f"Check position for {self.client_ext} before start")
+        self.sleep(1)
+        self.request_for_position_ext.set_params_for_fwd()
+        self.fix_manager.send_message(self.request_for_position_ext)
+        self.sleep(1)
 
-    response = call(del_act.getFxDealingPositionsDetails, dealing_positions_details.request())
-    time.sleep(0.5)
-    return float(response["dealingpositions.position"].replace(",", ""))
+        self.request_for_position_int.set_default()
+        self.request_for_position_int.change_parameters({"Instrument": self.instrument, "Currency": self.currency,
+                                                         "Account": self.client_int})
+        self.fix_manager.send_message_and_receive_response(self.request_for_position_int, self.test_id)
+        self.pos_report_none.set_params_from_reqeust(self.request_for_position_int)
+        self.fix_verifier.check_fix_message(self.pos_report_none,
+                                            message_name=f"Check position for {self.client_int} before start")
+        self.request_for_position_int.set_unsubscribe()
+        self.fix_manager.send_message(self.request_for_position_int)
+        self.sleep(1)
 
-
-def compare_position(even_name, case_id, expected_pos, actual_pos):
-    verifier = Verifier(case_id)
-    verifier.set_event_name(even_name)
-    verifier.compare_values("Quote position", str(float(expected_pos)), str(actual_pos))
-
-    verifier.verify()
-
-
-def check_order_book_AO(even_name, case_id, base_request, act_ob, qty_exp, status_exp, instr_type_exp, client):
-    ob = OrdersDetails()
-    extraction_id = bca.client_orderid(4)
-    ob.set_extraction_id(extraction_id)
-    ob.set_default_params(base_request)
-    ob.set_filter(
-        ["Order ID", 'AO', "Orig", 'AutoHedger', "Strategy", "Hedging_Test", "Symbol", symbol, "Client ID", client])
-    qty = ExtractionDetail("orderBook.qty", "Qty")
-    instr_type = ExtractionDetail("orderBook.instr_type", "InstrType")
-    status = ExtractionDetail("orderBook.sts", "Sts")
-    order_id = ExtractionDetail("orderBook.order_id", "Order ID")
-
-    ob.add_single_order_info(
-        OrderInfo.create(
-            action=ExtractionAction.create_extraction_action(extraction_details=[qty, status, instr_type, order_id])))
-    response = call(act_ob.getOrdersDetails, ob.request())
-
-    verifier = Verifier(case_id)
-    verifier.set_event_name(even_name)
-    verifier.compare_values('Qty', str(qty_exp), response[qty.name].replace(",", ""))
-    verifier.compare_values('Sts', status_exp, response[status.name])
-    verifier.compare_values('InstrType', instr_type_exp, response[instr_type.name])
-
-    verifier.verify()
-    time.sleep(0.5)
-    return response[order_id.name]
-
-
-def check_order_book_MO(even_name, case_id, base_request, act_ob, qty_exp, status_exp,instr_type_exp, client):
-    ob = OrdersDetails()
-    extraction_id = bca.client_orderid(4)
-    ob.set_extraction_id(extraction_id)
-    ob.set_default_params(base_request)
-    ob.set_filter(["Order ID", 'MO', "Orig", 'FIX', "Symbol", symbol, "Client ID", client])
-    qty = ExtractionDetail("orderBook.qty", "Qty")
-    instr_type = ExtractionDetail("orderBook.instr_type", "InstrType")
-    status = ExtractionDetail("orderBook.sts", "Sts")
-    order_id = ExtractionDetail("orderBook.order_id", "Order ID")
-
-    ob.add_single_order_info(
-        OrderInfo.create(
-            action=ExtractionAction.create_extraction_action(extraction_details=[qty, status, instr_type, order_id])))
-    response = call(act_ob.getOrdersDetails, ob.request())
-
-    verifier = Verifier(case_id)
-    verifier.set_event_name(even_name)
-    verifier.compare_values('Qty', str(qty_exp), response[qty.name].replace(",", ""))
-    verifier.compare_values('Sts', status_exp, response[status.name])
-    verifier.compare_values('InstrType', instr_type_exp, response[instr_type.name])
-
-
-    verifier.verify()
-    time.sleep(0.5)
-    return response[order_id.name]
-
-
-def execute(report_id, session_id):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-    pos_service = Stubs.act_fx_dealing_positions
-    case_base_request = get_base_request(session_id, case_id)
-    ob_act = Stubs.win_act_order_book
-    try:
-
-        params_1m = CaseParamsSellRfq(client, case_id, orderqty=qty_1, symbol=symbol,
-                                        securitytype=security_type_spo, settldate=settle_date_spo,
-                                        settltype=settltype, securityid=symbol, settlcurrency=settle_currency,
-                                        currency=currency, side=side,
-                                        account=account_client)
-        send_rfq_order_1m(params_1m)
-
-        actual_pos_client = get_dealing_positions_details(pos_service, case_base_request, symbol, account_client)
-        difference_cl = 0
-        if actual_pos_client != expected_pos_client_1:
-            difference_cl = int(actual_pos_client)-int(expected_pos_client_1)
-        new_exp_pos_cl = str(int(expected_pos_client_1) + difference_cl)
-        compare_position('Checking positions AURUM1_1', case_id, new_exp_pos_cl, actual_pos_client)
-
-
-        actual_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
-        compare_position('Checking positions QUOD4_1', case_id, expected_pos_quod_1, actual_pos_quod)
-
-
-        ah_qty_new = ah_qty
-        if actual_pos_quod != expected_pos_quod_1:
-            ah_qty_new = int(ah_qty) + 1000000
-
-        check_order_book_AO('Checking placed order AO_AH', case_id, case_base_request, ob_act, ah_qty_new, "Terminated", "FXSpot",
-                           client_quod)
-
-
-        check_order_book_MO('Checking placed order MO', case_id, case_base_request, ob_act, "5000000", "Terminated", "FXForward", client)
-
-
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
+        # endregion
+        # region Step 1
+        self.quote_request.set_rfq_params_fwd()
+        self.quote_request.update_repeating_group_by_index("NoRelatedSymbols", 0,
+                                                           Account=self.client_ext,
+                                                           Currency=self.currency,
+                                                           Instrument=self.instrument,
+                                                           OrderQty=self.qty)
+        response: list = self.fix_manager_gtw.send_message_and_receive_response(self.quote_request)
+        self.quote.set_params_for_quote(self.quote_request)
+        # endregion
+        # region Step 2
+        self.new_order_single.set_default_prev_quoted(self.quote_request, response[0])
+        self.fix_manager_gtw.send_message_and_receive_response(self.new_order_single)
+        self.execution_report.set_params_from_new_order_single(self.new_order_single)
+        self.fix_verifier_gtw.check_fix_message(self.execution_report)
+        # endregion
+        # region Step 3
+        self.ah_order.set_default_from_request(self.quote_request)
+        self.ah_order.change_parameter("Account", self.client_int)
+        ah_params = ["Account", "OrderQty"]
+        self.fix_drop_copy_verifier.check_fix_message(self.ah_order, key_parameters=ah_params,
+                                                      message_name="Check AutoHedger Order on DropCopy gtw")
+        # endregion
