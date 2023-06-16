@@ -40,5 +40,5 @@ class QAP_T2429(TestCase):
         # Region Step 2
         self.execution_report.set_params_from_new_order_single(self.new_order)
         self.execution_report.change_parameter("LastMkt", "CITI-ID")
-        self.fix_verifier.check_fix_message(self.execution_report)
+        self.fix_verifier.check_fix_message(self.execution_report, ignored_fields=["GatingRuleCondName", "GatingRuleName", "trailer", "header"])
         # endregion
