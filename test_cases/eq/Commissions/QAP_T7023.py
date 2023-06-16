@@ -122,7 +122,7 @@ class QAP_T7023(TestCase):
         #                                      'Check actually and expected result for ExecType (part of step 2')
 
         basis_fee_amount = str(float(self.qty) * float(self.price) / 1000000)
-        perc_rate = 5.0
+        perc_rate = 10.0
         perc_fee_amount = str(int(float(self.qty) * float(self.price) / 10000 * perc_rate))
         expected_levy_fee_dimensions = {
             JavaApiFields.MiscFeeAmt.value: basis_fee_amount,
@@ -295,7 +295,7 @@ class QAP_T7023(TestCase):
                                  'QtyType', 'Price', 'OrderCapacity', 'VenueType', 'CommissionData', 'Text',
                                  'AllocQty', 'ConfirmType', 'ConfirmID',
                                  'AllocID', 'NetMoney', 'MatchStatus',
-                                 'ConfirmStatus', 'AllocInstructionMiscBlock1',
+                                 'ConfirmStatus', 'AllocInstructionMiscBlock1', 'Account'
                                  'CpctyConfGrp', 'ReportedPx', 'OrderAvgPx', 'tag11245', 'GatingRuleName',
                                  'GatingRuleCondName']
         params = {'ConfirmTransType': "0",
