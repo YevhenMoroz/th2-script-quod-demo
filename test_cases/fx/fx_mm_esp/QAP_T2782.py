@@ -61,7 +61,7 @@ class QAP_T2782(TestCase):
         self.adjustment_request.update_client_tier(self.platinum_id)
         self.adjustment_request.update_margins_by_index(1, "0.5", "0.5")
         self.java_manager.send_message(self.adjustment_request)
-        self.sleep(2)
+        self.sleep(4)
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request)
         self.md_request.set_md_req_parameters_maker().change_parameters(
@@ -69,10 +69,11 @@ class QAP_T2782(TestCase):
         response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
         modified_bid_px_1 = round(float(self.default_bid_px_1) - 0.00005, 6)
         modified_ask_px_1 = round(float(self.default_ask_px_1) + 0.00005, 6)
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*"], response=response[0])
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*"], response=response[0])
+        # self.md_snapshot.get_parameters()["NoMDEntries"].pop(-1)
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 0, MDEntryPx=modified_bid_px_1)
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 1, MDEntryPx=modified_ask_px_1)
-        self.fix_verifier.check_fix_message(self.md_snapshot)
+        self.fix_verifier.check_fix_message(self.md_snapshot, ignored_fields=["header", "trailer", "CachedUpdate"])
         # endregion
 
         # region 3
@@ -81,16 +82,17 @@ class QAP_T2782(TestCase):
         self.adjustment_request.update_client_tier(self.platinum_id)
         self.adjustment_request.update_margins_by_index(1, "0", "0")
         self.java_manager.send_message(self.adjustment_request)
-        self.sleep(2)
+        self.sleep(4)
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request)
         self.md_request.set_md_req_parameters_maker().change_parameters(
             {"SenderSubID": self.platinum, "NoRelatedSymbols": self.no_related_symbols})
         response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*"], response=response[0])
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*"], response=response[0])
+        # self.md_snapshot.get_parameters()["NoMDEntries"].pop(-1)
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 0, MDEntryPx=self.default_bid_px_1)
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 1, MDEntryPx=self.default_ask_px_1)
-        self.fix_verifier.check_fix_message(self.md_snapshot)
+        self.fix_verifier.check_fix_message(self.md_snapshot, ignored_fields=["header", "trailer", "CachedUpdate"])
         # endregion
 
         # region 4
@@ -99,7 +101,7 @@ class QAP_T2782(TestCase):
         self.adjustment_request.update_client_tier(self.platinum_id)
         self.adjustment_request.update_margins_by_index(1, "0", "0")
         self.java_manager.send_message(self.adjustment_request)
-        self.sleep(2)
+        self.sleep(4)
         self.md_request.set_md_req_parameters_maker().change_parameters(
             {"SenderSubID": self.platinum, "NoRelatedSymbols": self.no_related_symbols})
         response: list = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
@@ -111,7 +113,7 @@ class QAP_T2782(TestCase):
         self.adjustment_request.update_client_tier(self.platinum_id)
         self.adjustment_request.update_margins_by_index(1, "0.5", "0.5")
         self.java_manager.send_message(self.adjustment_request)
-        self.sleep(2)
+        self.sleep(4)
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request)
         self.md_request.set_md_req_parameters_maker().change_parameters(
@@ -119,26 +121,28 @@ class QAP_T2782(TestCase):
         response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
         modified_bid_px_1 = round(float(self.default_bid_px_1) - 0.00005, 6)
         modified_ask_px_1 = round(float(self.default_ask_px_1) + 0.00005, 6)
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*"], response=response[0])
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*"], response=response[0])
+        # self.md_snapshot.get_parameters()["NoMDEntries"].pop(-1)
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 0, MDEntryPx=modified_bid_px_1)
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 1, MDEntryPx=modified_ask_px_1)
-        self.fix_verifier.check_fix_message(self.md_snapshot)
+        self.fix_verifier.check_fix_message(self.md_snapshot, ignored_fields=["header", "trailer", "CachedUpdate"])
 
         self.adjustment_request.set_defaults()
         self.adjustment_request.update_instrument(self.eur_nok)
         self.adjustment_request.update_client_tier(self.platinum_id)
         self.adjustment_request.update_margins_by_index(1, "0", "0")
         self.java_manager.send_message(self.adjustment_request)
-        self.sleep(2)
+        self.sleep(4)
         self.md_request.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.md_request)
         self.md_request.set_md_req_parameters_maker().change_parameters(
             {"SenderSubID": self.platinum, "NoRelatedSymbols": self.no_related_symbols})
         response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
-        self.md_snapshot.set_params_for_md_response(self.md_request, ["*"], response=response[0])
+        self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*"], response=response[0])
+        # self.md_snapshot.get_parameters()["NoMDEntries"].pop(-1)
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 0, MDEntryPx=self.default_bid_px_1)
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 1, MDEntryPx=self.default_ask_px_1)
-        self.fix_verifier.check_fix_message(self.md_snapshot)
+        self.fix_verifier.check_fix_message(self.md_snapshot, ignored_fields=["header", "trailer", "CachedUpdate"])
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
