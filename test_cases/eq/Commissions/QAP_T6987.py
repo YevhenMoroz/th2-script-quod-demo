@@ -1,10 +1,7 @@
 import logging
-import os
 import time
 from pathlib import Path
 
-from pkg_resources import resource_filename
-import xml.etree.ElementTree as ET
 from custom import basic_custom_actions as bca
 from custom.verifier import VerificationMethod
 from rule_management import Simulators, RuleManager
@@ -22,7 +19,6 @@ from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, E
 from test_framework.java_api_wrappers.oms.es_messages.ExecutionReportOMS import ExecutionReportOMS
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
-from test_framework.ssh_wrappers.ssh_client import SshClient
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -54,25 +50,9 @@ class QAP_T6987(TestCase):
         self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
         self.fix_verifier = FixVerifier(self.dc_connectivity, self.test_id)
         self.exec_report = ExecutionReportOMS(self.data_set)
-        self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
-                                    self.ssh_client_env.password, self.ssh_client_env.su_user,
-                                    self.ssh_client_env.su_password)
-        self.local_path = resource_filename("test_resources.be_configs.oms_be_configs", "client_backend.xml")
-        self.remote_path = f"/home/{self.ssh_client_env.su_user}/quod/cfg/client_backend.xml"
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region set configuration on backend (precondition)
-        tree = ET.parse(self.local_path)
-        tree.getroot().find("automaticCalculatedReportEnabled").text = 'true'
-        tree.write("temp.xml")
-        self.ssh_client.send_command("~/quod/script/site_scripts/change_permission_script")
-        self.ssh_client.put_file(self.remote_path, "temp.xml")
-        self.ssh_client.send_command('~/quod/script/site_scripts/change_book_agent_misc_fee_type_on_N')
-        self.ssh_client.send_command("qrestart QUOD.ORS QUOD.CS QUOD.ESBUYTH2TEST")
-        time.sleep(120)
-        # endregion
-
         # region send fee
         self.rest_commission_sender.clear_commissions()
         self.rest_commission_sender.clear_fees()
@@ -141,7 +121,8 @@ class QAP_T6987(TestCase):
                         'SettlCurrency', 'SettlDate', 'Currency', 'TimeInForce', 'PositionEffect', 'HandlInst',
                         'NoParty', 'CumQty', 'OrdType', 'LeavesQty',
                         'LastPx', 'LastPx', 'tag5120', 'OrderCapacity', 'QtyType', 'Price', 'ExecBroker',
-                        'TargetStrategy', 'Instrument', 'ExDestination', 'GrossTradeAmt', 'CommissionData', 'SecondaryOrderID']
+                        'TargetStrategy', 'Instrument', 'ExDestination', 'GrossTradeAmt', 'CommissionData', 'SecondaryOrderID',
+                        'Account']
         params = {"Account": self.client, "ExecType": "B",
                   "OrdStatus": "B", "ClOrdID": cl_ord_id, 'OrderID': ord_id,
                   'NoMiscFees': {'NoMiscFees': [{'MiscFeeAmt': '10', 'MiscFeeCurr': self.cur, 'MiscFeeType': '12'}]}}
@@ -216,13 +197,3 @@ class QAP_T6987(TestCase):
         conf_report = FixMessageConfirmationReportOMS(self.data_set, params)
         self.fix_verifier.check_fix_message_fix_standard(conf_report, ignored_fields=conf_ignored_list)
         # endregion
-
-    @try_except(test_id=Path(__file__).name[:-3])
-    def run_post_conditions(self):
-        self.rest_commission_sender.clear_fees()
-        self.ssh_client.put_file(self.remote_path, self.local_path)
-        self.ssh_client.send_command('~/quod/script/site_scripts/change_book_agent_misc_fee_type_on_N')
-        self.ssh_client.send_command("qrestart QUOD.ORS QUOD.CS QUOD.ESBUYTH2TEST")
-        time.sleep(120)
-        os.remove("temp.xml")
-        self.ssh_client.close()
