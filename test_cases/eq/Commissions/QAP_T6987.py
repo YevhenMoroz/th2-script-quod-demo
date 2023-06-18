@@ -186,7 +186,7 @@ class QAP_T6987(TestCase):
                              'TradeDate', 'NoParty',
                              'SettlCurrAmt', 'AllocInstructionMiscBlock1', 'tag11245', 'tag5120', 'CpctyConfGrp',
                              'ReportedPx',
-                             'Instrument', 'GrossTradeAmt', 'ConfirmID']
+                             'Instrument', 'GrossTradeAmt', 'ConfirmID', 'Account']
         params = {'ConfirmTransType': "0",
                   'NoOrders': [{
                       'ClOrdID': '*',
@@ -197,3 +197,7 @@ class QAP_T6987(TestCase):
         conf_report = FixMessageConfirmationReportOMS(self.data_set, params)
         self.fix_verifier.check_fix_message_fix_standard(conf_report, ignored_fields=conf_ignored_list)
         # endregion
+
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rest_commission_sender.clear_fees()
