@@ -165,6 +165,7 @@ class JavaApiFields(Enum):
     ExecCommission = 'ExecCommission'
     SettlDate = 'SettlDate'
     ClearingTradePrice = 'ClearingTradePrice'
+    HeldOrderAckReplyBlock = 'HeldOrderAckReplyBlock'
     AllocationInstructionBlock = 'AllocationInstructionBlock'
     RequestForOverdueRetailPositionsAckBlock = 'RequestForOverdueRetailPositionsAckBlock'
     TransExecStatus = 'TransExecStatus'
