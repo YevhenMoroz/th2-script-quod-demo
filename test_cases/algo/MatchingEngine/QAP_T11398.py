@@ -15,7 +15,6 @@ from custom import basic_custom_actions as bca
 from rule_management import RuleManager, Simulators
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide, TradingPhases, TimeInForce, FreeNotesReject
 from test_framework.db_wrapper.db_manager import DBManager
-from test_framework.fix_wrappers.FixMessageMarketDataSnapshotFullRefresh import MDEntryType
 from test_framework.fix_wrappers.FixMessageOrderCancelReplaceRequest import FixMessageOrderCancelReplaceRequest
 from test_framework.fix_wrappers.algo.FixMessageMarketDataIncrementalRefreshAlgo import FixMessageMarketDataIncrementalRefreshAlgo
 from test_framework.fix_wrappers.algo.FixMessageMarketDataSnapshotFullRefreshAlgo import FixMessageMarketDataSnapshotFullRefreshAlgo
