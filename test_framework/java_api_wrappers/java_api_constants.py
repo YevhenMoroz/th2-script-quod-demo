@@ -19,7 +19,10 @@ class ExecutionReportConst(Enum):
     LastCapacity_Principal = 'P'
     LastCapacity_Principal_FULL_VALUE = 'Principal'
     LastCapacity_Agency_FULL_VALUE = 'Agency'
+    LastCapacity_Mixed_FULL_VALUE = 'Mixed'
+    LastCapacity_CrossAsMixed_FULL_VALUE = 'CrossAsMixed'
     LastCapacity_Agency = 'A'
+
     ExecOrigin_M = 'M'
     ExecOrigin_E = 'E'
     ExecType_Trade = 'Trade'
