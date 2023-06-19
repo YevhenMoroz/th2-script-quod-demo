@@ -74,7 +74,6 @@ class QAP_T8174(TestCase):
         client_list = self.data_set.get_cl_list_id('cl_list_comm_1')
         self.rest_commission_sender.clear_commissions()
         commission = self.data_set.get_commission_by_name("commission1")
-        self.rest_commission_sender.clear_commissions()
         params = {
             'clCommissionID': commission.value,
             'clCommissionName': commission.name,
@@ -104,7 +103,7 @@ class QAP_T8174(TestCase):
             'SettlCurrency': self.settl_currency
 
         })
-        responses = self.java_api_manager.send_message_and_receive_response(self.order_submit)
+        self.java_api_manager.send_message_and_receive_response(self.order_submit)
         order_id = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
             JavaApiFields.OrdReplyBlock.value][JavaApiFields.OrdID.value]
         cl_ord_id = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[

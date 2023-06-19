@@ -74,7 +74,6 @@ class QAP_T8175(TestCase):
         venue_list = self.data_set.get_venue_list('venue_list_1')
         self.rest_commission_sender.clear_commissions()
         commission = self.data_set.get_commission_by_name("commission1")
-        self.rest_commission_sender.clear_commissions()
         params = {
             'clCommissionID': commission.value,
             'clCommissionName': commission.name,
