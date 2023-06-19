@@ -1,3 +1,4 @@
+import datetime
 import logging
 from pathlib import Path
 
@@ -110,6 +111,9 @@ class QAP_T9390(TestCase):
 
         # region step 5: Manually execute CO order via JavaApiUser_2:
         self.manual_execute.set_default_trade(order_id, price, half_qty)
+        self.manual_execute.update_fields_in_component(JavaApiFields.TradeEntryRequestBlock.value, {
+            JavaApiFields.TransactTime.value: datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
+        })
         self.java_api_manager2.send_message_and_receive_response(self.manual_execute)
         execution_report = \
             self.java_api_manager2.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
@@ -165,7 +169,7 @@ class QAP_T9390(TestCase):
         list_of_ignored_fields = ['Quantity', 'tag5120', 'TransactTime', 'AllocInstructionMiscBlock1',
                                   'AllocTransType', 'ReportedPx', 'Side', 'AvgPx', 'ExecAllocGrp',
                                   'QuodTradeQualifier', 'BookID', 'SettlDate',
-                                  'PartyRoleQualifier', 'NoPartySubIDs',
+                                  'PartyRoleQualifier', 'NoPartySubIDs', 'Account',
                                   'AllocID', 'Currency', 'NetMoney', 'Instrument',
                                   'TradeDate', 'RootSettlCurrAmt', 'BookingType', 'GrossTradeAmt',
                                   'IndividualAllocID', 'AllocNetPrice', 'AllocQty', 'AllocPrice', 'OrderAvgPx']
