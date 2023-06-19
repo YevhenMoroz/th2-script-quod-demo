@@ -74,7 +74,7 @@ class QAP_T8172(TestCase):
         commission_profile = self.data_set.get_comm_profile_by_name('perc_amt')
         self.rest_commission_sender.clear_commissions()
         commission = self.data_set.get_commission_by_name("commission1")
-        self.rest_commission_sender.clear_fees()
+        self.rest_commission_sender.clear_commissions()
         params = {
             'clCommissionID': commission.value,
             'clCommissionName': commission.name,
