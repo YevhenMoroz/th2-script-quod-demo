@@ -1,6 +1,10 @@
 import logging
-import time
+from datetime import datetime
 from pathlib import Path
+
+from pandas import Timestamp as tm
+from pandas.tseries.offsets import BusinessDay as bd
+
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
 from rule_management import RuleManager, Simulators
@@ -9,9 +13,6 @@ from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from datetime import datetime
-from pandas import Timestamp as tm
-from pandas.tseries.offsets import BusinessDay as bd
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, ExecutionReportConst, \
     AllocationInstructionConst, OrderReplyConst
@@ -103,7 +104,7 @@ class QAP_T8172(TestCase):
             'SettlCurrency': self.settl_currency
 
         })
-        responses = self.java_api_manager.send_message_and_receive_response(self.order_submit)
+        self.java_api_manager.send_message_and_receive_response(self.order_submit)
         order_id = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
             JavaApiFields.OrdReplyBlock.value][JavaApiFields.OrdID.value]
         cl_ord_id = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
@@ -135,7 +136,7 @@ class QAP_T8172(TestCase):
                                                              "LastMkt": self.venue_mic,
                                                              "OrdQty": self.qty
                                                          })
-        responses = self.java_api_manager.send_message_and_receive_response(self.execution_report)
+        self.java_api_manager.send_message_and_receive_response(self.execution_report)
         actually_result = \
             self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value,
                                                    ExecutionReportConst.ExecType_TRD.value).get_parameters()[
@@ -164,7 +165,7 @@ class QAP_T8172(TestCase):
         new_avg_px = str(int(self.price) / 100)
         self.compute_booking_fee_commission_request.update_fields_in_component(
             'ComputeBookingFeesCommissionsRequestBlock', {'AvgPx': new_avg_px, 'AccountGroupID': self.client})
-        responses = self.java_api_manager.send_message_and_receive_response(self.compute_booking_fee_commission_request)
+        self.java_api_manager.send_message_and_receive_response(self.compute_booking_fee_commission_request)
         client_commission = \
             self.java_api_manager.get_last_message(ORSMessageType.ComputeBookingFeesCommissionsReply.value). \
                 get_parameters()[JavaApiFields.ComputeBookingFeesCommissionsReplyBlock.value][
@@ -214,7 +215,7 @@ class QAP_T8172(TestCase):
             'AvgPx': new_avg_px,
             "InstrID": instrument_id
         })
-        responses = self.java_api_manager.send_message_and_receive_response(self.confirmation_request)
+        self.java_api_manager.send_message_and_receive_response(self.confirmation_request)
         confirmation_report = \
             self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[
                 JavaApiFields.ConfirmationReportBlock.value]
