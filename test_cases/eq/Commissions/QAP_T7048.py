@@ -219,11 +219,6 @@ class QAP_T7048(TestCase):
             self.rule_manager.remove_rule(trade_rule)
         return response
 
-    def __return_result(self, responses, message_type):
-        for response in responses:
-            if response.get_message_type() == message_type:
-                self.result = response
-
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.rest_commission_sender.clear_fees()
