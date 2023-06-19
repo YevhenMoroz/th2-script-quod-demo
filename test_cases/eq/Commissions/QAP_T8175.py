@@ -120,10 +120,7 @@ class QAP_T8175(TestCase):
                                                              "Side": "Buy",
                                                              "LastTradedQty": self.qty,
                                                              "VenueExecID": bca.client_orderid(9),
-                                                             "LastVenueOrdID": (
-                                                                     tm(datetime.utcnow().isoformat()) + bd(
-                                                                 n=2)).date().strftime(
-                                                                 '%Y-%m-%dT%H:%M:%S'),
+                                                             "LastVenueOrdID": bca.client_orderid(12),
                                                              "LastPx": self.price,
                                                              "OrdType": "Limit",
                                                              "Price": self.price,

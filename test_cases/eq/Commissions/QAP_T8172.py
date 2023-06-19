@@ -1,9 +1,5 @@
 import logging
-from datetime import datetime
 from pathlib import Path
-
-from pandas import Timestamp as tm
-from pandas.tseries.offsets import BusinessDay as bd
 
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
@@ -120,10 +116,7 @@ class QAP_T8172(TestCase):
                                                              "Side": "Buy",
                                                              "LastTradedQty": self.qty,
                                                              "VenueExecID": bca.client_orderid(9),
-                                                             "LastVenueOrdID": (
-                                                                     tm(datetime.utcnow().isoformat()) + bd(
-                                                                 n=2)).date().strftime(
-                                                                 '%Y-%m-%dT%H:%M:%S'),
+                                                             "LastVenueOrdID": bca.client_orderid(12),
                                                              "LastPx": self.price,
                                                              "OrdType": "Limit",
                                                              "Price": self.price,
