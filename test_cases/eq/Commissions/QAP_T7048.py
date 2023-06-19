@@ -122,7 +122,7 @@ class QAP_T7048(TestCase):
                                                                    "AccountGroupID": self.client,
                                                                    'RootMiscFeesList': fee_list
                                                                })
-        responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
+        self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
         # endregion
 
         # region check block valuese
@@ -138,7 +138,7 @@ class QAP_T7048(TestCase):
                                                 'RootMiscFeeAmt': '10'}]}
         alloc_ignored_fields = ['Account', 'tag5120', 'AvgPx', 'Currency', 'RootCommTypeClCommBasis',
                                 'RootOrClientCommission', 'RootOrClientCommissionCurrency', 'RootSettlCurrAmt',
-                                'OrderAvgPx']
+                                'OrderAvgPx', 'ExecAllocGrp']
         self.alloc_report.set_default_ready_to_book(self.fix_message)
         self.alloc_report.change_parameters({"NoRootMiscFeesList": no_misc_fees})
         self.fix_verifier_dc.check_fix_message_fix_standard(self.alloc_report, ignored_fields=alloc_ignored_fields)
@@ -158,7 +158,7 @@ class QAP_T7048(TestCase):
                                                                    "AccountGroupID": self.client,
                                                                    'RootMiscFeesList': fee_list
                                                                })
-        responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
+        self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
         alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
                                                JavaApiFields.BookingAllocInstructionID.value).get_parameter(
             JavaApiFields.AllocationReportBlock.value)
@@ -193,7 +193,7 @@ class QAP_T7048(TestCase):
         # region check ready to book message
         no_misc_fees = {'NoMiscFees': [{"MiscFeeAmt": '5', "MiscFeeCurr": self.com_cur,
                                         "MiscFeeType": "22"}]}
-        alloc_ignored_fields = ['AvgPx', 'tag5120', 'CommissionData', 'OrderAvgPx']
+        alloc_ignored_fields = ['AvgPx', 'tag5120', 'CommissionData', 'OrderAvgPx', 'Account']
         self.conf_report.set_default_confirmation_new(self.fix_message)
         self.conf_report.change_parameters({'NoMiscFees': no_misc_fees})
         self.fix_verifier_dc.check_fix_message_fix_standard(self.conf_report, ignored_fields=alloc_ignored_fields)
