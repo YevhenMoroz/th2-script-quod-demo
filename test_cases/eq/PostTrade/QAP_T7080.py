@@ -92,7 +92,7 @@ class QAP_T7080(TestCase):
 
         # region check account in the Confirmation report
         self.confirmation_report.set_default_confirmation_new(self.fix_message)
-        self.confirmation_report.change_parameters({'AllocAccount': self.alloc_account})
+        self.confirmation_report.change_parameters({'AllocAccount': self.alloc_account, 'Account': self.client})
         self.fix_verifier_dc.check_fix_message_fix_standard(self.confirmation_report, ignored_fields=['tag5120','tag11245'])
         # endregion
 

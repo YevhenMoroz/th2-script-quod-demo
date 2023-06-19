@@ -8,10 +8,10 @@ from custom.basic_custom_actions import timestamps
 from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
-from test_framework.data_sets.message_types import ORSMessageType
-from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
-from test_framework.java_api_wrappers.java_api_constants import JavaApiFields
-from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
+from test_framework.fix_wrappers.oms.FixMessageNewOrderSingleOMS import FixMessageNewOrderSingleOMS
 from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
 from test_framework.rest_api_wrappers.oms.RestApiModifyGatingRuleMessage import RestApiModifyGatingRuleMessage
 
@@ -28,7 +28,7 @@ def print_message(message, responses):
         logger.info(i.get_parameters())
 
 
-class QAP_T4305(TestCase):
+class QAP_T5082(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id=None, data_set=None, environment=None):
         super().__init__(report_id, session_id, data_set, environment)
@@ -37,47 +37,40 @@ class QAP_T4305(TestCase):
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.rest_api_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
         self.rest_api_manager = RestApiManager(session_alias=self.rest_api_connectivity, case_id=self.test_id)
-        self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
-        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
-        self.order_submit = OrderSubmitOMS(data_set).set_default_dma_limit()
+        self.modify_rule_message = RestApiModifyGatingRuleMessage(self.data_set).set_default_param()
+        self.client = self.data_set.get_client_by_name("client_1")  # CLIENT1
+        self.qty = "70"
+        self.price = "20"
+        self.ss_connectivity = self.fix_env.sell_side
+        self.bs_connectivity = self.fix_env.buy_side
+        self.fix_manager = FixManager(self.ss_connectivity, self.test_id)
+        self.fix_message = FixMessageNewOrderSingleOMS(self.data_set)
         self.rule_manager = RuleManager(sim=Simulators.equity)
         self.venue_client_names = self.data_set.get_venue_client_names_by_name("client_1_venue_1")  # XPAR_CLIENT1
         self.exec_destination = self.data_set.get_mic_by_name("mic_1")  # XPAR
-        self.modify_rule_message = RestApiModifyGatingRuleMessage(self.data_set).set_default_param()
+        self.fix_verifier = FixVerifier(self.ss_connectivity, self.test_id)
+        self.exec_report = FixMessageExecutionReportOMS(self.data_set)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Enabling GatingRule
-        self.order_submit.update_fields_in_component("NewOrderSingleBlock", {"OrdQty": "200"})
-        price = self.order_submit.get_parameter("NewOrderSingleBlock")["Price"]
         param = self.modify_rule_message.get_parameter("gatingRuleCondition")
-        # Set "Not In" to the condition of GatingRule
-        param[0]["gatingRuleCondExp"] = "TimeInForce NOT IN(FillOrKill,GoodTillCancel)"
-        set_value_params: dict = {
-            "alive": "true",
-            "gatingRuleResultIndice": 1,
-            "splitRatio": 0,
-            "holdOrder": "true",
-            "gatingRuleResultProperty": "APP",
-            "gatingRuleResultAction": "VAL",
-            "gatingRuleResultRejectType": "HRD",
-        }
-        param[0]["gatingRuleResult"].insert(0, set_value_params)  # Set Action=SetValue to Results
-        param[0]["gatingRuleResult"][1]["gatingRuleResultIndice"] = 2
-        param[0]["gatingRuleResult"][1]["holdOrder"] = "true"
-        param[0]["gatingRuleResult"][1]["gatingRuleResultRejectType"] = "HRD"
+        param[0]["gatingRuleCondExp"] = "OrdQty<=100"
+        param[0]["gatingRuleResult"][0]["gatingRuleResultAction"] = "DMA"
         self.modify_rule_message.update_parameters({"gatingRuleCondition": param})
         self.rest_api_manager.send_post_request(self.modify_rule_message)
         # endregion
 
-        # region Step 1 - Create DMA order
+        # region Step 1 - Create Care order via FIX
+        nos_rule = None
         try:
             nos_rule = self.rule_manager.add_NewOrdSingleExecutionReportPendingAndNew_FIXStandard(
-                self.fix_env.buy_side, self.venue_client_names, self.exec_destination, float(price)
+                self.bs_connectivity, self.venue_client_names, self.exec_destination, float(self.price)
             )
-            responses = self.java_api_manager.send_message_and_receive_response(self.order_submit)
-            print_message("CREATE", responses)
+            self.fix_message.set_default_care_limit()
+            self.fix_message.change_parameters({"OrderQtyData": {"OrderQty": self.qty}, "Account": self.client})
+            self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
         except Exception as e:
             logger.info(f"Your Exception is {e}")
         finally:
@@ -85,20 +78,20 @@ class QAP_T4305(TestCase):
             self.rule_manager.remove_rule(nos_rule)
         # endregion
 
-        # region Step 2 - Check that the Gating rule with 'Not In' condition is applied to the order
-        order_notification = self.java_api_manager.get_last_message(
-            ORSMessageType.OrdNotification.value
-        ).get_parameters()[JavaApiFields.OrderNotificationBlock.value]
-        self.java_api_manager.compare_values(
+        # region Step 1 - Check that the Gating rule is applied to the FIX Care order, ExecPcy=DMA
+        self.exec_report.set_default_new(self.fix_message)
+        self.exec_report.change_parameters(
             {
-                JavaApiFields.GatingRuleCondName.value: "All Orders",
-                JavaApiFields.GatingRuleID.value: self.data_set.get_venue_gating_rule_id_by_name("main_rule_id"),
-                JavaApiFields.OrdStatus.value: "HLD",
-                JavaApiFields.TimeInForce.value: "DAY",
-            },
-            order_notification,
-            "Step 2 - Check that the Gating rule with 'Not In' condition is applied to the order",
+                "ReplyReceivedTime": "*",
+                "SecondaryOrderID": "*",
+                "Text": "*",
+                "LastMkt": "*",
+                "GatingRuleName": "Main Rule",
+                "GatingRuleCondName": "All Orders",
+                "HandlInst": "1",
+            }
         )
+        self.fix_verifier.check_fix_message_fix_standard(self.exec_report)
         # endregion
 
         logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
