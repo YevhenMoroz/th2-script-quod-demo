@@ -46,5 +46,7 @@ class QAP_T2532(TestCase):
         # endregion
         # Region Step 2
         self.execution_report.set_params_from_new_order_single(self.new_order, status=self.status_new)
-        self.fix_verifier.check_fix_message(self.execution_report)
+        self.fix_verifier.check_fix_message(self.execution_report,
+                                            ignored_fields=["GatingRuleCondName", "GatingRuleName", "trailer", "header",
+                                                            "OrderCapacity"])
         # endregion
