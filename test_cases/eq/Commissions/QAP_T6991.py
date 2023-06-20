@@ -212,7 +212,7 @@ class QAP_T6991(TestCase):
             "ExecType": "B",
             "OrdStatus": "B"
         })
-        misc_fee_rate = 10
+        misc_fee_rate = 5
         amount_of_fees = misc_fee_rate / 100 * int(self.qty) * int(self.price) / 100
         execution_report.change_parameters({'Currency': self.currency, 'CommissionData': '*',
                                             'tag5120': '*', 'ExecBroker': '*',
