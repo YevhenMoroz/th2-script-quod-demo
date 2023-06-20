@@ -34,7 +34,7 @@ class QAP_T2448(TestCase):
             "Symbol": self.symbol,
             "SecurityType": self.security_type_fwd
         }
-        self.note = "WK1 is not being priced or not executable over this client tier"
+        self.note = "WK1 is not executable - manual intervention required"
         self.expected_quoting = "N"
 
     @try_except(test_id=Path(__file__).name[:-3])
