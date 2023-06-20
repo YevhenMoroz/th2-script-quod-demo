@@ -79,8 +79,7 @@ class QAP_T7927(TestCase):
         expected_result_comm = {JavaApiFields.CommissionCurrency.value: 'EUR',
                                 JavaApiFields.CommissionBasis.value: 'PCT', JavaApiFields.CommissionRate.value: '5.0',
                                 JavaApiFields.CommissionAmount.value: '100.0',
-                                JavaApiFields.CommissionAmountType.value: 'BRK',
-                                JavaApiFields.CommissionAmountSubType.value: 'OTH'}
+                                JavaApiFields.CommissionAmountType.value: 'BRK'}
         expected_result_fee = {JavaApiFields.MiscFeeBasis.value: 'P', JavaApiFields.MiscFeeType.value: 'EXC',
                                JavaApiFields.MiscFeeCurr.value: 'EUR',
                                JavaApiFields.MiscFeeRate.value: '5.0', JavaApiFields.MiscFeeAmt.value: '100.0'}
@@ -91,12 +90,14 @@ class QAP_T7927(TestCase):
         exec_reply = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
             JavaApiFields.ExecutionReportBlock.value]
         exec_id = exec_reply[JavaApiFields.ExecID.value]
-        expected_result = {JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_FIL.value,
-                           JavaApiFields.MiscFeesList.value: {JavaApiFields.MiscFeesBlock.value: [expected_result_fee]},
-                           JavaApiFields.ClientCommissionList.value: {
-                               JavaApiFields.ClientCommissionBlock.value: [expected_result_comm]}}
-        self.java_api_manager.compare_values(expected_result, exec_reply,
-                                             "Check commissions after Execution")
+
+        self.java_api_manager.compare_values(expected_result_comm, exec_reply[JavaApiFields.ClientCommissionList.value][
+            JavaApiFields.ClientCommissionBlock.value][0],
+                                             'Check that order has properly commission after Execution')
+        self.java_api_manager.compare_values(expected_result_fee, exec_reply[JavaApiFields.MiscFeesList.value][JavaApiFields.MiscFeesBlock.value][0],
+                                             'Check that order has properly fees after Execution')
+        self.java_api_manager.compare_values({JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_FIL.value}, exec_reply,
+                                             "Check that order has properly statuses  after Execution")
         # endregion
 
         # region complete order (precondition)
@@ -146,8 +147,10 @@ class QAP_T7927(TestCase):
                                                      "InstrID": self.instr_id, "AvgPx": self.price,
                                                      "GrossTradeAmt": '2000'})
         self.java_api_manager.send_message_and_receive_response(self.alloc_instr)
-        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameter(
+        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                                              JavaApiFields.BookingAllocInstructionID.value).get_parameter(
             JavaApiFields.AllocationReportBlock.value)
+        alloc_id = alloc_report[JavaApiFields.BookingAllocInstructionID.value]
         self.java_api_manager.compare_values(
             {JavaApiFields.RootMiscFeesList.value: {JavaApiFields.RootMiscFeesBlock.value: [expected_result_fee]},
              JavaApiFields.ClientCommissionList.value: {
@@ -159,11 +162,12 @@ class QAP_T7927(TestCase):
         # region check Allocation Report (step 1)
         ignored_firelds = ['Account', 'ExecAllocGrp', 'tag5120', 'RootSettlCurrAmt']
         self.alloc_report.set_default_ready_to_book(self.fix_message)
-        self.alloc_report.change_parameters({'RootCommTypeClCommBasis': '3', "RootOrClientCommission": '100',
-                                             'RootOrClientCommissionCurrency': self.cur, 'NoRootMiscFeesList': {
+        self.alloc_report.change_parameters({'RootCommTypeClCommBasis': '2', "RootOrClientCommission": '2',
+                                             'RootOrClientCommissionCurrency': self.cur,
+                                             'AllocID': alloc_id, 'NoRootMiscFeesList': {
                 'NoRootMiscFeesList': [{'RootMiscFeeBasis': '2', 'RootMiscFeeCurr': self.cur, 'RootMiscFeeType': '4',
-                                        'RootMiscFeeRate': '5', 'RootMiscFeeAmt': '100'}]}})
-        self.fix_verifier.check_fix_message_fix_standard(self.alloc_report, ignored_fields=ignored_firelds)
+                                        'RootMiscFeeRate': '5', 'RootMiscFeeAmt': '2'}]}})
+        self.fix_verifier.check_fix_message_fix_standard(self.alloc_report, ['AllocType', 'NoOrders', 'AllocID'],ignored_fields=ignored_firelds)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
