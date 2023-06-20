@@ -38,7 +38,7 @@ class QAP_T7191(TestCase):
         self.venue_client = self.data_set.get_venue_client_names_by_name('client_com_1_venue_2')
         self.test_id = create_event(self.__class__.__name__, self.report_id)
         self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
-        self.mic = self.data_set.get_mic_by_name('mic_1')
+        self.mic = self.data_set.get_mic_by_name('mic_2')
         self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
         self.compute_request = ComputeBookingFeesCommissionsRequestOMS(self.data_set)
