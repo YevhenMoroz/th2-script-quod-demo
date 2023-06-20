@@ -49,7 +49,7 @@ class QAP_T3788(TestCase):
             order_reply = self.ja_manager.get_last_message(ORSMessageType.OrderReply.value).get_parameters()[
                 JavaApiFields.OrdReplyBlock.value]
             self.ja_manager.compare_values({JavaApiFields.PosValidity.value: PositionValidities.PosValidity_DEL.value},
-                                           order_reply, f'Verify that {PositionValidities} has properly values (step 2)')
+                                           order_reply, f'Verify that PositionValidities has properly values (step 2)')
         finally:
             time.sleep(1)
             self.rule_manager.remove_rule(nos_rule)
