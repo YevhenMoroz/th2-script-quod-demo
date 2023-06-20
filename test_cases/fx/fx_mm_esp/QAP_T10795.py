@@ -6,9 +6,11 @@ from custom.verifier import Verifier
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.environments.full_environment import FullEnvironment
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.fx.TradeEntryRequestFX import TradeEntryRequestFX
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields
 from test_framework.ssh_wrappers.ssh_client import SshClient
 
 
@@ -35,72 +37,33 @@ class QAP_T10795(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Step 1
         self.trade_request.set_default_params()
-        response = self.java_api_manager.send_message_and_receive_response(self.trade_request)
-        for i in range(len(response)):
-            try:
-                response[i].get_parameters()
-                self.order_id = response["ExecutionReportBlock"]["ClOrdID"]
-                break
-            except TypeError:
-                pass
-        self.ssh_client.get_file("/Logs/quod314/QUOD.ORS.log",
-                                 self.temp_path)
-        logs = open(self.temp_path, "r")
-        self.result = True
-        for line in logs:
-            self.key = re.findall(rf"^.*no Transac with keys.*{self.order_id}.*$", line)
-            if self.key:
-                self.result = False
-                break
-        if self.result:
+        self.java_api_manager.send_message_and_receive_response(self.trade_request)
+        response = self.java_api_manager.get_first_message(ORSMessageType.ExecutionReport.value,
+                                                           "ExecMiscBlock").get_parameter(
+                                                           JavaApiFields.ExecutionReportBlock.value)
+        self.order_id = response["ClOrdID"]
+        self.ssh_client.find_regex_pattern("/Logs/quod314/QUOD.ORS.log", rf"^.*no Transac with keys.*{self.order_id}.*$")
+        if not self.result:
             self.pass_amount += 1
-        logs.close()
-        os.remove(self.temp_path)
         # endregion
         # region Step 1
         self.trade_request.set_default_params()
-        response = self.java_api_manager.send_message_and_receive_response(self.trade_request)
-        for i in range(len(response)):
-            try:
-                response[i].get_parameters()
-                self.order_id = response["ExecutionReportBlock"]["ClOrdID"]
-                break
-            except TypeError:
-                pass
-        self.ssh_client.get_file("/Logs/quod314/QUOD.ORS.log",
-                                 self.temp_path)
-        logs = open(self.temp_path, "r")
-        self.result = True
-        for line in logs:
-            self.key = re.findall(rf"^.*no Transac with keys.*{self.order_id}.*$", line)
-            if self.key:
-                self.result = False
-                break
-        if self.result:
+        response = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value,
+                                                           "ExecMiscBlock").get_parameter(
+                                                           JavaApiFields.ExecutionReportBlock.value)
+        self.order_id = response["ClOrdID"]
+        self.ssh_client.find_regex_pattern("/Logs/quod314/QUOD.ORS.log", rf"^.*no Transac with keys.*{self.order_id}.*$")
+        if not self.result:
             self.pass_amount += 1
-        logs.close()
-        os.remove(self.temp_path)
         # endregion
         # region Step 1
         self.trade_request.set_default_params()
-        response = self.java_api_manager.send_message_and_receive_response(self.trade_request)
-        for i in range(len(response)):
-            try:
-                response[i].get_parameters()
-                self.order_id = response["ExecutionReportBlock"]["ClOrdID"]
-                break
-            except TypeError:
-                pass
-        self.ssh_client.get_file("/Logs/quod314/QUOD.ORS.log",
-                                 self.temp_path)
-        logs = open(self.temp_path, "r")
-        self.result = True
-        for line in logs:
-            self.key = re.findall(rf"^.*no Transac with keys.*{self.order_id}.*$", line)
-            if self.key:
-                self.result = False
-                break
-        if self.result:
+        response = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value,
+                                                           "ExecMiscBlock").get_parameter(
+                                                           JavaApiFields.ExecutionReportBlock.value)
+        self.order_id = response["ClOrdID"]
+        self.ssh_client.find_regex_pattern("/Logs/quod314/QUOD.ORS.log", rf"^.*no Transac with keys.*{self.order_id}.*$")
+        if not self.result:
             self.pass_amount += 1
         if self.pass_amount != 3:
             self.result = "failed"
@@ -110,6 +73,4 @@ class QAP_T10795(TestCase):
         self.verifier.set_event_name("Check that there is no Cache checks while Trade Transacs")
         self.verifier.compare_values("status", "pass", self.result)
         self.verifier.verify()
-        logs.close()
-        os.remove(self.temp_path)
         # endregion
