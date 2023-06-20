@@ -3,8 +3,10 @@ import string
 import sys
 import time
 import traceback
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.market_making.quoting_sessions.quoting_sessions_client_client_tiers_sub_wizard import \
     QuotingSessionsClientClientTiersSubWizard
 from test_framework.web_admin_core.pages.market_making.quoting_sessions.quoting_sessions_client_tier_symbols_sub_wizard import \
@@ -108,29 +110,23 @@ class QAP_T3969(CommonTestCase):
         page.click_on_edit()
         time.sleep(2)
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
-        try:
-            self.precondition()
-            wizard = QuotingSessionsWizard(self.web_driver_container)
+        self.precondition()
+        wizard = QuotingSessionsWizard(self.web_driver_container)
 
-            expected_result_values = [self.name,
-                                      self.published_quote_id_format,
-                                      self.quote_update_format,
-                                      "Always Use New MDEntry ID: true",
-                                      "Always Acknowledge Orders: true",
-                                      "Use Same Session For Market Data and Trading: true",
-                                      self.broadcast_client_client_tier_id,
-                                      self.client_tier,
-                                      self.symbol,
-                                      self.client_tier,
-                                      self.client_client_tier_id,
-                                      self.client_tier,
-                                      ]
-            self.verify("Check is entity created correctly in PDF values", True,
-                        wizard.click_download_pdf_entity_button_and_check_pdf(expected_result_values))
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        expected_result_values = [self.name,
+                                  self.published_quote_id_format,
+                                  self.quote_update_format,
+                                  "Always Use New MDEntry ID: true",
+                                  "Always Acknowledge Orders: true",
+                                  "Use Same Session For Market Data and Trading: true",
+                                  self.broadcast_client_client_tier_id,
+                                  self.client_tier,
+                                  self.symbol,
+                                  self.client_tier,
+                                  self.client_client_tier_id,
+                                  self.client_tier,
+                                  ]
+        self.verify("Check is entity created correctly in PDF values", True,
+                    wizard.click_download_pdf_entity_button_and_check_pdf(expected_result_values))

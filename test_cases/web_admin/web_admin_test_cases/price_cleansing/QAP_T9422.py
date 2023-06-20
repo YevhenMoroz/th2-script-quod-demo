@@ -1,7 +1,9 @@
 import sys
 import traceback
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.price_cleansing.rate_deviation.main_page import MainPage
 from test_framework.web_admin_core.pages.price_cleansing.rate_deviation.wizards import *
@@ -26,26 +28,18 @@ class QAP_T9422(CommonTestCase):
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_rate_deviation_page()
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
+        self.precondition()
 
-        try:
-            self.precondition()
+        main_page = MainPage(self.web_driver_container)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
+        values_tab = ValuesTab(self.web_driver_container)
+        reference_venue = values_tab.get_reference_venues().split(",")[0]
+        values_tab.click_at_reference_venue_by_name(reference_venue)
+        time.sleep(1)
+        venue_wizard = VenuesWizard(self.web_driver_container)
+        venue_id = venue_wizard.get_venue_id()
 
-            main_page = MainPage(self.web_driver_container)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
-            values_tab = ValuesTab(self.web_driver_container)
-            reference_venue = values_tab.get_reference_venues().split(",")[0]
-            values_tab.click_at_reference_venue_by_name(reference_venue)
-            time.sleep(1)
-            venue_wizard = VenuesWizard(self.web_driver_container)
-            venue_id = venue_wizard.get_venue_id()
-
-            self.verify("Venue page open after click at Reference Venue", True, reference_venue == venue_id)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("Venue page open after click at Reference Venue", True, reference_venue == venue_id)

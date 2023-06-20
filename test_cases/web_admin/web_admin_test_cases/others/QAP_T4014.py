@@ -3,8 +3,10 @@ import string
 import sys
 import time
 import traceback
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.others.counterparts.counterparts_page import CounterpartsPage
 from test_framework.web_admin_core.pages.others.counterparts.counterparts_wizard import CounterpartsWizard
@@ -39,25 +41,18 @@ class QAP_T4014(CommonTestCase):
         time.sleep(1)
         counterparts_wizard.click_on_save_changes()
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
-        try:
-            self.precondition()
-            time.sleep(2)
-            counterparts_main_menu = CounterpartsPage(self.web_driver_container)
-            counterparts_main_menu.set_name_filter_value(self.name)
-            time.sleep(1)
-            self.verify("Counterpart entity is present", "True",
-                        counterparts_main_menu.is_counterpart_present_by_name(self.name))
-            counterparts_main_menu.click_on_more_actions()
-            time.sleep(1)
-            counterparts_main_menu.click_on_delete_and_confirmation(True)
-            time.sleep(2)
-            self.verify("Counterparts deleted", "False",
-                        counterparts_main_menu.is_counterpart_present_by_name(self.name))
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.precondition()
+        time.sleep(2)
+        counterparts_main_menu = CounterpartsPage(self.web_driver_container)
+        counterparts_main_menu.set_name_filter_value(self.name)
+        time.sleep(1)
+        self.verify("Counterpart entity is present", "True",
+                    counterparts_main_menu.is_counterpart_present_by_name(self.name))
+        counterparts_main_menu.click_on_more_actions()
+        time.sleep(1)
+        counterparts_main_menu.click_on_delete_and_confirmation(True)
+        time.sleep(2)
+        self.verify("Counterparts deleted", "False",
+                    counterparts_main_menu.is_counterpart_present_by_name(self.name))

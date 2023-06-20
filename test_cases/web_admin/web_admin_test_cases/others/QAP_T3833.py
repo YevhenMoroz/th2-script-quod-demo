@@ -3,8 +3,10 @@ import string
 import sys
 import time
 import traceback
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.others.counterparts.counterparts_page import CounterpartsPage
 from test_framework.web_admin_core.pages.others.counterparts.counterparts_party_roles_subwizard import \
@@ -62,28 +64,21 @@ class QAP_T3833(CommonTestCase):
         wizard.click_on_save_changes()
         time.sleep(2)
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
-
+        self.precondition()
+        counterparts_main_menu = CounterpartsPage(self.web_driver_container)
+        counterparts_main_menu.set_name_filter_value(self.name_at_values_tab)
+        wizard = CounterpartsWizard(self.web_driver_container)
+        time.sleep(2)
+        counterparts_main_menu.click_on_more_actions()
+        time.sleep(2)
+        counterparts_main_menu.click_on_edit()
+        time.sleep(2)
+        wizard.click_on_delete_at_party_roles_tab()
+        time.sleep(2)
         try:
-            self.precondition()
-            counterparts_main_menu = CounterpartsPage(self.web_driver_container)
-            counterparts_main_menu.set_name_filter_value(self.name_at_values_tab)
-            wizard = CounterpartsWizard(self.web_driver_container)
-            time.sleep(2)
-            counterparts_main_menu.click_on_more_actions()
-            time.sleep(2)
-            counterparts_main_menu.click_on_edit()
-            time.sleep(2)
-            wizard.click_on_delete_at_party_roles_tab()
-            time.sleep(2)
-            try:
-                wizard.click_on_edit_at_party_roles_tab()
-                self.verify("entity at party roles NOT deleted", True, False)
-            except Exception:
-                self.verify("entity at party roles deleted", True, True)
+            wizard.click_on_edit_at_party_roles_tab()
+            self.verify("entity at party roles NOT deleted", True, False)
         except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+            self.verify("entity at party roles deleted", True, True)

@@ -1,8 +1,10 @@
 import sys
 import time
 import traceback
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_instrument_values_sub_wizard import \
     ClientTierInstrumentValuesSubWizard
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_instruments_page import \
@@ -52,20 +54,13 @@ class QAP_T3990(CommonTestCase):
         client_tier_instrument_main_page.click_on_new()
         time.sleep(2)
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
-        try:
-            self.precondition()
-            client_tier_instrument_values_sub_wizard = ClientTierInstrumentValuesSubWizard(self.web_driver_container)
-            client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
-            client_tier_instrument_values_sub_wizard.set_symbol(self.symbol)
-            client_tier_instrument_values_sub_wizard.set_tod_end_time(self.tod_end_time)
-            client_tiers_wizard.click_on_save_changes()
-            time.sleep(2)
-            self.verify("Same client tier created", True, True)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.precondition()
+        client_tier_instrument_values_sub_wizard = ClientTierInstrumentValuesSubWizard(self.web_driver_container)
+        client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
+        client_tier_instrument_values_sub_wizard.set_symbol(self.symbol)
+        client_tier_instrument_values_sub_wizard.set_tod_end_time(self.tod_end_time)
+        client_tiers_wizard.click_on_save_changes()
+        time.sleep(2)
+        self.verify("Same client tier created", True, True)

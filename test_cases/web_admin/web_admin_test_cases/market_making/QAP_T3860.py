@@ -3,8 +3,10 @@ import string
 import sys
 import time
 import traceback
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_instrument_sweepable_quantities_sub_wizard import \
     ClientTiersInstrumentSweepableQuantitiesSubWizard
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_instrument_tiered_quantities_sub_wizard import \
@@ -53,30 +55,60 @@ class QAP_T3860(CommonTestCase):
         client_tiers_wizard.click_on_save_changes()
         time.sleep(2)
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
+        self.precondition()
+        client_tiers_main_page = ClientTiersPage(self.web_driver_container)
+        client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
+        client_tier_instrument_values_sub_wizard = ClientTierInstrumentValuesSubWizard(self.web_driver_container)
+        client_tier_instrument_sweepable_quantities = ClientTiersInstrumentSweepableQuantitiesSubWizard(
+            self.web_driver_container)
+        client_tier_instrument_tiered_quantities = ClientTiersInstrumentTieredQuantitiesSubWizard(
+            self.web_driver_container)
         try:
-            self.precondition()
-            client_tiers_main_page = ClientTiersPage(self.web_driver_container)
-            client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
-            client_tier_instrument_values_sub_wizard = ClientTierInstrumentValuesSubWizard(self.web_driver_container)
-            client_tier_instrument_sweepable_quantities = ClientTiersInstrumentSweepableQuantitiesSubWizard(
-                self.web_driver_container)
-            client_tier_instrument_tiered_quantities = ClientTiersInstrumentTieredQuantitiesSubWizard(
-                self.web_driver_container)
-            try:
-                client_tiers_main_page.set_name(self.name)
-                self.verify("Is client tier created correctly? ", True, True)
-            except Exception as e:
-                self.verify("Is client  created INCORRECTLY !!!", True, e.__class__.__name__)
-            time.sleep(2)
-            client_tiers_main_page.click_on_more_actions()
-            time.sleep(3)
-            client_tier_instrument_main_page = ClientTierInstrumentsPage(self.web_driver_container)
-            client_tier_instrument_main_page.click_on_new()
-            time.sleep(2)
+            client_tiers_main_page.set_name(self.name)
+            self.verify("Is client tier created correctly? ", True, True)
+        except Exception as e:
+            self.verify("Is client  created INCORRECTLY !!!", True, e.__class__.__name__)
+        time.sleep(2)
+        client_tiers_main_page.click_on_more_actions()
+        time.sleep(3)
+        client_tier_instrument_main_page = ClientTierInstrumentsPage(self.web_driver_container)
+        client_tier_instrument_main_page.click_on_new()
+        time.sleep(2)
 
-            client_tier_instrument_values_sub_wizard.set_symbol(self.symbol)
-            client_tier_instrument_values_sub_wizard.set_tod_end_time(self.tod_end_time)
+        client_tier_instrument_values_sub_wizard.set_symbol(self.symbol)
+        client_tier_instrument_values_sub_wizard.set_tod_end_time(self.tod_end_time)
+        client_tier_instrument_sweepable_quantities.click_on_plus()
+        client_tier_instrument_sweepable_quantities.set_quantity(1000000)
+        client_tier_instrument_sweepable_quantities.click_on_published_checkbox()
+        client_tier_instrument_sweepable_quantities.click_on_checkmark()
+        client_tier_instrument_tiered_quantities.click_on_plus()
+        client_tier_instrument_tiered_quantities.set_quantity(1000000)
+        client_tier_instrument_tiered_quantities.click_on_checkmark()
+        client_tiers_wizard.click_on_save_changes()
+        time.sleep(2)
+        client_tiers_main_page.set_name(self.name)
+        time.sleep(2)
+        client_tiers_main_page.click_on_more_actions()
+        time.sleep(12)
+        client_tier_instrument_main_page.click_on_more_actions()
+        time.sleep(2)
+        client_tier_instrument_main_page.click_on_edit()
+        time.sleep(2)
+        client_tier_instrument_sweepable_quantities.click_on_delete()
+        client_tier_instrument_tiered_quantities.click_on_delete()
+        client_tiers_wizard.click_on_save_changes()
+        time.sleep(2)
+        client_tiers_main_page.set_name(self.name)
+        time.sleep(2)
+        client_tiers_main_page.click_on_more_actions()
+        time.sleep(12)
+        client_tier_instrument_main_page.click_on_more_actions()
+        time.sleep(2)
+        client_tier_instrument_main_page.click_on_edit()
+        time.sleep(2)
+        try:
             client_tier_instrument_sweepable_quantities.click_on_plus()
             client_tier_instrument_sweepable_quantities.set_quantity(1000000)
             client_tier_instrument_sweepable_quantities.click_on_published_checkbox()
@@ -85,42 +117,6 @@ class QAP_T3860(CommonTestCase):
             client_tier_instrument_tiered_quantities.set_quantity(1000000)
             client_tier_instrument_tiered_quantities.click_on_checkmark()
             client_tiers_wizard.click_on_save_changes()
-            time.sleep(2)
-            client_tiers_main_page.set_name(self.name)
-            time.sleep(2)
-            client_tiers_main_page.click_on_more_actions()
-            time.sleep(12)
-            client_tier_instrument_main_page.click_on_more_actions()
-            time.sleep(2)
-            client_tier_instrument_main_page.click_on_edit()
-            time.sleep(2)
-            client_tier_instrument_sweepable_quantities.click_on_delete()
-            client_tier_instrument_tiered_quantities.click_on_delete()
-            client_tiers_wizard.click_on_save_changes()
-            time.sleep(2)
-            client_tiers_main_page.set_name(self.name)
-            time.sleep(2)
-            client_tiers_main_page.click_on_more_actions()
-            time.sleep(12)
-            client_tier_instrument_main_page.click_on_more_actions()
-            time.sleep(2)
-            client_tier_instrument_main_page.click_on_edit()
-            time.sleep(2)
-            try:
-                client_tier_instrument_sweepable_quantities.click_on_plus()
-                client_tier_instrument_sweepable_quantities.set_quantity(1000000)
-                client_tier_instrument_sweepable_quantities.click_on_published_checkbox()
-                client_tier_instrument_sweepable_quantities.click_on_checkmark()
-                client_tier_instrument_tiered_quantities.click_on_plus()
-                client_tier_instrument_tiered_quantities.set_quantity(1000000)
-                client_tier_instrument_tiered_quantities.click_on_checkmark()
-                client_tiers_wizard.click_on_save_changes()
-                self.verify("recreated entity saved correctly.", True, True)
-            except Exception as e:
-                self.verify("recreated entity don't saved correctly.", True, e.__class__.__name__)
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+            self.verify("recreated entity saved correctly.", True, True)
+        except Exception as e:
+            self.verify("recreated entity don't saved correctly.", True, e.__class__.__name__)

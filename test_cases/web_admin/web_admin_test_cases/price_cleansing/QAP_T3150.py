@@ -3,8 +3,10 @@ import time
 import traceback
 import random
 import string
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.price_cleansing.rate_deviation.main_page import MainPage
 from test_framework.web_admin_core.pages.price_cleansing.rate_deviation.wizards import *
@@ -45,58 +47,50 @@ class QAP_T3150(CommonTestCase):
         wizard = MainWizard(self.web_driver_container)
         wizard.click_on_save_changes()
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
+        self.precondition()
 
-        try:
-            self.precondition()
+        main_page = MainPage(self.web_driver_container)
+        main_page.set_name_filter(self.name[0])
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
+        values_tab = ValuesTab(self.web_driver_container)
+        values_tab.set_name(self.name[1])
+        values_tab.set_reference_venues(self.reference_venue)
+        wizard = MainWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
+        time.sleep(0.5)
+        self.verify("Reference Venues field must be filled", True,
+                    wizard.is_incorrect_or_missing_value_message_displayed())
 
-            main_page = MainPage(self.web_driver_container)
-            main_page.set_name_filter(self.name[0])
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
-            values_tab = ValuesTab(self.web_driver_container)
-            values_tab.set_name(self.name[1])
-            values_tab.set_reference_venues(self.reference_venue)
-            wizard = MainWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
-            time.sleep(0.5)
-            self.verify("Reference Venues field must be filled", True,
-                        wizard.is_incorrect_or_missing_value_message_displayed())
+        values_tab.set_reference_venues(self.reference_venue)
+        values_tab.set_price_deviation(self.price_deviation[-1])
 
-            values_tab.set_reference_venues(self.reference_venue)
-            values_tab.set_price_deviation(self.price_deviation[-1])
+        wizard.click_on_save_changes()
+        time.sleep(0.5)
+        self.verify("Price Deviation field must be positive", True,
+                    wizard.is_incorrect_or_missing_value_message_displayed())
 
-            wizard.click_on_save_changes()
-            time.sleep(0.5)
-            self.verify("Price Deviation field must be positive", True,
-                        wizard.is_incorrect_or_missing_value_message_displayed())
+        values_tab.set_price_deviation(self.price_deviation[1])
+        dimensions_tab = DimensionsTab(self.web_driver_container)
+        dimensions_tab.set_venue(self.venue)
+        dimensions_tab.set_listing(self.listing)
+        dimensions_tab.set_instr_type(self.instr_type)
+        dimensions_tab.set_symbol(self.symbol)
+        wizard.click_on_save_changes()
 
-            values_tab.set_price_deviation(self.price_deviation[1])
-            dimensions_tab = DimensionsTab(self.web_driver_container)
-            dimensions_tab.set_venue(self.venue)
-            dimensions_tab.set_listing(self.listing)
-            dimensions_tab.set_instr_type(self.instr_type)
-            dimensions_tab.set_symbol(self.symbol)
-            wizard.click_on_save_changes()
+        main_page.set_name_filter(self.name[1])
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
 
-            main_page.set_name_filter(self.name[1])
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
+        expected_result = [*[self.name[1], self.price_deviation[1], self.venue, self.listing,
+                           self.instr_type, self.symbol], *self.reference_venue]
+        actual_result = [*[values_tab.get_name(), values_tab.get_price_deviation(),
+                         dimensions_tab.get_venue(), dimensions_tab.get_listing(), dimensions_tab.get_instr_type(),
+                         dimensions_tab.get_symbol()],
+                         *[_.strip() for _ in values_tab.get_reference_venues().split(',')]]
 
-            expected_result = [*[self.name[1], self.price_deviation[1], self.venue, self.listing,
-                               self.instr_type, self.symbol], *self.reference_venue]
-            actual_result = [*[values_tab.get_name(), values_tab.get_price_deviation(),
-                             dimensions_tab.get_venue(), dimensions_tab.get_listing(), dimensions_tab.get_instr_type(),
-                             dimensions_tab.get_symbol()],
-                             *[_.strip() for _ in values_tab.get_reference_venues().split(',')]]
-
-            self.verify("New data saved", sorted(expected_result), sorted(actual_result))
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("New data saved", sorted(expected_result), sorted(actual_result))

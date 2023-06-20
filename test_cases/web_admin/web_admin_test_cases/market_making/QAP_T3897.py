@@ -3,8 +3,10 @@ import string
 import sys
 import time
 import traceback
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.market_making.quoting_sessions.quoting_sessions_page import \
     QuotingSessionsPage
 from test_framework.web_admin_core.pages.market_making.quoting_sessions.quoting_sessions_values_sub_wizard import \
@@ -44,29 +46,21 @@ class QAP_T3897(CommonTestCase):
         values_sub_wizard.set_quote_update_interval(self.quote_update_interval)
         time.sleep(1)
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
-        try:
-            self.precondition()
-            wizard = QuotingSessionsWizard(self.web_driver_container)
-            page = QuotingSessionsPage(self.web_driver_container)
-            expected_result_values = [self.name,
-                                      str(self.concurrently_active_quotes),
-                                      str(self.quote_update_interval),
-                                      ]
-            self.verify("Check entity in PDF ", True,
-                        wizard.click_download_pdf_entity_button_and_check_pdf(expected_result_values))
-            wizard.click_on_save_changes()
-            page.set_name_filter(self.name)
-            time.sleep(2)
-            page.click_on_more_actions()
-            time.sleep(2)
-            self.verify("Check entity values in PDF after saving", True,
-                        page.click_download_pdf_entity_button_and_check_pdf(expected_result_values))
-
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.precondition()
+        wizard = QuotingSessionsWizard(self.web_driver_container)
+        page = QuotingSessionsPage(self.web_driver_container)
+        expected_result_values = [self.name,
+                                  str(self.concurrently_active_quotes),
+                                  str(self.quote_update_interval),
+                                  ]
+        self.verify("Check entity in PDF ", True,
+                    wizard.click_download_pdf_entity_button_and_check_pdf(expected_result_values))
+        wizard.click_on_save_changes()
+        page.set_name_filter(self.name)
+        time.sleep(2)
+        page.click_on_more_actions()
+        time.sleep(2)
+        self.verify("Check entity values in PDF after saving", True,
+                    page.click_download_pdf_entity_button_and_check_pdf(expected_result_values))
