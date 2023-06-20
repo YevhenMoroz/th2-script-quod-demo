@@ -122,7 +122,7 @@ class QAP_T7023(TestCase):
         #                                      'Check actually and expected result for ExecType (part of step 2')
 
         basis_fee_amount = str(float(self.qty) * float(self.price) / 1000000)
-        perc_rate = 10.0
+        perc_rate = 5
         perc_fee_amount = str(int(float(self.qty) * float(self.price) / 10000 * perc_rate))
         expected_levy_fee_dimensions = {
             JavaApiFields.MiscFeeAmt.value: basis_fee_amount,
