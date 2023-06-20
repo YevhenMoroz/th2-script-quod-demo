@@ -792,9 +792,9 @@ class RuleManager:
 
         Result Message: ExecutionReport PendingNew, ExecutionReport New
 
-        Description: Answer with ER PendingNew/New on the NewOrderSingle with TIF = IOC with out price or order type restriction.
+        Description: Answer with ER PendingNew/New on the NewOrderSingle with TIF = IOC without price or order type restriction.
 
-        Use cases: Very useful when we need to check many IOC orders on which we both ER. We don't need create many rules with the  price restriction
+        Use cases: Very useful when we need to check many IOC orders on which we both ER. We don't need to create many rules with the  price restriction
 
         Note: OrderType= LMT or MKT
         Also have add_NewOrdSingle_IOC, but it contains restrictions
