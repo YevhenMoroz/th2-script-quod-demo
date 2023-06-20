@@ -261,14 +261,59 @@ class RuleManager:
                                                           cancel=cancel))
 
     def add_NOS(self, session: str, account: str = 'KEPLER'):
+        """
+        Triggered on Message: NewOrdSingle
+        supported TimeInForce: all
+        by parameters: Account
+
+        Result Message: ExecutionReport New or ExecutionReport  Canceled (for IOC)
+
+        Description: Send ExecReport with status New on 35=D with Text = 'sim work'. There is no PendingNew. For IOC orders - ExecReport Cancel
+
+        Use cases: Use as basic rule for manual testing/ debugging when we need reply for orders with any Venue, TIF and Price
+
+        Note: rule provided by ExactPro
+       """
         return self.sim.createQuodNOSRule(
             request=TemplateQuodNOSRule(connection_id=ConnectionID(session_alias=session), account=account))
 
     def add_OCR(self, session: str):
+        """
+        Triggered on Message: OrderCancelRequest
+
+        Result Message: ExecutionReport  Canceled
+
+        Description: Reply on Cancel Request with ExecReport Canceled with Text = 'order canceled'
+
+        Use cases: Use for RB testcases that don't use ExDestination in ER
+
+        Note: rule provided by ExactPro
+       """
         return self.sim.createQuodOCRRule(request=
                                           TemplateQuodOCRRule(connection_id=ConnectionID(session_alias=session)))
 
     def add_OCRR(self, session: str, trade: bool = False):
+        """
+        Triggered on Message: OrderCancelReplaceRequest
+        by parameters: trade
+
+        Result Message: ExecutionReport  Replaced or ExecutionReport Trade or ExecutionReport Canceled
+
+        Description:
+        1. Answer ER with replaced on the OrderCancelReplaceRequest with TIF not equals IOC or FOK orders and Trade=False
+        2. Answer ER with full Fill on the OrderCancelReplaceRequest with TIF equals IOC or FOK orders and Trade=True
+        3. Answer ER Canceled on the OrderCancelReplaceRequest with TIF equals IOC or FOK orders and Trade=False
+
+        Use cases:
+        1. To modify orders with any TIF exclude IOC and FOK
+        2. To fully Fill the order with TIF equals IOC or FOK order
+        3. To cancel IOC or FOK order
+
+        Note: rule provided by ExactPro
+        Also have add_OrderCancelReplaceRequest and add_OrderCancelReplaceRequest_ExecutionReport.
+        Difference for IOC, FOK orders: trade:false, add_OCRR: ER Canceled, add_OrderCancelReplaceRequest_ExecutionReport: ER Replaced, ER Canceled
+        add_OrderCancelReplaceRequest used for Redburn, Kepler tests
+       """
         return self.sim.createQuodOCRRRule(request=
                                            TemplateQuodOCRRRule(connection_id=
                                                                 ConnectionID(session_alias=session),
@@ -566,6 +611,19 @@ class RuleManager:
                                                     ))
 
     def add_NewOrdSingle_MarketAuction(self, session: str, account: str, venue: str):
+        """
+        Triggered on Message: NewOrdSingle
+        supported TimeInForce: AtTheOpen, AtTheClose
+        by parameters: Account, ExDestination
+
+        Result Message: ExecutionReport PendingNew, ExecutionReport New
+
+        Description: Send 2 execution reports on message 35=D if TIF == AtTheOpen or AtTheClose and OrderType=MKT
+        Use cases: Used for RB Market Auction tests.
+
+        Note: Market child orders doesn't executed during the Auction. Because of that default rule for the MarketOrders couldn't be use for the Auction.
+        OrderType=MKT
+       """
         return self.sim.createNewOrdSingleMarketAuction(
             request=TemplateNewOrdSingleMarketAuction(connection_id=ConnectionID(session_alias=session),
                                                       account=account,
@@ -633,6 +691,18 @@ class RuleManager:
                                                              price: float,
                                                              traded_price: float, qty: int, traded_qty: int,
                                                              delay: int = 0):
+        """
+        Triggered on Message: NewOrdSingle
+        supported TimeInForce: all except IOC, FOK
+        by parameters: Account, ExDestination, Price, OrderQty
+
+        Result Message: ExecutionReport  Fill or ExecutionReport  PartialFill
+        with params: TradedPrice, TradedQty, RBCustom parameters (tag 8016, 20010-20021)
+
+        Description: Send Execution report Fill on every 35=D  on OrderQty which we determine in TradedQty parameter with RBCustom parameters (tag 20010-20021) if TIF != IOC or FOK
+        Use cases: used for the REDBURN case
+
+       """
         return self.sim.createNewOrdSingleExecutionReportTradeByOrdQtyRBCustom(
             request=TemplateNewOrdSingleExecutionReportTradeByOrdQtyRBCustom(connection_id=ConnectionID(session_alias=session),
                                                                      account=account,
@@ -676,6 +746,17 @@ class RuleManager:
                                             ))
 
     def add_NewOrdSingleExecutionReportTradeOnFullQty(self, session: str, account: str, venue: str, delay: int = 0):
+        """
+        Triggered on Message: NewOrdSingle
+        supported TimeInForce: all except IOC, FOK
+        by parameters: Account, ExDestination
+
+        Result Message: ExecutionReport Trade
+
+        Description: Answer with ER Trade on the NewOrderSingle with any TIF exclude IOC and FOK without price or order type  restriction.
+
+        Use cases: Very useful when we need to trade many orders on. We don't need to create many rules with the price restriction
+       """
         return self.sim.createNewOrdSingleTradeOnFullQty(
             request=TemplateNewOrdSingleTradeOnFullQty(connection_id=ConnectionID(session_alias=session),
                                                              account=account,
@@ -683,6 +764,20 @@ class RuleManager:
                                                              delay=delay))
 
     def add_NewOrdSingleExecutionReportAll(self, session: str, account: str, venue: str, delay: int = 0):
+        """
+        Triggered on Message: NewOrdSingle
+        supported TimeInForce: all except IOC, FOK
+        by parameters: Account, ExDestination
+
+        Result Message: ExecutionReport PendingNew, ExecutionReport New
+
+        Description: Answer with ER PendingNew/New on the NewOrderSingle with any TIF exclude IOC and FOK without price or order type  restriction.
+
+        Use cases: Very useful when we need to check many orders on which we both ER. We don't need to create many rules with the  price restriction
+
+        Note: OrderType= LMT or MKT
+        Also have add_NewOrdSingleExecutionReportPendingAndNew, but it contains restrictions
+       """
         return self.sim.createNewOrdSingleExecutionReportAll(
             request=TemplateNewOrdSingleExecutionReportAll(connection_id=ConnectionID(session_alias=session),
                                                        account=account,
@@ -690,6 +785,20 @@ class RuleManager:
                                                        delay=delay))
 
     def add_NewOrdSingleExecutionReportIOCAll(self, session: str, account: str, venue: str, delay: int = 0):
+        """
+        Triggered on Message: NewOrdSingle
+        supported TimeInForce: IOC
+        by parameters: Account, ExDestination,
+
+        Result Message: ExecutionReport PendingNew, ExecutionReport New
+
+        Description: Answer with ER PendingNew/New on the NewOrderSingle with TIF = IOC with out price or order type restriction.
+
+        Use cases: Very useful when we need to check many IOC orders on which we both ER. We don't need create many rules with the  price restriction
+
+        Note: OrderType= LMT or MKT
+        Also have add_NewOrdSingle_IOC, but it contains restrictions
+       """
         return self.sim.createNewOrdSingleExecutionReportIOCAll(
             request=TemplateNewOrdSingleExecutionReportIOCAll(connection_id=ConnectionID(session_alias=session),
                                                        account=account,
