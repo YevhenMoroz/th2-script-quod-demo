@@ -68,6 +68,7 @@ class QAP_T2450(TestCase):
         # endregion
         # region Step 2
         notes = check_ah_decision(ord_id)
+        self.verifier.set_parent_id(self.test_id)
         self.verifier.set_event_name("Check AH decision")
         self.verifier.compare_values("Free notes", self.expected_notes, notes)
         self.verifier.verify()

@@ -44,6 +44,7 @@ class QAP_T2469(TestCase):
             "Symbol": self.usd_php
         }
         self.qty = "20000000"
+        self.ah_qty = "15000000"
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -66,8 +67,8 @@ class QAP_T2469(TestCase):
         ord_id = self.trade_request.get_ah_ord_id(response)
         self.ah_order.set_default_sor_from_trade(self.trade_request)
         self.ah_order.change_parameters({"ClOrdID": ord_id, "Account": self.client_int, "Currency": self.currency,
-                                         "SettlDate": self.settle_date})
-        self.ah_order.remove_parameters(["Misc0", "StrategyName"])
+                                         "SettlDate": self.settle_date, "OrderQty": self.ah_qty})
+        self.ah_order.remove_parameters(["Misc0", ])
         self.sleep(5)
         self.fix_drop_copy_verifier.check_fix_message(self.ah_order, message_name="Check AutoHedger Order",
                                                       key_parameters=["ClOrdID"])
@@ -92,6 +93,7 @@ class QAP_T2469(TestCase):
         # endregion
         # region Step 5
         self.ah_order.change_parameter("ClOrdID", "*")
+        self.ah_order.change_parameter("OrderQty", self.ah_qty)
         self.fix_drop_copy_verifier.check_fix_message(self.ah_order, key_parameters=["OrderQty", "Account"],
                                                       message_name="Check New AutoHedger Order")
         # endregion
