@@ -154,6 +154,7 @@ class QAP_T2844(TestCase):
         self.execution_report.set_params_from_new_order_single(self.new_order_single, status=self.status,
                                                                text=f"order price is not ranging in [{range_bellow}, "
                                                                     f"{range_above}]")
+        self.execution_report.add_tag({"Misc6": "SORS"})
         self.fix_verifier_dc.check_fix_message(self.execution_report,
                                                ignored_fields=["header", "trailer", "GatingRuleCondName",
                                                                "GatingRuleName"])
