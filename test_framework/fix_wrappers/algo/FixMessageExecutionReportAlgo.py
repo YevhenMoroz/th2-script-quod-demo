@@ -1274,6 +1274,7 @@ class FixMessageExecutionReportAlgo(FixMessageExecutionReport):
             "IClOrdIdTO": "*",
             "ChildOrderID": "*",
             "OrigClOrdID": "*",
+            "OrderQty": nos_rfq.get_parameter("OrderQty")
         }
         super().change_parameters(temp)
         return self
