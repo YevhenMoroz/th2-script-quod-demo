@@ -172,7 +172,7 @@ class TradeEntryRequestFX(JavaApiMessage):
             if msg.get_message_type() == ORSMessageType.ExecutionReport.value:
                 if msg.get_parameters()["ExecutionReportBlock"]["AccountGroupID"] == self.get_client():
                     if msg.get_parameters()["ExecutionReportBlock"]["ExecID"].endswith("1"):
-                        return msg.get_parameters()["ExecutionReportBlock"]["CreationTime"]
+                        return msg.get_parameters()["ExecutionReportBlock"]["TransactTime"]
 
     def get_venue_exec_id(self):
         return self.get_parameters()["TradeEntryRequestBlock"]["VenueExecID"]
