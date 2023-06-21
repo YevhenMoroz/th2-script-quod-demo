@@ -125,6 +125,29 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
+    def set_TWAP_Intraday_auction_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            'Account': self.get_data_set().get_account_by_name('account_1'),
+            'ClOrdID': basic_custom_actions.client_orderid(9),
+            "HandlInst": "2",
+            "Side": "1",
+            "OrderQty": "1000",
+            "TimeInForce": "0",
+            "OrdType": "2",
+            "TransactTime": datetime.utcnow().isoformat(),
+            "OrderCapacity": "A",
+            "Price": "20",
+            'ExDestination': self.get_data_set().get_mic_by_name('mic_1'),
+            "Currency": self.get_data_set().get_currency_by_name('currency_1'),
+            'Instrument': self.get_data_set().get_fix_instrument_by_name("instrument_1"),
+            "TargetStrategy": "1005",
+            'QuodFlatParameters': {
+                "ParticipateInIntradayAuctions": "Y",
+            }
+        }
+        super().change_parameters(base_parameters)
+        return self
+
     def set_VWAP_auction_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             'Account': self.get_data_set().get_account_by_name('account_1'),
@@ -770,6 +793,32 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'TargetStrategy': '1004',
             "DisplayInstruction": {
                 'DisplayQty': '15000'
+            }
+        }
+        super().change_parameters(base_parameters)
+        return self
+
+    def set_Native_Iceberg_with_Peg_params(self):
+        base_parameters = {
+            'Account': "CLIENT1",
+            'ClOrdID': '*',
+            'HandlInst': "2",
+            'Side': '1',
+            'OrderQty': '30000',
+            'TimeInForce': "0",
+            'Price': "20",
+            'OrdType': "2",
+            'TransactTime': datetime.utcnow().isoformat(),
+            'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_2'),
+            'OrderCapacity': 'A',
+            'Currency': 'EUR',
+            "DisplayInstruction": {
+                'DisplayQty': '15000'
+            },
+            'PegInstructions': {
+                'PegOffsetValue': '0.2',
+                'PegPriceType': '1',
+                'PegOffsetType': '0'
             }
         }
         super().change_parameters(base_parameters)
@@ -1606,7 +1655,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'TargetStrategy': '1008',
             'ClientAlgoPolicyID': 'QA_Auto_SORPING_Spray_1',
             'PegInstructions': {
-                'PegOffsetValue': '0',
+                'PegOffsetValue': '0.2',
                 'PegPriceType': '1',
                 'PegOffsetType': '0',
             }

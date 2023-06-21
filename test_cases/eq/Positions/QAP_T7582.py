@@ -117,7 +117,6 @@ class QAP_T7582(TestCase):
 
         # region step 5: Check CumSellQty of security account
         decreased_qty = str(float(self.qty_of_second_order) - float(new_qty))
-
         cum_sell_qty_before = result_of_position_for_security_account[JavaApiFields.CumSellQty.value]
         cum_sell_qty_after = security_account_posit_request[JavaApiFields.CumSellQty.value]
         self.ja_manager.compare_values({'DecreasingQty': decreased_qty},
@@ -129,14 +128,14 @@ class QAP_T7582(TestCase):
         # region step 6: Check CumBuyQty and BuyAvgPx of washbook
         posit_qty = wash_book_posit_request[JavaApiFields.PositQty.value]
         buy_avg_px_before = result_of_position_for_washbook[JavaApiFields.BuyAvgPx.value]
-        buy_avg_px_expected = PositionCalculationManager.calculate_buy_avg_px(posit_qty, new_qty,
+        buy_avg_px_expected = PositionCalculationManager.calculate_buy_avg_px_execution_buy_side(posit_qty, new_qty,
                                                                               self.price_for_amend_house_fill,
                                                                               buy_avg_px_before)
         buy_avg_px_actually = wash_book_posit_request[JavaApiFields.BuyAvgPx.value]
         cum_buy_qty_before = result_of_position_for_washbook[JavaApiFields.CumBuyQty.value]
         cum_buy_qty_after = wash_book_posit_request[JavaApiFields.CumBuyQty.value]
         buy_avg_px_actually = str(round(float(buy_avg_px_actually), 3))
-        buy_avg_px_expected = str(round(float(buy_avg_px_actually), 3))
+        buy_avg_px_expected = str(round(float(buy_avg_px_expected), 3))
         self.ja_manager.compare_values({'DecreasingQty': decreased_qty,
                                         JavaApiFields.BuyAvgPx.value: buy_avg_px_expected},
                                        {'DecreasingQty': str((float(cum_buy_qty_before) - float(cum_buy_qty_after))),

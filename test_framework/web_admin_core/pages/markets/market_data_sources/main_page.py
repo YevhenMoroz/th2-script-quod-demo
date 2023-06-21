@@ -80,3 +80,6 @@ class MarketDataSourcesPage(CommonPage):
 
     def get_md_source(self):
         return self.find_by_xpath(MarketDataSourcesConstants.MAIN_PAGE_MDSOURCE_XPATH).text
+
+    def is_market_data_source_entity_displayed(self):
+        return self.is_element_present(MarketDataSourcesConstants.MORE_ACTIONS_BUTTON_XPATH)

@@ -19,19 +19,22 @@ from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTes
 
 class QAP_T3496(CommonTestCase):
 
-    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None):
+    def __init__(self, web_driver_container: WebDriverContainer, second_lvl_id, data_set=None, environment=None,
+                 db_manager=None):
         super().__init__(web_driver_container, self.__class__.__name__, second_lvl_id, data_set=data_set,
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
+
+        self.db_manager = db_manager
 
         self.name = self.__class__.__name__
         self.client_cash_account_id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.venue_cash_account_id = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.currency = 'EUR'
         self.client = ''
-        self.enable_message = f"Cash Position {self.name} Disabled"
-        self.disable_message = f"Cash Position {self.name} Enabled"
+        self.enable_message = f"Cash Position {self.name} Enabled"
+        self.disable_message = f"Cash Position {self.name} Disabled"
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
@@ -62,6 +65,7 @@ class QAP_T3496(CommonTestCase):
                                       f"bookedamt = '0' WHERE cashaccountname = '{self.name}'")
 
         common_act.refresh_page(True)
+        time.sleep(1)
         cash_positions_page.set_name(self.name)
         time.sleep(1)
 
@@ -76,13 +80,13 @@ class QAP_T3496(CommonTestCase):
             cash_positions_page.click_on_enable_disable_button()
             cash_positions_page.click_on_ok_button()
             time.sleep(1)
-            self.verify("Entity disabled", self.disable_message, common_act.get_error_pop_up_text())
+            self.verify("Entity disabled", self.disable_message, common_act.get_info_pop_up_text())
 
             common_act.click_on_info_error_message_pop_up()
             cash_positions_page.click_on_enable_disable_button()
             cash_positions_page.click_on_ok_button()
             time.sleep(1)
-            self.verify("Entity enabled", self.enable_message, common_act.get_error_pop_up_text())
+            self.verify("Entity enabled", self.enable_message, common_act.get_info_pop_up_text())
 
         except Exception:
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,

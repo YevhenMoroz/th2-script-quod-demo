@@ -456,6 +456,7 @@ class JavaApiFields(Enum):
     CDOrdFreeNotes = 'CDOrdFreeNotes'
     VenueClientActGrpName = 'VenueClientActGrpName'
     IsLocked = 'IsLocked'
+    SourceAccountID = 'SourceAccountID'
     Currency = "Currency"
     FreeNotes = 'FreeNotes'
     Price = 'Price'

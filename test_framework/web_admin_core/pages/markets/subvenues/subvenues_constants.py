@@ -61,11 +61,11 @@ class SubVenuesConstants:
     DETAILS_TAB_MANAGE_TICK_SIZE_PROFILE_XPATH = '//*[@class="expanded"]//nb-accordion-item-body//form//div[2]//div[4]//button'
 
     # Price limit profile manage sub wizard
-    PRICE_LIMIT_PROFILE_TAB_PLUS_BUTTON_XPATH = '//*[@class="nb-plus ng2-add-btn"]'
-    PRICE_LIMIT_PROFILE_TAB_CHECKMARK_BUTTON_XPATH = '//*[@class="nb-checkmark"]'
-    PRICE_LIMIT_PROFILE_TAB_CLOSE_BUTTON_XPATH = '//*[@class="nb-close ng2-cancel-btn"]'
-    PRICE_LIMIT_PROFILE_TAB_EDIT_BUTTON_XPATH = '//*[@class="nb-edit ng2-edit-btn"]'
-    PRICE_LIMIT_PROFILE_TAB_DELETE_BUTTON_XPATH = '//*[@class="nb-trash"]'
+    PRICE_LIMIT_PROFILE_TAB_PLUS_BUTTON_XPATH = '//*[@name="priceLimitProfile"]//button[contains(@class,"add-button")]'
+    PRICE_LIMIT_PROFILE_TAB_CHECKMARK_BUTTON_XPATH = '//*[@name="priceLimitProfile"]//*[@data-name="checkmark"]'
+    PRICE_LIMIT_PROFILE_TAB_CLOSE_BUTTON_XPATH = '//*[@name="priceLimitProfile"]//*[@data-name="close"]'
+    PRICE_LIMIT_PROFILE_TAB_EDIT_BUTTON_XPATH = '//*[@name="priceLimitProfile"]//*[@data-name="edit"]'
+    PRICE_LIMIT_PROFILE_TAB_DELETE_BUTTON_XPATH = '//*[@name="priceLimitProfile"]//*[@data-name="trash-2"]'
     PRICE_LIMIT_PROFILE_TAB_EXTERNAL_ID_XPATH = '//*[@placeholder="External ID *"]'
     PRICE_LIMIT_PROFILE_TAB_EXTERNAL_ID_FILTER_XPATH = '//*[@class="externalPriceLimitProfileID ng2-smart-th ng-star-inserted"]//input'
     PRICE_LIMIT_PROFILE_TAB_TRADING_REFERENCE_PRICE_TYPE_XPATH = '//*[@placeholder="Trading Reference Price Type *"]'
@@ -75,11 +75,11 @@ class SubVenuesConstants:
     PRICE_LIMIT_PROFILE_TAB_PRICE_LIMIT_FIELD_NAME_XPATH = '//*[@placeholder="Price Limit Field Name"]'
     PRICE_LIMIT_PROFILE_TAB_PRICE_LIMIT_FIELD_NAME_FILTER_XPATH = '//*[@class="ng2-smart-th refPriceFieldName ng-star-inserted"]//input'
 
-    PRICE_LIMIT_POINTS_TAB_PLUS_BUTTON_XPATH = '//*[@class="nb-plus sub-table-action"]'
-    PRICE_LIMIT_POINTS_TAB_CHECKMARK_BUTTON_XPATH = '//*[@class="nb-checkmark"]'
-    PRICE_LIMIT_POINTS_TAB_CLOSE_BUTTON_XPATH = '//*[@class="nb-close"]'
-    PRICE_LIMIT_POINTS_TAB_EDIT_BUTTON_XPATH = '//*[@class="nb-edit sub-table-action"]'
-    PRICE_LIMIT_POINTS_TAB_DELETE_BUTTON_XPATH = '//*[@class="nb-trash sub-table-action"]'
+    PRICE_LIMIT_POINTS_TAB_PLUS_BUTTON_XPATH = '//*[@name="priceLimitPointProfile"]//button[contains(@class,"add-button")]'
+    PRICE_LIMIT_POINTS_TAB_CHECKMARK_BUTTON_XPATH = '//*[@name="priceLimitPointProfile"]//*[@data-name="checkmark"]'
+    PRICE_LIMIT_POINTS_TAB_CLOSE_BUTTON_XPATH = '//*[@name="priceLimitPointProfile"]//*[@data-name="close"]'
+    PRICE_LIMIT_POINTS_TAB_EDIT_BUTTON_XPATH = '//*[@name="priceLimitPointProfile"]//*[@data-name="edit"]'
+    PRICE_LIMIT_POINTS_TAB_DELETE_BUTTON_XPATH = '//*[@name="priceLimitPointProfile"]//*[@data-name="trash-2"]'
 
     PRICE_LIMIT_POINTS_TAB_LIMIT_PRICE_XPATH = '//*[@placeholder="Limit Price *"]'
     PRICE_LIMIT_POINTS_TAB_LIMIT_PRICE_FILTER_XPATH = '//*[@class="limitPrice ng2-smart-th ng-star-inserted"]//input'

@@ -53,7 +53,7 @@ class QAP_T4305(TestCase):
         price = self.order_submit.get_parameter("NewOrderSingleBlock")["Price"]
         param = self.modify_rule_message.get_parameter("gatingRuleCondition")
         # Set "Not In" to the condition of GatingRule
-        param[0]["gatingRuleCondExp"] = "VenueID NOT IN(CHIX)"
+        param[0]["gatingRuleCondExp"] = "TimeInForce NOT IN(FillOrKill,GoodTillCancel)"
         set_value_params: dict = {
             "alive": "true",
             "gatingRuleResultIndice": 1,
@@ -61,10 +61,12 @@ class QAP_T4305(TestCase):
             "holdOrder": "true",
             "gatingRuleResultProperty": "APP",
             "gatingRuleResultAction": "VAL",
+            "gatingRuleResultRejectType": "HRD",
         }
         param[0]["gatingRuleResult"].insert(0, set_value_params)  # Set Action=SetValue to Results
         param[0]["gatingRuleResult"][1]["gatingRuleResultIndice"] = 2
         param[0]["gatingRuleResult"][1]["holdOrder"] = "true"
+        param[0]["gatingRuleResult"][1]["gatingRuleResultRejectType"] = "HRD"
         self.modify_rule_message.update_parameters({"gatingRuleCondition": param})
         self.rest_api_manager.send_post_request(self.modify_rule_message)
         # endregion
@@ -92,8 +94,7 @@ class QAP_T4305(TestCase):
                 JavaApiFields.GatingRuleCondName.value: "All Orders",
                 JavaApiFields.GatingRuleID.value: self.data_set.get_venue_gating_rule_id_by_name("main_rule_id"),
                 JavaApiFields.OrdStatus.value: "HLD",
-                JavaApiFields.OrdQty.value: "200.0",
-                JavaApiFields.ExecutionPolicy.value: "D",
+                JavaApiFields.TimeInForce.value: "DAY",
             },
             order_notification,
             "Step 2 - Check that the Gating rule with 'Not In' condition is applied to the order",

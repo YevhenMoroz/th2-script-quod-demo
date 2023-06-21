@@ -30,7 +30,7 @@ class QAP_T4005(CommonTestCase):
         login_page.click_login_button()
         time.sleep(2)
         side_menu = SideMenu(self.web_driver_container)
-        side_menu.click_on_execution_strategies_when_order_management_tab_is_open()
+        side_menu.click_on_execution_strategies_tab()
         side_menu.wait_for_button_to_become_active()
         main_menu = ExecutionStrategiesPage(self.web_driver_container)
         main_menu.click_on_new_button()

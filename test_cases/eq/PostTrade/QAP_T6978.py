@@ -1,10 +1,6 @@
 import logging
-import os
 import time
-import xml.etree.ElementTree as ET
 from pathlib import Path
-
-from pkg_resources import resource_filename
 
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
@@ -27,7 +23,6 @@ from test_framework.java_api_wrappers.ors_messages.BlockChangeConfirmationServic
     BlockChangeConfirmationServiceRequest
 from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
 from test_framework.rest_api_wrappers.oms.RestApiModifyInstitutionMessage import RestApiModifyInstitutionMessage
-from test_framework.ssh_wrappers.ssh_client import SshClient
 from test_framework.win_gui_wrappers.oms.oms_client_inbox import OMSClientInbox
 
 logger = logging.getLogger(__name__)
@@ -57,12 +52,6 @@ class QAP_T6978(TestCase):
         self.fix_verifier = FixVerifier(self.fix_env.drop_copy, self.test_id)
         self.execution_report = FixMessageExecutionReportOMS(self.data_set)
         self.rule_manager = RuleManager(Simulators.equity)
-        self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
-        self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
-                                    self.ssh_client_env.password, self.ssh_client_env.su_user,
-                                    self.ssh_client_env.su_password)
-        self.local_path = resource_filename("test_resources.be_configs.oms_be_configs", "client_ors.xml")
-        self.remote_path = f"/home/{self.ssh_client_env.su_user}/quod/cfg/client_ors.xml"
         self.wa_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
         self.api_manager = RestApiManager(self.wa_connectivity, self.test_id)
         self.java_api = self.environment.get_list_java_api_environment()[0].java_api_conn

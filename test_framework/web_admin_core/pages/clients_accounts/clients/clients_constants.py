@@ -6,6 +6,7 @@ class ClientsConstants:
 
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@nbtooltip = 'Download PDF']//*[@data-name='download']"
+    DOWNLOAD_CSV_BUTTON = '//nb-card-header//*[@data-name="download"]'
     SAVE_CHANGES_BUTTON_XPATH = "//*[contains(text(), 'Save Changes')]"
     CLEAR_CHANGES_BUTTON_XPATH = "//*[text()='Clear Changes']"
     CLOSE_WIZARD_XPATH = "//*[@data-name='close']"
@@ -31,6 +32,9 @@ class ClientsConstants:
     FOOTER_WARNING_XPATH = '//nb-card-footer//nb-alert[@outline="danger"]'
     DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span | //nb-option'
     CHECKBOX_DROP_DOWN_MENU = '//p-multiselectitem//li[@style="display: block;"]//span[@id]'
+    CANCEL_BUTTON = '//button[normalize-space()="Cancel"]'
+    NO_BUTTON = '//button[normalize-space()="No"]'
+    OK_BUTTON = '//button[normalize-space()="OK"]'
 
     # main page
     MAIN_PAGE_GLOBAL_FILTER_XPATH = '//*[@class="left ng-star-inserted"]//input'
@@ -184,7 +188,7 @@ class ClientsConstants:
     VENUES_TAB_DEFAULT_ROUTE_FILTER_XPATH = '(//nb-accordion-item-header[normalize-space()="Venues"]//..//thead//input)[4]'
     VENUES_TAB_ROUTING_PARAM_GROUP_XPATH = '//*[@placeholder="Routing Param Group"]'
     VENUES_TAB_ROUTING_PARAM_GROUP_FILTER_XPATH = '(//nb-accordion-item-header[normalize-space()="Venues"]//..//thead//input)[5]'
-    VENUES_TAB_MAX_COMMISSION_TYPE_XPATH = '//*[@placeholder="Max Commission Type"]'
+    VENUES_TAB_MAX_COMMISSION_TYPE_XPATH = '//*[@id="maxCommType"]'
     VENUES_TAB_MAX_COMMISSION_TYPE_FILTER_XPATH = '(//nb-accordion-item-header[normalize-space()="Venues"]//..//thead//input)[6]'
     VENUES_TAB_MAX_COMMISSION_VALUE_XPATH = '//*[@placeholder="Max Commission Value"]'
     VENUES_TAB_MAX_COMMISSION_VALUE_FILTER_XPATH = '(//nb-accordion-item-header[normalize-space()="Venues"]//..//thead//input)[7]'

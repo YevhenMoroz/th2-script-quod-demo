@@ -116,7 +116,7 @@ class QAP_T7105(TestCase):
         ord_update_message = self.java_api_manager.get_last_message(ORSMessageType.OrdUpdate.value).get_parameters()[
             JavaApiFields.OrdUpdateBlock.value]
         allocation_report = \
-            self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+            self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value, JavaApiFields.BookingAllocInstructionID.value).get_parameters()[
                 JavaApiFields.AllocationReportBlock.value]
         actually_result = {JavaApiFields.PostTradeStatus.value: ord_update_message[JavaApiFields.PostTradeStatus.value],
                            JavaApiFields.DoneForDay.value: ord_update_message[JavaApiFields.DoneForDay.value],

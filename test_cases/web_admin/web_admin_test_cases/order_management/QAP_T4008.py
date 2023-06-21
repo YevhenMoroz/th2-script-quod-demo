@@ -33,7 +33,7 @@ class QAP_T4008(CommonTestCase):
         side_menu = SideMenu(self.web_driver_container)
 
         login_page.login_to_web_admin(self.login, self.password)
-        side_menu.click_on_order_management_rules_when_order_management_tab_is_open()
+        side_menu.click_on_order_management_rules_tab()
 
     def test_context(self):
         page = MainPage(self.web_driver_container)
