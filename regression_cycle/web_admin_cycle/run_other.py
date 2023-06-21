@@ -25,8 +25,8 @@ from test_cases.web_admin.web_admin_test_cases.others.QAP_T8930 import QAP_T8930
 
 
 class RunOthers:
-    def __init__(self, root_report_id):
-        self.second_lvl_id = bca.create_event("WA_Others", root_report_id)
+    def __init__(self, root_report_id, version):
+        self.second_lvl_id = bca.create_event(f"WA_Others | {version}", root_report_id)
         self.web_driver_container = None
 
     def execute(self):

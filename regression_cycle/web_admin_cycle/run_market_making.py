@@ -66,8 +66,8 @@ from test_cases.web_admin.web_admin_test_cases.market_making.QAP_T10608 import Q
 
 
 class RunMarketMaking:
-    def __init__(self, root_report_id):
-        self.second_lvl_id = bca.create_event("WA_Market_Making", root_report_id)
+    def __init__(self, root_report_id, version=None):
+        self.second_lvl_id = bca.create_event(f"WA_Market_Making | {version}", root_report_id)
         self.web_driver_container = None
 
     def execute(self):

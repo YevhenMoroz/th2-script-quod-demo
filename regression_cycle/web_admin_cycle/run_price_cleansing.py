@@ -25,8 +25,8 @@ from custom import basic_custom_actions as bca
 
 
 class RunPriceCleansing:
-    def __init__(self, root_report_id):
-        self.second_lvl_id = bca.create_event("WA_Price_Cleansing", root_report_id)
+    def __init__(self, root_report_id, version):
+        self.second_lvl_id = bca.create_event(f"WA_Price_Cleansing | {version}", root_report_id)
         self.web_driver_container = None
 
     def execute(self):
