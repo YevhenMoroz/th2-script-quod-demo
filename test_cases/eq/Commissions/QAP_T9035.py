@@ -85,8 +85,8 @@ class QAP_T9035(TestCase):
         tree.write("temp.xml")
         self.ssh_client.send_command("~/quod/script/site_scripts/change_permission_script")
         self.ssh_client.put_file(self.remote_path, "temp.xml")
-        self.ssh_client.send_command("qrestart QUOD.CS QUOD.ESBUYTH2TEST, QUOD.ORS")
-        time.sleep(90)
+        self.ssh_client.send_command("qrestart QUOD.ESBUYTH2TEST")
+        time.sleep(40)
         # end_of_part
         # endregion
 
@@ -132,11 +132,13 @@ class QAP_T9035(TestCase):
                                                              JavaApiFields.OrdQty.value: self.qty
                                                          })
         self.java_api_manager.send_message_and_receive_response(self.execution_report)
-        exec_price = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value, ExecutionReportConst.ExecType_TRD.value).get_parameters()[JavaApiFields.ExecutionReportBlock.value][JavaApiFields.ExecPrice.value]
+        exec_price = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value,
+                                                            ExecutionReportConst.ExecType_TRD.value).get_parameters()[
+            JavaApiFields.ExecutionReportBlock.value][JavaApiFields.ExecPrice.value]
         fee_amt = str(float(exec_price) * (0.5 / 10000) * float(self.qty))
         list_ignored_fields = ['GatingRuleName', 'GatingRuleCondName',
                                'SettlCurrency', 'Currency', 'LastMkt',
-                               'CommissionData']
+                               'CommissionData', 'SecondaryOrderID']
         execution_report = FixMessageExecutionReportOMS(self.data_set)
         execution_report.set_default_filled(self.fix_message)
         execution_report.change_parameters({
@@ -149,7 +151,7 @@ class QAP_T9035(TestCase):
     def run_post_conditions(self):
         self.rest_commission_sender.clear_fees()
         self.ssh_client.put_file(self.remote_path, self.local_path)
-        self.ssh_client.send_command("qrestart QUOD.CS QUOD.ESBUYTH2TEST, QUOD.ORS")
-        time.sleep(90)
+        self.ssh_client.send_command("qrestart  QUOD.ESBUYTH2TEST")
+        time.sleep(40)
         os.remove("temp.xml")
         self.ssh_client.close()
