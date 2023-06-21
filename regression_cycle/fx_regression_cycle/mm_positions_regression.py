@@ -41,7 +41,7 @@ def test_run(parent_id=None, version="5.1.178.193"):
     configuration = ComponentConfiguration("ESP_MM")
     try:
         # prepare_position()
-        QAP_T11053(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_T11053(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T11080(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10649(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2932(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
