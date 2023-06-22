@@ -402,6 +402,7 @@ class JavaApiFields(Enum):
     LastPx = 'LastPx'
     LastTradedQty = 'LastTradedQty'
     SingleAllocClientAccountID = 'SingleAllocClientAccountID'
+    AllocClientAccountID = 'AllocClientAccountID'
     ComputeBookingFeesCommissionsReplyBlock = 'ComputeBookingFeesCommissionsReplyBlock'
     RootMiscFeeBasis = 'RootMiscFeeBasis'
     RootMiscFeeRate = 'RootMiscFeeRate'

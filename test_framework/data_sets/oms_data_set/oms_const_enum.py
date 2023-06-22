@@ -263,6 +263,7 @@ class OmsAccounts(Enum):
     client_com_2_acc_2 = "CLIENT_COMM_2_SA2"
     client_com_2_acc_3 = "CLIENT_COMM_2_SA3"
     client_rest_api_acc_1 = 'CLIENT_REST_API_ACC_1'
+    client_rest_api_acc_2 = 'CLIENT_REST_API_SA2'
     client_fees_1_acc_1 = "CLIENT_FEES_1_SA1"
     """Counterparts"""
     client_counterpart_1_acc_1 = "CLIENT_COUNTERPART_SA1"
@@ -341,6 +342,8 @@ class OmsVenueClientAccounts(Enum):
     client_pt_1_acc_1_venue_client_account = 'MOCLIENT_SA1'
     client_pt_1_acc_2_venue_client_account = 'MOCLIENT_SA2'
     client_pt_1_acc_3_venue_client_account = "11223344"
+    client_rest_api_acc_1_venue_client_account = "CLIENT_REST_API_ACC1"
+    client_rest_api_acc_2_venue_client_account = "CLIENT_REST_API_SA222"
 
 
 class OMSCommissionProfiles(Enum):
