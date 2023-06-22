@@ -205,6 +205,7 @@ class ClientAlgoPolicy(Enum):
     qa_mpdark_14 = "QA_Auto_MPDark14"
     qa_mpdark_15 = "QA_Auto_MPDark15"
     qa_mpdark_16 = "QA_Auto_MPDark16"
+    qa_mpdark_spray_av = "QA_Auto_DarkPool_Spray_AV"
     qa_mpdark_rr_1 = "QA_Auto_MPDark_RR_1"
     qa_mpdark_rr_2 = "QA_Auto_MPDark_RR_2"
     qa_mpdark_rr_3 = "QA_Auto_MPDark_RR_3"
