@@ -34,8 +34,8 @@ class InstitutionsConstants:
 
     # Main page
 
-    MAIN_PAGE_INSTITUTION_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
-    MAIN_PAGE_LEI_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[2]//input'
+    MAIN_PAGE_INSTITUTION_NAME_FILTER_XPATH = '//*[@col-id="institutionName"]//following::input[@ref="eFloatingFilterText"][1]'
+    MAIN_PAGE_LEI_FILTER_XPATH = '//*[@col-id="institutionLEI"]//following::input[@ref="eFloatingFilterText"][2]'
     MAIN_PAGE_CTM_BIC_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[3]//input'
     MAIN_PAGE_COUNTERPART_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[4]//input'
     MAIN_PAGE_ENABLED_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[5]//select'

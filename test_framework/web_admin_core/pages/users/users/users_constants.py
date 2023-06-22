@@ -29,11 +29,11 @@ class UsersConstants:
     LOAD_BUTTON = '//nb-card-header//form//button'
 
     # filters
-    USER_ID_FILTER_AT_MAIN_PAGE = "//ag-grid-angular/div/div[1]/div/div[1]/div[2]/div/div[2]/div[1]/div[1]/div/input"
-    FIRST_NAME_FILTER_AT_MAIN_PAGE = "//ag-grid-angular/div/div[1]/div/div[1]/div[2]/div/div[2]/div[2]/div[1]/div/input"
-    LAST_NAME_FILTER_AT_MAIN_PAGE = "//ag-grid-angular/div/div[1]/div/div[1]/div[2]/div/div[2]/div[3]/div[1]/div/input"
-    EXT_ID_CLIENT_FILTER_AT_MAIN_PAGE = "//ag-grid-angular/div/div[1]/div/div[1]/div[2]/div/div[2]/div[4]/div[1]/div/input"
-    EXT_ID_VENUE_FILTER_AT_MAIN_PAGE = "//ag-grid-angular/div/div[1]/div/div[1]/div[2]/div/div[2]/div[5]/div[1]/div/input"
+    USER_ID_FILTER_AT_MAIN_PAGE = '//*[@col-id="userID"]//following::input[@ref="eFloatingFilterText"][1]'
+    FIRST_NAME_FILTER_AT_MAIN_PAGE = '//*[@col-id="firstName"]//following::input[@ref="eFloatingFilterText"][2]'
+    LAST_NAME_FILTER_AT_MAIN_PAGE = '//*[@col-id="lastName"]//following::input[@ref="eFloatingFilterText"][3]'
+    EXT_ID_CLIENT_FILTER_AT_MAIN_PAGE = '//*[@col-id="clientUserID"]//following::input[@ref="eFloatingFilterText"][4]'
+    EXT_ID_VENUE_FILTER_AT_MAIN_PAGE = '//*[@col-id="venueUserID"]//following::input[@ref="eFloatingFilterText"][5]'
     PASSWORD_EXPIRY_DATE_FILTER_AT_MAIN_PAGE = "//ag-grid-angular/div/div[1]/div/div[1]/div[2]/div/div[2]/div[6]/div[1]/div/div/div/input"
     FIRST_LOGIN_FILTER_AT_MAIN_PAGE = "//ag-grid-angular/div/div[1]/div/div[1]/div[2]/div/div[2]/div[7]/div[1]/ng-component/select"
     PING_FILTER_AT_MAIN_PAGE = "//ag-grid-angular/div/div[1]/div/div[1]/div[2]/div/div[2]/div[2]/div[1]/ng-component/select"
@@ -45,7 +45,7 @@ class UsersConstants:
     EMAIL_FILTER_AT_MAIN_PAGE = '//ag-grid-angular/div/div[1]/div/div[1]/div[2]/div/div[2]/div[8]/div[1]/div/input'
     ENABLED_FILTER_AT_MAIN_PAGE = '//ag-grid-angular/div/div[1]/div/div[1]/div[2]/div/div[2]/div[7]/div[1]/ng-component/select'
     LOCKED_FILTER_AT_MAIN_PAGE = '//ag-grid-angular/div/div[1]/div/div[1]/div[2]/div/div[2]/div[8]/div[1]/ng-component/select'
-    CONNECTED_FILTER_AT_MAIN_PAGE = '(//*[@style="width: 200px; left: 3600px;"])[2]//ng-component'
+    CONNECTED_FILTER_AT_MAIN_PAGE = '//*[@col-id="1"]//following::select[3]'
     HORIZONTAL_SCROLL = "//*[@class='ag-body-horizontal-scroll']"
 
     # values for getters
@@ -83,7 +83,7 @@ class UsersConstants:
     PASSWORD_AT_LOGIN_SUB_WIZARD = '//*[text()="Password *"]/preceding-sibling::input'
     PASSWORD_EXPIRATION_AT_LOGIN_SUB_WIZARD = '//*[text()="Password Expiration"]/preceding-sibling::input'
     COUNTERPART_AT_LOGIN_SUB_WIZARD = '//*[text()="Counterpart"]/preceding-sibling::input'
-    MANAGE_AT_LOGIN_SUB_WIZARD = '//*[text()="Manage"]'
+    MANAGE_AT_LOGIN_SUB_WIZARD = '//button[normalize-space()="Manage"]'
     NON_VISIBLE_POSITION_FLATTENING_PERIODS = '//*[@id="Non-Visible Position Flattening Periods"]//p-multiselect//div'
     CHANGE_PASSWORD_BUTTON_AT_LOGIN_SUB_WIZARD = '//button[normalize-space()="Change Password"]'
     NEW_PASSWORD_AT_LOGIN_SUB_WIZARD = '//*[@formcontrolname="newPassword"]'
@@ -141,11 +141,11 @@ class UsersConstants:
     CLIENT_IN_TABLE_AT_CLIENT_SUB_WIZARD = '//*[normalize-space()="Clients"]//..//tbody//td[2]//span'
 
     # Venue trader
-    PLUS_BUTTON_AT_VENUE_TRADER_SUB_WIZARD = '//*[text()="Manage Trader Groups"]/ancestor::*[@class="expanded"]//*[@data-name="plus"]'
-    CHECKMARK_AT_VENUE_TRADER_SUB_WIZARD = '//*[text()="Manage Trader Groups"]/ancestor::*[@class="expanded"]//*[@data-name="checkmark"]'
-    CANCEL_AT_VENUE_TRADER_SUB_WIZARD = '//*[text()="Manage Trader Groups"]/ancestor::*[@class="expanded"]//*[@data-name="close"]'
-    EDIT_AT_VENUE_TRADER_SUB_WIZARD = '//*[text()="Manage Trader Groups"]/ancestor::*[@class="expanded"]//*[@data-name="edit"]'
-    DELETE_AT_VENUE_TRADER_SUB_WIZARD = '//*[text()="Manage Trader Groups"]/ancestor::*[@class="expanded"]//*[@data-name="trash-2"]'
+    PLUS_BUTTON_AT_VENUE_TRADER_SUB_WIZARD = '//*[normalize-space()="Venue Trader"]//..//button[@nbtooltip="Add"]'
+    CHECKMARK_AT_VENUE_TRADER_SUB_WIZARD = '//*[normalize-space()="Venue Trader"]//..//*[@data-name="checkmark"]'
+    CANCEL_AT_VENUE_TRADER_SUB_WIZARD = '//*[normalize-space()="Venue Trader"]//..//*[@data-name="close"]'
+    EDIT_AT_VENUE_TRADER_SUB_WIZARD = '//*[normalize-space()="Venue Trader"]//..//*[@data-name="edit"]'
+    DELETE_AT_VENUE_TRADER_SUB_WIZARD = '//*[normalize-space()="Venue Trader"]//..//*[@data-name="trash-2"]'
     GO_BACK_BUTTON = '//*[text()="Go Back"]'
     VENUE_AT_VENUE_TRADER_SUB_WIZARD = '//*[@placeholder="Venue *"]'
     VENUE_TRADER_NAME_AT_VENUE_TRADER_SUB_WIZARD = '//*[@placeholder="Venue Trader Name *"]'

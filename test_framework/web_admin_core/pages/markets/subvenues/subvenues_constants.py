@@ -20,7 +20,7 @@ class SubVenuesConstants:
     DISPLAYED_SUBVENUE_XPATH = "//*[text()='{}']"
 
     # Main page
-    MAIN_PAGE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
+    MAIN_PAGE_NAME_FILTER_XPATH = '//*[@col-id="subVenueName"]//following::input[@ref="eFloatingFilterText"][1]'
     MAIN_PAGE_NAME_XPATH = '//*[@col-id="subVenueName"]//span//span[4]'
     MAIN_PAGE_EXT_ID_VENUE_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[2]//input'
     MAIN_PAGE_EXT_ID_VENUE_XPATH = '//*[@col-id="venueSubVenueID"]//span//span[4]'

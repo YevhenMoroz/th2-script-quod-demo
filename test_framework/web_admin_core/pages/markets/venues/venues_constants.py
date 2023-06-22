@@ -25,7 +25,7 @@ class VenuesConstants:
     FOOTER_ERROR_XPATH = '//nb-card-footer//*[@outline="danger"]/div/span'
 
     # --Main page--
-    MAIN_PAGE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
+    MAIN_PAGE_NAME_FILTER_XPATH = '//*[@col-id="venueName"]//following::input[@ref="eFloatingFilterText"][1]'
     MAIN_PAGE_NAME_XPATH = '//*[@col-id="venueName"]//span//span[4]'
     MAIN_PAGE_ID_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[2]//input'
     MAIN_PAGE_ID_XPATH = '//*[@col-id="venueID"]//span//span[4]'
@@ -54,7 +54,7 @@ class VenuesConstants:
     VALUES_TAB_ROUTE_VENUE_ID_XPATH = '//*[@formcontrolname="routeVenueID"]'
     VALUES_TAB_TYPE_XPATH = '//*[@id="venueType"]'
     VALUES_TAB_COUNTERPART_XPATH = '//*[@id="counterpart"]'
-    VALUES_TAB_COUNTERPART_MANAGE_XPATH = '//*[@class="venue-detail-settings"]//nb-accordion//nb-accordion-item[1]//*[text()="Manage"]'
+    VALUES_TAB_COUNTERPART_MANAGE_XPATH = '//*[@class="venue-detail-settings"]//nb-accordion//nb-accordion-item[1]//button[normalize-space()="Manage"]'
     VALUES_TAB_BIC_XPATH = '//*[@formcontrolname="BIC"]'
     VALUES_TAB_MANAGE_MIC_BUTTON_XPATH ='//*[@id="MIC"]//ancestor::div[@class="row"]//button'
     VALUES_TAB_POSITION_FLATTENING_PERIOD_XPATH = '//*[@formcontrolname="venuePosValidity"]//button'

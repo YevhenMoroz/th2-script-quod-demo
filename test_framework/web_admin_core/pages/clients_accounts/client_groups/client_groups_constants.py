@@ -23,10 +23,10 @@ class ClientGroupsConstants:
 
     #   Main page
 
-    MAIN_PAGE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
-    MAIN_PAGE_DESCRIPTION_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[2]//input'
-    MAIN_PAGE_FIX_USER_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[3]//input'
-    MAIN_PAGE_BOOKING_INST_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[4]//input'
+    MAIN_PAGE_NAME_FILTER_XPATH = '//*[@col-id="clientGroupName"]//following::input[@ref="eFloatingFilterText"][1]'
+    MAIN_PAGE_DESCRIPTION_FILTER_XPATH = '//*[@col-id="clientGroupDesc"]//following::input[@ref="eFloatingFilterText"][2]'
+    MAIN_PAGE_FIX_USER_FILTER_XPATH = '//*[@col-id="FIXUserID"]//following::input[@ref="eFloatingFilterText"][3]'
+    MAIN_PAGE_BOOKING_INST_FILTER_XPATH = '//*[@col-id="bookingInst"]//following::input[@ref="eFloatingFilterText"][4]'
     MAIN_PAGE_ALLOCATION_PREFERENCE_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[5]//input'
     MAIN_PAGE_ROUNDING_DIRECTION_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[6]//input'
     MAIN_PAGE_PRICE_PRECISION_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[7]//input'

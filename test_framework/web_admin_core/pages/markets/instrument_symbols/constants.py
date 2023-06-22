@@ -22,7 +22,7 @@ class InstrumentSymbolsConstants:
 
     # Main page
 
-    MAIN_PAGE_INSTR_SYMBOL_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
+    MAIN_PAGE_INSTR_SYMBOL_FILTER_XPATH = '//*[@col-id="instrSymbol"]//following::input[@ref="eFloatingFilterText"][1]'
     MAIN_PAGE_CUM_TRADING_LIMIT_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[2]//input'
     MAIN_PAGE_MD_MAX_SPREAD_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[3]//input'
     MAIN_PAGE_CROSS_THROUGH_USD_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[4]//select'

@@ -117,7 +117,7 @@ class SideMenu(CommonPage):
     def __init__(self, web_driver_container: WebDriverContainer):
         super().__init__(web_driver_container)
 
-    def toggle_container(self, selector: str, expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+    def toggle_container(self, selector: str, expected_state):
         if expected_state == ToggleStateEnum.CLOSED:
             container = self.find_by_css_selector(selector)
             container.click()
@@ -126,8 +126,9 @@ class SideMenu(CommonPage):
         page_item = self.find_by_xpath(page_item_selector)
         page_item.click()
 
-    def open_page(self, page_item_selector: str, container_selector: str,
-                  expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+    def open_page(self, page_item_selector: str, container_selector: str, expected_state):
+        if "true" in self.find_by_css_selector(container_selector).get_attribute("aria-expanded"):
+            expected_state = ToggleStateEnum.OPENED
         self.toggle_container(container_selector, expected_state)
         self.click_menu_item(page_item_selector)
 

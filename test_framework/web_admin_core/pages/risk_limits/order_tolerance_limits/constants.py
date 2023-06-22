@@ -70,7 +70,7 @@ class OrderToleranceLimitsConstants:
     ORDR_TAB_AGGRESSOR_INDICATOR_XPATH = '//*[text()="Aggressor Indicator"]/preceding-sibling::span'
     ORDR_TAB_STATIC_PROFILE_XPATH = '//*[@id="staticPriceCtrlProfile"]'
     ORDR_TAB_DYNAMIC_PROFILE_XPATH = '//*[@id="dynamicPriceCtrlProfile"]'
-    ORDR_TAB_DYNAMIC_PROFILE_MANAGE_BUTTON_XPATH = '//*[text()="Manage"]'
+    ORDR_TAB_DYNAMIC_PROFILE_MANAGE_BUTTON_XPATH = '//button[normalize-space()="Manage"]'
 
     # Manage Dynamic profile sub wizard
 

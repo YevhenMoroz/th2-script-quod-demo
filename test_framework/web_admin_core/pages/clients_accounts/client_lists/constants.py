@@ -23,7 +23,7 @@ class ClientListsConstants:
 
     # Main page
 
-    MAIN_PAGE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
+    MAIN_PAGE_NAME_FILTER_XPATH = '//*[@col-id="clientListName"]//following::input[@ref="eFloatingFilterText"][1]'
     MAIN_PAGE_NAME_XPATH = '//*[@col-id="clientListName"]//span//span[4]'
     MAIN_PAGE_DESCRIPTION_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[2]//input'
     MAIN_PAGE_DESCRIPTION_XPATH = '//*[@col-id="clientListDescription"]//span//span[4]'

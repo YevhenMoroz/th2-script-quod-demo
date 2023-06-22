@@ -38,9 +38,9 @@ class ClientsConstants:
 
     # main page
     MAIN_PAGE_GLOBAL_FILTER_XPATH = '//*[@class="left ng-star-inserted"]//input'
-    MAIN_PAGE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
-    MAIN_PAGE_DESCRIPTION_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[2]//input'
-    MAIN_PAGE_CLEARING_ACCOUNT_TYPE_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[3]//input'
+    MAIN_PAGE_NAME_FILTER_XPATH = '//*[@col-id="accountGroupName"]//following::input[@ref="eFloatingFilterText"][1]'
+    MAIN_PAGE_DESCRIPTION_FILTER_XPATH = '//*[@col-id="accountGroupDesc"]//following::input[@ref="eFloatingFilterText"][2]'
+    MAIN_PAGE_CLEARING_ACCOUNT_TYPE_FILTER_XPATH = '//*[@col-id="clearingAccountType"]//following::input[@ref="eFloatingFilterText"][3]'
     MAIN_PAGE_BOOKING_INS_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[4]//input'
     MAIN_PAGE_ALLOCATION_PREFERENCE_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[5]//input'
     MAIN_PAGE_DISCLOSE_EXEC_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[6]//input'

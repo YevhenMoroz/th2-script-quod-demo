@@ -23,7 +23,7 @@ class SettlementModelsConstants:
     # Main page
     MAIN_PAGE_DESCRIPTION_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
     MAIN_PAGE_DESCRIPTION_XPATH = '//*[@col-id="settlementModelDescription"]//span//span[4]'
-    MAIN_PAGE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[2]//input'
+    MAIN_PAGE_NAME_FILTER_XPATH = '//*[@col-id="settlementModelName"]//following::input[@ref="eFloatingFilterText"][2]'
     MAIN_PAGE_NAME_XPATH = '//*[@col-id="settlementModelName"]//span//span[4]'
     MAIN_PAGE_COUNTRY_CODE_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[3]//input'
     MAIN_PAGE_COUNTRY_CODE_XPATH = '//*[@col-id="countryCode"]//span//span[4]'
@@ -39,7 +39,7 @@ class SettlementModelsConstants:
     VALUES_TAB_SETTL_LOCATION_BIC_XPATH = '//*[@formcontrolname="settlLocationBIC"]'
     VALUES_TAB_INSTR_TYPE_XPATH = '//*[@id="instrType"]'
     VALUES_TAB_COUNTRY_CODE_XPATH = '//*[@id="countryCodeEnumTable"]'
-    VALUES_TAB_SETTL_LOCATION_MANAGE_BUTTON_XPATH = '//*[text()="Manage"]'
+    VALUES_TAB_SETTL_LOCATION_MANAGE_BUTTON_XPATH = '//button[normalize-space()="Manage"]'
 
     # Dimensions tab
     DIMENSIONS_TAB_CLIENT_GROUP_XPATH = '//*[@id="clientGroup"]'

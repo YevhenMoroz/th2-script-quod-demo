@@ -23,11 +23,11 @@ class LocationsConstants:
     INCORRECT_OR_MISSING_VALUES_MESSAGE_XPATH = "//*[text()='Incorrect or missing values']"
     DISPLAYED_ENTITY_XPATH = "//*[text()='{}']"
     ZONES_NAME_COLUMN_XPATH = '//*[@col-id="zone.zoneName"][@tabindex="-1"]//span[@ref="eValue"]'
-    LOCATIONS_NAME_COLUMN_XPATH = '//*[@tabindex="-1"][1]//span[@ref="eValue"]'
+    LOCATIONS_NAME_COLUMN_XPATH = '//*[@col-id="locationName"]//span[@ref="eValue"]'
     DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span'
     CONFIRMATION_POP_UP = '//nb-dialog-container'
 
-    MAIN_PAGE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
+    MAIN_PAGE_NAME_FILTER_XPATH = '//*[@col-id="locationName"]//following::input[@ref="eFloatingFilterText"][1]'
     MAIN_PAGE_ZONE_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[2]//input'
     MAIN_PAGE_ENABLED_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[3]//select'
 

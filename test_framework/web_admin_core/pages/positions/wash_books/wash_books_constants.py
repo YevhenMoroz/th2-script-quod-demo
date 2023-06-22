@@ -60,7 +60,7 @@ class WashBookConstants:
     CLEARING_ACCOUNT_TYPE_AT_VALUES_TAB = '//*[text()="Clearing Account Type"]/preceding-sibling::input'
     CLIENT_ID_SOURCE_AT_VALUES_TAB = '//*[text()="Client ID Source *"]/preceding-sibling::input'
     COUNTERPART_AT_VALUES_TAB = '//*[text()="Counterpart"]/preceding-sibling::input'
-    MANAGE_COUNTERPART_AT_VALUES_TAB = '//*[text()="Manage"]'
+    MANAGE_COUNTERPART_AT_VALUES_TAB = '//button[normalize-space()="Manage"]'
 
     # ---ASSIGNMENTS TAB---
     INSTITUTION_AT_ASSIGNMENT_TAB = '//*[@id="institution"]'

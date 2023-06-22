@@ -30,7 +30,7 @@ class ZonesConstants:
     ENABLE_DISABLE_BUTTON_XPATH = "//div[contains(@class, 'toggle')]"
 
     MAIN_PAGE_DOWNLOAD_CSV_XPATH = "//*[@data-name='download']"
-    MAIN_PAGE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
+    MAIN_PAGE_NAME_FILTER_XPATH = '//*[@col-id="zoneName"]//following::input[@ref="eFloatingFilterText"][1]'
     MAIN_PAGE_INSTITUTION_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[2]//input'
     MAIN_PAGE_ENABLED_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[3]//select'
 

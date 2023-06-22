@@ -23,7 +23,7 @@ class CommissionsConstants:
     DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//nb-option | span'
 
     # main page
-    MAIN_PAGE_NAME_FILTER_XPATH = '//*[text()="Name"]//following::*[contains(@style, "left: 0px;")]//input'
+    MAIN_PAGE_NAME_FILTER_XPATH = '//*[@col-id="clCommissionName"]//following::input[@ref="eFloatingFilterText"][1]'
     MAIN_PAGE_DESCRIPTION_FILTER_XPATH = '//*[text()="Description"]//following::*[contains(@style, "left: 200px;")]//input'
     MAIN_PAGE_INSTR_TYPE_FILTER_XPATH = '//*[text()="Instr Type"]//following::*[contains(@style, "left: 1000px;")]//input'
     MAIN_PAGE_VENUE_FILTER_XPATH = '//*[text()="Venue"]//following::*[contains(@style, "left: 1200px;")]//input'
@@ -52,7 +52,7 @@ class CommissionsConstants:
     DIMENSIONS_TAB_COMMISSION_AMOUNT_TYPE_XPATH = '//*[@id="commissionAmountType"]'
     DIMENSIONS_TAB_COMMISSION_AMOUNT_SUB_TYPE_XPATH = '//*[@id="commissionAmountSubType"]'
     DIMENSIONS_TAB_COMMISSION_PROFILE_XPATH = '//*[@id="commissionProfile"]'
-    DIMENSIONS_TAB_MANAGE_COMMISSION_PROFILE_XPATH = '//*[text()="Manage"]'
+    DIMENSIONS_TAB_MANAGE_COMMISSION_PROFILE_XPATH = '//button[normalize-space()="Manage"]'
 
     # values tab
     VALUES_TAB_NAME_XPATH = '//*[@formcontrolname="clCommissionName"]'

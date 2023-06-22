@@ -1,7 +1,7 @@
 class RoutesConstants:
     ROUTES_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][normalize-space()='Routes']"
     #   -----Main page-----
-    NAME_FILTER_XPATH = '//*[@ref="headerRoot"]//*[@class="ag-header-container"]/div[2]/div[1]//input'
+    NAME_FILTER_XPATH = '//*[@col-id="routeName"]//following::input[@ref="eFloatingFilterText"][1]'
     DESCRIPTION_FILTER_XPATH = '//*[@class="ag-header-container"]//div[2]/div[2]//*[@class="ag-input-old_wrappers"]//input'
     ES_INSTANCE_FILTER_XPATH = '//*[@class="ag-header-container"]//div[2]/div[3]//*[@class="ag-input-old_wrappers"]//input'
     CLIENT_ID_FILTER_XPATH = '//*[@class="ag-header-container"]//div[2]/div[4]//*[@class="ag-input-old_wrappers"]//input'
@@ -42,7 +42,7 @@ class RoutesConstants:
     DESCRIPTION_AT_VALUES_TAB_XPATH = '//*[@id="routeDescription"]'
     COUNTERPART_AT_VALUES_TAB_XPATH = '//*[@id="counterpart"]'
     SUPPORT_CONTRA_FIRM_COMMISSION_AT_VALUES_TAB_XPATH = '//*[text()="Support Contra Firm Commission"]/parent::label'
-    MANAGE_AT_VALUES_TAB_XPATH = '//*[text()="Manage"]'
+    MANAGE_AT_VALUES_TAB_XPATH = '//button[normalize-space()="Manage"]'
     EXPECTED_ERROR_FOR_VALUE_FIELD_AT_VALUES_TAB_XPATH = "//*[text()='Incorrect or missing values']"
     # -Counterpart tab-
     NEW_BUTTON_AT_COUNTERPARTS_TAB_XPATH = '//*[normalize-space()="New"]'
