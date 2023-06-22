@@ -1,8 +1,5 @@
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -21,40 +18,31 @@ class QAP_T10643(CommonTestCase):
 
     def test_context(self):
 
-        try:
-            login_page = LoginPage(self.web_driver_container)
-            login_page.login_to_web_admin(self.login, self.password)
-            time.sleep(1)
+        login_page = LoginPage(self.web_driver_container)
+        login_page.login_to_web_admin(self.login, self.password)
+        time.sleep(1)
 
-            common_act = CommonPage(self.web_driver_container)
-            expected_result = [self.site_name, self.user_data]
-            actual_result = [common_act.get_site_name_from_header(), common_act.get_user_data()]
-            self.verify("Site name and user data displayed after first login", expected_result, actual_result)
+        common_act = CommonPage(self.web_driver_container)
+        expected_result = [self.site_name, self.user_data]
+        actual_result = [common_act.get_site_name_from_header(), common_act.get_user_data()]
+        self.verify("Site name and user data displayed after first login", expected_result, actual_result)
 
-            common_act.refresh_page()
-            time.sleep(2)
-            actual_result = [common_act.get_site_name_from_header(), common_act.get_user_data()]
-            self.verify("Site name and user data displayed after page reload", expected_result, actual_result)
+        common_act.refresh_page()
+        time.sleep(2)
+        actual_result = [common_act.get_site_name_from_header(), common_act.get_user_data()]
+        self.verify("Site name and user data displayed after page reload", expected_result, actual_result)
 
-            common_act.click_on_user_icon()
-            common_act.click_on_logout()
-            time.sleep(2)
+        common_act.click_on_user_icon()
+        common_act.click_on_logout()
+        time.sleep(2)
 
-            login_page.login_to_web_admin(self.login, self.password)
-            time.sleep(1)
+        login_page.login_to_web_admin(self.login, self.password)
+        time.sleep(1)
 
-            actual_result = [common_act.get_site_name_from_header(), common_act.get_user_data()]
-            self.verify("Site name and user data displayed after second login", expected_result, actual_result)
+        actual_result = [common_act.get_site_name_from_header(), common_act.get_user_data()]
+        self.verify("Site name and user data displayed after second login", expected_result, actual_result)
 
-            common_act.refresh_page()
-            time.sleep(2)
-            actual_result = [common_act.get_site_name_from_header(), common_act.get_user_data()]
-            self.verify("Site name and user data displayed after page reload", expected_result, actual_result)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
-
+        common_act.refresh_page()
+        time.sleep(2)
+        actual_result = [common_act.get_site_name_from_header(), common_act.get_user_data()]
+        self.verify("Site name and user data displayed after page reload", expected_result, actual_result)

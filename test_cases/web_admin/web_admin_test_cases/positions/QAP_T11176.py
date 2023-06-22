@@ -56,6 +56,7 @@ class QAP_T11176(CommonTestCase):
 
         self.db_manager.my_db.execute(f"UPDATE cashaccount SET alive = 'N' WHERE cashaccountname = '{self.name}'")
         common_act.refresh_page(True)
+        time.sleep(2)
 
     def test_context(self):
         cash_positions_page = MainPage(self.web_driver_container)

@@ -76,8 +76,10 @@ class QAP_T3979(CommonTestCase):
             tick_size_profile.set_upper_limit(self.upper_limit)
             tick_size_profile.click_on_checkmark_at_tick_size_points()
             tick_size_profile.click_on_checkmark()
+            time.sleep(1)
             wizard = VenuesWizard(self.web_driver_container)
             wizard.click_on_go_back_button()
+            time.sleep(1)
 
             profiles_sub_wizard.set_tick_size_profile(self.external_id[1])
             profiles_sub_wizard.click_on_tick_size_profile_manage_button()

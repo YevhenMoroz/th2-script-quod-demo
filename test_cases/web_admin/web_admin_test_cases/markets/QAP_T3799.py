@@ -36,6 +36,7 @@ class QAP_T3799(CommonTestCase):
         self.strike_price = str(random.randint(0, 10))
         self.call_put = 'Call'
         self.maturity_month_year = '01, 25, 2027'
+        self.security_exchange = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
 
         self.venue = self.data_set.get_venue_by_name("venue_3")
         self.currency = self.data_set.get_currency_by_name("currency_1")
@@ -70,6 +71,7 @@ class QAP_T3799(CommonTestCase):
             values_tab.set_symbol(self.symbol)
             values_tab.set_lookup_symbol(self.lookup_symbol)
             values_tab.set_instr_symbol(self.instr_symbol)
+            values_tab.set_security_exchange(self.security_exchange)
             values_tab.set_strike_price(self.strike_price)
             values_tab.set_call_put(self.call_put)
             values_tab.set_maturity_month_year(self.maturity_month_year)

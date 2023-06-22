@@ -1,8 +1,5 @@
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
@@ -198,44 +195,38 @@ class QAP_T3566(CommonTestCase):
 
     def test_context(self):
         side_menu = SideMenu(self.web_driver_container)
-        try:
-            self.precondition()
 
-            side_menu.open_institutions_page()
-            time.sleep(1)
-            self.step_check_only_click_at_full_screen_btn("Institutions")
-            self.step_check_full_screen_after_click_on_new_btn("Institutions")
-            self.step_check_full_screen_after_edit_btn("Institutions")
-            self.step_check_full_screen_after_clone_btn("Institutions")
-            self.step_check_full_screen_after_click_esc_btn("Institutions")
+        self.precondition()
 
-            side_menu.click_on_zones_tab()
-            time.sleep(1)
-            self.step_check_only_click_at_full_screen_btn("Zones")
-            self.step_check_full_screen_after_click_on_new_btn("Zones")
-            self.step_check_full_screen_after_edit_btn("Zones")
-            self.step_check_full_screen_after_clone_btn("Zones")
-            self.step_check_full_screen_after_click_esc_btn("Zones")
+        side_menu.open_institutions_page()
+        time.sleep(1)
+        self.step_check_only_click_at_full_screen_btn("Institutions")
+        self.step_check_full_screen_after_click_on_new_btn("Institutions")
+        self.step_check_full_screen_after_edit_btn("Institutions")
+        self.step_check_full_screen_after_clone_btn("Institutions")
+        self.step_check_full_screen_after_click_esc_btn("Institutions")
 
-            side_menu.click_on_locations_tab()
-            time.sleep(1)
-            self.step_check_only_click_at_full_screen_btn("Locations")
-            self.step_check_full_screen_after_click_on_new_btn("Locations")
-            self.step_check_full_screen_after_edit_btn("Locations")
-            self.step_check_full_screen_after_clone_btn("Locations")
-            self.step_check_full_screen_after_click_esc_btn("Locations")
+        side_menu.click_on_zones_tab()
+        time.sleep(1)
+        self.step_check_only_click_at_full_screen_btn("Zones")
+        self.step_check_full_screen_after_click_on_new_btn("Zones")
+        self.step_check_full_screen_after_edit_btn("Zones")
+        self.step_check_full_screen_after_clone_btn("Zones")
+        self.step_check_full_screen_after_click_esc_btn("Zones")
 
-            side_menu.click_on_desks_tab()
-            time.sleep(1)
-            self.step_check_only_click_at_full_screen_btn("Desks")
-            self.step_check_full_screen_after_click_on_new_btn("Desks")
-            self.step_check_full_screen_after_edit_btn("Desks")
-            self.step_check_full_screen_after_clone_btn("Desks")
-            self.step_check_full_screen_after_click_esc_btn("Desks")
+        side_menu.click_on_locations_tab()
+        time.sleep(1)
+        self.step_check_only_click_at_full_screen_btn("Locations")
+        self.step_check_full_screen_after_click_on_new_btn("Locations")
+        self.step_check_full_screen_after_edit_btn("Locations")
+        self.step_check_full_screen_after_clone_btn("Locations")
+        self.step_check_full_screen_after_click_esc_btn("Locations")
 
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        side_menu.click_on_desks_tab()
+        time.sleep(1)
+        self.step_check_only_click_at_full_screen_btn("Desks")
+        self.step_check_full_screen_after_click_on_new_btn("Desks")
+        self.step_check_full_screen_after_edit_btn("Desks")
+        self.step_check_full_screen_after_clone_btn("Desks")
+        self.step_check_full_screen_after_click_esc_btn("Desks")
+

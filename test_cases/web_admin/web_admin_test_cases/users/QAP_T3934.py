@@ -68,6 +68,7 @@ class QAP_T3934(CommonTestCase):
                 self.verify(f"PDF is not contains {expected_pdf_content}", True, e.__class__.__name__)
 
             users_wizard.click_on_save_changes()
+            time.sleep(2)
 
             users_page.set_user_id(self.user_id)
             time.sleep(2)

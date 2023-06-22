@@ -64,6 +64,7 @@ class QAP_T3925(CommonTestCase):
         time.sleep(1)
         users_wizard = UsersWizard(self.web_driver_container)
         users_wizard.click_on_save_changes()
+        time.sleep(1)
 
     def test_context(self):
         try:

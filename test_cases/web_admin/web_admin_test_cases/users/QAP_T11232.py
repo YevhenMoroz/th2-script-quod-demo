@@ -92,6 +92,7 @@ class QAP_T11232(CommonTestCase):
             self.verify("Deleted Route is not displayed",
                         False, routes_in_table[-1] in route_tab.get_all_route_in_table())
             wizard.click_on_save_changes()
+            time.sleep(1)
             users_page.set_user_id(self.user_id)
             time.sleep(1)
             users_page.click_on_more_actions()

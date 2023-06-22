@@ -1,5 +1,8 @@
 import abc
 
+from pathlib import Path
+from test_framework.core.try_exept_decorator import try_except
+
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from test_framework.data_sets.base_data_set import BaseDataSet
@@ -15,6 +18,7 @@ class CommonTestCase:
         self.data_set = data_set
         self.environment = environment
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def run(self):
         self.__start_driver()
         self.test_context()
@@ -31,13 +35,13 @@ class CommonTestCase:
         self.web_driver_container.stop_driver()
 
     def verify(self, event_name, expected_result, actual_result):
-        verifier = Verifier(self.test_case_id)
+        verifier = Verifier(self.test_id)
         verifier.set_event_name(event_name)
         verifier.compare_values(event_name, str(expected_result), str(actual_result))
         verifier.verify()
 
     def verify_arrays_of_data_objects(self, page_name, event_name, expected_result, actual_result):
-        verifier = Verifier(self.test_case_id)
+        verifier = Verifier(self.test_id)
         verifier.set_event_name(page_name)
         for item in range(len(event_name)):
             verifier.compare_values(event_name[item], expected_result[item], actual_result[item])

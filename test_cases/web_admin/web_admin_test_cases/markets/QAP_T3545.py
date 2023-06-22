@@ -73,5 +73,5 @@ class QAP_T3545(CommonTestCase):
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')
             exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            traceback.print_tb(exc_traceback, limit=20, file=sys.stdout)
             print(" Search in ->  " + self.__class__.__name__)

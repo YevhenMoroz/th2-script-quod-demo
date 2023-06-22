@@ -52,6 +52,7 @@ class QAP_T3851(CommonTestCase):
             common_page = CommonPage(self.web_driver_container)
 
             self.check_verify()
+            time.sleep(2)
             common_page.click_on_info_error_message_pop_up()
             time.sleep(1)
             common_page.click_on_user_icon()

@@ -73,6 +73,7 @@ class QAP_T8830(CommonTestCase):
             values_tab.set_short_name(self.short_name)
             wizard = VenuesWizard(self.web_driver_container)
             wizard.click_on_save_changes()
+            time.sleep(2)
 
             page.set_name_filter(self.name)
             time.sleep(1)

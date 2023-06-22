@@ -185,7 +185,7 @@ class QAP_T3672(CommonTestCase):
             pos_maintenance.set_position_maintenance(self.position_maintenance)
             pos_maintenance.click_on_validate_pos_limit()
             pos_maintenance.set_underl_position_maintenance(self.underl_position_maintenance)
-            pos_maintenance.click_on_validate_pos_limit()
+            pos_maintenance.click_on_validate_underl_pos_limit()
             pos_maintenance.set_cash_maintenance(self.cash_maintenance)
             pos_maintenance.click_on_pnl_maintenance()
             pos_maintenance.set_posit_price_currency(self.posit_price_currency)
@@ -255,11 +255,11 @@ class QAP_T3672(CommonTestCase):
                                     f"Cash Maintenance: {self.cash_maintenance}",
                                     f"PNL Maintenance: {self.pnl_maintenance}",
                                     f"Posit Price Currency: {self.posit_price_currency}",
-                                    f"{self.instr_type} - {self.pos_keeping_mode}",
+                                    f"{self.instr_type}  - {self.pos_keeping_mode}",
                                     f"Venue: {self.venue}, Venue Client Name: {self.venue_client_name}, "
-                                    f"Venue Client AccountGroup Name: {self.venue_client_account_group_name},"
+                                    f"Venue Client AccountGroup Name: {self.venue_client_account_group_name}, "
                                     f"Default Route: {self.default_route}, "
-                                    f"Max Commission Type: {self.max_commission_type},"
+                                    f"Max Commission Type: {self.max_commission_type}, "
                                     f"Max Commission Value: {self.max_commission_value}.",
                                     f"Route: {self.route}", f"Route Client Name: {self.route_client_name}",
                                     f"Trade Confirm Generation: {self.trade_confirm_generation}",

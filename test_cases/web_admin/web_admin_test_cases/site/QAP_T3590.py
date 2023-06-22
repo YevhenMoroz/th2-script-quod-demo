@@ -115,6 +115,9 @@ class QAP_T3590(CommonTestCase):
                     actual_result = True
             self.verify(f"Only {self.institution_name} institution are displayed at edit wizard", True, actual_result)
             zone_wizard.click_on_save_changes()
+            time.sleep(1)
+            zone_page.set_name('')
+            time.sleep(1)
             displayed_zones_at_zones_page = zone_page.get_list_of_all_zones()
         ###
             side_menu.open_locations_page()
@@ -136,7 +139,7 @@ class QAP_T3590(CommonTestCase):
             location_assignment_tab = LocationsAssignmentsSubWizard(self.web_driver_container)
             displayed_zones_in_create_wizard = location_assignment_tab.get_all_zones_from_drop_menu()
             self.verify("Zones field dropdown displays only Zones the current User has access to",
-                        displayed_zones_at_zones_page, displayed_zones_in_create_wizard)
+                        sorted(displayed_zones_at_zones_page), sorted(displayed_zones_in_create_wizard))
             location_assignment_tab.set_zone(self.zone_name)
             location_wizard = LocationsWizard(self.web_driver_container)
             location_wizard.click_on_save_changes()
@@ -148,9 +151,12 @@ class QAP_T3590(CommonTestCase):
             location_page.click_on_edit()
             displayed_zones_in_edit_wizard = location_assignment_tab.get_all_zones_from_drop_menu()
             self.verify("Zones field dropdown displays only Zones the current User has access to",
-                        displayed_zones_at_zones_page, displayed_zones_in_edit_wizard)
+                        sorted(displayed_zones_at_zones_page), sorted(displayed_zones_in_edit_wizard))
             location_assignment_tab.set_zone(self.zone_name)
             location_wizard.click_on_save_changes()
+            time.sleep(1)
+            location_page.set_name('')
+            time.sleep(1)
             displayed_locations_at_location_page = location_page.get_list_of_all_locations_name()
         ###
             side_menu.open_desks_page()
@@ -165,7 +171,8 @@ class QAP_T3590(CommonTestCase):
             desk_assignments_tab = DesksAssignmentsSubWizard(self.web_driver_container)
             displayed_locations_in_create_wizard = desk_assignments_tab.get_all_locations_from_drop_menu()
             self.verify("Locations field dropdown displays only Locations the current User has access to",
-                        displayed_locations_at_location_page, displayed_locations_in_create_wizard[:len(displayed_locations_at_location_page)])
+                        sorted(displayed_locations_at_location_page),
+                        sorted(displayed_locations_in_create_wizard[:len(displayed_locations_at_location_page)]))
             desk_assignments_tab.set_location(self.location_name)
             actual_result = ''
             for i in displayed_locations_at_desk_page:
@@ -186,7 +193,8 @@ class QAP_T3590(CommonTestCase):
             desk_page.click_on_edit()
             displayed_locations_in_edit_wizard = desk_assignments_tab.get_all_locations_from_drop_menu()
             self.verify("Locations field dropdown displays only Locations the current User has access to",
-                        displayed_locations_at_location_page, displayed_locations_in_edit_wizard[:len(displayed_locations_at_location_page)])
+                        sorted(displayed_locations_at_location_page),
+                        sorted(displayed_locations_in_edit_wizard[:len(displayed_locations_at_location_page)]))
             desk_assignments_tab.set_location(self.location_name)
             desk_wizard.click_on_save_changes()
 
@@ -194,5 +202,5 @@ class QAP_T3590(CommonTestCase):
             basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
                                               status='FAILED')
             exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
+            traceback.print_tb(exc_traceback, limit=20, file=sys.stdout)
             print(" Search in ->  " + self.__class__.__name__)
