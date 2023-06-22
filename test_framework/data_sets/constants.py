@@ -211,6 +211,7 @@ class ClientAlgoPolicy(Enum):
     qa_mpdark_rr_3 = "QA_Auto_MPDark_RR_3"
     qa_mpdark_rr_4 = "QA_Auto_MPDark_RR_4"
     qa_mpdark_rr_5 = "QA_Auto_MPDark_RR_5"
+    qa_mpdark_rr_av = "QA_Auto_DarkPool_RR_AV"
     qa_sorping = "QA_SORPING"
     qa_sorping_1 = "QA_Auto_SORPING_1"
     qa_sorping_2 = "QA_Auto_SORPING_2"
