@@ -90,9 +90,9 @@ class QAP_T11555(TestCase):
         er_pending_new_MP_Dark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_pending)
         self.fix_verifier_sell.check_fix_message(er_pending_new_MP_Dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PendingNew')
 
-        er_eliminate_MP_Dark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_reject)
-        er_eliminate_MP_Dark_order_params.add_tag(dict(Text="listings not found in algorithm policy"))
-        self.fix_verifier_sell.check_fix_message(er_eliminate_MP_Dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Eliminate')
+        er_reject_MP_Dark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_reject)
+        er_reject_MP_Dark_order_params.add_tag(dict(Text="listings not found in algorithm policy"))
+        self.fix_verifier_sell.check_fix_message(er_reject_MP_Dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Reject')
         # endregion
 
         time.sleep(5)

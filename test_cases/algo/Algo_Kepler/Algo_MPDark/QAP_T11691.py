@@ -2,20 +2,22 @@ import os
 import time
 from pathlib import Path
 
-from test_framework.algo_formulas_manager import AlgoFormulasManager
 from test_framework.core.try_exept_decorator import try_except
 from custom import basic_custom_actions as bca
+from rule_management import RuleManager, Simulators
 from test_framework.data_sets.constants import DirectionEnum, Status, GatewaySide
 from test_framework.fix_wrappers.algo.FixMessageNewOrderSingleAlgo import FixMessageNewOrderSingleAlgo
 from test_framework.fix_wrappers.algo.FixMessageExecutionReportAlgo import FixMessageExecutionReportAlgo
+from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.core.test_case import TestCase
+from test_framework.algo_formulas_manager import AlgoFormulasManager
 from test_framework.data_sets import constants
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
 
 
-class QAP_T11556(TestCase):
+class QAP_T11691(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -44,6 +46,7 @@ class QAP_T11556(TestCase):
 
         # region Status
         self.status_pending = Status.Pending
+        self.status_new = Status.New
         self.status_reject = Status.Reject
         # endregion
 
@@ -69,7 +72,8 @@ class QAP_T11556(TestCase):
     def run_pre_conditions_and_steps(self):
         # region modify strategy
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify strategy", self.test_id))
-        self.rest_api_manager.modify_strategy_parameter(self.algopolicy, "DarkPoolWeights", AlgoFormulasManager.create_string_for_strategy_weight(dict(CBOEEU=1, ITG=1)))
+        self.rest_api_manager.modify_strategy_parameter(self.algopolicy, "DarkPoolWeights", AlgoFormulasManager.create_string_for_strategy_weight(dict(COPENHAGENPA=6, BATSDARK=4)))
+        self.rest_api_manager.modify_strategy_parameter(self.algopolicy, "AllowedVenues", AlgoFormulasManager.create_string_for_strategy_venues("COPENHAGENPA"))
         # endregion
 
         # region Send NewOrderSingle (35=D) for MP Dark order
@@ -92,7 +96,7 @@ class QAP_T11556(TestCase):
         self.fix_verifier_sell.check_fix_message(er_pending_new_MP_Dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport PendingNew')
 
         er_reject_MP_Dark_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.MP_Dark_order, self.gateway_side_sell, self.status_reject)
-        er_reject_MP_Dark_order_params.add_tag(dict(Text="listings not found in algorithm policy"))
+        er_reject_MP_Dark_order_params.add_tag(dict(Text="order must have at least one dark listing"))
         self.fix_verifier_sell.check_fix_message(er_reject_MP_Dark_order_params, key_parameters=self.key_params_ER_parent, message_name='Sell side ExecReport Reject')
         # endregion
 
@@ -103,4 +107,5 @@ class QAP_T11556(TestCase):
         # region revert strategy changes
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Revert strategy changes", self.test_id))
         self.rest_api_manager.modify_strategy_parameter(self.algopolicy, "DarkPoolWeights", AlgoFormulasManager.create_string_for_strategy_weight(dict(CHIXDELTA=6, BATSDARK=4, CBOEEU=1, ITG=1)))
+        self.rest_api_manager.modify_strategy_parameter(self.algopolicy, "AllowedVenues", AlgoFormulasManager.create_string_for_strategy_venues("CHIXDELTA", "BATSDARK"))
         # endregion
