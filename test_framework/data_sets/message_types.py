@@ -93,6 +93,7 @@ class ORSMessageType(Enum):
     ComputeBookingFeesCommissionsReply = 'Order_ComputeBookingFeesCommissionsReply'
     QuoteRequestActionRequest = "Order_QuoteRequestActionRequest"
     QuoteRequest = "Fix_QuoteRequest"
+    OrderQuoteRequest = "Order_QuoteRequest"
     QuoteCancel = "Fix_QuoteCancel"
     QuoteRequestNotif = "Order_QuoteRequestNotif"
     QuoteRequestActionReply = "Order_QuoteRequestActionReply"

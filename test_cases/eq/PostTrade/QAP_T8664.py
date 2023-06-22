@@ -96,7 +96,7 @@ class QAP_T8664(TestCase):
         allocation_report = \
             self.java_api_manager.get_last_message(ORSMessageType.GatewayAllocationInstruction.value).get_parameters()[
                 JavaApiFields.AllocationInstructionBlock.value]
-        self.java_api_manager.compare_values({"BIC": "QUODTESTGW3"}, allocation_report, "Check BIC")
+        self.java_api_manager.compare_values({"BIC": "DeskBIC"}, allocation_report, "Check BIC")
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
