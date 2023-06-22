@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.users.users.users_user_details_sub_wizard import \
@@ -48,27 +45,18 @@ class QAP_T3654(CommonTestCase):
         assignment_tab = UsersAssignmentsSubWizard(self.web_driver_container)
         wizard = UsersWizard(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            users_page.click_on_new_button()
-            values_tab.set_user_id(self.user_id)
-            values_tab.set_ext_id_client(self.ext_id_client)
-            details_tab.set_mail(self.email)
-            assignment_tab.set_desks(self.desk)
-            wizard.click_on_save_changes()
-            time.sleep(5)
-            self.db_manager.my_db.execute(
-                f"SELECT ROLEID, HIERARCHICALLEVEL FROM USERROLES WHERE USERID = '{self.user_id}'")
-            actual_result = self.db_manager.my_db.fetchall()[0]
-            expected_result = ('TRA', 'DSK')
-            self.verify(f"User {self.user_id} has been saved with RoleId = TRA and HierarchicalLevel = DSK",
-                        expected_result, actual_result)
-
-        except Exception:
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            errors = f'"{[traceback.extract_tb(exc_traceback, limit=4)]}"'.replace("\\", "/")
-            basic_custom_actions.create_event(f"FAILED", self.test_case_id, status='FAILED',
-                                              body="[{\"type\": \"message\", \"data\":" + f"{errors}" + "}]")
-            traceback.print_tb(exc_traceback, limit=3, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        users_page.click_on_new_button()
+        values_tab.set_user_id(self.user_id)
+        values_tab.set_ext_id_client(self.ext_id_client)
+        details_tab.set_mail(self.email)
+        assignment_tab.set_desks(self.desk)
+        wizard.click_on_save_changes()
+        time.sleep(5)
+        self.db_manager.my_db.execute(
+            f"SELECT ROLEID, HIERARCHICALLEVEL FROM USERROLES WHERE USERID = '{self.user_id}'")
+        actual_result = self.db_manager.my_db.fetchall()[0]
+        expected_result = ('TRA', 'DSK')
+        self.verify(f"User {self.user_id} has been saved with RoleId = TRA and HierarchicalLevel = DSK",
+                    expected_result, actual_result)

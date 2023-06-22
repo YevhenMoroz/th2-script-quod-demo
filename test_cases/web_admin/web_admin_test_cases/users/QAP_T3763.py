@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.users.users.users_user_details_sub_wizard import \
@@ -42,35 +39,26 @@ class QAP_T3763(CommonTestCase):
         details_tab = UsersUserDetailsSubWizard(self.web_driver_container)
         wizard = UsersWizard(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            users_page.click_on_new_button()
-            details_tab.set_mail(self.email)
-            wizard.click_on_save_changes()
-            time.sleep(1)
-            self.verify("User not save, error appear", True, wizard.is_warning_displayed())
-            details_tab.set_mail('')
-            values_tab.set_user_id(self.user_id)
-            wizard.click_on_save_changes()
-            time.sleep(1)
-            self.verify("User not save, error appear", True, wizard.is_warning_displayed())
-            values_tab.set_user_id('')
-            values_tab.set_ext_id_client(self.ext_id_client)
-            wizard.click_on_save_changes()
-            time.sleep(1)
-            self.verify("User not save, error appear", True, wizard.is_warning_displayed())
-            values_tab.set_user_id(self.user_id)
-            values_tab.set_ext_id_client(self.exist_ext_client_id)
-            details_tab.set_mail(self.email)
-            wizard.click_on_save_changes()
-            time.sleep(1)
-            self.verify("User not save, error appear", True, wizard.is_warning_displayed())
-
-        except Exception:
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            errors = f'"{[traceback.extract_tb(exc_traceback, limit=4)]}"'.replace("\\", "/")
-            basic_custom_actions.create_event(f"FAILED", self.test_case_id, status='FAILED',
-                                              body="[{\"type\": \"message\", \"data\":" + f"{errors}" + "}]")
-            traceback.print_tb(exc_traceback, limit=3, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        users_page.click_on_new_button()
+        details_tab.set_mail(self.email)
+        wizard.click_on_save_changes()
+        time.sleep(1)
+        self.verify("User not save, error appear", True, wizard.is_warning_displayed())
+        details_tab.set_mail('')
+        values_tab.set_user_id(self.user_id)
+        wizard.click_on_save_changes()
+        time.sleep(1)
+        self.verify("User not save, error appear", True, wizard.is_warning_displayed())
+        values_tab.set_user_id('')
+        values_tab.set_ext_id_client(self.ext_id_client)
+        wizard.click_on_save_changes()
+        time.sleep(1)
+        self.verify("User not save, error appear", True, wizard.is_warning_displayed())
+        values_tab.set_user_id(self.user_id)
+        values_tab.set_ext_id_client(self.exist_ext_client_id)
+        details_tab.set_mail(self.email)
+        wizard.click_on_save_changes()
+        time.sleep(1)
+        self.verify("User not save, error appear", True, wizard.is_warning_displayed())

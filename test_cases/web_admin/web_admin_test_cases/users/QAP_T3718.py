@@ -1,8 +1,5 @@
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.users.users.users_page import UsersPage
 from test_framework.web_admin_core.pages.users.users.users_wizard import UsersWizard
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
@@ -25,30 +22,23 @@ class QAP_T3718(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            side_menu = SideMenu(self.web_driver_container)
-            side_menu.open_users_page()
-            time.sleep(2)
-            user_page = UsersPage(self.web_driver_container)
-            user_page.set_connected("true")
-            time.sleep(1)
-            self.verify("Displayed only connected users with green round icon near User Id",
-                        user_page.count_displayed_users(),
-                        user_page.count_online_status_for_displayed_users())
+        side_menu = SideMenu(self.web_driver_container)
+        side_menu.open_users_page()
+        time.sleep(2)
+        user_page = UsersPage(self.web_driver_container)
+        user_page.set_connected("true")
+        time.sleep(1)
+        self.verify("Displayed only connected users with green round icon near User Id",
+                    user_page.count_displayed_users(),
+                    user_page.count_online_status_for_displayed_users())
 
-            user_page.click_on_more_actions()
-            time.sleep(1)
-            user_page.click_on_edit_at_more_actions()
-            time.sleep(2)
+        user_page.click_on_more_actions()
+        time.sleep(1)
+        user_page.click_on_edit_at_more_actions()
+        time.sleep(2)
 
-            wizard = UsersWizard(self.web_driver_container)
-            self.verify("Near user name displayed green round icon", True, wizard.is_online_status_displayed())
+        wizard = UsersWizard(self.web_driver_container)
+        self.verify("Near user name displayed green round icon", True, wizard.is_online_status_displayed())
 
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)

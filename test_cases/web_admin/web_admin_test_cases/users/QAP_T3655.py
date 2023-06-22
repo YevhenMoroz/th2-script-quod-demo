@@ -1,9 +1,6 @@
 import time
-import traceback
 
 from selenium.common.exceptions import TimeoutException
-
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.users.users.users_page import UsersPage
@@ -32,22 +29,16 @@ class QAP_T3655(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
+        self.precondition()
+        user_role_sub_wizard = UsersPermissionsSubWizard(self.web_driver_container)
         try:
-            self.precondition()
-            user_role_sub_wizard = UsersPermissionsSubWizard(self.web_driver_container)
-            try:
-                self.verify("Is perm role field displayed", True, user_role_sub_wizard.is_perm_role_field_visible())
-                self.verify("Is perm op field displayed", True, user_role_sub_wizard.is_perm_op_field_visible())
-                self.verify("Is group field displayed", True, user_role_sub_wizard.is_group_field_visible())
-            except Exception:
-                self.verify("Some fields in role tab not visible", True, False)
-
-            try:
-                user_role_sub_wizard.is_role_id_field_visible()
-            except TimeoutException:
-                self.verify("Is role id field NOT displayed", True, True)
-
+            self.verify("Is perm role field displayed", True, user_role_sub_wizard.is_perm_role_field_visible())
+            self.verify("Is perm op field displayed", True, user_role_sub_wizard.is_perm_op_field_visible())
+            self.verify("Is group field displayed", True, user_role_sub_wizard.is_group_field_visible())
         except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)
+            self.verify("Some fields in role tab not visible", True, False)
+
+        try:
+            user_role_sub_wizard.is_role_id_field_visible()
+        except TimeoutException:
+            self.verify("Is role id field NOT displayed", True, True)

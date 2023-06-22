@@ -1,10 +1,6 @@
 import random
 import string
-import sys
-import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.users.user_lists.main_page import MainPage
@@ -37,24 +33,15 @@ class QAP_T11215(CommonTestCase):
         wizard = Wizard(self.web_driver_container)
         values_tab = ValuesTab(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            user_lists_page.click_on_new_button()
-            values_tab.set_user_list_name(self.user_list_name)
-            values_tab.click_on_plus_button()
-            values_tab.set_user(self.user)
-            values_tab.click_on_save_checkmark_button()
-            wizard.click_on_save_changes_button()
-            time.sleep(1)
-            user_lists_page.set_name_filter(self.user_list_name)
-            time.sleep(1)
-            self.verify("User List has been created", True, user_lists_page.is_user_lists_found(self.user_list_name))
-
-        except Exception:
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            errors = f'"{[traceback.extract_tb(exc_traceback, limit=4)]}"'.replace("\\", "/")
-            basic_custom_actions.create_event(f"FAILED", self.test_case_id, status='FAILED',
-                                              body="[{\"type\": \"message\", \"data\":" + f"{errors}" + "}]")
-            traceback.print_tb(exc_traceback, limit=3, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        user_lists_page.click_on_new_button()
+        values_tab.set_user_list_name(self.user_list_name)
+        values_tab.click_on_plus_button()
+        values_tab.set_user(self.user)
+        values_tab.click_on_save_checkmark_button()
+        wizard.click_on_save_changes_button()
+        time.sleep(1)
+        user_lists_page.set_name_filter(self.user_list_name)
+        time.sleep(1)
+        self.verify("User List has been created", True, user_lists_page.is_user_lists_found(self.user_list_name))
