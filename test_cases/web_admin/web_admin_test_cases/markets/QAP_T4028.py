@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.listing_groups.listing_groups_description_sub_wizard import \
     ListingGroupsDescriptionSubWizard
@@ -49,23 +46,13 @@ class QAP_T4028(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
+        self.precondition()
+        page = ListingGroupsPage(self.web_driver_container)
+        page.click_on_delete(True)
+        time.sleep(2)
+        page.set_name(self.name)
+        time.sleep(2)
         try:
-            self.precondition()
-            page = ListingGroupsPage(self.web_driver_container)
-            page.click_on_delete(True)
-            time.sleep(2)
-            page.set_name(self.name)
-            time.sleep(2)
-            try:
-                self.verify("Entity NOT DELETED !", self.name, page.get_name())
-            except Exception:
-                self.verify("Entity deleted correctly", True, True)
-
-
-
+            self.verify("Entity NOT DELETED !", self.name, page.get_name())
         except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+            self.verify("Entity deleted correctly", True, True)

@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.market_data_sources.main_page \
     import MarketDataSourcesPage
@@ -33,21 +30,13 @@ class QAP_T3678(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page = MarketDataSourcesPage(self.web_driver_container)
-            main_page.click_on_new_button()
-            time.sleep(2)
-            wizard = MarketDataSourcesWizard(self.web_driver_container)
-            symbol_field_entity = wizard.get_all_symbol_from_drop_menu()
-            actual_result = False if "Not found" in symbol_field_entity else True
+        main_page = MarketDataSourcesPage(self.web_driver_container)
+        main_page.click_on_new_button()
+        time.sleep(2)
+        wizard = MarketDataSourcesWizard(self.web_driver_container)
+        symbol_field_entity = wizard.get_all_symbol_from_drop_menu()
+        actual_result = False if "Not found" in symbol_field_entity else True
 
-            self.verify("Is Symbol field contains entity?", True, actual_result)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("Is Symbol field contains entity?", True, actual_result)

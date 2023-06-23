@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.venues.nested_wizards.venues_exchange_codes_sub_wizard import \
     VenuesExchangeCodesSubWizard
@@ -52,16 +49,8 @@ class QAP_T3574(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
-        try:
-            self.precondition()
-            description_sub_wizard = VenuesValuesSubWizard(self.web_driver_container)
-            description_sub_wizard.set_mic(self.exchange_code_mic)
-            time.sleep(1)
-            self.verify("Is MIC created correctly ", self.exchange_code_mic, description_sub_wizard.get_mic())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.precondition()
+        description_sub_wizard = VenuesValuesSubWizard(self.web_driver_container)
+        description_sub_wizard.set_mic(self.exchange_code_mic)
+        time.sleep(1)
+        self.verify("Is MIC created correctly ", self.exchange_code_mic, description_sub_wizard.get_mic())

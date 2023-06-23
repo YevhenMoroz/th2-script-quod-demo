@@ -1,8 +1,5 @@
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.routes.main_page import RoutesPage
 from test_framework.web_admin_core.pages.markets.routes.strategy_type_subwizard import \
@@ -30,22 +27,14 @@ class QAP_T3118(CommonTestCase):
         side_menu.open_routes_page()
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            routes_main_menu = RoutesPage(self.web_driver_container)
-            routes_main_menu.click_on_new_button()
-            strategy_type_sub_wizard = RoutesStrategyTypeSubWizard(self.web_driver_container)
-            strategy_type_sub_wizard.set_strategy_type_at_strategy_type_tab(self.strategy_type)
-            strategy_type_sub_wizard.click_on_default_scenario()
-            strategy_type_sub_wizard.set_default_scenario_at_strategy_type_tab(self.default_scenario)
+        routes_main_menu = RoutesPage(self.web_driver_container)
+        routes_main_menu.click_on_new_button()
+        strategy_type_sub_wizard = RoutesStrategyTypeSubWizard(self.web_driver_container)
+        strategy_type_sub_wizard.set_strategy_type_at_strategy_type_tab(self.strategy_type)
+        strategy_type_sub_wizard.click_on_default_scenario()
+        strategy_type_sub_wizard.set_default_scenario_at_strategy_type_tab(self.default_scenario)
 
-            self.verify("Default Scenario has been select", self.default_scenario,
-                        strategy_type_sub_wizard.get_default_scenario_at_strategy_type_tab())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("Default Scenario has been select", self.default_scenario,
+                    strategy_type_sub_wizard.get_default_scenario_at_strategy_type_tab())

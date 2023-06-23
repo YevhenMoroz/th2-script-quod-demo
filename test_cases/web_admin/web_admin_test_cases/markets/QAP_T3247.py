@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.listings.listings_attachment_sub_wizard import \
     ListingsAttachmentSubWizard
@@ -79,22 +76,14 @@ class QAP_T3247(CommonTestCase):
 
     def test_context(self):
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            market_identifiers_tab = ListingsMarketIdentifiersSubWizard(self.web_driver_container)
-            market_identifiers_tab.set_security_id("")
-            market_identifiers_tab.set_security_id_source(self.security_id_source)
+        market_identifiers_tab = ListingsMarketIdentifiersSubWizard(self.web_driver_container)
+        market_identifiers_tab.set_security_id("")
+        market_identifiers_tab.set_security_id_source(self.security_id_source)
 
-            wizard = ListingsWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
-            time.sleep(2)
+        wizard = ListingsWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
+        time.sleep(2)
 
-            self.verify("Listing is not save w/o Security ID", True, wizard.is_error_message_displayed())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("Listing is not save w/o Security ID", True, wizard.is_error_message_displayed())

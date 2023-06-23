@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
 from test_framework.web_admin_core.pages.markets.listings.listings_attachment_sub_wizard import \
@@ -64,50 +61,41 @@ class QAP_T3347(CommonTestCase):
         wizard.click_on_save_changes()
 
     def test_context(self):
+        self.precondition()
 
-        try:
-            self.precondition()
+        main_page = ListingsPage(self.web_driver_container)
+        main_page.load_listing_from_global_filter(self.lookup_symbol)
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
 
-            main_page = ListingsPage(self.web_driver_container)
-            main_page.load_listing_from_global_filter(self.lookup_symbol)
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
+        fee_type_exemption = ListingsFeeTypeExemptionSubWizard(self.web_driver_container)
+        fee_type_exemption.click_on_stamp_fee_exemption()
+        fee_type_exemption.click_on_levy_fee_exemption()
+        fee_type_exemption.click_on_per_transac_fee_exemption()
 
-            fee_type_exemption = ListingsFeeTypeExemptionSubWizard(self.web_driver_container)
-            fee_type_exemption.click_on_stamp_fee_exemption()
-            fee_type_exemption.click_on_levy_fee_exemption()
-            fee_type_exemption.click_on_per_transac_fee_exemption()
+        wizard = ListingsWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
 
-            wizard = ListingsWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
+        main_page.load_listing_from_global_filter(self.lookup_symbol)
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
 
-            main_page.load_listing_from_global_filter(self.lookup_symbol)
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
+        expected_result = [True for _ in range(3)]
+        actual_result = [fee_type_exemption.is_stamp_fee_exemption(), fee_type_exemption.is_levy_fee_exemption(),
+                         fee_type_exemption.is_per_tranac_fee_exemption()]
+        self.verify("All checkboxes selected", expected_result, actual_result)
 
-            expected_result = [True for _ in range(3)]
-            actual_result = [fee_type_exemption.is_stamp_fee_exemption(), fee_type_exemption.is_levy_fee_exemption(),
-                             fee_type_exemption.is_per_tranac_fee_exemption()]
-            self.verify("All checkboxes selected", expected_result, actual_result)
+        common_act = CommonPage(self.web_driver_container)
+        common_act.click_on_info_error_message_pop_up()
+        common_act.click_on_user_icon()
+        common_act.click_on_logout()
+        time.sleep(2)
 
-            common_act = CommonPage(self.web_driver_container)
-            common_act.click_on_info_error_message_pop_up()
-            common_act.click_on_user_icon()
-            common_act.click_on_logout()
-            time.sleep(2)
+        login_page = LoginPage(self.web_driver_container)
+        login_page.login_to_web_admin(self.login, self.password)
 
-            login_page = LoginPage(self.web_driver_container)
-            login_page.login_to_web_admin(self.login, self.password)
-
-            actual_result = [fee_type_exemption.is_stamp_fee_exemption(), fee_type_exemption.is_levy_fee_exemption(),
-                             fee_type_exemption.is_per_tranac_fee_exemption()]
-            self.verify("All checkboxes still selected after relogin", expected_result, actual_result)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        actual_result = [fee_type_exemption.is_stamp_fee_exemption(), fee_type_exemption.is_levy_fee_exemption(),
+                         fee_type_exemption.is_per_tranac_fee_exemption()]
+        self.verify("All checkboxes still selected after relogin", expected_result, actual_result)

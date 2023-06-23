@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.venues.nested_wizards.venues_tick_size_profile_sub_wizard import \
     VenuesTickSizeProfileSubWizard
@@ -52,57 +49,49 @@ class QAP_T3979(CommonTestCase):
         #wizard.click_on_no_button()
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            page = VenuesPage(self.web_driver_container)
-            page.click_on_new()
-            profiles_sub_wizard = VenuesProfilesSubWizard(self.web_driver_container)
-            profiles_sub_wizard.click_on_tick_size_profile_manage_button()
+        page = VenuesPage(self.web_driver_container)
+        page.click_on_new()
+        profiles_sub_wizard = VenuesProfilesSubWizard(self.web_driver_container)
+        profiles_sub_wizard.click_on_tick_size_profile_manage_button()
 
-            tick_size_profile = VenuesTickSizeProfileSubWizard(self.web_driver_container)
-            if tick_size_profile.is_tick_size_profile_lookup_displayed():
-                tick_size_profile.load_tick_size_profile_by_lookup(self.external_id[0])
-                time.sleep(0.5)
-            else:
-                tick_size_profile.set_external_id_filter(self.external_id[0])
-                time.sleep(0.5)
-            tick_size_profile.click_on_edit()
-            tick_size_profile.set_external_id(self.external_id[1])
-            tick_size_profile.set_tick_size_xaxis_type(self.tick_size_xaxis_type)
-            tick_size_profile.set_tick_size_refprice_type(self.tick_size_refprice_type)
-            tick_size_profile.click_on_edit_at_tick_size_points()
-            tick_size_profile.set_tick(self.tick[1])
-            tick_size_profile.set_upper_limit(self.upper_limit)
-            tick_size_profile.click_on_checkmark_at_tick_size_points()
-            tick_size_profile.click_on_checkmark()
-            time.sleep(1)
-            wizard = VenuesWizard(self.web_driver_container)
-            wizard.click_on_go_back_button()
-            time.sleep(1)
+        tick_size_profile = VenuesTickSizeProfileSubWizard(self.web_driver_container)
+        if tick_size_profile.is_tick_size_profile_lookup_displayed():
+            tick_size_profile.load_tick_size_profile_by_lookup(self.external_id[0])
+            time.sleep(0.5)
+        else:
+            tick_size_profile.set_external_id_filter(self.external_id[0])
+            time.sleep(0.5)
+        tick_size_profile.click_on_edit()
+        tick_size_profile.set_external_id(self.external_id[1])
+        tick_size_profile.set_tick_size_xaxis_type(self.tick_size_xaxis_type)
+        tick_size_profile.set_tick_size_refprice_type(self.tick_size_refprice_type)
+        tick_size_profile.click_on_edit_at_tick_size_points()
+        tick_size_profile.set_tick(self.tick[1])
+        tick_size_profile.set_upper_limit(self.upper_limit)
+        tick_size_profile.click_on_checkmark_at_tick_size_points()
+        tick_size_profile.click_on_checkmark()
+        time.sleep(1)
+        wizard = VenuesWizard(self.web_driver_container)
+        wizard.click_on_go_back_button()
+        time.sleep(1)
 
-            profiles_sub_wizard.set_tick_size_profile(self.external_id[1])
-            profiles_sub_wizard.click_on_tick_size_profile_manage_button()
-            if tick_size_profile.is_tick_size_profile_lookup_displayed():
-                tick_size_profile.load_tick_size_profile_by_lookup(self.external_id[1])
-                time.sleep(0.5)
-            else:
-                tick_size_profile.set_external_id_filter(self.external_id[1])
-                time.sleep(0.5)
-            tick_size_profile.click_on_edit()
-            tick_size_profile.click_on_edit_at_tick_size_points()
+        profiles_sub_wizard.set_tick_size_profile(self.external_id[1])
+        profiles_sub_wizard.click_on_tick_size_profile_manage_button()
+        if tick_size_profile.is_tick_size_profile_lookup_displayed():
+            tick_size_profile.load_tick_size_profile_by_lookup(self.external_id[1])
+            time.sleep(0.5)
+        else:
+            tick_size_profile.set_external_id_filter(self.external_id[1])
+            time.sleep(0.5)
+        tick_size_profile.click_on_edit()
+        tick_size_profile.click_on_edit_at_tick_size_points()
 
-            expected_result = [self.external_id[1], self.tick_size_xaxis_type, self.tick_size_refprice_type,
-                               self.tick[1], self.upper_limit]
-            actual_result = [tick_size_profile.get_external_id(), tick_size_profile.get_tick_size_xaxis_type(),
-                             tick_size_profile.get_tick_size_refprice_type(), tick_size_profile.get_tick(),
-                             tick_size_profile.get_upper_limit()]
+        expected_result = [self.external_id[1], self.tick_size_xaxis_type, self.tick_size_refprice_type,
+                           self.tick[1], self.upper_limit]
+        actual_result = [tick_size_profile.get_external_id(), tick_size_profile.get_tick_size_xaxis_type(),
+                         tick_size_profile.get_tick_size_refprice_type(), tick_size_profile.get_tick(),
+                         tick_size_profile.get_upper_limit()]
 
-            self.verify("Tick Size Profile has been change", expected_result, actual_result)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("Tick Size Profile has been change", expected_result, actual_result)

@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.venues.nested_wizards.venues_routing_param_group_sub_wizard import \
     VenuesRoutingParamGroupsSubWizard
@@ -91,34 +88,26 @@ class QAP_T3848(CommonTestCase):
         profiles = VenuesProfilesSubWizard(self.web_driver_container)
         routing_param_groups = VenuesRoutingParamGroupsSubWizard(self.web_driver_container)
 
+        self.precondition()
+
         try:
-            self.precondition()
+            profiles.set_routing_param_group(self.name_at_routing_param_groups)
+            self.verify("Routing param group created and selected in list", True, True)
+        except Exception as e:
+            self.verify("Routing param group NOT created !!", True, e.__class__.__name__)
 
-            try:
-                profiles.set_routing_param_group(self.name_at_routing_param_groups)
-                self.verify("Routing param group created and selected in list", True, True)
-            except Exception as e:
-                self.verify("Routing param group NOT created !!", True, e.__class__.__name__)
+        profiles.click_on_routing_param_group()
+        routing_param_groups.set_name_filter(self.name_at_routing_param_groups)
+        time.sleep(2)
+        routing_param_groups.click_on_entity_at_routing_param_groups()
+        time.sleep(1)
+        actual_result = [routing_param_groups.get_name(), routing_param_groups.get_positive_routes(),
+                         routing_param_groups.get_negative_routes(), routing_param_groups.get_parameter(),
+                         routing_param_groups.get_value()]
+        expected_result = [self.name_at_routing_param_groups, self.positive_routes[0] + ", " + self.positive_routes[1],
+                           self.negative_routes[0] + ", " + self.negative_routes[1], self.parameter, self.value]
 
-            profiles.click_on_routing_param_group()
-            routing_param_groups.set_name_filter(self.name_at_routing_param_groups)
-            time.sleep(2)
-            routing_param_groups.click_on_entity_at_routing_param_groups()
-            time.sleep(1)
-            actual_result = [routing_param_groups.get_name(), routing_param_groups.get_positive_routes(),
-                             routing_param_groups.get_negative_routes(), routing_param_groups.get_parameter(),
-                             routing_param_groups.get_value()]
-            expected_result = [self.name_at_routing_param_groups, self.positive_routes[0] + ", " + self.positive_routes[1],
-                               self.negative_routes[0] + ", " + self.negative_routes[1], self.parameter, self.value]
-
-            try:
-                self.verify("Data saved correctly", expected_result, actual_result)
-            except Exception as e:
-                self.verify("Data saved incorrect!", True, e.__class__.__name__)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        try:
+            self.verify("Data saved correctly", expected_result, actual_result)
+        except Exception as e:
+            self.verify("Data saved incorrect!", True, e.__class__.__name__)

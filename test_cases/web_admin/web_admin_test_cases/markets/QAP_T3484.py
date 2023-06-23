@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.listings.listings_page import ListingsPage
 from test_framework.web_admin_core.pages.markets.listings.listings_wizard import ListingsWizard
@@ -79,33 +76,24 @@ class QAP_T3484(CommonTestCase):
         listing_wizard.click_on_save_changes()
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            page = ListingsPage(self.web_driver_container)
-            page.load_listing_from_global_filter(self.symbol)
-            page.click_on_more_actions()
+        page = ListingsPage(self.web_driver_container)
+        page.load_listing_from_global_filter(self.symbol)
+        page.click_on_more_actions()
 
-            time.sleep(2)
-            page.click_on_edit()
-            time.sleep(2)
-            listing_wizard_dark = ListingsDarkAlgoCommissionSubWizard(self.web_driver_container)
-            expected_values_after_saved = [self.cost_per_trade, self.per_unit_comm_amt, self.comm_basis_point,
-                                           self.spread_discount_proportion]
-            actual_result = [listing_wizard_dark.get_cost_per_trade(), listing_wizard_dark.get_per_unit_comm_amt(),
-                             listing_wizard_dark.get_comm_basis_point(),
-                             listing_wizard_dark.get_spread_discount_proportion()]
+        time.sleep(2)
+        page.click_on_edit()
+        time.sleep(2)
+        listing_wizard_dark = ListingsDarkAlgoCommissionSubWizard(self.web_driver_container)
+        expected_values_after_saved = [self.cost_per_trade, self.per_unit_comm_amt, self.comm_basis_point,
+                                       self.spread_discount_proportion]
+        actual_result = [listing_wizard_dark.get_cost_per_trade(), listing_wizard_dark.get_per_unit_comm_amt(),
+                         listing_wizard_dark.get_comm_basis_point(),
+                         listing_wizard_dark.get_spread_discount_proportion()]
 
-            self.verify("Values saved correctly", expected_values_after_saved, actual_result)
+        self.verify("Values saved correctly", expected_values_after_saved, actual_result)
 
-            time.sleep(2)
-            self.verify("Check-box \"Is Comm Per Unit\" is enable", True,
-                        listing_wizard_dark.is_comm_per_unit_checkbox_selected())
-
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        time.sleep(2)
+        self.verify("Check-box \"Is Comm Per Unit\" is enable", True,
+                    listing_wizard_dark.is_comm_per_unit_checkbox_selected())

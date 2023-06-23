@@ -1,8 +1,5 @@
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.listings.listings_validations_sub_wizard import \
     ListingsValidationsSubWizard
@@ -31,30 +28,22 @@ class QAP_T9418(CommonTestCase):
 
     def test_context(self):
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page = ListingsPage(self.web_driver_container)
-            main_page.load_listing_from_global_filter(self.lookup_symbol)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
-            validations_tab = ListingsValidationsSubWizard(self.web_driver_container)
-            validations_tab.click_on_manage_tick_size_profile()
-            time.sleep(0.5)
-            tick_size_profile_wizard = ListingsTickSizeProfileSubWizard(self.web_driver_container)
-            if tick_size_profile_wizard.is_tick_size_profile_lookup_displayed():
-                tick_size_profile_wizard.load_tick_size_profile_by_lookup("t")
-                time.sleep(1)
-                self.verify("Tick Size Profile displayed", True,
-                            tick_size_profile_wizard.is_tick_size_profile_table_contains_entity())
-            else:
-                time.sleep(1)
-                self.verify("Tick Size Profile displayed", True,
-                            tick_size_profile_wizard.is_tick_size_profile_table_contains_entity())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        main_page = ListingsPage(self.web_driver_container)
+        main_page.load_listing_from_global_filter(self.lookup_symbol)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
+        validations_tab = ListingsValidationsSubWizard(self.web_driver_container)
+        validations_tab.click_on_manage_tick_size_profile()
+        time.sleep(0.5)
+        tick_size_profile_wizard = ListingsTickSizeProfileSubWizard(self.web_driver_container)
+        if tick_size_profile_wizard.is_tick_size_profile_lookup_displayed():
+            tick_size_profile_wizard.load_tick_size_profile_by_lookup("t")
+            time.sleep(1)
+            self.verify("Tick Size Profile displayed", True,
+                        tick_size_profile_wizard.is_tick_size_profile_table_contains_entity())
+        else:
+            time.sleep(1)
+            self.verify("Tick Size Profile displayed", True,
+                        tick_size_profile_wizard.is_tick_size_profile_table_contains_entity())

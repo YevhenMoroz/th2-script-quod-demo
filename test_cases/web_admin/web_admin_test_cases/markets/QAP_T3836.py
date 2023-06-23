@@ -1,10 +1,7 @@
-import sys
 import time
-import traceback
 import string
 import random
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.routes.main_page import RoutesPage
 from test_framework.web_admin_core.pages.markets.routes.venues_subwizard import RoutesVenuesSubWizard
@@ -52,56 +49,48 @@ class QAP_T3836(CommonTestCase):
         wizard.click_on_save_changes()
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            routes_page = RoutesPage(self.web_driver_container)
-            routes_page.set_name_at_filter(self.name)
-            time.sleep(1)
-            routes_page.click_on_more_actions()
-            routes_page.click_on_edit_at_more_actions()
+        routes_page = RoutesPage(self.web_driver_container)
+        routes_page.set_name_at_filter(self.name)
+        time.sleep(1)
+        routes_page.click_on_more_actions()
+        routes_page.click_on_edit_at_more_actions()
 
-            routes_venues_sub_wizard = RoutesVenuesSubWizard(self.web_driver_container)
-            routes_venues_sub_wizard.click_on_edit_at_venues_tab()
-            routes_venues_sub_wizard.set_ord_amt_less_than_std_mkt_size_checkbox_at_venues_tab()
-            routes_venues_sub_wizard.set_max_ord_amt_at_venues_tab(self.max_ord_amt[1])
-            routes_venues_sub_wizard.set_max_ord_amt_currency_at_venues_tab(self.max_ord_amt_currency[1])
-            routes_venues_sub_wizard.set_currency_different_than_at_venues_tab(self.currency_different_than[1])
-            routes_venues_sub_wizard.set_max_ord_qty_at_venues_tab(self.max_ord_qty[1])
-            routes_venues_sub_wizard.set_display_qty_max_pct_of_ord_qty_at_venues_tab(self.display_qty_max_pct_of_ord_qty[1])
-            routes_venues_sub_wizard.click_on_check_mark_at_venues_tab()
+        routes_venues_sub_wizard = RoutesVenuesSubWizard(self.web_driver_container)
+        routes_venues_sub_wizard.click_on_edit_at_venues_tab()
+        routes_venues_sub_wizard.set_ord_amt_less_than_std_mkt_size_checkbox_at_venues_tab()
+        routes_venues_sub_wizard.set_max_ord_amt_at_venues_tab(self.max_ord_amt[1])
+        routes_venues_sub_wizard.set_max_ord_amt_currency_at_venues_tab(self.max_ord_amt_currency[1])
+        routes_venues_sub_wizard.set_currency_different_than_at_venues_tab(self.currency_different_than[1])
+        routes_venues_sub_wizard.set_max_ord_qty_at_venues_tab(self.max_ord_qty[1])
+        routes_venues_sub_wizard.set_display_qty_max_pct_of_ord_qty_at_venues_tab(self.display_qty_max_pct_of_ord_qty[1])
+        routes_venues_sub_wizard.click_on_check_mark_at_venues_tab()
 
-            wizard = RoutesWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
-            routes_page.set_name_at_filter(self.name)
-            time.sleep(1)
-            routes_page.click_on_more_actions()
-            routes_page.click_on_edit_at_more_actions()
-            routes_venues_sub_wizard.click_on_edit_at_venues_tab()
+        wizard = RoutesWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
+        routes_page.set_name_at_filter(self.name)
+        time.sleep(1)
+        routes_page.click_on_more_actions()
+        routes_page.click_on_edit_at_more_actions()
+        routes_venues_sub_wizard.click_on_edit_at_venues_tab()
 
-            expected_result = ["False", self.max_ord_amt[1], self.max_ord_amt_currency[1],
-                               self.currency_different_than[1], self.max_ord_qty[1],
-                               self.display_qty_max_pct_of_ord_qty[1]]
+        expected_result = ["False", self.max_ord_amt[1], self.max_ord_amt_currency[1],
+                           self.currency_different_than[1], self.max_ord_qty[1],
+                           self.display_qty_max_pct_of_ord_qty[1]]
 
-            actual_result = [f"{routes_venues_sub_wizard.get_ord_amt_less_than_std_mkt_size_checkbox_at_venues_tab()}",
-                             routes_venues_sub_wizard.get_max_ord_amt_at_venues_tab(),
-                             routes_venues_sub_wizard.get_max_ord_amt_currency_at_venues_tab(),
-                             routes_venues_sub_wizard.get_currency_different_than_at_venues_tab(),
-                             routes_venues_sub_wizard.get_max_ord_qty_at_venues_tab(),
-                             routes_venues_sub_wizard.get_display_qty_max_pct_of_ord_qty_at_venues_tab()]
+        actual_result = [f"{routes_venues_sub_wizard.get_ord_amt_less_than_std_mkt_size_checkbox_at_venues_tab()}",
+                         routes_venues_sub_wizard.get_max_ord_amt_at_venues_tab(),
+                         routes_venues_sub_wizard.get_max_ord_amt_currency_at_venues_tab(),
+                         routes_venues_sub_wizard.get_currency_different_than_at_venues_tab(),
+                         routes_venues_sub_wizard.get_max_ord_qty_at_venues_tab(),
+                         routes_venues_sub_wizard.get_display_qty_max_pct_of_ord_qty_at_venues_tab()]
 
-            self.verify("Parameters are update", expected_result, actual_result)
+        self.verify("Parameters are update", expected_result, actual_result)
 
-            wizard.click_on_save_changes()
-            routes_page.set_name_at_filter(self.name)
-            time.sleep(1)
-            routes_page.click_on_more_actions()
-            routes_page.click_on_delete_at_more_actions()
-            routes_page.click_on_ok()
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        wizard.click_on_save_changes()
+        routes_page.set_name_at_filter(self.name)
+        time.sleep(1)
+        routes_page.click_on_more_actions()
+        routes_page.click_on_delete_at_more_actions()
+        routes_page.click_on_ok()

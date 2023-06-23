@@ -1,10 +1,7 @@
 import string
-import sys
 import time
-import traceback
 import random
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.market_data_sources.main_page import \
     MarketDataSourcesPage
@@ -44,25 +41,17 @@ class QAP_T4011(CommonTestCase):
         main_page.click_on_more_actions()
 
     def test_context(self):
+        self.precondition()
+        main_page = MarketDataSourcesPage(self.web_driver_container)
+
+        main_page.click_on_delete_and_confirmation(False)
+        time.sleep(2)
+        # main_page.set_symbol_at_filter("AUD/CAD")
+        # time.sleep(2)
+        main_page.click_on_more_actions()
+        time.sleep(2)
         try:
-            self.precondition()
-            main_page = MarketDataSourcesPage(self.web_driver_container)
-
-            main_page.click_on_delete_and_confirmation(False)
-            time.sleep(2)
-            # main_page.set_symbol_at_filter("AUD/CAD")
-            # time.sleep(2)
-            main_page.click_on_more_actions()
-            time.sleep(2)
-            try:
-                main_page.click_on_delete_and_confirmation(True)
-                self.verify("Entity deleted", True, True)
-            except Exception as e:
-                self.verify("Entity NOT DELETED !, check case", True, e.__class__.__name__)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+            main_page.click_on_delete_and_confirmation(True)
+            self.verify("Entity deleted", True, True)
+        except Exception as e:
+            self.verify("Entity NOT DELETED !, check case", True, e.__class__.__name__)

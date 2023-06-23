@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.listings.listings_attachment_sub_wizard import \
     ListingsAttachmentSubWizard
@@ -107,101 +104,93 @@ class QAP_T3974(CommonTestCase):
 
     def test_context(self):
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            values_tab = ListingsValuesSubWizard(self.web_driver_container)
-            values_tab.set_symbol(self.new_symbol)
-            values_tab.set_settl_type(self.settle_type)
-            values_tab.set_strike_price(self.strike_price)
+        values_tab = ListingsValuesSubWizard(self.web_driver_container)
+        values_tab.set_symbol(self.new_symbol)
+        values_tab.set_settl_type(self.settle_type)
+        values_tab.set_strike_price(self.strike_price)
 
-            translation_tab_listing = TranslationTab.ListingTable(self.web_driver_container)
-            translation_tab_listing.click_on_plus()
-            translation_tab_listing.set_language(self.language)
-            translation_tab_listing.set_description(self.language_description)
-            translation_tab_listing.click_on_checkmark()
+        translation_tab_listing = TranslationTab.ListingTable(self.web_driver_container)
+        translation_tab_listing.click_on_plus()
+        translation_tab_listing.set_language(self.language)
+        translation_tab_listing.set_description(self.language_description)
+        translation_tab_listing.click_on_checkmark()
 
-            attachment_tab = ListingsAttachmentSubWizard(self.web_driver_container)
-            self.sub_venue = random.choice(attachment_tab.get_all_sub_venue_from_drop_menu())
-            attachment_tab.set_sub_venue(self.sub_venue)
+        attachment_tab = ListingsAttachmentSubWizard(self.web_driver_container)
+        self.sub_venue = random.choice(attachment_tab.get_all_sub_venue_from_drop_menu())
+        attachment_tab.set_sub_venue(self.sub_venue)
 
-            currency_tab = ListingsCurrencySubWizard(self.web_driver_container)
-            currency_tab.set_instr_currency(self.instr_currency)
+        currency_tab = ListingsCurrencySubWizard(self.web_driver_container)
+        currency_tab.set_instr_currency(self.instr_currency)
 
-            dark_algo_commission_tab = ListingsDarkAlgoCommissionSubWizard(self.web_driver_container)
-            dark_algo_commission_tab.set_per_unit_comm_amt(self.per_unit_comm_amt)
+        dark_algo_commission_tab = ListingsDarkAlgoCommissionSubWizard(self.web_driver_container)
+        dark_algo_commission_tab.set_per_unit_comm_amt(self.per_unit_comm_amt)
 
-            market_data_tab = ListingsMarketDataSubWizard(self.web_driver_container)
-            market_data_tab.set_quote_book_symbol(self.quote_book_symbol)
+        market_data_tab = ListingsMarketDataSubWizard(self.web_driver_container)
+        market_data_tab.set_quote_book_symbol(self.quote_book_symbol)
 
-            market_identifiers_tab = ListingsMarketIdentifiersSubWizard(self.web_driver_container)
-            market_identifiers_tab.set_security_id(self.security_id)
-            market_identifiers_tab.set_security_id_source(self.security_id_source)
+        market_identifiers_tab = ListingsMarketIdentifiersSubWizard(self.web_driver_container)
+        market_identifiers_tab.set_security_id(self.security_id)
+        market_identifiers_tab.set_security_id_source(self.security_id_source)
 
-            format_tab = ListingsFormatSubWizard(self.web_driver_container)
-            format_tab.set_tick_denominator(self.tick_denominator)
+        format_tab = ListingsFormatSubWizard(self.web_driver_container)
+        format_tab.set_tick_denominator(self.tick_denominator)
 
-            feature_tab = ListingsFeatureSubWizard(self.web_driver_container)
-            feature_tab.set_contract_multiplier(self.contract_multiplier)
-            feature_tab.click_on_async_indicator()
-            feature_tab.click_on_cross_through_eur()
+        feature_tab = ListingsFeatureSubWizard(self.web_driver_container)
+        feature_tab.set_contract_multiplier(self.contract_multiplier)
+        feature_tab.click_on_async_indicator()
+        feature_tab.click_on_cross_through_eur()
 
-            validations_tab = ListingsValidationsSubWizard(self.web_driver_container)
-            validations_tab.set_min_trade_vol(self.min_trade_vol)
+        validations_tab = ListingsValidationsSubWizard(self.web_driver_container)
+        validations_tab.set_min_trade_vol(self.min_trade_vol)
 
-            status_tab = ListingsStatusSubWizard(self.web_driver_container)
-            status_tab.set_trading_phase(self.trading_phase)
+        status_tab = ListingsStatusSubWizard(self.web_driver_container)
+        status_tab.set_trading_phase(self.trading_phase)
 
-            short_sell_tab = ListingsShortShellSubWizard(self.web_driver_container)
-            short_sell_tab.click_on_allow_short_sell()
+        short_sell_tab = ListingsShortShellSubWizard(self.web_driver_container)
+        short_sell_tab.click_on_allow_short_sell()
 
-            misc_tab = ListingsMiscSubWizard(self.web_driver_container)
-            misc_tab.set_misc_0(self.misk_0)
+        misc_tab = ListingsMiscSubWizard(self.web_driver_container)
+        misc_tab.set_misc_0(self.misk_0)
 
-            counterpart_tab = ListingsCounterpartSubWizard(self.web_driver_container)
-            counterpart_tab.set_counterpart(self.counterpart)
+        counterpart_tab = ListingsCounterpartSubWizard(self.web_driver_container)
+        counterpart_tab.set_counterpart(self.counterpart)
 
-            fee_type_exemption = ListingsFeeTypeExemptionSubWizard(self.web_driver_container)
-            fee_type_exemption.click_on_levy_fee_exemption()
+        fee_type_exemption = ListingsFeeTypeExemptionSubWizard(self.web_driver_container)
+        fee_type_exemption.click_on_levy_fee_exemption()
 
-            wizard = ListingsWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
-            time.sleep(2)
+        wizard = ListingsWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
+        time.sleep(2)
 
-            main_page = ListingsPage(self.web_driver_container)
-            main_page.set_listing_in_global_filter(self.lookup_symbol)
-            time.sleep(2)
-            main_page.click_on_more_actions()
-            time.sleep(1)
-            main_page.click_on_edit()
-            time.sleep(2)
+        main_page = ListingsPage(self.web_driver_container)
+        main_page.set_listing_in_global_filter(self.lookup_symbol)
+        time.sleep(2)
+        main_page.click_on_more_actions()
+        time.sleep(1)
+        main_page.click_on_edit()
+        time.sleep(2)
 
-            translation_tab_listing.click_on_edit()
+        translation_tab_listing.click_on_edit()
 
-            actual_result = [values_tab.get_symbol(), values_tab.get_settl_type(),
-                             values_tab.get_strike_price(), translation_tab_listing.get_language(),
-                             translation_tab_listing.get_description(), attachment_tab.get_sub_venue(),
-                             currency_tab.get_instr_currency(), dark_algo_commission_tab.get_per_unit_comm_amt(),
-                             market_data_tab.get_quote_book_symbol(), market_identifiers_tab.get_security_id(),
-                             market_identifiers_tab.get_security_id_source(), format_tab.get_tick_denominator(),
-                             feature_tab.get_contract_multiplier(), feature_tab.is_async_indicator_checked(),
-                             feature_tab.is_cross_through_eur_checked(), validations_tab.get_min_trade_vol(),
-                             status_tab.get_trading_phase(), short_sell_tab.is_allow_short_sell_checked(),
-                             misc_tab.get_misc_0(), counterpart_tab.get_counterpart(),
-                             fee_type_exemption.is_levy_fee_exemption()]
+        actual_result = [values_tab.get_symbol(), values_tab.get_settl_type(),
+                         values_tab.get_strike_price(), translation_tab_listing.get_language(),
+                         translation_tab_listing.get_description(), attachment_tab.get_sub_venue(),
+                         currency_tab.get_instr_currency(), dark_algo_commission_tab.get_per_unit_comm_amt(),
+                         market_data_tab.get_quote_book_symbol(), market_identifiers_tab.get_security_id(),
+                         market_identifiers_tab.get_security_id_source(), format_tab.get_tick_denominator(),
+                         feature_tab.get_contract_multiplier(), feature_tab.is_async_indicator_checked(),
+                         feature_tab.is_cross_through_eur_checked(), validations_tab.get_min_trade_vol(),
+                         status_tab.get_trading_phase(), short_sell_tab.is_allow_short_sell_checked(),
+                         misc_tab.get_misc_0(), counterpart_tab.get_counterpart(),
+                         fee_type_exemption.is_levy_fee_exemption()]
 
-            excepted_result = [self.new_symbol, self.settle_type, self.strike_price, self.language,
-                               self.language_description, self.sub_venue, self.instr_currency,
-                               self.per_unit_comm_amt, self.quote_book_symbol, self.security_id,
-                               self.security_id_source, self.tick_denominator, self.contract_multiplier,
-                               True, True, self.min_trade_vol, self.trading_phase, False, self.misk_0,
-                               self.counterpart, True]
+        excepted_result = [self.new_symbol, self.settle_type, self.strike_price, self.language,
+                           self.language_description, self.sub_venue, self.instr_currency,
+                           self.per_unit_comm_amt, self.quote_book_symbol, self.security_id,
+                           self.security_id_source, self.tick_denominator, self.contract_multiplier,
+                           True, True, self.min_trade_vol, self.trading_phase, False, self.misk_0,
+                           self.counterpart, True]
 
-            self.verify("Edit data is correct", actual_result, excepted_result)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("Edit data is correct", actual_result, excepted_result)
