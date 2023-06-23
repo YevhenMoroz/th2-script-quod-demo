@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_wizard import ClientsWizard
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_values_sub_wizard import ClientsValuesSubWizard
@@ -96,27 +93,19 @@ class QAP_T3633(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            login_page = LoginPage(self.web_driver_container)
-            login_page.login_to_web_admin(self.test_data['desk_user']['login'], self.test_data['desk_user']['password'])
-            side_menu = SideMenu(self.web_driver_container)
-            side_menu.open_accounts_page()
-            account_page = AccountsPage(self.web_driver_container)
-            account_page.set_id(self.test_data['account']['id'])
-            time.sleep(1)
-            account_page.click_more_actions_button()
-            account_page.click_edit_entity_button()
-            account_values_tab = AccountsWizard(self.web_driver_container)
-            clients_available_for_selection = account_values_tab.get_all_clients_from_drop_menu()
+        login_page = LoginPage(self.web_driver_container)
+        login_page.login_to_web_admin(self.test_data['desk_user']['login'], self.test_data['desk_user']['password'])
+        side_menu = SideMenu(self.web_driver_container)
+        side_menu.open_accounts_page()
+        account_page = AccountsPage(self.web_driver_container)
+        account_page.set_id(self.test_data['account']['id'])
+        time.sleep(1)
+        account_page.click_more_actions_button()
+        account_page.click_edit_entity_button()
+        account_values_tab = AccountsWizard(self.web_driver_container)
+        clients_available_for_selection = account_values_tab.get_all_clients_from_drop_menu()
 
-            self.verify("Client field displays dropdown only with available Client values for User",
-                        True, True if self.test_data['account']['client'] in clients_available_for_selection else False)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("Client field displays dropdown only with available Client values for User",
+                    True, True if self.test_data['account']['client'] in clients_available_for_selection else False)

@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_page import AccountsPage
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_routes_subwizard import \
     AccountsRoutesSubWizard
@@ -41,35 +38,27 @@ class QAP_T10959(CommonTestCase):
         wizard = AccountsWizard(self.web_driver_container)
         routes_tab = AccountsRoutesSubWizard(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page.click_new_button()
-            values_tab.set_id(self.id)
-            values_tab.set_ext_id_client(self.ext_id_client)
-            values_tab.set_client_id_source(self.client_id_source)
+        main_page.click_new_button()
+        values_tab.set_id(self.id)
+        values_tab.set_ext_id_client(self.ext_id_client)
+        values_tab.set_client_id_source(self.client_id_source)
 
-            for i in range(len(self.routes)):
-                routes_tab.click_on_plus_button()
-                routes_tab.set_route_account_name(self.route_name)
-                routes_tab.set_route(self.routes[i])
-                routes_tab.click_on_checkmark_button()
+        for i in range(len(self.routes)):
+            routes_tab.click_on_plus_button()
+            routes_tab.set_route_account_name(self.route_name)
+            routes_tab.set_route(self.routes[i])
+            routes_tab.click_on_checkmark_button()
 
-            wizard.click_save_button()
-            main_page.set_id(self.id)
-            time.sleep(1)
-            main_page.click_more_actions_button()
-            main_page.click_edit_entity_button()
+        wizard.click_save_button()
+        main_page.set_id(self.id)
+        time.sleep(1)
+        main_page.click_more_actions_button()
+        main_page.click_edit_entity_button()
 
-            expected_result = [[self.route_name for _ in range(2)], sorted(self.routes)]
-            actual_result = [routes_tab.get_all_route_account_names_in_table(),
-                             sorted(routes_tab.get_all_routes_in_table())]
+        expected_result = [[self.route_name for _ in range(2)], sorted(self.routes)]
+        actual_result = [routes_tab.get_all_route_account_names_in_table(),
+                         sorted(routes_tab.get_all_routes_in_table())]
 
-            self.verify("New Account has been saved with same RouteAccountName", expected_result, actual_result)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("New Account has been saved with same RouteAccountName", expected_result, actual_result)

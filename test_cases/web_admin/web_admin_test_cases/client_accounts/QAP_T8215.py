@@ -1,10 +1,7 @@
-import sys
 import time
-import traceback
 import random
 import string
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_wizard import ClientsWizard
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_values_sub_wizard import \
@@ -45,47 +42,39 @@ class QAP_T8215(CommonTestCase):
         manage_sub_wizard.click_on_delete_button(True)
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page = ClientsPage(self.web_driver_container)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
+        main_page = ClientsPage(self.web_driver_container)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
 
-            values_sub_wizard = ClientsValuesSubWizard(self.web_driver_container)
-            self.client_name = values_sub_wizard.get_name()
+        values_sub_wizard = ClientsValuesSubWizard(self.web_driver_container)
+        self.client_name = values_sub_wizard.get_name()
 
-            values_sub_wizard.click_on_manage_external_allocation_matching_service()
-            manage_sub_wizard = ClientsExternalAllocationMatchingService(self.web_driver_container)
-            manage_sub_wizard.click_on_plus_button()
-            manage_sub_wizard.set_name(self.name_at_manage)
-            manage_sub_wizard.set_gateway_instance(self.gateway_instance_at_manage)
-            manage_sub_wizard.click_on_unsolicited_checkmark()
-            manage_sub_wizard.click_on_save_checkmark()
-            time.sleep(1)
+        values_sub_wizard.click_on_manage_external_allocation_matching_service()
+        manage_sub_wizard = ClientsExternalAllocationMatchingService(self.web_driver_container)
+        manage_sub_wizard.click_on_plus_button()
+        manage_sub_wizard.set_name(self.name_at_manage)
+        manage_sub_wizard.set_gateway_instance(self.gateway_instance_at_manage)
+        manage_sub_wizard.click_on_unsolicited_checkmark()
+        manage_sub_wizard.click_on_save_checkmark()
+        time.sleep(1)
 
-            wizard = ClientsWizard(self.web_driver_container)
-            wizard.click_on_go_back()
-            values_sub_wizard.set_allocation_matching_service(self.allocation_matching_service)
-            time.sleep(1)
-            self.verify("Allocation Matching Service field is enable", True,
-                        values_sub_wizard.is_external_allocation_matching_service_field_enable())
-            values_sub_wizard.set_external_allocation_matching_service(self.name_at_manage)
-            wizard.click_on_save_changes()
-            time.sleep(1)
-            main_page.set_name(self.client_name)
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
-            time.sleep(1)
-            self.verify("External allocation matching service saved", self.name_at_manage,
-                        values_sub_wizard.get_external_allocation_matching_service())
+        wizard = ClientsWizard(self.web_driver_container)
+        wizard.click_on_go_back()
+        values_sub_wizard.set_allocation_matching_service(self.allocation_matching_service)
+        time.sleep(1)
+        self.verify("Allocation Matching Service field is enable", True,
+                    values_sub_wizard.is_external_allocation_matching_service_field_enable())
+        values_sub_wizard.set_external_allocation_matching_service(self.name_at_manage)
+        wizard.click_on_save_changes()
+        time.sleep(1)
+        main_page.set_name(self.client_name)
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
+        time.sleep(1)
+        self.verify("External allocation matching service saved", self.name_at_manage,
+                    values_sub_wizard.get_external_allocation_matching_service())
 
-            self.post_condition()
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.post_condition()

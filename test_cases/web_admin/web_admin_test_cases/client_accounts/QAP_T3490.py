@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_wizard import ClientsWizard
@@ -60,17 +57,9 @@ class QAP_T3490(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            page = ClientsPage(self.web_driver_container)
-            page.set_name(self.name)
-            time.sleep(2)
-            self.verify("Created account found", self.name, page.get_client_name())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        page = ClientsPage(self.web_driver_container)
+        page.set_name(self.name)
+        time.sleep(2)
+        self.verify("Created account found", self.name, page.get_client_name())

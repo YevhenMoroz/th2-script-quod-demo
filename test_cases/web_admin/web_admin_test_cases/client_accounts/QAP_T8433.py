@@ -1,7 +1,5 @@
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.client_lists.main_page import ClientListsPage
 from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
@@ -26,18 +24,12 @@ class QAP_T8433(CommonTestCase):
         side_menu.open_client_list_page()
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page = ClientListsPage(self.web_driver_container)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
+        main_page = ClientListsPage(self.web_driver_container)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
 
-            time.sleep(1)
-            common_act = CommonPage(self.web_driver_container)
-            self.verify("Such record already exists displayed", False, common_act.is_error_message_displayed())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)
+        time.sleep(1)
+        common_act = CommonPage(self.web_driver_container)
+        self.verify("Such record already exists displayed", False, common_act.is_error_message_displayed())

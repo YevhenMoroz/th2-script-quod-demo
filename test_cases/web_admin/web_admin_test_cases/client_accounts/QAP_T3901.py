@@ -1,10 +1,7 @@
-import sys
 import time
-import traceback
 import string
 import random
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_values_sub_wizard \
     import ClientsValuesSubWizard
@@ -75,40 +72,32 @@ class QAP_T3901(CommonTestCase):
         external_source_tab = ClientsExternalSourcesSubWizard(self.web_driver_container)
         wizard = ClientsWizard(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            external_source_tab.set_bic_venue_act_grp_name(self.bic)
-            wizard.click_on_save_changes()
-            time.sleep(1)
-            main_page.set_name(self.name)
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
+        external_source_tab.set_bic_venue_act_grp_name(self.bic)
+        wizard.click_on_save_changes()
+        time.sleep(1)
+        main_page.set_name(self.name)
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
 
-            self.verify("BIC has value", self.bic, external_source_tab.get_bic_venue_act_grp_name())
+        self.verify("BIC has value", self.bic, external_source_tab.get_bic_venue_act_grp_name())
 
-            external_source_tab.set_bic_venue_act_grp_name(self.new_bic)
-            wizard.click_on_save_changes()
-            main_page.set_name(self.name)
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
+        external_source_tab.set_bic_venue_act_grp_name(self.new_bic)
+        wizard.click_on_save_changes()
+        main_page.set_name(self.name)
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
 
-            self.verify("BIC has been changed", self.new_bic, external_source_tab.get_bic_venue_act_grp_name())
+        self.verify("BIC has been changed", self.new_bic, external_source_tab.get_bic_venue_act_grp_name())
 
-            external_source_tab.set_bic_venue_act_grp_name("")
-            wizard.click_on_save_changes()
-            main_page.set_name(self.name)
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
-            actual_result = True if len(external_source_tab.get_bic_venue_act_grp_name()) > 1 else False
-            self.verify("BIC has not values", True, actual_result)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        external_source_tab.set_bic_venue_act_grp_name("")
+        wizard.click_on_save_changes()
+        main_page.set_name(self.name)
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
+        actual_result = True if len(external_source_tab.get_bic_venue_act_grp_name()) > 1 else False
+        self.verify("BIC has not values", True, actual_result)

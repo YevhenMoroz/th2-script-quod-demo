@@ -1,7 +1,3 @@
-import sys
-import traceback
-
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_values_sub_wizard import \
     ClientsValuesSubWizard
@@ -32,32 +28,24 @@ class QAP_T3882(CommonTestCase):
 
     def test_context(self):
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            values_sub_wizard = ClientsValuesSubWizard(self.web_driver_container)
-            values_sub_wizard.set_clearing_account_type(self.clearing_account_type)
-            values_sub_wizard.set_booking_inst(self.option)
-            values_sub_wizard.set_allocation_preference(self.option)
-            values_sub_wizard.set_confirmation_service(self.option)
-            values_sub_wizard.set_block_approval(self.option)
+        values_sub_wizard = ClientsValuesSubWizard(self.web_driver_container)
+        values_sub_wizard.set_clearing_account_type(self.clearing_account_type)
+        values_sub_wizard.set_booking_inst(self.option)
+        values_sub_wizard.set_allocation_preference(self.option)
+        values_sub_wizard.set_confirmation_service(self.option)
+        values_sub_wizard.set_block_approval(self.option)
 
-            selected_values = [values_sub_wizard.get_clearing_account_type(), values_sub_wizard.get_booking_inst(),
-                               values_sub_wizard.get_allocation_preference(), values_sub_wizard.get_confirmation_service(),
-                               values_sub_wizard.get_block_approval()]
-            actual_result = True
-            for i in selected_values:
-                if i == self.clearing_account_type or i == self.option:
-                    pass
-                else:
-                    actual_result = False
-                    break
+        selected_values = [values_sub_wizard.get_clearing_account_type(), values_sub_wizard.get_booking_inst(),
+                           values_sub_wizard.get_allocation_preference(), values_sub_wizard.get_confirmation_service(),
+                           values_sub_wizard.get_block_approval()]
+        actual_result = True
+        for i in selected_values:
+            if i == self.clearing_account_type or i == self.option:
+                pass
+            else:
+                actual_result = False
+                break
 
-            self.verify("The required options have been selected", True, actual_result)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("The required options have been selected", True, actual_result)

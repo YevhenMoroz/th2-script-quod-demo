@@ -1,10 +1,6 @@
-import sys
 import time
-import traceback
 import random
 import string
-
-from custom import basic_custom_actions
 
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_values_sub_wizard import \
     ClientsValuesSubWizard
@@ -108,24 +104,16 @@ class QAP_T10724(CommonTestCase):
         account_page = AccountsPage(self.web_driver_container)
         values_tab = AccountsWizard(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            side_menu.open_accounts_page()
-            account_page.set_id(self.account_id)
-            time.sleep(1)
-            account_page.click_more_actions_button()
-            account_page.click_edit_entity_button()
-            time.sleep(1)
-            self.verify("Cash Account is linked", self.cash_position_name, values_tab.get_cash_accounts())
-            values_tab.set_cash_accounts(self.cash_position_name)
-            time.sleep(1)
-            self.verify("Cash Account is still linked", self.cash_position_name, values_tab.get_cash_accounts())
-            self.verify("WARN message appears", True, values_tab.is_unable_to_unassign_cash_account_warning_displayed())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        side_menu.open_accounts_page()
+        account_page.set_id(self.account_id)
+        time.sleep(1)
+        account_page.click_more_actions_button()
+        account_page.click_edit_entity_button()
+        time.sleep(1)
+        self.verify("Cash Account is linked", self.cash_position_name, values_tab.get_cash_accounts())
+        values_tab.set_cash_accounts(self.cash_position_name)
+        time.sleep(1)
+        self.verify("Cash Account is still linked", self.cash_position_name, values_tab.get_cash_accounts())
+        self.verify("WARN message appears", True, values_tab.is_unable_to_unassign_cash_account_warning_displayed())

@@ -1,9 +1,7 @@
 import time
-import traceback
 import random
 import string
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_page import AccountsPage
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_wizard import AccountsWizard
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_routes_subwizard \
@@ -33,41 +31,35 @@ class QAP_T3356(CommonTestCase):
         side_menu.open_accounts_page()
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page = AccountsPage(self.web_driver_container)
-            main_page.click_more_actions_button()
-            main_page.click_edit_entity_button()
-            values_sub_wizard = AccountsWizard(self.web_driver_container)
-            self.account_id = values_sub_wizard.get_id()
+        main_page = AccountsPage(self.web_driver_container)
+        main_page.click_more_actions_button()
+        main_page.click_edit_entity_button()
+        values_sub_wizard = AccountsWizard(self.web_driver_container)
+        self.account_id = values_sub_wizard.get_id()
 
-            routes_tab = AccountsRoutesSubWizard(self.web_driver_container)
-            routes_tab.click_on_plus_button()
-            routes_tab.set_route_account_name(self.route_account_name)
-            routes_tab.set_route(self.route)
-            routes_tab.select_agent_fee_exemption_checkbox()
-            routes_tab.click_on_checkmark_button()
+        routes_tab = AccountsRoutesSubWizard(self.web_driver_container)
+        routes_tab.click_on_plus_button()
+        routes_tab.set_route_account_name(self.route_account_name)
+        routes_tab.set_route(self.route)
+        routes_tab.select_agent_fee_exemption_checkbox()
+        routes_tab.click_on_checkmark_button()
 
-            wizard = AccountsWizard(self.web_driver_container)
-            wizard.click_save_button()
+        wizard = AccountsWizard(self.web_driver_container)
+        wizard.click_save_button()
 
-            main_page.set_id(self.account_id)
-            time.sleep(1)
-            main_page.click_more_actions_button()
-            main_page.click_edit_entity_button()
+        main_page.set_id(self.account_id)
+        time.sleep(1)
+        main_page.click_more_actions_button()
+        main_page.click_edit_entity_button()
 
-            routes_tab.filter_routes(self.route_account_name)
-            time.sleep(1)
-            routes_tab.click_edit_button()
-            self.verify("Agent fee exemption is selected", True, routes_tab.is_agent_fee_exemption_selected())
+        routes_tab.filter_routes(self.route_account_name)
+        time.sleep(1)
+        routes_tab.click_edit_button()
+        self.verify("Agent fee exemption is selected", True, routes_tab.is_agent_fee_exemption_selected())
 
-            routes_tab.click_discard_entity_button()
-            routes_tab.click_delete_button()
+        routes_tab.click_discard_entity_button()
+        routes_tab.click_delete_button()
 
-            wizard.click_save_button()
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)
+        wizard.click_save_button()

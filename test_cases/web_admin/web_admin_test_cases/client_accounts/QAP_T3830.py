@@ -1,8 +1,5 @@
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_external_sources_sub_wizard import \
     ClientsExternalSourcesSubWizard
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
@@ -35,25 +32,17 @@ class QAP_T3830(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
-        try:
-            self.precondition()
-            page = ClientsPage(self.web_driver_container)
-            external_sources_sub_wizard = ClientsExternalSourcesSubWizard(self.web_driver_container)
-            venue_act_group_name_bic = external_sources_sub_wizard.get_bic_venue_act_grp_name()
-            time.sleep(1)
-            external_sources_sub_wizard.set_bic_venue_act_grp_name(" ")
-            wizard = ClientsWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
-            time.sleep(2)
-            page.click_on_more_actions()
-            time.sleep(2)
-            page = ClientsPage(self.web_driver_container)
-            self.verify("Is bic venue act group name changed correctly", False,
-                        page.click_download_pdf_entity_button_and_check_pdf(venue_act_group_name_bic))
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.precondition()
+        page = ClientsPage(self.web_driver_container)
+        external_sources_sub_wizard = ClientsExternalSourcesSubWizard(self.web_driver_container)
+        venue_act_group_name_bic = external_sources_sub_wizard.get_bic_venue_act_grp_name()
+        time.sleep(1)
+        external_sources_sub_wizard.set_bic_venue_act_grp_name(" ")
+        wizard = ClientsWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
+        time.sleep(2)
+        page.click_on_more_actions()
+        time.sleep(2)
+        page = ClientsPage(self.web_driver_container)
+        self.verify("Is bic venue act group name changed correctly", False,
+                    page.click_download_pdf_entity_button_and_check_pdf(venue_act_group_name_bic))

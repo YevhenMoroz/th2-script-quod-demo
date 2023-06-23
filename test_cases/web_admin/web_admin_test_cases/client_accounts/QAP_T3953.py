@@ -1,10 +1,7 @@
-import sys
 import time
-import traceback
 import random
 import string
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_page import AccountsPage
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_wizard import AccountsWizard
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_routes_subwizard \
@@ -91,47 +88,39 @@ class QAP_T3953(CommonTestCase):
         routes_tab = AccountsRoutesSubWizard(self.web_driver_container)
         wizard = AccountsWizard(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page = AccountsPage(self.web_driver_container)
-            main_page.set_id(self.id)
-            time.sleep(1)
-            main_page.click_more_actions_button()
-            main_page.click_clone_entity_button()
-            dimensions_tab.click_edit_button()
-            routes_tab.click_edit_button()
+        main_page = AccountsPage(self.web_driver_container)
+        main_page.set_id(self.id)
+        time.sleep(1)
+        main_page.click_more_actions_button()
+        main_page.click_clone_entity_button()
+        dimensions_tab.click_edit_button()
+        routes_tab.click_edit_button()
 
-            expected_result = [self.client, self.description, self.client_id_source, self.bo_field_5, "True",
-                               self.counterpart, self.venue_account, self.venue, self.account_id_source, "True",
-                               self.venue_client_account_name, self.route_account_name, self.route, "True",
-                               self.default_route]
+        expected_result = [self.client, self.description, self.client_id_source, self.bo_field_5, "True",
+                           self.counterpart, self.venue_account, self.venue, self.account_id_source, "True",
+                           self.venue_client_account_name, self.route_account_name, self.route, "True",
+                           self.default_route]
 
-            actual_result = [values_tab.get_client(), values_tab.get_name(), values_tab.get_client_id_source(),
-                             values_tab.get_bo_field_5(), str(values_tab.is_commission_exemption_checked()),
-                             values_tab.get_counterpart(), dimensions_tab.get_venue_account(),
-                             dimensions_tab.get_venue(), dimensions_tab.get_account_id_source(),
-                             str(dimensions_tab.get_stamp_exempt()), dimensions_tab.get_venue_client_account_name(),
-                             routes_tab.get_route_account_name(), routes_tab.get_route(),
-                             str(routes_tab.is_agent_fee_exemption_selected()),
-                             routes_tab.get_default_route()]
+        actual_result = [values_tab.get_client(), values_tab.get_name(), values_tab.get_client_id_source(),
+                         values_tab.get_bo_field_5(), str(values_tab.is_commission_exemption_checked()),
+                         values_tab.get_counterpart(), dimensions_tab.get_venue_account(),
+                         dimensions_tab.get_venue(), dimensions_tab.get_account_id_source(),
+                         str(dimensions_tab.get_stamp_exempt()), dimensions_tab.get_venue_client_account_name(),
+                         routes_tab.get_route_account_name(), routes_tab.get_route(),
+                         str(routes_tab.is_agent_fee_exemption_selected()),
+                         routes_tab.get_default_route()]
 
-            self.verify("Cloned data the same as parent", expected_result, actual_result)
+        self.verify("Cloned data the same as parent", expected_result, actual_result)
 
-            values_tab.set_id(self.new_id)
-            values_tab.set_ext_id_client(self.new_ext_id_client)
-            dimensions_tab.set_venue_account(self.new_venue_account)
-            dimensions_tab.set_venue_client_account_name(self.new_venue_client_account_name)
-            dimensions_tab.click_on_checkmark_button()
-            wizard.click_save_button()
+        values_tab.set_id(self.new_id)
+        values_tab.set_ext_id_client(self.new_ext_id_client)
+        dimensions_tab.set_venue_account(self.new_venue_account)
+        dimensions_tab.set_venue_client_account_name(self.new_venue_client_account_name)
+        dimensions_tab.click_on_checkmark_button()
+        wizard.click_save_button()
 
-            main_page.set_id(self.new_id)
-            time.sleep(1)
-            self.verify("New account has been create", True, main_page.is_searched_account_found(self.new_id))
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        main_page.set_id(self.new_id)
+        time.sleep(1)
+        self.verify("New account has been create", True, main_page.is_searched_account_found(self.new_id))
