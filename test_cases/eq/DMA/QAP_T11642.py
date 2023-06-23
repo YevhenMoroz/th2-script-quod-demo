@@ -23,7 +23,7 @@ logger.setLevel(logging.INFO)
 seconds, nanos = timestamps()  # Test case start time
 
 
-class QAP_T11644(TestCase):
+class QAP_T11642(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
         super().__init__(report_id, session_id, data_set, environment)
@@ -41,8 +41,8 @@ class QAP_T11644(TestCase):
                                     self.ssh_client_env.su_password)
         self.rule_manager = RuleManager(Simulators.equity)
         self.order_modification_request = OrderModificationRequest()
-        self.price = '20.0'
-        self.colar_up = '21'
+        self.price = '5.0'
+        self.colar_down = '4'
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -50,7 +50,7 @@ class QAP_T11644(TestCase):
         # region precondition: set up needed configuration for listing
         instrument_id = self.data_set.get_instrument_id_by_name('instrument_11_collar_eurex')
         listing_id = self.data_set.get_listing_id_by_name('listing_11_collar_eurex')
-        self.db_manager.execute_query(f"""UPDATE listingdailyinfo SET  collarup='{self.colar_up}', collardown=NULL
+        self.db_manager.execute_query(f"""UPDATE listingdailyinfo SET  collardown ='{self.colar_down}', collarup=NULL
                                             WHERE listingid = '{listing_id}'""")
         self.ssh_client.send_command("qrestart QUOD.AQS, QUOD.RDS, QUOD.ORS")
         time.sleep(80)
@@ -82,7 +82,7 @@ class QAP_T11644(TestCase):
         # endregion
 
         # region step 2 : Amend DMA order
-        new_price = '23'
+        new_price = '3'
         self.order_modification_request.set_default(self.data_set, order_id)
         self.order_modification_request.update_fields_in_component(JavaApiFields.OrderModificationRequestBlock.value, {
             JavaApiFields.Price.value: new_price})
