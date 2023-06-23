@@ -98,10 +98,8 @@ class QAP_T11644(TestCase):
         # endregion
 
         value = self._get_logs_from_ors(order_id)
-
-        print(value)
         self.java_api_manager.compare_values({'ErrorMessage': 'QUOD-11685" ErrorLevel="E" ErrorMsg="Order price is not within RD collar range.',
-                                              'Price': new_price},
+                                              'Price': f'Price={new_price}'},
                                              {'ErrorMessage': value[0],
                                                  'Price': value[0]}, 'Verify actual result from step 2',
                                              VerificationMethod.CONTAINS)

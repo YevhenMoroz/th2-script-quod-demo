@@ -102,6 +102,8 @@ class OmsInstrumentId(Enum):
     instrument_7 = "4o_6NqkKiqQpmUhKO4xUEw"  # MultiListed instrument
     instrument_8 = 'KojIbEE6b0HgK4VBgy8F9w'  # MFD instrument
     instrument_9 = 'OqYEQbjef05OTF0ken9_qw'
+    instrument_10_collar = 'r957ZBmvcpEi2tGHqJxKgw'
+    instrument_11_collar_eurex = 'bFWOnhVL1w0AANsbQuAVXg'  # Equity Instrument for Collar functionality
 
 
 class OmsListingId(Enum):
@@ -115,6 +117,8 @@ class OmsListingId(Enum):
     listing_8 = "3346"  # one listing of MultiListed instrument
     listing_9 = "10100000077"  # listing for MFD instrument
     listing_10 = '905'
+    listing_10_collar = '10001300000032'
+    listing_11_collar_eurex = '10001400000031'
 
 
 class OmsVenues(Enum):
