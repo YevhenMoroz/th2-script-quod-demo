@@ -1,0 +1,43 @@
+<!--
+$HeadURL$
+$LastChangedDate$
+$LastChangedRevision$
+$LastChangedBy$
+
+Copyright Quod Financial
+-->
+<quod>
+    <includes>
+        <include>${CFG_DIR}/${CFG_PREFIX}backend.xml</include>
+        <include>${CFG_DIR}/${CFG_PREFIX}persistence.xml</include>
+        <include>${CFG_DIR}/${CFG_PREFIX}routing.xml</include>
+        <include>${CFG_DIR}/${CFG_PREFIX}marketdata.xml</include>
+        <include>${CFG_DEFAULT}/qs.xml</include>
+    </includes>
+	<qs>
+		<pricing>
+			<marketdata>
+				<!-- exact field name in Market_Quote -->
+				<field>LastTradedPrice</field>
+			</marketdata>
+			<default>marketdata</default>
+			<priceRoundInverted>false</priceRoundInverted>
+		</pricing>
+		<!-- quote price contribution -->
+		<contribution>
+		<enabled>true</enabled>
+		<attempt>3</attempt>
+		<upTickShortSell>MMM</upTickShortSell>
+		<downTickShortSell>MMS</downTickShortSell>
+		</contribution>
+
+		<!-- required info to provide for contribution or internal positions -->
+		<identification>
+		<accountGroup>CLIENT1</accountGroup>
+		<user>JavaApiUser</user>
+		<role>TRA</role>
+		<hedger></hedger>
+		</identification>
+		<partialFillStop>false</partialFillStop>
+	</qs>
+</quod>
