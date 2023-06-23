@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.middle_office.commissions.commissions_dimensions_sub_wizard import \
     CommissionsDimensionsSubWizard
@@ -61,27 +58,19 @@ class QAP_T3587(CommonTestCase):
 
     def test_context(self):
 
-        try:
-            self.precondition()
-            dimensions_tab = CommissionsDimensionsSubWizard(self.web_driver_container)
-            wizard = CommissionsWizard(self.web_driver_container)
-            main_page = CommissionsPage(self.web_driver_container)
-            main_page.set_name(self.name)
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
-            dimensions_tab.clear_client_list_field()
-            dimensions_tab.set_venue(self.venue)
-            wizard.click_on_save_changes()
-            main_page.set_name(self.name)
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
-            self.verify("Is client list remove", True, dimensions_tab.is_client_list_contains_text())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.precondition()
+        dimensions_tab = CommissionsDimensionsSubWizard(self.web_driver_container)
+        wizard = CommissionsWizard(self.web_driver_container)
+        main_page = CommissionsPage(self.web_driver_container)
+        main_page.set_name(self.name)
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
+        dimensions_tab.clear_client_list_field()
+        dimensions_tab.set_venue(self.venue)
+        wizard.click_on_save_changes()
+        main_page.set_name(self.name)
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
+        self.verify("Is client list remove", True, dimensions_tab.is_client_list_contains_text())

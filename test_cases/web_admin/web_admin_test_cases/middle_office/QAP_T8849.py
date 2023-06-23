@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.middle_office.fees.fees_page import FeesPage
 from test_framework.web_admin_core.pages.middle_office.fees.fees_values_sub_wizard import FeesValuesSubWizard
@@ -51,34 +48,26 @@ class QAP_T8849(CommonTestCase):
         values_tab = FeesValuesSubWizard(self.web_driver_container)
         commission_profile_points = FeesCommissionProfilePointsSubWizard(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            values_tab.click_on_manage_exec_fee_profile()
-            exec_fee_profile = FeesExecFeeProfileSubWizard(self.web_driver_container)
-            exec_fee_profile.click_on_plus()
-            exec_fee_profile.set_commission_profile_name(self.commission_profile_name)
-            exec_fee_profile.set_comm_xunit(self.comm_xunit)
-            exec_fee_profile.set_comm_type(self.comm_type)
-            exec_fee_profile.set_comm_algorithm(self.comm_algorithm)
+        values_tab.click_on_manage_exec_fee_profile()
+        exec_fee_profile = FeesExecFeeProfileSubWizard(self.web_driver_container)
+        exec_fee_profile.click_on_plus()
+        exec_fee_profile.set_commission_profile_name(self.commission_profile_name)
+        exec_fee_profile.set_comm_xunit(self.comm_xunit)
+        exec_fee_profile.set_comm_type(self.comm_type)
+        exec_fee_profile.set_comm_algorithm(self.comm_algorithm)
 
-            self.create_commission_profile_point(self.base_values, self.upper_limit[0])
-            self.create_commission_profile_point(self.base_values, self.upper_limit[1])
-            self.create_commission_profile_point(self.base_values, self.upper_limit[2])
-            exec_fee_profile.click_on_checkmark()
+        self.create_commission_profile_point(self.base_values, self.upper_limit[0])
+        self.create_commission_profile_point(self.base_values, self.upper_limit[1])
+        self.create_commission_profile_point(self.base_values, self.upper_limit[2])
+        exec_fee_profile.click_on_checkmark()
 
-            exec_fee_profile.set_commission_profile_name_filter(self.commission_profile_name)
-            time.sleep(1)
-            exec_fee_profile.click_on_edit()
-            actual_result = commission_profile_points.get_all_upper_limit_values_from_table()
-            expected_result = [self.upper_limit[-1], self.upper_limit[0], self.upper_limit[1]]
+        exec_fee_profile.set_commission_profile_name_filter(self.commission_profile_name)
+        time.sleep(1)
+        exec_fee_profile.click_on_edit()
+        actual_result = commission_profile_points.get_all_upper_limit_values_from_table()
+        expected_result = [self.upper_limit[-1], self.upper_limit[0], self.upper_limit[1]]
 
-            self.verify("Sort CommissionPointBlocks in ascending UpperLimit and null one is the last one",
-                        expected_result, actual_result)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("Sort CommissionPointBlocks in ascending UpperLimit and null one is the last one",
+                    expected_result, actual_result)

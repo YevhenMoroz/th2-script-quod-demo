@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.middle_office.settlement_models.main_page import \
@@ -48,33 +45,26 @@ class QAP_T3839(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
-        try:
-            self.precondition()
-            page = SettlementModelsPage(self.web_driver_container)
-            page.set_name(self.name)
-            time.sleep(1)
-            page.click_on_more_actions()
-            time.sleep(1)
-            page.click_on_delete(True)
-            common_page = CommonPage(self.web_driver_container)
-            common_page.click_on_info_error_message_pop_up()
-            common_page.click_on_user_icon()
-            time.sleep(1)
-            common_page.click_on_logout()
-            time.sleep(2)
-            login_page = LoginPage(self.web_driver_container)
-            login_page.login_to_web_admin(self.login, self.password)
-            time.sleep(2)
-            side_menu = SideMenu(self.web_driver_container)
-            side_menu.open_settlement_models_page()
-            time.sleep(2)
-            page.set_name(self.name)
-            time.sleep(1)
-            self.verify("Entity is deleted", False, page.is_searched_entity_found(self.name))
+        self.precondition()
+        page = SettlementModelsPage(self.web_driver_container)
+        page.set_name(self.name)
+        time.sleep(1)
+        page.click_on_more_actions()
+        time.sleep(1)
+        page.click_on_delete(True)
+        common_page = CommonPage(self.web_driver_container)
+        common_page.click_on_info_error_message_pop_up()
+        common_page.click_on_user_icon()
+        time.sleep(1)
+        common_page.click_on_logout()
+        time.sleep(2)
+        login_page = LoginPage(self.web_driver_container)
+        login_page.login_to_web_admin(self.login, self.password)
+        time.sleep(2)
+        side_menu = SideMenu(self.web_driver_container)
+        side_menu.open_settlement_models_page()
+        time.sleep(2)
+        page.set_name(self.name)
+        time.sleep(1)
+        self.verify("Entity is deleted", False, page.is_searched_entity_found(self.name))
 
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
