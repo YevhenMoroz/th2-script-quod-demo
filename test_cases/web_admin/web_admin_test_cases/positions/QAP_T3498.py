@@ -1,10 +1,6 @@
 import random
 import string
-import sys
 import time
-import traceback
-
-from custom import basic_custom_actions
 
 from test_framework.web_admin_core.pages.positions.cash_positions.main_page import *
 from test_framework.web_admin_core.pages.positions.cash_positions.wizards import *
@@ -69,25 +65,17 @@ class QAP_T3498(CommonTestCase):
         cash_positions_page = MainPage(self.web_driver_container)
         common_act = CommonPage(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            cash_positions_page.click_on_transaction()
-            cash_positions_page.set_transaction_type(self.transaction_type)
-            cash_positions_page.set_amount(self.amount)
-            time.sleep(1)
-            cash_positions_page.click_on_ok_button()
-            time.sleep(1)
-            common_act.click_on_info_error_message_pop_up()
-            cash_positions_page.click_on_enable_disable_button()
-            time.sleep(1)
+        cash_positions_page.click_on_transaction()
+        cash_positions_page.set_transaction_type(self.transaction_type)
+        cash_positions_page.set_amount(self.amount)
+        time.sleep(1)
+        cash_positions_page.click_on_ok_button()
+        time.sleep(1)
+        common_act.click_on_info_error_message_pop_up()
+        cash_positions_page.click_on_enable_disable_button()
+        time.sleep(1)
 
-            self.verify("Entity not disabled, error pop-up appears", self.error_message,
-                        common_act.get_error_pop_up_text())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("Entity not disabled, error pop-up appears", self.error_message,
+                    common_act.get_error_pop_up_text())

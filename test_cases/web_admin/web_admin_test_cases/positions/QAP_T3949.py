@@ -1,10 +1,7 @@
-import sys
 import time
-import traceback
 import string
 import random
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.positions.wash_books.wash_books_page import WashBookPage
 from test_framework.web_admin_core.pages.positions.wash_books.wash_books_wizard import WashBookWizard
 from test_framework.web_admin_core.pages.positions.wash_books.wash_books_assignments_sub_waizard import WashBookAssignmentsSubWizard
@@ -37,34 +34,27 @@ class QAP_T3949(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            wash_book_main_menu = WashBookPage(self.web_driver_container)
-            wash_book_main_menu.click_on_new_button()
-            wash_book_wizard = WashBookWizard(self.web_driver_container)
-            wash_book_wizard.set_id_at_values_tab(self.id)
-            wash_book_wizard.set_ext_id_client_at_values_tab(self.ext_id_client)
-            wash_book_wizard.set_client_at_values_tab(self.client)
-            wash_book_wizard.set_client_id_source_at_values_tab(self.client_id_source)
-            wash_book_wizard_assignment_tab = WashBookAssignmentsSubWizard(self.web_driver_container)
-            wash_book_wizard_assignment_tab.set_institution(self.institution)
-            expected_pdf_content = [f"ID: {self.id}",
-                                    f"Ext ID Client: {self.ext_id_client}",
-                                    "Client ID Source: BIC",
-                                    "Clearing Account Type: Institution",
-                                    f"Institution: {self.institution}"]
-            self.verify(f"Is PDF contains {expected_pdf_content}", True,
-                        wash_book_wizard.click_on_download_pdf_button_and_check_data(expected_pdf_content))
+        wash_book_main_menu = WashBookPage(self.web_driver_container)
+        wash_book_main_menu.click_on_new_button()
+        wash_book_wizard = WashBookWizard(self.web_driver_container)
+        wash_book_wizard.set_id_at_values_tab(self.id)
+        wash_book_wizard.set_ext_id_client_at_values_tab(self.ext_id_client)
+        wash_book_wizard.set_client_at_values_tab(self.client)
+        wash_book_wizard.set_client_id_source_at_values_tab(self.client_id_source)
+        wash_book_wizard_assignment_tab = WashBookAssignmentsSubWizard(self.web_driver_container)
+        wash_book_wizard_assignment_tab.set_institution(self.institution)
+        expected_pdf_content = [f"ID: {self.id}",
+                                f"Ext ID Client: {self.ext_id_client}",
+                                "Client ID Source: BIC",
+                                "Clearing Account Type: Institution",
+                                f"Institution: {self.institution}"]
+        self.verify(f"Is PDF contains {expected_pdf_content}", True,
+                    wash_book_wizard.click_on_download_pdf_button_and_check_data(expected_pdf_content))
 
-            wash_book_wizard.click_on_save_changes()
-            wash_book_main_menu.set_id_filter(self.id)
-            time.sleep(1)
-            self.verify("WashBook Account is created and displayed on WashBook Accounts page.", True,
-                        wash_book_main_menu.is_searched_entity_found(self.id))
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        wash_book_wizard.click_on_save_changes()
+        wash_book_main_menu.set_id_filter(self.id)
+        time.sleep(1)
+        self.verify("WashBook Account is created and displayed on WashBook Accounts page.", True,
+                    wash_book_main_menu.is_searched_entity_found(self.id))

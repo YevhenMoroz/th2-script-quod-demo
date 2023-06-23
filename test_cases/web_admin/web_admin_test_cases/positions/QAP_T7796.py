@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_wizard import ClientsWizard
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_values_sub_wizard import ClientsValuesSubWizard
@@ -120,25 +117,17 @@ class QAP_T7796(CommonTestCase):
         cash_positions_values_tab = ValuesTab(self.web_driver_container)
         cash_positions_wizard = MainWizard(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            cash_positions_page.set_name(self.test_data['cash_position_2']['name'])
-            time.sleep(1)
-            cash_positions_page.click_on_more_actions()
-            cash_positions_page.click_on_edit()
-            cash_positions_values_tab.select_default_cash_position_checkbox()
-            cash_positions_wizard.click_on_save_changes()
-            time.sleep(1)
+        cash_positions_page.set_name(self.test_data['cash_position_2']['name'])
+        time.sleep(1)
+        cash_positions_page.click_on_more_actions()
+        cash_positions_page.click_on_edit()
+        cash_positions_values_tab.select_default_cash_position_checkbox()
+        cash_positions_wizard.click_on_save_changes()
+        time.sleep(1)
 
-            common_act = CommonPage(self.web_driver_container)
+        common_act = CommonPage(self.web_driver_container)
 
-            self.verify("Get an reject with error message - A default cash account for this currency on this client "
-                        "is already assigned", True, common_act.is_error_message_displayed())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("Get an reject with error message - A default cash account for this currency on this client "
+                    "is already assigned", True, common_act.is_error_message_displayed())

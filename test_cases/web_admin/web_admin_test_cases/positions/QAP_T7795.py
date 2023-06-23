@@ -1,10 +1,5 @@
 import random
 import string
-import sys
-import time
-import traceback
-
-from custom import basic_custom_actions
 
 from test_framework.web_admin_core.pages.positions.cash_positions.main_page import *
 from test_framework.web_admin_core.pages.positions.cash_positions.wizards import *
@@ -40,41 +35,33 @@ class QAP_T7795(CommonTestCase):
         side_menu.open_cash_positions_page()
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            cash_positions_page = MainPage(self.web_driver_container)
-            cash_positions_page.click_on_new()
-            values_tab = ValuesTab(self.web_driver_container)
-            values_tab.set_name(self.name[0])
-            values_tab.set_client_cash_account_id(self.client_cash_account_id[0])
-            values_tab.set_venue_cash_account_id(self.venue_cash_account_id[0])
-            values_tab.set_currency(self.currency)
-            values_tab.set_client(self.client)
-            wizard = MainWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
+        cash_positions_page = MainPage(self.web_driver_container)
+        cash_positions_page.click_on_new()
+        values_tab = ValuesTab(self.web_driver_container)
+        values_tab.set_name(self.name[0])
+        values_tab.set_client_cash_account_id(self.client_cash_account_id[0])
+        values_tab.set_venue_cash_account_id(self.venue_cash_account_id[0])
+        values_tab.set_currency(self.currency)
+        values_tab.set_client(self.client)
+        wizard = MainWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
 
-            cash_positions_page.click_on_new()
-            values_tab.set_name(self.name[1])
-            values_tab.set_client_cash_account_id(self.client_cash_account_id[1])
-            values_tab.set_venue_cash_account_id(self.venue_cash_account_id[1])
-            values_tab.set_currency(self.currency)
-            values_tab.set_client(self.client)
-            wizard.click_on_save_changes()
+        cash_positions_page.click_on_new()
+        values_tab.set_name(self.name[1])
+        values_tab.set_client_cash_account_id(self.client_cash_account_id[1])
+        values_tab.set_venue_cash_account_id(self.venue_cash_account_id[1])
+        values_tab.set_currency(self.currency)
+        values_tab.set_client(self.client)
+        wizard.click_on_save_changes()
 
-            cash_positions_page.set_name(self.name[0])
-            time.sleep(1)
-            self.verify("Firs entity has been saved", True,
-                        cash_positions_page.is_searched_cash_account_found(self.name[0]))
+        cash_positions_page.set_name(self.name[0])
+        time.sleep(1)
+        self.verify("Firs entity has been saved", True,
+                    cash_positions_page.is_searched_cash_account_found(self.name[0]))
 
-            cash_positions_page.set_name(self.name[1])
-            time.sleep(1)
-            self.verify("Second entity has been saved", True,
-                        cash_positions_page.is_searched_cash_account_found(self.name[1]))
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        cash_positions_page.set_name(self.name[1])
+        time.sleep(1)
+        self.verify("Second entity has been saved", True,
+                    cash_positions_page.is_searched_cash_account_found(self.name[1]))

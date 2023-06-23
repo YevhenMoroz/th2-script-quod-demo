@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
 from test_framework.web_admin_core.pages.positions.wash_book_rules.wash_book_rules_page import WashBookRulesPage
@@ -33,61 +30,53 @@ class QAP_T3412(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            page = WashBookRulesPage(self.web_driver_container)
-            page.click_on_new_button()
-            time.sleep(2)
-            wizard = WashBookRulesWizard(self.web_driver_container)
-            wizard.set_name(self.name)
-            self.account = random.choice(wizard.get_all_account_from_drop_menu())
-            wizard.set_account(self.account)
-            available_institutions = wizard.get_all_institutions_from_drop_menu()
-            actual_result = bool
-            for i in available_institutions:
-                if i != self.institution:
-                    actual_result = False
-                    break
-                else:
-                    actual_result = True
-            self.verify(f"Only {self.institution} available to choose", True, actual_result)
+        page = WashBookRulesPage(self.web_driver_container)
+        page.click_on_new_button()
+        time.sleep(2)
+        wizard = WashBookRulesWizard(self.web_driver_container)
+        wizard.set_name(self.name)
+        self.account = random.choice(wizard.get_all_account_from_drop_menu())
+        wizard.set_account(self.account)
+        available_institutions = wizard.get_all_institutions_from_drop_menu()
+        actual_result = bool
+        for i in available_institutions:
+            if i != self.institution:
+                actual_result = False
+                break
+            else:
+                actual_result = True
+        self.verify(f"Only {self.institution} available to choose", True, actual_result)
 
-            wizard.set_institution(self.institution)
-            time.sleep(1)
-            wizard.click_on_save_changes()
-            time.sleep(2)
-            page = WashBookRulesPage(self.web_driver_container)
-            page.set_name_at_filter(self.name)
-            time.sleep(1)
-            self.verify("New WashBookRules has been create", True, page.is_searched_entity_found(self.name))
+        wizard.set_institution(self.institution)
+        time.sleep(1)
+        wizard.click_on_save_changes()
+        time.sleep(2)
+        page = WashBookRulesPage(self.web_driver_container)
+        page.set_name_at_filter(self.name)
+        time.sleep(1)
+        self.verify("New WashBookRules has been create", True, page.is_searched_entity_found(self.name))
 
-            page.click_on_more_actions()
-            time.sleep(1)
-            page.click_on_edit_at_more_actions()
-            time.sleep(2)
-            new_account = random.choice(wizard.get_all_account_from_drop_menu())
-            wizard.set_account(new_account)
-            wizard.click_on_save_changes()
-            time.sleep(2)
-            page.set_name_at_filter(self.name)
-            time.sleep(1)
-            self.verify("Current user can modify WashBookRules entity", True, page.is_searched_entity_found(self.name))
+        page.click_on_more_actions()
+        time.sleep(1)
+        page.click_on_edit_at_more_actions()
+        time.sleep(2)
+        new_account = random.choice(wizard.get_all_account_from_drop_menu())
+        wizard.set_account(new_account)
+        wizard.click_on_save_changes()
+        time.sleep(2)
+        page.set_name_at_filter(self.name)
+        time.sleep(1)
+        self.verify("Current user can modify WashBookRules entity", True, page.is_searched_entity_found(self.name))
 
-            page.click_on_more_actions()
-            time.sleep(1)
-            page.click_on_delete_and_confirmation(True)
-            time.sleep(1)
-            common_act = CommonPage(self.web_driver_container)
-            common_act.refresh_page(True)
-            time.sleep(3)
-            page.set_name_at_filter(self.name)
-            time.sleep(1)
-            self.verify("Entity has been delete", False, page.is_searched_entity_found(self.name))
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        page.click_on_more_actions()
+        time.sleep(1)
+        page.click_on_delete_and_confirmation(True)
+        time.sleep(1)
+        common_act = CommonPage(self.web_driver_container)
+        common_act.refresh_page(True)
+        time.sleep(3)
+        page.set_name_at_filter(self.name)
+        time.sleep(1)
+        self.verify("Entity has been delete", False, page.is_searched_entity_found(self.name))
