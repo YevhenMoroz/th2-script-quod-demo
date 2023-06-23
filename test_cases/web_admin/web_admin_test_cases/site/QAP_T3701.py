@@ -1,7 +1,5 @@
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.site.zones.zones_page import ZonesPage
@@ -26,20 +24,14 @@ class QAP_T3701(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
+        self.precondition()
+        page = ZonesPage(self.web_driver_container)
         try:
-            self.precondition()
-            page = ZonesPage(self.web_driver_container)
-            try:
-                page.click_on_enable_disable_button()
-                time.sleep(2)
-                page.click_on_enable_disable_button()
-                time.sleep(2)
+            page.click_on_enable_disable_button()
+            time.sleep(2)
+            page.click_on_enable_disable_button()
+            time.sleep(2)
 
-                self.verify("Enable / disable button works correctly", True, True)
-            except Exception as e:
-                self.verify("Enable / disable button works incorrectly", True, e.__class__.__name__)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)
+            self.verify("Enable / disable button works correctly", True, True)
+        except Exception as e:
+            self.verify("Enable / disable button works incorrectly", True, e.__class__.__name__)

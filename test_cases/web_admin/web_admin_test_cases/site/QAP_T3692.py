@@ -1,7 +1,5 @@
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.site.zones.zones_page import ZonesPage
@@ -30,15 +28,9 @@ class QAP_T3692(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
-        try:
-            self.precondition()
-            wizard = ZonesWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
-            time.sleep(1)
-            self.verify("Is incorrect or missing values message displayed", True,
-                        wizard.is_incorrect_or_missing_value_message_displayed())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)
+        self.precondition()
+        wizard = ZonesWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
+        time.sleep(1)
+        self.verify("Is incorrect or missing values message displayed", True,
+                    wizard.is_incorrect_or_missing_value_message_displayed())
