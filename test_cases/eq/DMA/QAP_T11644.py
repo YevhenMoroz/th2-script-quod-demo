@@ -110,7 +110,6 @@ class QAP_T11644(TestCase):
             self.ssh_client.send_command(
                 f'egrep "sent.*MessageType=.Order_OrderModificationReply.*.*.{order_id}.*" QUOD.ORS.log > logs.txt')
             self.ssh_client.get_file('/Logs/quod317/logs.txt', './logs.txt')
-            file = open('./logs.txt')
             with open('./logs.txt') as file:
                 values = file.readlines()
             return values
