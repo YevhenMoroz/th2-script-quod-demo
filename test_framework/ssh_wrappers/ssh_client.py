@@ -5,7 +5,9 @@ import time
 import paramiko
 import xml.etree.ElementTree as ET
 from stubs import ROOT_DIR
-
+import logging
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 class SshClient:
     """A wrapper of paramiko.SSHClient"""

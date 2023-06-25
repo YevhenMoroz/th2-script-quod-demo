@@ -12,6 +12,8 @@ from stubs import Stubs
 from test_framework.data_sets.message_types import ORSMessageType, CSMessageType, ESMessageType, PKSMessageType, \
     MDAMessageType, AQSMessageType, QSMessageType
 from test_framework.java_api_wrappers.JavaApiMessage import JavaApiMessage
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 class JavaApiManager:
