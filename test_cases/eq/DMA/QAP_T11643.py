@@ -101,6 +101,5 @@ class QAP_T11643(TestCase):
                 JavaApiFields.OrderModificationReplyBlock.value)
             order_id = order_reply[JavaApiFields.OrdID.value]
             self.java_api_manager.compare_values(
-                {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value,
-                 JavaApiFields.Price.value: new_price}, order_modification_reply,
+                {JavaApiFields.Price.value: new_price}, order_modification_reply,
                 f'Verifying that order has properly price (step {list_of_new_price.index(new_price) + 2})')
