@@ -341,5 +341,4 @@ class QAP_T7166(TestCase):
     def run_post_conditions(self):
         self.commission_sender.clear_commissions()
         self.commission_sender.clear_fees()
-
         logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")

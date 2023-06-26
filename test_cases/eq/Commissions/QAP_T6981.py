@@ -33,8 +33,6 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-
-
 class QAP_T6981(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -207,6 +205,7 @@ class QAP_T6981(TestCase):
                                                  alloc_report["RootMiscFeesList"]["RootMiscFeesBlock"])},
                                              "Check Per Transac", VerificationMethod.CONTAINS)
         alloc_id = alloc_report["AllocInstructionID"]
+        booking_alloc_id = alloc_report[JavaApiFields.BookingAllocInstructionID.value]
         order_update = self.java_api_manager.get_last_message(ORSMessageType.OrdUpdate.value).get_parameters()[
             JavaApiFields.OrdUpdateBlock.value]
         expected_result = {
@@ -287,14 +286,15 @@ class QAP_T6981(TestCase):
 
         # end region
         # pre step check 35=J message (626 = 5)
-        list_of_ignored_fields.extend(['RootCommTypeClCommBasis', 'AllocID',
+        list_of_ignored_fields.extend(['RootCommTypeClCommBasis',
                                        'NetMoney', 'BookingType', 'AllocInstructionMiscBlock1',
                                        'Quantity', 'RootOrClientCommission', 'AllocTransType',
                                        'ReportedPx', 'ConfirmStatus', 'MatchStatus', 'ConfirmID',
                                        'RootOrClientCommissionCurrency',
                                        'RootSettlCurrAmt'])
         self.allocation_instruction_fix.change_parameters(
-            {'NoOrders': [{'ClOrdID': cl_order_id, 'OrderID': order_id}], "AllocType": '5',
+            {'AllocID': booking_alloc_id,
+             'NoOrders': [{'ClOrdID': cl_order_id, 'OrderID': order_id}], "AllocType": '5',
              'NoRootMiscFeesList': [{
                  'RootMiscFeeBasis': '2',
                  'RootMiscFeeCurr': self.currency,
@@ -303,18 +303,21 @@ class QAP_T6981(TestCase):
                  'RootMiscFeeAmt': fee_amount_fix
              }]})
         self.fix_verifier.check_fix_message_fix_standard(self.allocation_instruction_fix,
+                                                         ['AllocType', 'NoOrders', 'AllocID'],
                                                          ignored_fields=list_of_ignored_fields)
         # end region
         # pre step check 35=J message (626 = 2)
         list_of_ignored_fields.extend(['IndividualAllocID', 'AllocNetPrice', 'AllocQty', 'AllocPrice'])
         self.allocation_instruction_fix.remove_parameter('NoRootMiscFeesList')
-        self.allocation_instruction_fix.change_parameters({'NoAllocs': [{
-            'NoMiscFees': no_misc_fee,
-            'AllocAccount': self.client_acc
-        }]})
+        self.allocation_instruction_fix.change_parameters({'AllocID': alloc_id,
+                                                           'NoAllocs': [{
+                                                               'NoMiscFees': no_misc_fee,
+                                                               'AllocAccount': self.client_acc
+                                                           }]})
         self.allocation_instruction_fix.change_parameters(
             {'NoOrders': [{'ClOrdID': cl_order_id, 'OrderID': order_id}], "AllocType": '2'})
         self.fix_verifier.check_fix_message_fix_standard(self.allocation_instruction_fix,
+                                                         ['AllocType', 'NoOrders', 'AllocID'],
                                                          ignored_fields=list_of_ignored_fields)
         # end region
         # pre step check 35=AK message
@@ -322,8 +325,10 @@ class QAP_T6981(TestCase):
         self.confirmation_report.change_parameters(
             {'NoOrders': [{'ClOrdID': cl_order_id, 'OrderID': order_id}],
              'ConfirmTransType': "0",
-             'NoMiscFees': no_misc_fee})
+             'NoMiscFees': no_misc_fee,
+             'AllocID': alloc_id})
         self.fix_verifier.check_fix_message_fix_standard(self.confirmation_report,
+                                                         ['ConfirmTransType', 'NoOrders', 'AllocID'],
                                                          ignored_fields=list_of_ignored_fields)
         # end region
 

@@ -1,6 +1,6 @@
 import logging
-import time
 from pathlib import Path
+
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
 from rule_management import RuleManager, Simulators
@@ -19,19 +19,11 @@ from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, E
 from test_framework.java_api_wrappers.oms.es_messages.ExecutionReportOMS import ExecutionReportOMS
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
-from test_framework.ssh_wrappers.ssh_client import SshClient
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 seconds, nanos = timestamps()
-
-
-def print_message(message, responses):
-    logger.info(message)
-    for i in responses:
-        logger.info(i)
-        logger.info(i.get_parameters())
 
 
 class QAP_T6991(TestCase):
@@ -87,8 +79,7 @@ class QAP_T6991(TestCase):
             'OrdQty': self.qty,
             'Price': self.price,
         })
-        responses = self.java_api_manager.send_message_and_receive_response(self.order_submit)
-        print_message('Create DMA  order', responses)
+        self.java_api_manager.send_message_and_receive_response(self.order_submit)
         order_id = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
             JavaApiFields.OrdReplyBlock.value][JavaApiFields.OrdID.value]
         cl_ord_id = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
@@ -116,8 +107,7 @@ class QAP_T6991(TestCase):
                                                              "LastMkt": self.venue_mic,
                                                              "OrdQty": self.qty
                                                          })
-        responses = self.java_api_manager.send_message_and_receive_response(self.execution_report)
-        print_message('Trade DMA  order (Partially filled)', responses)
+        self.java_api_manager.send_message_and_receive_response(self.execution_report)
         actually_result = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
             JavaApiFields.ExecutionReportBlock.value]
         self.java_api_manager.compare_values(
@@ -130,9 +120,7 @@ class QAP_T6991(TestCase):
             "LeavesQty": '0',
             "VenueExecID": bca.client_orderid(9),
         })
-        responses = self.java_api_manager.send_message_and_receive_response(self.execution_report)
-
-        print_message('Trade DMA  order (Fully Filled)', responses)
+        self.java_api_manager.send_message_and_receive_response(self.execution_report)
         actually_result = dict()
         actually_result.update({JavaApiFields.TransExecStatus.value: self.java_api_manager.get_last_message(
             ORSMessageType.ExecutionReport.value).get_parameters()[
@@ -212,7 +200,7 @@ class QAP_T6991(TestCase):
             "ExecType": "B",
             "OrdStatus": "B"
         })
-        misc_fee_rate = 10
+        misc_fee_rate = 5
         amount_of_fees = misc_fee_rate / 100 * int(self.qty) * int(self.price) / 100
         execution_report.change_parameters({'Currency': self.currency, 'CommissionData': '*',
                                             'tag5120': '*', 'ExecBroker': '*',
