@@ -24,6 +24,26 @@ class RestApiGatingRuleMessages(RestApiMessages):
         }
         return self
 
+    def set_main_rule_evaluation(self):
+        self.parameters = {
+            "alive": "true",
+            "gatingRuleCondition": [
+                {"alive": "true", "gatingRuleCondExp": "AND(InstrSymbol=GBP/USD,OrdQty>=1000000)", "gatingRuleCondIndice": 1,
+                 "gatingRuleCondName": "First Main",
+                 "gatingRuleResult": [{"alive": "true", "gatingRuleResultAction": "EVA",
+                                       "gatingRuleResultIndice": 1, "holdOrder": "false",
+                                       "resultGatingRuleID": "3800025", "splitRatio": 0, }]},
+                {"alive": "true", "gatingRuleCondIndice": 2,
+                 "gatingRuleCondName": "Default Result",
+                 "gatingRuleResult": [{"alive": "true", "gatingRuleResultAction": "ORI",
+                                       "gatingRuleResultIndice": 1, "holdOrder": "false",
+                                       "priceOrigin": "PAR", "splitRatio": 1}]},
+                ],
+            "gatingRuleID": 3000015,
+            "gatingRuleName": "Main Rule"
+        }
+        return self
+
     def set_secondary_rule(self):
         self.parameters = {
             "alive": "true",
@@ -41,6 +61,29 @@ class RestApiGatingRuleMessages(RestApiMessages):
                 ],
             "gatingRuleID": 3800024,
             "gatingRuleName": "Automation_secondary_rule"
+        }
+        return self
+
+    def set_evaluation_rule(self):
+        self.parameters = {
+            "alive": "true",
+            "gatingRuleCondition": [
+                {"alive": "true", "gatingRuleCondExp": "AND(InstrSymbol=GBP/USD,OrdQty>=1000000)", "gatingRuleCondIndice": 1,
+                 "gatingRuleCondName": "Eval 1",
+                 "gatingRuleResult": [{"alive": "true", "gatingRuleResultAction": "DMA",
+                                       "gatingRuleResultIndice": 1, "holdOrder": "false",
+                                       "priceOrigin": "PAR", "splitRatio": 1, "venueID": "BARX"},
+                                      {"alive": "true", "gatingRuleResultAction": "DMA",
+                                       "gatingRuleResultIndice": 2, "holdOrder": "false",
+                                       "priceOrigin": "PAR", "splitRatio": 1, "venueID": "BARX"}]},
+                {"alive": "true", "gatingRuleCondExp": "OrdQty>2000000", "gatingRuleCondIndice": 2,
+                 "gatingRuleCondName": "Trigger GT",
+                 "gatingRuleResult": [{"alive": "true", "gatingRuleResultAction": "REJ",
+                                       "gatingRuleResultIndice": 1, "gatingRuleResultRejectType": "HRD",
+                                       "holdOrder": "false", "splitRatio": 1}]},
+                ],
+            "gatingRuleID": 3800025,
+            "gatingRuleName": "Evaluate_automation"
         }
         return self
 
@@ -67,3 +110,7 @@ class RestApiGatingRuleMessages(RestApiMessages):
             instance["gatingRuleResult"][0].update({"alive": "true"})
             temp[index].update(instance)
         return self
+
+    def change_result_by_index(self, result, condition_index=0):
+        self.get_parameters()["gatingRuleCondition"][condition_index]["gatingRuleResult"].clear()
+        self.get_parameters()["gatingRuleCondition"][condition_index]["gatingRuleResult"].append(result)
