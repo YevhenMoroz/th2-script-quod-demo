@@ -98,8 +98,7 @@ class QAP_T11643(TestCase):
                 self.rule_manager.remove_rule(modification_rule)
             order_modification_reply = self.java_api_manager.get_last_message(ORSMessageType.OrderModificationReply.value
                                                                  ).get_parameter(
-                JavaApiFields.OrderModificationReplyBlock.value)
-            order_id = order_reply[JavaApiFields.OrdID.value]
+                JavaApiFields.OrderModificationReplyBlock.value)[JavaApiFields.OrdModify.value]
             self.java_api_manager.compare_values(
                 {JavaApiFields.Price.value: new_price}, order_modification_reply,
                 f'Verifying that order has properly price (step {list_of_new_price.index(new_price) + 2})')
