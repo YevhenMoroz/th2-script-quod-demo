@@ -67,6 +67,24 @@ class JavaApiVerifier:
                     Direction.Value(direction.value)
                 )
             )
+        elif java_message.get_message_type() == PKSMessageType.FixPositionReport.value:
+            if key_parameters is None:
+                key_parameters = ["ClientPosReqID"]
+
+            if message_name is None:
+                message_name = "Check PositionReport  message"
+            self.__verifier.submitCheckRule(
+                basic_custom_actions.create_check_rule(
+                    message_name,
+                    basic_custom_actions.filter_to_grpc(f"{PKSMessageType.FixPositionReport.value}",
+                                                        java_message.get_parameters(),
+                                                        key_parameters, ignored_fields),
+                    self.__checkpoint,
+                    self.__session_alias,
+                    self.__case_id,
+                    Direction.Value(direction.value)
+                )
+            )
         else:
             pass
 # TODO add exeption into els
