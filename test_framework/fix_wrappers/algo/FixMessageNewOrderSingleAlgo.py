@@ -1022,6 +1022,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "ExDestination": "LISX",
             "AlgoCst01": "ioi",
             "QtyType": "0",
+            "IClOrdIdAO": "*"
         }
         super().change_parameters(base_parameters)
         return self
