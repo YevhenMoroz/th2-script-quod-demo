@@ -68,6 +68,8 @@ class OrderReplyConst(Enum):
     ExecType_PMO = 'PMO'
     ExecType_CXL = 'CXL'
     ExecType_COR = 'COR'
+    ExecType_PDO = 'PDO'
+    ExecType_OPN = 'OPN'
 
 
 class ExecutionPolicyConst(Enum):
