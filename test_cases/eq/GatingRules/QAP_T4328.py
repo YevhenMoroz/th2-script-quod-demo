@@ -53,7 +53,7 @@ class QAP_T4328(TestCase):
         price = self.order_submit.get_parameter("NewOrderSingleBlock")["Price"]
         param = self.modify_rule_message.get_parameter("gatingRuleCondition")
         # Set "In" to the condition of GatingRule
-        param[0]["gatingRuleCondExp"] = "VenueID IN(PARIS)"
+        param[0]["gatingRuleCondExp"] = "TimeInForce IN(Day,GoodTillCancel)"
         param[0]["gatingRuleResult"][0]["gatingRuleResultAction"] = "DMA"
         set_value_params: dict = {
             "alive": "true",
@@ -65,7 +65,6 @@ class QAP_T4328(TestCase):
         }
         param[1]["gatingRuleResult"].insert(0, set_value_params)  # Set SetValue=HoldOrder to Default Result
         param[1]["gatingRuleResult"][1]["gatingRuleResultIndice"] = 2
-        param[1]["gatingRuleResult"][1]["holdOrder"] = "true"
         self.modify_rule_message.update_parameters({"gatingRuleCondition": param})
         self.rest_api_manager.send_post_request(self.modify_rule_message)
         # endregion
@@ -103,7 +102,7 @@ class QAP_T4328(TestCase):
             {
                 JavaApiFields.GatingRuleCondName.value: "All Orders",
                 JavaApiFields.ExecType.value: "OPN",
-                JavaApiFields.OrdQty.value: "200.0",
+                JavaApiFields.TimeInForce.value: "DAY",
                 JavaApiFields.ExecutionPolicy.value: "D",
             },
             order_reply,
