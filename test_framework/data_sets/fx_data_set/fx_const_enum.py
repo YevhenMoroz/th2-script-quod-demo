@@ -40,6 +40,7 @@ class FxMarketIDs(Enum):
     market_3 = "MS-SW"  # do not use
     market_4 = "JPM-SW"
     market_5 = "DB-SW"
+    market_8 = "GS-SW"
     market_9 = "D3"
     market_10 = "BNP-SW"
 
