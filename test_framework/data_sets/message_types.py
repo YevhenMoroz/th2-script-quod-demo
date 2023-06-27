@@ -31,6 +31,7 @@ class FIXMessageType(Enum):
     AllocationACK = "AllocationACK"
     SecurityStatusRequest = "SecurityStatusRequest"
     SecurityStatus = "SecurityStatus"
+    MultilegOrderCancelReplace = 'MultilegOrderCancelReplace'
 
 
 class ORSMessageType(Enum):
@@ -155,6 +156,7 @@ class ORSMessageType(Enum):
     BenchmarkNotification = 'Order_BenchmarkNotification'
     CrossAnnouncementReply = 'Order_CrossAnnouncementReply'
     CrossAnnouncement = 'Order_CrossAnnouncement'
+    MultiLegOrderModificationRequest = 'Order_MultiLegOrderModificationRequest'
 
 
 class TradingRestApiMessageType(Enum):
