@@ -70,6 +70,7 @@ class OrderReplyConst(Enum):
     ExecType_COR = 'COR'
     ExecType_PDO = 'PDO'
     ExecType_OPN = 'OPN'
+    ExecType_RES = 'RES'
 
 
 class ExecutionPolicyConst(Enum):
@@ -175,6 +176,7 @@ class JavaApiFields(Enum):
     RequestForOverdueRetailPositionsAckBlock = 'RequestForOverdueRetailPositionsAckBlock'
     TransExecStatus = 'TransExecStatus'
     BookingType = 'BookingType'
+    OrdReportBlock = 'OrdReportBlock'
     BenchmarkList = 'BenchmarkList'
     BenchmarkBlock = 'BenchmarkBlock'
     StartBenchmarkTimestamp = 'StartBenchmarkTimestamp'
@@ -188,6 +190,7 @@ class JavaApiFields(Enum):
     ModifyChildren = 'ModifyChildren'
     CancelChildren = ' CancelChildren'
     PositionType = 'PositionType'
+    StopPx = 'StopPx'
     TransactTime = 'TransactTime'
     ErrorMsg = "ErrorMsg"
     OrdModify = 'OrdModify'
@@ -511,6 +514,9 @@ class TimeInForces(Enum):
 class OrdTypes(Enum):
     Limit = 'LMT'
     Market = 'MKT'
+    StopLimit = 'STL'
+    StopLimit_FULL = 'StopLimit'
+    Limit_FULL = 'Limit'
 
 
 class PegScopes(Enum):
