@@ -112,7 +112,7 @@ class QAP_T11152(TestCase):
                     self.java_api_manager.get_last_message(ORSMessageType.OrderReply.value).get_parameters()[JavaApiFields.OrdReplyBlock.value]
                 self.java_api_manager.compare_values({JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value,
                                                       JavaApiFields.Price.value: str(float(new_price))},
-                                                     order_reply, f'Verify that order order has properly price (step {list_of_price.index(new_price)})')
+                                                     order_reply, f'Verify that order order has properly price (step {list_of_price.index(new_price)+2})')
         finally:
             time.sleep(2)
             self.rule_manager.remove_rule(modification_rule)
