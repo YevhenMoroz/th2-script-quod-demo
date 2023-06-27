@@ -19,6 +19,7 @@ Copyright Quod Financial
 	<es>
 	    <execution>
 		    <ignoreTradeDate>true</ignoreTradeDate>
+			<supportDontKnowTrade>false</supportDontKnowTrade>
 			<duplicates>false</duplicates>
 		</execution>
 		<instrument>
@@ -47,6 +48,15 @@ Copyright Quod Financial
 				can handle Reuters/Bloomberg's composite codes -->
 				<supportCompositeCodes>true</supportCompositeCodes>
 		</instrument>
+	<modify>
+		<same>false</same>
+		<synthetic>
+		<increase>false</increase>
+		<venues>
+		<venue>TRQX</venue>
+		</venues>
+		</synthetic>
+	</modify>
 	<order>
 	<!-- whether to expect implicit/unsolicited orders, that is,
 	             when receiving reports on an unknown order, notify its creation
