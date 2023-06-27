@@ -94,6 +94,8 @@ class SshClient:
                 logs.close()
                 os.remove(temp_path)
                 return True
+        logs.close()
+        os.remove(temp_path)
         return False
 
 
