@@ -74,7 +74,6 @@ class QAP_T8175(TestCase):
         venue_list = self.data_set.get_venue_list('venue_list_1')
         self.rest_commission_sender.clear_commissions()
         commission = self.data_set.get_commission_by_name("commission1")
-        self.rest_commission_sender.clear_fees()
         params = {
             'clCommissionID': commission.value,
             'clCommissionName': commission.name,
@@ -120,10 +119,7 @@ class QAP_T8175(TestCase):
                                                              "Side": "Buy",
                                                              "LastTradedQty": self.qty,
                                                              "VenueExecID": bca.client_orderid(9),
-                                                             "LastVenueOrdID": (
-                                                                     tm(datetime.utcnow().isoformat()) + bd(
-                                                                 n=2)).date().strftime(
-                                                                 '%Y-%m-%dT%H:%M:%S'),
+                                                             "LastVenueOrdID": bca.client_orderid(12),
                                                              "LastPx": self.price,
                                                              "OrdType": "Limit",
                                                              "Price": self.price,

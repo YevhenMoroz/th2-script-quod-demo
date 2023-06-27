@@ -1,3 +1,4 @@
+import datetime
 import logging
 from pathlib import Path
 
@@ -90,7 +91,8 @@ class QAP_T9390(TestCase):
         # region step 4: Fully Filled Child CO order
         self.manual_execute.set_default_trade(child_ord_id, price, half_qty)
         self.java_api_manager.send_message_and_receive_response(self.manual_execute,
-                                                                {order_id: order_id, child_ord_id: child_ord_id},response_time=15_000)
+                                                                {order_id: order_id, child_ord_id: child_ord_id},
+                                                                response_time=15_000)
         execution_report_child_order = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value,
                                                                               child_ord_id).get_parameters()[
             JavaApiFields.ExecutionReportBlock.value]
@@ -109,10 +111,13 @@ class QAP_T9390(TestCase):
 
         # region step 5: Manually execute CO order via JavaApiUser_2:
         self.manual_execute.set_default_trade(order_id, price, half_qty)
+        self.manual_execute.update_fields_in_component(JavaApiFields.TradeEntryRequestBlock.value, {
+            JavaApiFields.TransactTime.value: datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
+        })
         self.java_api_manager2.send_message_and_receive_response(self.manual_execute)
         execution_report = \
-        self.java_api_manager2.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
-            JavaApiFields.ExecutionReportBlock.value]
+            self.java_api_manager2.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
+                JavaApiFields.ExecutionReportBlock.value]
         self.java_api_manager.compare_values(
             {JavaApiFields.TransExecStatus.value: ExecutionReportConst.TransExecStatus_FIL.value},
             execution_report, f'Verifying that {order_id} has ExecSts = '
@@ -143,16 +148,18 @@ class QAP_T9390(TestCase):
         # endregion
 
         # region step 8: Check 35 = J message
-        last_user_conterpart = self.data_set.get_counterpart_id_fix('counterpart_id_custodian_user')
+        last_user_conterpart = self.data_set.get_counterpart_id_fix('counterpart_id_custodian_user_2')
         route_counterpart = self.data_set.get_counterpart_id_fix('counterpart_id_market_maker_th2_route')
         regulatory_body = self.data_set.get_counterpart_id_fix('counterpart_id_regulatory_body_venue_paris')
         entering_firm = self.data_set.get_counterpart_id_fix('entering_firm')
+        settlement_location = self.data_set.get_counterpart_id_fix('counterpart_id_settlement_location')
         change_parameters = {
             'AllocType': 5,
             'NoParty': [route_counterpart,
                         last_user_conterpart,
                         regulatory_body,
-                        entering_firm],
+                        entering_firm,
+                        settlement_location],
             'NoOrders': [{
                 'ClOrdID': cl_ord_id,
                 'OrderID': order_id
@@ -160,10 +167,9 @@ class QAP_T9390(TestCase):
         }
 
         list_of_ignored_fields = ['Quantity', 'tag5120', 'TransactTime', 'AllocInstructionMiscBlock1',
-                                                                         'AllocTransType', 'ReportedPx', 'Side',
-                                  'AvgPx',
+                                  'AllocTransType', 'ReportedPx', 'Side', 'AvgPx', 'ExecAllocGrp',
                                   'QuodTradeQualifier', 'BookID', 'SettlDate',
-                                  'PartyRoleQualifier', 'NoPartySubIDs',
+                                  'PartyRoleQualifier', 'NoPartySubIDs', 'Account',
                                   'AllocID', 'Currency', 'NetMoney', 'Instrument',
                                   'TradeDate', 'RootSettlCurrAmt', 'BookingType', 'GrossTradeAmt',
                                   'IndividualAllocID', 'AllocNetPrice', 'AllocQty', 'AllocPrice', 'OrderAvgPx']

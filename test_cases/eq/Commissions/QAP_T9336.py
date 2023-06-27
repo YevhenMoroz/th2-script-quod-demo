@@ -86,30 +86,30 @@ class QAP_T9336(TestCase):
                                                                                             self.venue_client, self.mic,
                                                                                             float(price), int(qty), 0)
             self.java_api_manager.send_message_and_receive_response(self.submit_request, response_time=15_000)
-            order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value,
-                                                                 OrderReplyConst.TransStatus_TER.value).get_parameters()[
-                JavaApiFields.OrdReplyBlock.value]
-            self.java_api_manager.compare_values(
-                {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value},
-                order_reply, 'Verify that order created (step 1)')
-            execution_report = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value,
-                                                                      ExecutionReportConst.ExecType_TRD.value).get_parameters()[
-                JavaApiFields.ExecutionReportBlock.value]
-            self.java_api_manager.compare_values(expected_result_client_commission,
-                                                 execution_report[JavaApiFields.ClientCommissionList.value][
-                                                     JavaApiFields.ClientCommissionBlock.value][0],
-                                                 'Verify that Client commission was calculated (step 2)')
-            self.java_api_manager.compare_values(expected_result_fees,
-                                                 execution_report[JavaApiFields.MiscFeesList.value][
-                                                     JavaApiFields.MiscFeesBlock.value][0],
-                                                 'Verify that Fees was calculated (step 2)')
-
         except Exception as e:
             logger.error(f'Something go wrong {e}')
         finally:
             time.sleep(2)
             self.rule_manager.remove_rule(new_order_single)
             self.rule_manager.remove_rule(trade_rule)
+
+        order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value,
+                                                             f"'TransStatus': '{OrderReplyConst.TransStatus_OPN.value}'").get_parameters()[
+            JavaApiFields.OrdReplyBlock.value]
+        self.java_api_manager.compare_values(
+            {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value},
+            order_reply, 'Verify that order created (step 1)')
+        execution_report = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value,
+                                                                  ExecutionReportConst.ExecType_TRD.value).get_parameters()[
+            JavaApiFields.ExecutionReportBlock.value]
+        self.java_api_manager.compare_values(expected_result_client_commission,
+                                             execution_report[JavaApiFields.ClientCommissionList.value][
+                                                 JavaApiFields.ClientCommissionBlock.value][0],
+                                             'Verify that Client commission was calculated (step 2)')
+        self.java_api_manager.compare_values(expected_result_fees,
+                                             execution_report[JavaApiFields.MiscFeesList.value][
+                                                 JavaApiFields.MiscFeesBlock.value][0],
+                                             'Verify that Fees was calculated (step 2)')
         # enderegion
 
     @try_except(test_id=Path(__file__).name[:-3])
