@@ -192,6 +192,12 @@ class TradeEntryRequestFX(JavaApiMessage):
     def get_notes(self):
         return self.get_parameters()["TradeEntryRequestBlock"]["CDOrdFreeNotes"]
 
+    def get_symbol(self):
+        return self.get_parameters()["TradeEntryRequestBlock"]["InstrumentBlock"]["InstrSymbol"]
+
+    def get_side(self):
+        return self.get_parameters()["TradeEntryRequestBlock"]["Side"]
+
     # endregion
 
     def check_response(self, response):

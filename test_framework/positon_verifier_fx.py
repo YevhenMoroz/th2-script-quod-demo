@@ -1,4 +1,5 @@
 from custom.verifier import Verifier
+from test_framework.position_calculation_manager import PositionCalculationManager
 
 
 class PositionVerifier:
@@ -6,6 +7,7 @@ class PositionVerifier:
     def __init__(self, test_id):
         self.test_id = test_id
         self.verifier = Verifier(test_id)
+        self.pos_calc = PositionCalculationManager()
 
     def check_base_position(self, report, expected_value, text="Check Base Position"):
         pos_amount_date = report[1].get_parameters()["PositionAmountData"][0]
@@ -26,7 +28,7 @@ class PositionVerifier:
     def check_quote_position_default(self, report, trade):
         qty = trade.get_exec_qty()
         price = trade.get_exec_price()
-        expected_value = self.calculate_quote_position(qty, price)
+        expected_value = self.pos_calc.calculate_quote_position(qty, price)
         pos_amount_date = report[1].get_parameters()["PositionAmountData"][29]
         amount = pos_amount_date["PosAmt"]
         self.verifier.set_event_name("Check Quote Position")
@@ -42,6 +44,19 @@ class PositionVerifier:
         amount = pos_amount_date["PosAmt"]
         self.verifier.set_event_name("Check System Currency Position")
         self.verifier.compare_values("Compare Position", expected_value, amount)
+        self.verifier.verify()
+        self.verifier = Verifier(self.test_id)
+
+    def check_system_quote_position(self, report, trade):
+        qty = trade.get_exec_qty()
+        price = trade.get_exec_price()
+        symbol = trade.get_symbol()
+        side = trade.get_side()
+        expected_value = self.pos_calc.calculate_sys_quote_position(qty, price, symbol, side)
+        pos_amount_date = report[1].get_parameters()["PositionAmountData"][7]
+        amount = pos_amount_date["PosAmt"]
+        self.verifier.set_event_name("Check SysQuote Position")
+        self.verifier.compare_values("Compare SysQuote Position", expected_value, amount)
         self.verifier.verify()
         self.verifier = Verifier(self.test_id)
 
@@ -61,23 +76,5 @@ class PositionVerifier:
         self.verifier.compare_values("Compare Position", expected_value, position)
         self.verifier.verify()
         self.verifier = Verifier(self.test_id)
+
     # TODO Add new fields to check
-
-    def calculate_quote_position(self, qty, price):
-        quote_pos = float(qty) * float(price)
-        if str(quote_pos).endswith(".0"):
-            return str(quote_pos)[:-2]
-        else:
-            return str(round(quote_pos, 3))
-
-    def calculate_quote_after_trade(self, qty, trade_px, trade_qty, avg_px):
-        leaves_qty = float(qty) - float(trade_qty)
-        pos = self.calculate_quote_position(qty, trade_px)
-        quote_pos = float(pos) - float(trade_qty) * float(avg_px) - leaves_qty * float(trade_px)
-        if str(quote_pos).endswith(".0"):
-            return str(quote_pos)[:-2]
-        else:
-            return str(round(quote_pos, 3))
-
-
-
