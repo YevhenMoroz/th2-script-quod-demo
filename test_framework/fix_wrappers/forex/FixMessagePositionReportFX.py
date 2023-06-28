@@ -10,7 +10,6 @@ class FixMessagePositionReportFX(FixMessage):
     def __init__(self, parameters: dict = None, data_set: BaseDataSet = None):
         super().__init__(message_type=FIXMessageType.PositionReport.value, data_set=data_set)
         super().change_parameters(parameters)
-        self.verifier = Verifier()
 
     def set_params_from_reqeust(self, request: FixMessageRequestForPositions):
         base_parameters = {
