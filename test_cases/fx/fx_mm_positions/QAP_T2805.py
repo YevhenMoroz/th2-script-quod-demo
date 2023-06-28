@@ -55,7 +55,8 @@ class QAP_T2805(TestCase):
         self.trade_request.set_default_params()
         self.trade_request.update_fields_in_component("TradeEntryRequestBlock",
                                                       {"ClientAccountGroupID": self.client,
-                                                       "ExecQty": self.qty_1})
+                                                       "ExecQty": self.qty_1,
+                                                       "Currency": self.currency})
         self.trade_request.change_instrument(self.usd_cad, self.instr_type_spo)
         response = self.java_api_manager.send_message_and_receive_response(self.trade_request)
         self.trade_request.get_exec_id(response)
