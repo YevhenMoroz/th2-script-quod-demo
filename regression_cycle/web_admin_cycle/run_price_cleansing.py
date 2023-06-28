@@ -19,19 +19,19 @@ from test_cases.web_admin.web_admin_test_cases.price_cleansing.QAP_T8150 import 
 from test_cases.web_admin.web_admin_test_cases.price_cleansing.QAP_T8151 import QAP_T8151
 from test_cases.web_admin.web_admin_test_cases.price_cleansing.QAP_T9422 import QAP_T9422
 
-from test_framework.configurations.component_configuration import ComponentConfiguration
+from test_framework.configurations.component_configuration import WebAdminComponentConfiguration
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from custom import basic_custom_actions as bca
 
 
 class RunPriceCleansing:
-    def __init__(self, root_report_id):
-        self.second_lvl_id = bca.create_event("WA_Price_Cleansing", root_report_id)
+    def __init__(self, root_report_id, version):
+        self.second_lvl_id = bca.create_event(f"WA_Price_Cleansing | {version}", root_report_id)
         self.web_driver_container = None
 
     def execute(self):
         try:
-            configuration = ComponentConfiguration("WA_Price_Cleansing")
+            configuration = WebAdminComponentConfiguration("WA_Price_Cleansing")
             self.web_driver_container = WebDriverContainer(
                 configuration.environment.get_list_web_admin_environment()[0].web_browser,
                 configuration.environment.get_list_web_admin_environment()[0].site_url)

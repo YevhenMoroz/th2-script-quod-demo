@@ -120,7 +120,7 @@ class QAP_T7159(TestCase):
         # region check 35=8 150 = B message
         self.fix_message_execution_report.set_default_calculated(self.fix_message)
         self.fix_message_execution_report.remove_parameter('Parties')
-        amount = str(round((5 / 1000000) * 5000, 3))
+        amount = str(round((5 / 1000000) * 1000, 3))
         self.fix_message_execution_report.remove_parameter('TradeReportingIndicator')
         self.fix_message_execution_report.change_parameters({'QuodTradeQualifier': '*', 'BookID': '*',
                                                              'Currency': self.currency, 'NoParty': '*',

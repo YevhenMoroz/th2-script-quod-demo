@@ -17,7 +17,8 @@ class RestApiModifyInstitutionMessage(RestApiMessages):
             "institutionID": 1,
             "institutionName": "QUOD FINANCIAL 1",
             "settlCurrFxHairCut": 0,
-            "settlCurrFxRateSource": "MKT"
+            "settlCurrFxRateSource": "MKT",
+            "alive": "true"
         }
 
     def set_default_param(self):

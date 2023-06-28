@@ -52,7 +52,7 @@ class QAP_T11055(CommonTestCase):
             dimensions_tab.set_venue_account(self.venue_account)
             dimensions_tab.set_venue(self.venue)
             dimensions_tab.set_account_id_source(self.venue_account_id_source)
-            dimensions_tab.click_on_plus()
+            dimensions_tab.click_on_checkmark_button()
             wizard.click_save_button()
 
         self.db_manager.my_db.execute(

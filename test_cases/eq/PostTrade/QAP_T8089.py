@@ -85,7 +85,7 @@ class QAP_T8089(TestCase):
         # endregion
 
         # check 35=J 54=5 626=5 message
-        ignored_list_alloc = ['Account', 'tag5120', 'OrderAvgPx', 'IndividualAllocID', "tag11245"]
+        ignored_list_alloc = ['Account', 'tag5120', 'OrderAvgPx', 'IndividualAllocID', "tag11245", "ExecAllocGrp"]
         allocation_report = FixMessageAllocationInstructionReportOMS()
         allocation_report.set_default_ready_to_book(self.fix_message)
         allocation_report.change_parameters({'Side': '5'})

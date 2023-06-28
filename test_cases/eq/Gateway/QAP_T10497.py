@@ -116,19 +116,18 @@ class QAP_T10497(TestCase):
                                   'LastPx', 'CumQty', 'LeavesQty', 'HandlInst', 'PositionEffect', 'TimeInForce',
                                   'OrderID', 'LastQty', 'ExecID', 'OrderQtyData', 'Account', 'OrderAvgPx', 'Instrument',
                                   'GatingRuleName', 'GatingRuleCondName', 'IndividualAllocID', 'AllocNetPrice',
-                                  'AllocPrice', 'Instrument']
+                                  'AllocPrice', 'Instrument', 'ExecAllocGrp']
         change_parameters = {'NoOrders': [{
             'ClOrdID': cl_ord_id,
-            'OrderID': '*',
+            'OrderID': order_id,
+            'OrderAvgPx': self.price
         }], 'AllocType': 5,
             'BackOfficeNote': back_office_notes,
             'Text': cd_ord_free_notes
         }
         allocation_report = FixMessageAllocationInstructionReportOMS(change_parameters)
-        allocation_report.change_parameters({'BackOfficeNote': back_office_notes,
-                                             'Text': cd_ord_free_notes})
         self.fix_verifier.check_fix_message_fix_standard(allocation_report,
-                                                         key_parameters=['ClOrdID', 'AllocType'],
+                                                         key_parameters=['ClOrdID', 'AllocType', 'NoOrders'],
                                                          ignored_fields=list_of_ignored_fields)
         # endregion
 
@@ -153,17 +152,16 @@ class QAP_T10497(TestCase):
 
         # part 3: Check 35 = AK message
         list_of_ignored_fields.extend(['ConfirmID', 'MatchStatus', 'ConfirmStatus',
-                                       'CpctyConfGrp', 'ConfirmTransType', 'ConfirmType', 'ExecType', 'OrdStatus',
-                                       'AllocType', 'tag11245'])
+                                       'CpctyConfGrp', 'ConfirmType', 'ExecType', 'OrdStatus',
+                                       'AllocType', 'tag11245', 'AllocInstructionMiscBlock2'])
 
         change_parameters['AllocAccount'] = sec_acc_1
         change_parameters['AllocQty'] = self.qty
-        change_parameters['FrontOfficeNote'] = cd_ord_free_notes
-        change_parameters[JavaApiFields.BackOfficeNotes.value] = back_office_notes
-        change_parameters['Text'] = cd_ord_free_notes
+        change_parameters.pop('AllocType')
         confirmation_report = FixMessageConfirmationReportOMS(self.data_set, change_parameters)
+        confirmation_report.change_parameters({'ConfirmTransType': '0', 'FrontOfficeNote': cd_ord_free_notes})
         self.fix_verifier.check_fix_message_fix_standard(confirmation_report,
-                                                         ['AllocAccount', 'NoOrders'],
+                                                         ['AllocAccount', 'NoOrders', 'ConfirmTransType'],
                                                          ignored_fields=list_of_ignored_fields)
         # end_of_part
         # endregion

@@ -27,7 +27,7 @@ class QAP_T4001(CommonTestCase):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
-        side_menu.click_on_execution_strategies_when_order_management_tab_is_open()
+        side_menu.click_on_execution_strategies_tab()
         page = MainPage(self.web_driver_container)
         page.click_on_new_button()
 

@@ -58,6 +58,7 @@ class QAP_T9251(TestCase):
         self.exec_report = FixMessageExecutionReportOMS(self.data_set)
         self.comm_profile = self.data_set.get_comm_profile_by_name("abs_amt")
         self.ord_scope = self.data_set.get_fee_order_scope_by_name('done_for_day')
+        self.fee_type = self.data_set.get_misc_fee_type_by_name('other')
         self.submit_request = OrderSubmitOMS(self.data_set)
         self.dfd_batch = DFDManagementBatchOMS(self.data_set)
         self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
@@ -86,7 +87,7 @@ class QAP_T9251(TestCase):
         self.rest_commission_sender.clear_commissions()
         self.rest_commission_sender.clear_fees()
         self.rest_commission_sender.set_modify_fees_message(
-            comm_profile=self.comm_profile).change_message_params(
+            comm_profile=self.comm_profile, fee_type=self.fee_type).change_message_params(
             {'venueID': self.venue, 'commOrderScope': self.ord_scope, 'orderCommissionProfileID': self.comm_profile
              })
         self.rest_commission_sender.remove_parameter('commExecScope')
@@ -123,10 +124,11 @@ class QAP_T9251(TestCase):
             self.rule_manager.remove_rule(nos_rule)
             self.rule_manager.remove_rule(trade_rule)
         # endregion
-
+        child_id = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameter(
+            JavaApiFields.OrdNotificationBlock.value)[JavaApiFields.OrdID.value]
         # check fee of child order
         exec_report_calc = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value,
-                                                                  'CAL').get_parameters()
+                                                                  child_id).get_parameters()
         self.java_api_manager.compare_values(
             {JavaApiFields.ExecutionReportBlock.value: JavaApiFields.MiscFeesList.value},
             exec_report_calc,

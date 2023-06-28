@@ -4,11 +4,16 @@ from stubs import Stubs
 from test_cases.algo.Algo_Redburn.Algo_VWAP import QAP_T4285
 from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T10943 import QAP_T10943
 from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T10944 import QAP_T10944
+from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T11220 import QAP_T11220
 from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T11227 import QAP_T11227
 from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T11304 import QAP_T11304
 from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T11312 import QAP_T11312
 from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T11329 import QAP_T11329
 from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T11355 import QAP_T11355
+from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T11373 import QAP_T11373
+from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T11374 import QAP_T11374
+from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T4218 import QAP_T4218
+from test_cases.algo.Algo_Redburn.Algo_VWAP.QAP_T8801 import QAP_T8801
 from test_framework.configurations.component_configuration import ComponentConfigurationAlgo
 
 
@@ -30,6 +35,15 @@ def test_run(parent_id=None, version=None):
         QAP_T11312(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T11329(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T11355(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T11373(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T11374(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+
+        # region sub-slices
+        QAP_T4218(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # endregion
+
+        QAP_T8801(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T11220(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
     except Exception:
         # bca.create_event('Fail test event', status='FAILED', parent_id=parent_id)

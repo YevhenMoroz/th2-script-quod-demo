@@ -1,8 +1,10 @@
 import sys
 import time
 import traceback
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_instrument_values_sub_wizard import \
     ClientTierInstrumentValuesSubWizard
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_instrument_tenors_sub_wizard import \
@@ -68,37 +70,32 @@ class QAP_T3354(CommonTestCase):
             client_tiers_instrument_wizard = ClientTierInstrumentWizard(self.web_driver_container)
             client_tiers_instrument_wizard.click_on_save_changes()
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            client_tiers_frame = ClientTiersPage(self.web_driver_container)
-            client_tiers_frame.set_name(self.name)
-            time.sleep(1)
-            client_tiers_frame.select_client_tier_by_name(self.name)
-            client_tier_instrument_frame = ClientTierInstrumentsPage(self.web_driver_container)
-            client_tier_instrument_frame.set_symbol(self.symbol)
-            time.sleep(1)
-            client_tier_instrument_frame.click_on_more_actions()
-            client_tier_instrument_frame.click_on_edit()
-            tenors_tab = ClientTiersInstrumentTenorsSubWizard(self.web_driver_container)
-            tenors_tab.set_tenor_filter(self.tenor)
-            tenors_tab.click_on_edit()
+        client_tiers_frame = ClientTiersPage(self.web_driver_container)
+        client_tiers_frame.set_name(self.name)
+        time.sleep(1)
+        client_tiers_frame.select_client_tier_by_name(self.name)
+        client_tier_instrument_frame = ClientTierInstrumentsPage(self.web_driver_container)
+        client_tier_instrument_frame.set_symbol(self.symbol)
+        time.sleep(1)
+        client_tier_instrument_frame.click_on_more_actions()
+        client_tier_instrument_frame.click_on_edit()
+        tenors_tab = ClientTiersInstrumentTenorsSubWizard(self.web_driver_container)
+        tenors_tab.set_tenor_filter(self.tenor)
+        tenors_tab.click_on_edit()
 
-            tenors_tab.click_on_plus_for_tiered_quantity()
-            tenors_tab.set_quantity_for_tiered_quantity(self.tiered_quantity)
-            tenors_tab.click_on_checkmark_for_tiered_quantity()
-            tenors_tab.click_on_plus_for_tiered_quantity()
-            tenors_tab.set_quantity_for_tiered_quantity(self.tiered_quantity)
-            tenors_tab.click_on_checkmark_for_tiered_quantity()
+        tenors_tab.click_on_plus_for_tiered_quantity()
+        tenors_tab.set_quantity_for_tiered_quantity(self.tiered_quantity)
+        tenors_tab.click_on_checkmark_for_tiered_quantity()
+        tenors_tab.click_on_plus_for_tiered_quantity()
+        tenors_tab.set_quantity_for_tiered_quantity(self.tiered_quantity)
+        tenors_tab.click_on_checkmark_for_tiered_quantity()
 
-            client_tiers_instrument_wizard = ClientTierInstrumentWizard(self.web_driver_container)
-            self.verify("Such record is already exist displayed ", True,
-                        client_tiers_instrument_wizard.is_such_record_exists_massage_displayed())
+        client_tiers_instrument_wizard = ClientTierInstrumentWizard(self.web_driver_container)
+        self.verify("Such record is already exist displayed ", True,
+                    client_tiers_instrument_wizard.is_such_record_exists_massage_displayed())
 
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+

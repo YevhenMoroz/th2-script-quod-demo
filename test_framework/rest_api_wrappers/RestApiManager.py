@@ -4,6 +4,7 @@ from custom.basic_custom_actions import convert_to_get_request
 from stubs import Stubs
 from custom import basic_custom_actions as bca
 from google.protobuf.json_format import MessageToDict
+import logging
 
 
 class RestApiManager:
@@ -14,6 +15,7 @@ class RestApiManager:
         self.case_id = case_id
 
     def send_post_request(self, api_message: RestApiMessages):
+        logging.info(f"Message {api_message.get_message_type()} sent with params -> {api_message.get_parameters()}")
         self.act.sendMessage(request=SubmitMessageRequest(message=bca.wrap_message(content=api_message.get_parameters(),
                                                                                    message_type=api_message.get_message_type(),
                                                                                    session_alias=self.session_alias),
@@ -33,6 +35,7 @@ class RestApiManager:
         return response.response_message
 
     def send_get_request(self, api_message: RestApiMessages):
+        logging.info(f"Message {api_message.get_message_type()} sent with params -> {api_message.get_parameters()}")
         message = convert_to_get_request(description="Send Get request",
                                          connectivity=self.session_alias,
                                          event_id=self.case_id,
@@ -45,6 +48,7 @@ class RestApiManager:
         return response.response_message
 
     def send_get_request_filtered(self, api_message: RestApiMessages):
+        logging.info(f"Message {api_message.get_message_type()} sent with params -> {api_message.get_parameters()}")
         message = convert_to_get_request(description="Send Get request",
                                          connectivity=self.session_alias,
                                          event_id=self.case_id,

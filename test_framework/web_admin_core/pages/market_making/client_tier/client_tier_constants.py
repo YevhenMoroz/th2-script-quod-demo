@@ -2,7 +2,7 @@ class ClientTierConstants:
     CLIENT_TIER_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][normalize-space(text())='Client Tiers']"
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"
-    SAVE_CHANGES_BUTTON_XPATH = "//*[text()='Save Changes']"
+    SAVE_CHANGES_BUTTON_XPATH = "//*[normalize-space()='Save Changes']"
     CLEAR_CHANGES_BUTTON_XPATH = "//*[text()='Clear Changes']"
     CLOSE_WIZARD_XPATH = "//*[@data-name='close']"
     OK_BUTTON_XPATH = '//*[text()="Ok" or text()="OK"]'
@@ -22,7 +22,7 @@ class ClientTierConstants:
     MAIN_PAGE_CLIENT_TIER_PIN_ROW_XPATH = "//*[@class='cdk-overlay-container']//*[@nbtooltip='Click to Pin Row']"
     MAIN_PAGE_CLIENT_TIER_DOWNLOAD_CSV_XPATH = "//*[@class='ct-grid']//*[@data-name='download']"
     MAIN_PAGE_CLIENT_TIER_DOWNLOAD_PDF_XPATH ="//*[@class='cdk-overlay-container']//*[@data-name='download']"
-    MAIN_PAGE_CLIENT_TIER_NEW_BUTTON_XPATH = '//*[normalize-space()="Client Tiers"]//..//*[text()="New"]'
+    MAIN_PAGE_CLIENT_TIER_NEW_BUTTON_XPATH = '//*[normalize-space()="Client Tiers"]//..//*[normalize-space()="New"]'
     MAIN_PAGE_CLIENT_TIER_NAME_FILTER_XPATH = "//*[@class='ct-grid']//*[@class='ag-header-container']/div[2]/div[1]//input"
     MAIN_PAGE_CLIENT_TIER_CORE_SPOT_PRICE_STRATEGY_FILTER_XPATH = "//*[@class='ct-grid']//*[@class='ag-header-container']/div[2]/div[2]//input"
     MAIN_PAGE_CLIENT_TIER_ENABLE_SCHEDULE_FILTER_XPATH = "//*[@class='ct-grid']//*[@class='ag-header-container']/div[2]/div[3]//select"
@@ -42,8 +42,8 @@ class ClientTierConstants:
     CLIENT_TIER_VALUES_TAB_CORE_SPOT_PRICE_STRATEGY_XPATH = '//*[@id="pricingMethod"]'
     CLIENT_TIER_VALUES_TAB_CORE_SPOT_PRICE_STRATEGY_DROP_DOWN_MENU_XPATH = "//*[@class='option-list']//span"
     CLIENT_TIER_VALUES_TAB_TOD_TIME_ZONE = '//*[@id="TODTimeZone"]'
-    CLIENT_TIER_VALUES_TAB_TOD_START_TIME = '//*[@id="TODStartTime_ext"]'
-    CLIENT_TIER_VALUES_TAB_TOD_END_TIME = '//*[@id="TODEndTime_ext"]'
+    CLIENT_TIER_VALUES_TAB_TOD_START_TIME = '//*[@id="TODStartTime"]'
+    CLIENT_TIER_VALUES_TAB_TOD_END_TIME = '//*[@id="TODEndTime"]'
     CLIENT_TIER_VALUES_TAB_SCHEDULES_MANAGE_BUTTON = '//*[@id="schedule"]//following::button[normalize-space()="Manage"]'
     CLIENT_TIER_VALUES_TAB_SCHEDULES_CHECKBOX = '//*[@id="schedule"]//ancestor::div//*[contains(@class, "custom-checkbox")]'
     CLIENT_TIER_VALUES_TAB_SCHEDULES = '//*[@id="schedule"]'

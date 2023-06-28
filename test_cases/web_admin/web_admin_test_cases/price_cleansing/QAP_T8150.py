@@ -3,8 +3,10 @@ import time
 import traceback
 import random
 import string
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.price_cleansing.unbalanced_rates.main_page import MainPage
 from test_framework.web_admin_core.pages.price_cleansing.unbalanced_rates.wizards import *
@@ -41,39 +43,31 @@ class QAP_T8150(CommonTestCase):
         wizard = MainWizard(self.web_driver_container)
         wizard.click_on_save_changes()
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
+        self.precondition()
+        main_page = MainPage(self.web_driver_container)
+        main_page.set_name_filter(self.name[0])
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
+        values_tab = ValuesTab(self.web_driver_container)
+        values_tab.set_name(self.name[1])
+        values_tab.click_on_remove_detected_price_update_checkbox()
+        values_tab.click_on_enrich_empty_side_of_book_checkbox()
+        dimensions_tab = DimensionsTab(self.web_driver_container)
+        dimensions_tab.set_venue(self.venue[1])
+        dimensions_tab.set_instr_type(self.instr_type)
+        wizard = MainWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
 
-        try:
-            self.precondition()
-            main_page = MainPage(self.web_driver_container)
-            main_page.set_name_filter(self.name[0])
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
-            values_tab = ValuesTab(self.web_driver_container)
-            values_tab.set_name(self.name[1])
-            values_tab.click_on_remove_detected_price_update_checkbox()
-            values_tab.click_on_enrich_empty_side_of_book_checkbox()
-            dimensions_tab = DimensionsTab(self.web_driver_container)
-            dimensions_tab.set_venue(self.venue[1])
-            dimensions_tab.set_instr_type(self.instr_type)
-            wizard = MainWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
+        main_page.set_name_filter(self.name[1])
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
+        expected_result = [self.name[1], True, False, self.venue[1], self.instr_type]
+        actual_result = [values_tab.get_name(), values_tab.is_remove_detected_price_update_checkbox_selected(),
+                         values_tab.is_enrich_empty_side_of_book_checkbox_selected(), dimensions_tab.get_venue(),
+                         dimensions_tab.get_instr_type()]
 
-            main_page.set_name_filter(self.name[1])
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
-            expected_result = [self.name[1], True, False, self.venue[1], self.instr_type]
-            actual_result = [values_tab.get_name(), values_tab.is_remove_detected_price_update_checkbox_selected(),
-                             values_tab.is_enrich_empty_side_of_book_checkbox_selected(), dimensions_tab.get_venue(),
-                             dimensions_tab.get_instr_type()]
-
-            self.verify(f"New data saved for {self.name[1]}", expected_result,actual_result)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify(f"New data saved for {self.name[1]}", expected_result,actual_result)

@@ -47,10 +47,10 @@ class QAP_T7591(TestCase):
         if out != ():
             self._db_manager.execute_query(
                 f"DELETE FROM dailyposit WHERE  accountid = '{self.acc2}' AND instrid = '{self.instrument_id}'")
-            self.ssh_client.send_command('qrestart all')
             self._db_manager.execute_query(
                 f"DELETE FROM posit WHERE  accountid = '{self.acc2}' AND instrid = '{self.instrument_id}'")
-            time.sleep(180)
+            self.ssh_client.send_command('qrestart all')
+            time.sleep(140)
         # endregion
 
         # region step  1-2 : Extract position for acc1 and acc2
@@ -59,13 +59,14 @@ class QAP_T7591(TestCase):
 
         # region step 3-4 : Perform Position Transfer
         self.pos_trans.set_default_transfer(self.acc1, self.acc2, self.qty_to_transfer, self.price)
-        self.pos_trans.update_fields_in_component("PositionTransferInstructionBlock",
-                                                  {"InstrID": self.instrument_id})
+        self.pos_trans.update_fields_in_component(JavaApiFields.PositionTransferInstructionBlock.value,
+                                                  {JavaApiFields.InstrID.value: self.instrument_id})
         self.ja_manager.send_message_and_receive_response(self.pos_trans)
 
         # endregion
 
         # region step 5 : Check Position of Destination account:
+        time.sleep(2)
         out = self._db_manager.execute_query(
             f"SELECT positqty FROM posit WHERE accountid = '{self.acc2}' AND instrid = '{self.instrument_id}'")
         self.ja_manager.compare_values({JavaApiFields.PositQty.value: self.qty_to_transfer},
@@ -126,6 +127,6 @@ class QAP_T7591(TestCase):
             self._db_manager.execute_query(
                 f"DELETE FROM posit WHERE  accountid = '{self.acc2}' AND instrid = '{self.instrument_id}'")
             self.ssh_client.send_command('qrestart all')
-            time.sleep(180)
+            time.sleep(140)
         finally:
             self._db_manager.close_connection()

@@ -31,13 +31,20 @@ class QAP_T4012(CommonTestCase):
         login_page = LoginPage(self.web_driver_container)
         login_page.login_to_web_admin(self.login, self.password)
         side_menu = SideMenu(self.web_driver_container)
-        time.sleep(2)
         side_menu.open_market_data_source_page()
         main_page = MarketDataSourcesPage(self.web_driver_container)
+        if not main_page.is_market_data_source_entity_displayed():
+            main_page.click_on_new_button()
+            wizard = MarketDataSourcesWizard(self.web_driver_container)
+            wizard.set_symbol(self.symbol)
+            wizard.set_user(self.user)
+            wizard.set_venue(self.venue)
+            wizard.set_md_source(self.md_source)
+            wizard.click_on_save_changes()
+            time.sleep(1)
+
         main_page.click_on_more_actions()
-        time.sleep(2)
         main_page.click_on_edit_at_more_actions()
-        time.sleep(2)
 
     def test_context(self):
         try:

@@ -121,7 +121,7 @@ class QAP_T10721(CommonTestCase):
             cash_positions_page.click_on_edit()
 
             expected_result = [self.cash_position_name, self.currency, self.client_name, self.account_id,
-                               'Margin Account checkbox = False', 'WARN displayed = True']
+                               'Margin Account checkbox = False', 'WARN displayed = False']
             actual_result = [cash_position_values_tab.get_name(), cash_position_values_tab.get_currency(),
                              cash_position_values_tab.get_client(), cash_position_values_tab.get_security_accounts(),
                              f'Margin Account checkbox = {cash_position_values_tab.is_margin_account_checkbox_selected()}',

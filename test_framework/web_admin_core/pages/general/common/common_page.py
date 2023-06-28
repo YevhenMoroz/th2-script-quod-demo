@@ -39,7 +39,7 @@ class CommonPage(CP):
     def set_confirm_new_password(self, value):
         self.set_text_by_xpath(CommonConstants.CONFIRM_PASSWORD_FIELD_AT_LOGIN_PAGE_XPATH, value)
 
-    def click_on_change_password(self):
+    def click_on_change_password_button(self):
         self.find_by_xpath(CommonConstants.CHANGE_PASSWORD_BUTTON_AT_LOGIN_PAGE_XPATH).click()
 
     def click_on_back(self):
@@ -134,10 +134,14 @@ class CommonPage(CP):
         self.web_driver_container.get_driver().switch_to.new_window('tab')
         self.web_driver_container.get_driver().get(url)
 
+    def open_new_browser_window_and_set_url(self, url: str):
+        self.web_driver_container.get_driver().switch_to.new_window('window')
+        self.web_driver_container.get_driver().get(url)
+
     def get_current_page_url(self):
         return self.web_driver_container.get_driver().current_url
 
-    def switch_to_browser_tab(self, tab: int):
+    def switch_to_browser_tab_or_window(self, tab: int):
         """
         The current method for switching between open tabs.
         Where 0 - first tab, 1 - second, 2 - third, etc...
@@ -200,3 +204,36 @@ class CommonPage(CP):
 
     def is_confirmation_pop_displayed(self):
         return self.is_element_present(CommonConstants.CONFIRM_POP_UP)
+
+    def click_on_change_password_in_user_menu(self):
+        self.find_by_xpath(CommonConstants.CHANGE_PASSWORD_AT_USER_PANEL).click()
+
+    def click_on_change_password_button_in_change_password_pop_up(self):
+        self.find_by_xpath(CommonConstants.CHANGE_PASSWORD_BUTTON_IN_POP_UP).click()
+
+    def is_change_password_pop_up_displayed(self):
+        return self.is_element_present(CommonConstants.CHANGE_PASSWORD_POP_UP)
+
+    def is_new_password_filed_displayed_in_change_password_pop_up(self):
+        return self.is_element_present(CommonConstants.NEW_PASSWORD_IN_POP_UP)
+
+    def is_confirm_new_password_field_displayed_in_change_password_pop_up(self):
+        return self.is_element_present(CommonConstants.CONFIRM_NEW_PASSWORD_IN_POP_UP)
+
+    def is_current_password_field_displayed_in_change_password_pop_up(self):
+        return self.is_element_present(CommonConstants.CURRENT_PASSWORD_IN_POP)
+
+    def get_error_message_text_in_change_password_pop_up(self):
+        return self.get_text_by_xpath(CommonConstants.CHANGE_PASSWORD_POP_UP_ERROR_TEXT)
+
+    def set_current_password_in_change_password_pop_up(self, value):
+        self.set_text_by_xpath(CommonConstants.CURRENT_PASSWORD_IN_POP, value)
+
+    def set_new_password_in_change_password_pop_up(self, value):
+        self.set_text_by_xpath(CommonConstants.NEW_PASSWORD_IN_POP_UP, value)
+
+    def set_confirm_new_password_in_change_password_pop_up(self, value):
+        self.set_text_by_xpath(CommonConstants.CONFIRM_NEW_PASSWORD_IN_POP_UP, value)
+
+    def click_on_cancel_button(self):
+        self.find_by_xpath(CommonConstants.CANCEL_BUTTON).click()

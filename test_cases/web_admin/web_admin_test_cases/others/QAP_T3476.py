@@ -1,8 +1,10 @@
 import sys
 import time
 import traceback
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.others.counterparts.counterparts_page import CounterpartsPage
 from test_framework.web_admin_core.pages.others.counterparts.counterparts_party_roles_subwizard import \
@@ -36,19 +38,13 @@ class QAP_T3476(CommonTestCase):
         wizard = CounterpartsWizard(self.web_driver_container)
         wizard.click_on_plus_party_roles()
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
+        self.precondition()
+        party_roles_wizard = CounterpartsPartyRolesSubWizard(self.web_driver_container)
         try:
-            self.precondition()
-            party_roles_wizard = CounterpartsPartyRolesSubWizard(self.web_driver_container)
-            try:
-                party_roles_wizard.set_party_role_at_party_roles_tab(self.party_role)
-                self.verify(f"Party Role contains {self.party_role}", True, True)
-            except Exception as e:
-                self.verify(f"Party Role contains {self.party_role}", True, e.__class__.__name__)
+            party_roles_wizard.set_party_role_at_party_roles_tab(self.party_role)
+            self.verify(f"Party Role contains {self.party_role}", True, True)
+        except Exception as e:
+            self.verify(f"Party Role contains {self.party_role}", True, e.__class__.__name__)
 
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)

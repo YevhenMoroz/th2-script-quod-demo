@@ -98,6 +98,12 @@ class SshClient:
         os.remove(temp_path)
         return False
 
+    def get_regex_pattern(self, path_to_log_file: str, pattern: str):
+        temp_path = os.path.join(os.path.expanduser('~'), 'PycharmProjects', 'th2-script-quod-demo', 'temp')
+        self.get_file(path_to_log_file, temp_path)
+        logs = open(temp_path, "r").read()
+        return re.findall(pattern, logs)
+
 
 if __name__ == "__main__":
     client = SshClient(host='', port=22, username='', password='', su_user='', su_pass='')

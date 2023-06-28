@@ -13,6 +13,9 @@ class UsersAssignmentsSubWizard(CommonPage):
     def set_desks(self, value: list):
         self.set_multiselect_field_value(UsersConstants.DESKS_AT_ASSIGNMENTS_SUB_WIZARD, value)
 
+    def get_desks(self):
+        return self.get_text_by_xpath(UsersConstants.DESKS_AT_ASSIGNMENTS_SUB_WIZARD)
+
     def set_location(self, value):
         self.set_combobox_value(UsersConstants.LOCATION_AT_ASSIGNMENTS_SUB_WIZARD, value)
 
@@ -38,7 +41,7 @@ class UsersAssignmentsSubWizard(CommonPage):
         self.find_by_xpath(UsersConstants.INSTITUTION).click()
 
     def is_desks_field_enabled(self):
-        return self.find_by_xpath(UsersConstants.DESKS_AT_ASSIGNMENTS_SUB_WIZARD).is_enabled()
+        return False if 'disabled' in self.find_by_xpath(UsersConstants.DESKS_AT_ASSIGNMENTS_SUB_WIZARD).get_attribute('class') else True
 
     def is_desks_field_displayed(self):
         return self.is_element_present(UsersConstants.DESKS_AT_ASSIGNMENTS_SUB_WIZARD)
@@ -63,7 +66,10 @@ class UsersAssignmentsSubWizard(CommonPage):
 
     def clear_assignments_tab(self):
         if self.is_desks_field_displayed():
-            selected_desks = self.get_text_by_xpath(UsersConstants.DESKS_AT_ASSIGNMENTS_SUB_WIZARD)
+            try:
+                selected_desks = self.get_text_by_xpath(UsersConstants.DESKS_AT_ASSIGNMENTS_SUB_WIZARD)
+            except:
+                selected_desks = ''
             if self.is_desks_field_enabled() and len(selected_desks) > 1:
                 self.set_desks([_.strip() for _ in selected_desks.split(",")])
         if self.is_location_field_displayed():

@@ -2,8 +2,10 @@ import sys
 import traceback
 import random
 import string
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.price_cleansing.crossed_reference_rates.main_page import MainPage
 from test_framework.web_admin_core.pages.price_cleansing.crossed_reference_rates.wizards import *
@@ -35,23 +37,15 @@ class QAP_T8139(CommonTestCase):
         wizard = MainWizard(self.web_driver_container)
         wizard.click_on_save_changes()
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
+        self.precondition()
 
-        try:
-            self.precondition()
-
-            main_page = MainPage(self.web_driver_container)
-            main_page.set_name_filter(self.name)
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            main_page.click_on_delete(True)
-            time.sleep(1)
-            self.verify(f"Entity {self.name} has been delete", False,
-                        main_page.is_searched_entity_found_by_name(self.name))
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        main_page = MainPage(self.web_driver_container)
+        main_page.set_name_filter(self.name)
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        main_page.click_on_delete(True)
+        time.sleep(1)
+        self.verify(f"Entity {self.name} has been delete", False,
+                    main_page.is_searched_entity_found_by_name(self.name))

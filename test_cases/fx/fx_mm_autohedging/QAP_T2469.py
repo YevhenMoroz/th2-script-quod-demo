@@ -1,199 +1,108 @@
-from random import randint
-from time import sleep
-
-from custom.tenor_settlement_date import spo
-from custom.verifier import Verifier, VerificationMethod
-from stubs import Stubs
-from custom import basic_custom_actions as bca
-from test_cases.fx.fx_wrapper.CaseParamsSellRfq import CaseParamsSellRfq
-from test_cases.fx.fx_wrapper.FixClientSellRfq import FixClientSellRfq
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, ExecSts
-from test_framework.win_gui_wrappers.forex.fx_order_book import FXOrderBook
-from win_gui_modules.dealing_positions_wrappers import GetOrdersDetailsRequest, ExtractionPositionsFieldsDetails, \
-    ExtractionPositionsAction, PositionsInfo
-from th2_grpc_act_rest_quod.act_rest_quod_pb2 import SubmitMessageRequest
-from win_gui_modules.utils import get_base_request, call
-import logging
 from pathlib import Path
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-
-client = 'Osmium1'
-client_tier = "Osmium"
-account = 'Osmium1_1'
-account_quod = 'QUOD3_1'
-symbol = 'EUR/USD'
-side_b = "1"
-side_s = "2"
-instrument_tier = 'EUR/USD-SPOT'
-security_type_spo = "FXSPOT"
-settle_date_spo = spo()
-settle_type_spo = "0"
-currency = "EUR"
-settle_currency = "USD"
-
-ord_qty = str(randint(2000000, 4000000))
-qty_1 = '4000000'
-qty_2 = '2000000'
-api = Stubs.api_service
-ttl_test = 500
-ttl_default = 120
-verification_equal = VerificationMethod.EQUALS
-verification_not_equal = VerificationMethod.NOT_EQUALS
-
-status_true = 'true'
-status_false = 'false'
+from custom import basic_custom_actions as bca
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleTakerDC import FixMessageNewOrderSingleTakerDC
+from test_framework.fix_wrappers.forex.FixMessageOrderCancelRequestFX import FixMessageOrderCancelRequestFX
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.fx.FixPositionMassCancelRequestFX import FixPositionMassCancelRequestFX
+from test_framework.java_api_wrappers.fx.TradeEntryRequestFX import TradeEntryRequestFX
+from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
+from test_framework.rest_api_wrappers.forex.RestApiAutoHedgerMessages import RestApiAutoHedgerMessages
 
 
-def set_send_hedge_order_status(case_id, status):
-    modify_params = {
-        "autoHedgerStatusID": "1",
-        "sendHedgeOrders": status,
-    }
-    api.sendMessage(
-        request=SubmitMessageRequest(message=bca.wrap_message(modify_params, 'ModifyAutoHedgerStatus', 'rest_wa314luna'),
-                                     parent_event_id=case_id))
+class QAP_T2469(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.java_api_env = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.dc_connectivity = self.environment.get_list_fix_environment()[0].drop_copy
+        self.rest_api_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
+        self.java_api_manager = JavaApiManager(self.java_api_env, self.test_id)
+        self.fix_drop_copy_verifier = FixVerifier(self.dc_connectivity, self.test_id)
+        self.rest_api_manager = RestApiManager(self.rest_api_connectivity, self.test_id)
+        self.trade_request = TradeEntryRequestFX()
+        self.ah_order = FixMessageNewOrderSingleTakerDC()
+        self.ah_cancel_request = FixMessageOrderCancelRequestFX()
+        self.ah_status = RestApiAutoHedgerMessages()
+        self.cancel_request = FixPositionMassCancelRequestFX()
+        self.client_ext = self.data_set.get_client_by_name("client_mm_6")
+        self.account_ext = self.data_set.get_account_by_name("account_mm_6")
+        self.client_int = self.data_set.get_client_by_name("client_int_3")
+        self.account_int = self.data_set.get_account_by_name("account_int_3")
+        self.currency = self.data_set.get_currency_by_name("currency_usd")
+        self.usd_php = self.data_set.get_symbol_by_name("symbol_ndf_1")
+        self.sec_type_spo = self.data_set.get_security_type_by_name("fx_spot")
+        self.instr_type_spo = self.data_set.get_fx_instr_type_ja("fx_spot")
+        self.settle_date = self.data_set.get_settle_date_by_name("spo_ndf")
+        self.instrument = {
+            "SecurityType": self.sec_type_spo,
+            "Symbol": self.usd_php
+        }
+        self.qty = "20000000"
+        self.ah_qty = "15000000"
 
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Clear position start
+        self.cancel_request.set_params(self.account_ext)
+        self.java_api_manager.send_message(self.cancel_request)
+        self.sleep(5)
+        self.cancel_request.set_params(self.account_int)
+        self.java_api_manager.send_message(self.cancel_request)
+        self.sleep(5)
+        # endregion
 
-def send_rfq_and_filled_order_buy(case_id, qty):
-    params_spot = CaseParamsSellRfq(client, case_id, orderqty=qty, symbol=symbol,
-                                    securitytype=security_type_spo, settldate=settle_date_spo,
-                                    settltype=settle_type_spo, securityid=symbol, settlcurrency=settle_currency,
-                                    currency=currency, side=side_b,
-                                    account=account)
-    rfq = FixClientSellRfq(params_spot)
-    rfq.send_request_for_quote()
-    rfq.verify_quote_pending()
-    price = rfq.extract_filed("OfferPx")
-    rfq.send_new_order_single(price)
-    rfq.verify_order_pending().verify_order_filled()
+        # region Step 1
+        # self.sleep(1)
+        self.trade_request.set_default_params()
+        self.trade_request.update_fields_in_component("TradeEntryRequestBlock",
+                                                      {"ClientAccountGroupID": self.client_ext, "ExecQty": self.qty})
+        self.trade_request.change_instrument(self.usd_php, self.instr_type_spo)
+        response: list = self.java_api_manager.send_message_and_receive_response(self.trade_request)
+        ord_id = self.trade_request.get_ah_ord_id(response)
+        self.ah_order.set_default_sor_from_trade(self.trade_request)
+        self.ah_order.change_parameters({"ClOrdID": ord_id, "Account": self.client_int, "Currency": self.currency,
+                                         "SettlDate": self.settle_date, "OrderQty": self.ah_qty})
+        self.ah_order.remove_parameters(["Misc0", ])
+        self.sleep(5)
+        self.fix_drop_copy_verifier.check_fix_message(self.ah_order, message_name="Check AutoHedger Order",
+                                                      key_parameters=["ClOrdID"])
+        # endregion
 
+        # region Step 2
+        self.ah_status.send_hedge_orders_false()
+        self.rest_api_manager.send_post_request(self.ah_status)
+        self.sleep(5)
+        # endregion
 
-def send_rfq_and_filled_order_sell(case_id, qty):
-    params_spot = CaseParamsSellRfq(client, case_id, orderqty=qty, symbol=symbol,
-                                    securitytype=security_type_spo, settldate=settle_date_spo,
-                                    settltype=settle_type_spo, securityid=symbol, settlcurrency=settle_currency,
-                                    currency=currency, side=side_s,
-                                    account=account)
-    rfq = FixClientSellRfq(params_spot)
-    rfq.send_request_for_quote()
-    rfq.verify_quote_pending()
-    price = rfq.extract_filed("BidPx")
-    rfq.send_new_order_single(price)
-    rfq.verify_order_pending().verify_order_filled()
+        # region Step 3
+        self.ah_cancel_request.set_params_from_trade(ord_id)
+        self.fix_drop_copy_verifier.check_fix_message(self.ah_cancel_request, key_parameters=["OrigClOrdID"])
+        # endregion
 
+        # region Step 4
+        self.fix_drop_copy_verifier = FixVerifier(self.dc_connectivity, self.test_id)
+        self.ah_status.send_hedge_orders_true()
+        self.rest_api_manager.send_post_request(self.ah_status)
+        self.sleep(5)
+        # endregion
+        # region Step 5
+        self.ah_order.change_parameter("ClOrdID", "*")
+        self.ah_order.change_parameter("OrderQty", self.ah_qty)
+        self.fix_drop_copy_verifier.check_fix_message(self.ah_order, key_parameters=["OrderQty", "Account"],
+                                                      message_name="Check New AutoHedger Order")
+        # endregion
 
-def get_dealing_positions_details(del_act, base_request, symbol, account):
-    dealing_positions_details = GetOrdersDetailsRequest()
-    dealing_positions_details.set_default_params(base_request)
-    extraction_id = bca.client_orderid(4)
-    dealing_positions_details.set_extraction_id(extraction_id)
-    dealing_positions_details.set_filter(["Symbol", symbol, "Account", account])
-    position = ExtractionPositionsFieldsDetails("dealingpositions.position", 'Position')
-    dealing_positions_details.add_single_positions_info(
-        PositionsInfo.create(
-            action=ExtractionPositionsAction.create_extraction_action(extraction_details=[position])))
-    response = call(del_act.getFxDealingPositionsDetails, dealing_positions_details.request())
-    return response["dealingpositions.position"].replace(",", "")
-
-
-def compare_position(even_name, case_id,
-                     expected_pos_acc1, actual_pos_acc1,
-                     expected_pos_acc2, actual_pos_acc2,
-                     acc1_name, acc2_name,
-                     acc1_verify_method, acc2_verify_method):
-    verifier = Verifier(case_id)
-    verifier.set_event_name(even_name)
-    verifier.compare_values(f"Quote position {acc1_name}", str(expected_pos_acc1),
-                            str(actual_pos_acc1), acc1_verify_method)
-    verifier.compare_values(f"Quote position {acc2_name}", str(expected_pos_acc2),
-                            str(actual_pos_acc2), acc2_verify_method)
-    verifier.verify()
-
-
-def execute(report_id, session_id):
-    ob_names = OrderBookColumns
-    sts_names = ExecSts
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-    case_base_request = get_base_request(session_id, case_id)
-    pos_service = Stubs.act_fx_dealing_positions
-    try:
-        # Step 1
-        set_send_hedge_order_status(case_id, status_true)
-        initial_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
-        initial_pos_osmium = get_dealing_positions_details(pos_service, case_base_request, symbol, account)
-
-        send_rfq_and_filled_order_buy(case_id, ord_qty)
-
-        order_info = FXOrderBook(case_id, session_id).set_filter([ob_names.order_id.value, 'AO',
-                                                                  ob_names.orig.value, 'AutoHedger']). \
-            extract_fields_list({ob_names.order_id.value: '', ob_names.qty.value: ''})
-
-        FXOrderBook(case_id, session_id).check_order_fields_list({
-            ob_names.order_id.value: order_info[ob_names.order_id.value],
-            ob_names.orig.value: 'AutoHedger',
-            ob_names.qty.value: order_info[ob_names.qty.value],
-            ob_names.sts.value: sts_names.open.value},
-            event_name='Checking that AH triggered')
-
-        extracted_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
-        extracted_pos_osmium = get_dealing_positions_details(pos_service, case_base_request, symbol, account)
-
-        compare_position(
-            'Checking positions', case_id,
-            f'-{ord_qty}', extracted_pos_quod,
-            int(initial_pos_osmium)+int(ord_qty), extracted_pos_osmium,
-            account_quod, account,
-            verification_equal, verification_equal
-        )
-
-        set_send_hedge_order_status(case_id, status_false)
-
-        FXOrderBook(case_id, session_id).set_filter([ob_names.order_id.value, 'AO',
-                                                     ob_names.orig.value, 'AutoHedger']). \
-            check_order_fields_list({ob_names.order_id.value: order_info['Order ID'],
-                                     ob_names.orig.value: 'AutoHedger',
-                                     ob_names.qty.value: order_info['Qty'],
-                                     ob_names.sts.value: sts_names.cancelled.value},
-                                    event_name='Checking that AH order was cancelled when panic button pushed')
-
-        set_send_hedge_order_status(case_id, status_true)
-        sleep(5)
-
-        order_info = FXOrderBook(case_id, session_id).set_filter([ob_names.order_id.value, 'AO',
-                                                                  ob_names.orig.value, 'AutoHedger']). \
-            extract_fields_list({ob_names.order_id.value: '', ob_names.qty.value: ''})
-
-        send_rfq_and_filled_order_sell(case_id, ord_qty)
-
-        FXOrderBook(case_id, session_id).cancel_order(filter_list=[ob_names.order_id.value, order_info['Order ID']])
-
-        FXOrderBook(case_id, session_id).set_filter([ob_names.order_id.value, 'AO',
-                                                     ob_names.orig.value, 'AutoHedger']). \
-            check_order_fields_list({ob_names.order_id.value: order_info['Order ID'],
-                                     ob_names.sts.value: sts_names.cancelled.value},
-                                    event_name='Checking that after cancel there is no new AH orders')
-
-        extracted_pos_quod = get_dealing_positions_details(pos_service, case_base_request, symbol, account_quod)
-        extracted_pos_osmium = get_dealing_positions_details(pos_service, case_base_request, symbol, account)
-        compare_position(
-            'Checking positions', case_id,
-            initial_pos_quod, extracted_pos_quod,
-            initial_pos_osmium, extracted_pos_osmium,
-            account_quod, account,
-            verification_equal, verification_equal
-        )
-    except Exception as e:
-        logging.error('Error execution', exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-        send_rfq_and_filled_order_sell(case_id, ord_qty)
-    finally:
-        try:
-            # Set default parameters
-            set_send_hedge_order_status(case_id, status_true)
-        except Exception:
-            logging.error("Error execution", exc_info=True)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.cancel_request.set_params(self.account_ext)
+        self.java_api_manager.send_message(self.cancel_request)
+        self.sleep(5)
+        self.cancel_request.set_params(self.account_int)
+        self.java_api_manager.send_message(self.cancel_request)
+        self.sleep(5)

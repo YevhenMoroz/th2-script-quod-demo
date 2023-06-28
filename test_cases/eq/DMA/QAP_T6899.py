@@ -71,7 +71,7 @@ class QAP_T6899(TestCase):
         # endregion
 
         # check error in the exec report
-        exp_text = '11642 Unknown account identifier: test / 11505 Runtime error (trying to get VSecurityAccount with an empty key)'
+        exp_text = '11642 Unknown account / 11505 Runtime error (trying to get VSecurityAccount with an empty key)'
         self.java_api_manager.compare_values({'Text': exp_text}, {'Text': txt}, 'Check error in the exec report')
         # endregion
 
@@ -80,3 +80,4 @@ class QAP_T6899(TestCase):
         self.ssh_client.put_file(self.remote_path, self.local_path)
         self.ssh_client.send_command("qrestart ORS")
         os.remove("temp.xml")
+        time.sleep(40)

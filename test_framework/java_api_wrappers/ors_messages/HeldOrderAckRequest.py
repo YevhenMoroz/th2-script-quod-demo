@@ -8,14 +8,14 @@ class HeldOrderAckRequest(JavaApiMessage):
         super().__init__(message_type=ORSMessageType.HeldOrderAckRequest.value)
         super().change_parameters(parameters)
 
-    def set_default(self, order_id, client, account=None):
+    def set_default(self, order_id, client, account=None, ack_type='A'):
         base_parameters = {
             'SEND_SUBJECT': 'QUOD.ORS.FE',
             'REPLY_SUBJECT': 'QUOD.FE.ORS',
             'HeldOrderAckBlock': {
                 'RequestID': order_id,
                 'RequestType': 'NEW',
-                'HeldOrderAckType': 'A',
+                'HeldOrderAckType': ack_type,
                 'AccountGroupID': client
             }
         }

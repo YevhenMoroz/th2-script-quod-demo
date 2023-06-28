@@ -2,7 +2,7 @@ import time
 import traceback
 from datetime import timedelta
 
-from test_framework.configurations.component_configuration import ComponentConfiguration
+from test_framework.configurations.component_configuration import WebAdminComponentConfiguration
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from custom import basic_custom_actions as bca
 from test_cases.web_admin.web_admin_test_cases.site.QAP_T3127 import QAP_T3127
@@ -47,7 +47,7 @@ class RunSite:
 
     def execute(self):
         try:
-            configuration = ComponentConfiguration("WA_Site")
+            configuration = WebAdminComponentConfiguration("WA_Site")
             self.web_driver_container = WebDriverContainer(
                 configuration.environment.get_list_web_admin_environment()[0].web_browser,
                 configuration.environment.get_list_web_admin_environment()[0].site_url)

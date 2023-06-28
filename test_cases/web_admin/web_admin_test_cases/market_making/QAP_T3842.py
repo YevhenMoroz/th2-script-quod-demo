@@ -2,8 +2,10 @@ import random
 import sys
 import time
 import traceback
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tiers_page import ClientTiersPage
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tiers_values_sub_wizard import \
     ClientTiersValuesSubWizard
@@ -33,38 +35,31 @@ class QAP_T3842(CommonTestCase):
         client_tiers_main_page.click_on_more_actions()
         client_tiers_main_page.click_on_edit()
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            client_tier_wizard_value_tab = ClientTiersValuesSubWizard(self.web_driver_container)
-            client_tier_wizard_value_tab.set_tod_end_time(self.tod_end_time)
-            client_tier_wizard_value_tab.clear_field_core_spot_price_strategy()
-            time.sleep(1)
-            core_spot_price_items = client_tier_wizard_value_tab.get_all_core_spot_price_strategy_from_drop_menu()
-            actual_result = [True if self.core_spot_price_strategy[i] in core_spot_price_items else False
-                             for i in range(len(self.core_spot_price_strategy))]
-            excepted_result = [True for _ in range(len(self.core_spot_price_strategy))]
+        client_tier_wizard_value_tab = ClientTiersValuesSubWizard(self.web_driver_container)
+        client_tier_wizard_value_tab.set_tod_end_time(self.tod_end_time)
+        client_tier_wizard_value_tab.clear_field_core_spot_price_strategy()
+        time.sleep(1)
+        core_spot_price_items = client_tier_wizard_value_tab.get_all_core_spot_price_strategy_from_drop_menu()
+        actual_result = [True if self.core_spot_price_strategy[i] in core_spot_price_items else False
+                         for i in range(len(self.core_spot_price_strategy))]
+        excepted_result = [True for _ in range(len(self.core_spot_price_strategy))]
 
-            self.verify("Core spot price strategy contains test data", excepted_result, actual_result)
+        self.verify("Core spot price strategy contains test data", excepted_result, actual_result)
 
-            new_core_spot_price_strategy = random.choice(self.core_spot_price_strategy)
-            client_tier_wizard_value_tab.set_core_spot_price_strategy(new_core_spot_price_strategy)
-            client_tier_wizard = ClientTiersWizard(self.web_driver_container)
-            edited_client_tier = client_tier_wizard_value_tab.get_name()
-            client_tier_wizard.click_on_save_changes()
-            client_tiers_main_page = ClientTiersPage(self.web_driver_container)
-            client_tiers_main_page.set_client_tiers_global_filter(edited_client_tier)
-            time.sleep(1)
-            client_tiers_main_page.click_on_more_actions()
-            client_tiers_main_page.click_on_edit()
+        new_core_spot_price_strategy = random.choice(self.core_spot_price_strategy)
+        client_tier_wizard_value_tab.set_core_spot_price_strategy(new_core_spot_price_strategy)
+        client_tier_wizard = ClientTiersWizard(self.web_driver_container)
+        edited_client_tier = client_tier_wizard_value_tab.get_name()
+        client_tier_wizard.click_on_save_changes()
+        client_tiers_main_page = ClientTiersPage(self.web_driver_container)
+        client_tiers_main_page.set_client_tiers_global_filter(edited_client_tier)
+        time.sleep(1)
+        client_tiers_main_page.click_on_more_actions()
+        client_tiers_main_page.click_on_edit()
 
-            self.verify("New Core Spot Price Strategy was save correctly", new_core_spot_price_strategy,
-                        client_tier_wizard_value_tab.get_core_spot_price_strategy())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("New Core Spot Price Strategy was save correctly", new_core_spot_price_strategy,
+                    client_tier_wizard_value_tab.get_core_spot_price_strategy())

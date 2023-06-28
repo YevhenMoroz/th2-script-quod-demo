@@ -33,7 +33,7 @@ class QAP_T3398(CommonTestCase):
         login_page.set_password(self.password)
         login_page.click_login_button()
         side_menu = SideMenu(self.web_driver_container)
-        side_menu.click_on_order_management_rules_when_order_management_tab_is_open()
+        side_menu.click_on_order_management_rules_tab()
         main_page = MainPage(self.web_driver_container)
         main_page.set_name_filter(self.name)
         time.sleep(1)

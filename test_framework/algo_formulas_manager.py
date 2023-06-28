@@ -56,15 +56,15 @@ class AlgoFormulasManager:
             return min(math.ceil((market_vol * per_vol) / (100 - per_vol)), ord_qty)
 
     @staticmethod
-    def get_twap_nav_child_qty(remaining_ord_qty: int, remaining_waves: int, ats: int, nav_percentage: float = 100) -> int:
-        first_reserve = max(5 * ats, math.ceil(remaining_ord_qty * (100 - nav_percentage)))
+    def get_twap_nav_child_qty(remaining_ord_qty: int, remaining_waves: int, ats: int = 10000, nav_percentage: float = 100) -> int:
+        first_reserve = max(5 * ats, math.ceil(remaining_ord_qty * ((100 - nav_percentage) / 100)))
         reserve = max(first_reserve, AlgoFormulasManager.get_next_twap_slice(remaining_ord_qty, remaining_waves))
         return remaining_ord_qty - reserve
 
     @staticmethod
-    def get_nav_reserve(remaining_ord_qty: int, remaining_waves: int, ats: int, nav_percentage: float = 100) -> int:
-        first_reserve = max(5 * ats, math.ceil(remaining_ord_qty * (100 - nav_percentage)))
-        reserve = max(first_reserve, AlgoFormulasManager.get_next_twap_slice(remaining_ord_qty, remaining_waves))
+    def get_nav_reserve(remaining_ord_qty: int, child_qty: int, ats: int = 10000, nav_percentage: float = 100) -> int:
+        first_reserve = max(5 * ats, math.ceil(remaining_ord_qty * ((100 - nav_percentage) / 100)))
+        reserve = max(first_reserve, child_qty)
         return reserve
 
     @staticmethod
@@ -840,3 +840,23 @@ class AlgoFormulasManager:
     @staticmethod
     def calc_mid_price(price_1, price_2):
         return (price_1 + price_2)/2
+
+    @staticmethod
+    def get_avaible_qty_with_save_for_close_percent(parent_qty: int, save_for_close_percent: float, child_order_qty: int):
+        if (save_for_close_percent > 0 and save_for_close_percent < 1):
+            if (parent_qty - math.ceil(parent_qty * 100) / (save_for_close_percent * 100)) > child_order_qty:
+                return child_order_qty
+            else:
+                return parent_qty - math.ceil(parent_qty * 100) / (save_for_close_percent * 100)
+        else:
+            if (parent_qty - math.ceil(parent_qty / 100 * save_for_close_percent)) > child_order_qty:
+                return child_order_qty
+            else:
+                return (parent_qty - math.ceil(parent_qty / 100 * save_for_close_percent))
+
+    @staticmethod
+    def get_avaible_qty_with_save_for_close_shares(parent_qty: int, save_for_close_shares: int, child_order_qty: int):
+        if parent_qty - save_for_close_shares > child_order_qty:
+            return child_order_qty
+        else:
+            return (parent_qty - save_for_close_shares)

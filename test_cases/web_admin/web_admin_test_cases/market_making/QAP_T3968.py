@@ -3,8 +3,10 @@ import string
 import sys
 import time
 import traceback
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.market_making.quoting_sessions.quoting_sessions_page import \
     QuotingSessionsPage
 from test_framework.web_admin_core.pages.market_making.quoting_sessions.quoting_sessions_values_sub_wizard import \
@@ -63,22 +65,16 @@ class QAP_T3968(CommonTestCase):
         page.click_on_edit()
         time.sleep(2)
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
-        try:
-            self.precondition()
-            values_sub_wizard = QuotingSessionsValuesSubWizard(self.web_driver_container)
-            expected_result_values = [self.name,
-                                      self.published_quote_id_format,
-                                      self.quote_update_format,
-                                      ]
-            actual_result_values = [values_sub_wizard.get_name(),
-                                    values_sub_wizard.get_published_quote_id_format(),
-                                    values_sub_wizard.get_quote_update_format()]
-            self.verify("Check is entity created correctly", expected_result_values,
-                        actual_result_values)
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.precondition()
+        values_sub_wizard = QuotingSessionsValuesSubWizard(self.web_driver_container)
+        expected_result_values = [self.name,
+                                  self.published_quote_id_format,
+                                  self.quote_update_format,
+                                  ]
+        actual_result_values = [values_sub_wizard.get_name(),
+                                values_sub_wizard.get_published_quote_id_format(),
+                                values_sub_wizard.get_quote_update_format()]
+        self.verify("Check is entity created correctly", expected_result_values,
+                    actual_result_values)

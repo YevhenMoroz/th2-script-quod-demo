@@ -36,7 +36,7 @@ class QAP_T2450(TestCase):
             "Symbol": self.eur_usd
         }
         self.qty = "3000000"
-        self.expected_notes = "open quantity of position (3e+06) exceeds the low watermark (0)"
+        self.expected_notes = "open quantity of position (3.54441e+06) exceeds the low watermark (0)"
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Clear position start
@@ -68,6 +68,7 @@ class QAP_T2450(TestCase):
         # endregion
         # region Step 2
         notes = check_ah_decision(ord_id)
+        self.verifier.set_parent_id(self.test_id)
         self.verifier.set_event_name("Check AH decision")
         self.verifier.compare_values("Free notes", self.expected_notes, notes)
         self.verifier.verify()

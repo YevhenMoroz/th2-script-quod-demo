@@ -34,7 +34,7 @@ from test_cases.web_admin.web_admin_test_cases.general.QAP_T10424 import QAP_T10
 from test_cases.web_admin.web_admin_test_cases.general.QAP_T10643 import QAP_T10643
 
 
-from test_framework.configurations.component_configuration import ComponentConfiguration
+from test_framework.configurations.component_configuration import WebAdminComponentConfiguration
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from custom import basic_custom_actions as bca
 
@@ -46,7 +46,7 @@ class RunGeneral:
 
     def execute(self):
         try:
-            configuration = ComponentConfiguration("WA_General")
+            configuration = WebAdminComponentConfiguration("WA_General")
             self.web_driver_container = WebDriverContainer(
                 configuration.environment.get_list_web_admin_environment()[0].web_browser,
                 configuration.environment.get_list_web_admin_environment()[0].site_url)

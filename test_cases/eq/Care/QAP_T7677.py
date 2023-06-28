@@ -53,8 +53,11 @@ class QAP_T7677(TestCase):
         order_id = self.java_api_manager2.get_last_message(ORSMessageType.OrdNotification.value).get_parameters()[
             JavaApiFields.OrderNotificationBlock.value][JavaApiFields.OrdID.value]
         cd_order_notif_id = cd_order_notif_message.get_parameter("CDOrdNotifBlock")["CDOrdNotifID"]
-        order_notification = self.java_api_manager2.get_last_message(ORSMessageType.OrdNotification.value).get_parameters()[JavaApiFields.OrderNotificationBlock.value]
-        self.java_api_manager2.compare_values({JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_SEN.value}, order_notification,
+        order_notification = \
+            self.java_api_manager2.get_last_message(ORSMessageType.OrdNotification.value).get_parameters()[
+                JavaApiFields.OrderNotificationBlock.value]
+        self.java_api_manager2.compare_values({JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_SEN.value},
+                                              order_notification,
                                               'Verifying that CO order has Status = Sent (step 6)')
         # endregion
 
@@ -80,9 +83,12 @@ class QAP_T7677(TestCase):
                                                                                  'ExecutionPolicy': ExecutionPolicyConst.DMA.value,
                                                                                  'AccountGroupID': self.client})
             self.java_api_manager.send_message_and_receive_response(self.order_submit)
-            order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[JavaApiFields.OrdReplyBlock.value]
-            self.java_api_manager.compare_values({JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value,
-                                                  JavaApiFields.ExecutionPolicy.value: ExecutionPolicyConst.DMA.value}, order_reply, 'Verifying that Child DMA order created (step 10)')
+            order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
+                JavaApiFields.OrdReplyBlock.value]
+            self.java_api_manager.compare_values(
+                {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value,
+                 JavaApiFields.ExecutionPolicy.value: ExecutionPolicyConst.DMA.value}, order_reply,
+                'Verifying that Child DMA order created (step 10)')
         finally:
             time.sleep(3)
             self.rule_manager.remove_rule(nos_rule)
@@ -90,11 +96,12 @@ class QAP_T7677(TestCase):
 
         # region step 12-13:Split CO order on half qty (Algo Order)
         self.order_submit.set_default_direct_algo_iceberg(order_id, self.qty_to_display)
-        self.order_submit.update_fields_in_component('NewOrderSingleBlock', {'OrdQty': self.qty_to_split})
+        self.order_submit.update_fields_in_component('NewOrderSingleBlock',
+                                                     {'OrdQty': self.qty_to_split})
+        self.order_submit.remove_parameter('CDOrdAssignInstructionsBlock')
         self.java_api_manager.send_message_and_receive_response(self.order_submit)
-        order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
-            JavaApiFields.OrdReplyBlock.value]
-        self.java_api_manager.compare_values({JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value,
-                                              JavaApiFields.ExecutionPolicy.value: ExecutionPolicyConst.Synthetic.value},
+        order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameters()[
+            JavaApiFields.OrderNotificationBlock.value]
+        self.java_api_manager.compare_values({JavaApiFields.ExecutionPolicy.value: ExecutionPolicyConst.Synthetic.value},
                                              order_reply, 'Verifying that Child DMA order created (step 12)')
         # endregion

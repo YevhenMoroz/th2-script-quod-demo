@@ -145,38 +145,14 @@ class QAP_MD(TestCase):
                 "MDEntryTime": "14:57:13"
             }]
 
-        self.md_req_id = "EUR/USD:FXF:WK2:HSBC"
-        # self.md_req_id = "EUR/USD:SPO:REG:HSBC"
+        # self.md_req_id = "EUR/DKK:SPO:REG:BARX_1378"
+        self.md_req_id = "GBP/USD:SPO:REG:HSBC"
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Step 1-3
-        self.fix_md.set_market_data_fwd()
-        # # self.fix_md.change_parameter("MDReqID", self.md_req_id)
-        # # self.fix_md.set_market_data_fwd()
+        self.fix_md.set_market_data()
+        # self.fix_md.change_parameter("MDReqID", self.md_req_id)
+        # self.fix_md.set_market_data_fwd()
         self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
         self.fix_manager_fh_314.send_message(self.fix_md)
-        # self.sleep(1)
-        # self.fix_md.update_repeating_group("NoMDEntries", self.no_md_entries_spot)
-        # self.fix_manager_fh_314.send_message(self.fix_md)
-        # self.sleep(1)
-        # self.fix_md.update_repeating_group("NoMDEntries", self.no_md_entries_spot_1)
-        # self.fix_manager_fh_314.send_message(self.fix_md)
-        # self.sleep(1)
-        # self.fix_md.update_repeating_group("NoMDEntries", self.no_md_entries_spot_2)
-        # self.fix_manager_fh_314.send_message(self.fix_md)
-        # self.sleep(1)
-        # self.fix_md.update_repeating_group("NoMDEntries", self.no_md_entries_spot_3)
-        # self.fix_manager_fh_314.send_message(self.fix_md)
-        # self.sleep(1)
-        # self.fix_md.update_repeating_group("NoMDEntries", self.no_md_entries_spot)
-        # self.fix_manager_fh_314.send_message(self.fix_md)
-        # self.sleep(1)
-        # self.fix_md.update_repeating_group("NoMDEntries", self.no_md_entries_spot_1)
-        # self.fix_manager_fh_314.send_message(self.fix_md)
-        # self.sleep(1)
-        # self.fix_md.update_repeating_group("NoMDEntries", self.no_md_entries_spot_2)
-        # self.fix_manager_fh_314.send_message(self.fix_md)
-        # self.sleep(1)
-        # self.fix_md.update_repeating_group("NoMDEntries", self.no_md_entries_spot_3)
-        # self.fix_manager_fh_314.send_message(self.fix_md)

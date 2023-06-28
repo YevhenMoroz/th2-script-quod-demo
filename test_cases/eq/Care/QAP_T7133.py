@@ -76,7 +76,7 @@ class QAP_T7133(TestCase):
         # endergion
 
         # region  step 1: create CO order via FIX
-        desk = self.environment.get_list_fe_environment()[0].desk_ids[0]
+        desk = self.environment.get_list_fe_environment()[0].desk_ids[1]
         self.new_order.set_default_care_limit(account='client_2')
         self.new_order.add_tag({'header': {
             JavaApiFields.SenderSubID.value: 'SENDER_SUB_ID',
@@ -87,8 +87,9 @@ class QAP_T7133(TestCase):
             JavaApiFields.OnBehalfOfSubID.value: 'ON_BEHALF_OF_SUB_ID'
         }})
         self.fix_manager.send_message_and_receive_response_fix_standard(self.new_order)
-        execution_report_last = self.fix_manager.get_last_message('ExecutionReport').get_parameters()
-        order_id = execution_report_last['OrderID']
+        time.sleep(2)
+        cl_ord_id = self.new_order.get_parameters()['ClOrdID']
+        order_id = self.db_manager.execute_query(f"SELECT ordid FROM ordr WHERE clordid = '{cl_ord_id}'")[0][0]
         cd_ord_notif_id = str(int(
             self.db_manager.execute_query(f"SELECT cdordnotifid FROM cdordnotif WHERE transid = '{order_id}'")[
                 0][0]))
@@ -139,4 +140,5 @@ class QAP_T7133(TestCase):
         os.remove('temp_cs.xml')
         os.remove('temp_ors.xml')
         time.sleep(90)
+        self.db_manager.close_connection()
         self.ssh_client.close()

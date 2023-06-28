@@ -194,3 +194,17 @@ class UsersPage(CommonPage):
 
     def count_online_status_for_displayed_users(self):
         return len(self.find_elements_by_xpath(UsersConstants.ONLINE_STATUS_XPATH))
+
+    def is_users_displayed(self):
+        return self.is_element_present(UsersConstants.ALL_DISPLAYED_USERS_XPATH)
+
+    def load_users_by_look_up_pattern(self, value):
+        self.set_text_by_xpath(UsersConstants.USERS_LOOK_UP_INPUT, value)
+        time.sleep(0.5)
+        self.find_by_xpath(UsersConstants.LOAD_BUTTON).click()
+
+    def is_load_users_look_up_displayed(self):
+        return self.is_element_present(UsersConstants.USERS_LOOK_UP_INPUT)
+
+    def is_main_page_open(self):
+        return self.is_element_present(UsersConstants.USERS_PAGE_TITLE_XPATH)

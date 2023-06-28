@@ -24,7 +24,7 @@ from test_framework.java_api_wrappers.ors_messages.BlockUnallocateRequest import
 from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, MiddleOfficeColumns, \
     AllocationsColumns
 from test_framework.java_api_wrappers.java_api_constants import ExecutionReportConst, OrderReplyConst, \
-    SubmitRequestConst, AllocationReportConst, ConfirmationReportConst
+    SubmitRequestConst, AllocationReportConst, ConfirmationReportConst, JavaApiFields
 from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)
@@ -126,7 +126,10 @@ class QAP_T7507(TestCase):
         responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
         class_name.print_message('BOOK', responses)
         self.return_result(responses, ORSMessageType.AllocationReport.value)
-        alloc_id = self.result.get_parameter('AllocationReportBlock')['ClientAllocID']
+        alloc_instr = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                                             JavaApiFields.BookingAllocInstructionID.value).get_parameter(
+            'AllocationReportBlock')
+        alloc_id = alloc_instr['ClientAllocID']
         self.approve_message.set_default_approve(alloc_id)
         responses = self.java_api_manager.send_message_and_receive_response(self.approve_message)
         class_name.print_message('APPROVE', responses)
@@ -171,10 +174,10 @@ class QAP_T7507(TestCase):
         }
         change_parameters.update(instrument_dict)
         list_of_ignored_fields = ['NoParty', 'Quantity', 'tag5120', 'TransactTime',
-                                  'AllocTransType', 'ReportedPx', 'Side', 'AvgPx','QuodTradeQualifier', 'BookID',
-                                  'SettlDate','AllocID', 'Currency', 'NetMoney','TradeDate', 'RootSettlCurrAmt',
-                                  'BookingType', 'GrossTradeAmt','IndividualAllocID', 'AllocNetPrice', 'AllocPrice',
-                                  'AllocInstructionMiscBlock1','SecurityDesc', 'Symbol', 'SecurityID', 'ExDestination',
+                                  'AllocTransType', 'ReportedPx', 'Side', 'AvgPx', 'QuodTradeQualifier', 'BookID',
+                                  'SettlDate', 'AllocID', 'Currency', 'NetMoney', 'TradeDate', 'RootSettlCurrAmt',
+                                  'BookingType', 'GrossTradeAmt', 'IndividualAllocID', 'AllocNetPrice', 'AllocPrice',
+                                  'AllocInstructionMiscBlock1', 'SecurityDesc', 'Symbol', 'SecurityID', 'ExDestination',
                                   'VenueType', 'Price', 'ExecBroker', 'QtyType', 'OrderCapacity', 'LastMkt', 'OrdType',
                                   'LastPx', 'CumQty', 'LeavesQty', 'HandlInst', 'PositionEffect', 'TimeInForce',
                                   'OrderID', 'LastQty', 'ExecID', 'OrderQtyData', 'Account', 'OrderAvgPx',
@@ -193,7 +196,7 @@ class QAP_T7507(TestCase):
             'OrderID': '*',
         }]})
         change_parameters.update(instrument_dict)
-        list_of_ignored_fields.extend(['IndividualAllocID', 'AllocNetPrice', 'AllocPrice'])
+        list_of_ignored_fields.extend(['IndividualAllocID', 'AllocNetPrice', 'AllocPrice', 'ExecAllocGrp'])
         change_parameters['AllocType'] = 5
         allocation_report = FixMessageAllocationInstructionReportOMS(change_parameters)
         self.fix_verifier.check_fix_message_fix_standard(allocation_report,
@@ -203,7 +206,7 @@ class QAP_T7507(TestCase):
         # region step 9 (check 35= AK message)
         list_of_ignored_fields.extend(['ConfirmID', 'MatchStatus', 'ConfirmStatus',
                                        'CpctyConfGrp', 'ConfirmTransType', 'ConfirmType', 'ExecType', 'OrdStatus',
-                                       'AllocType', 'tag11245'])
+                                       'AllocType', 'tag11245', 'AllocInstructionMiscBlock2'])
 
         change_parameters['AllocAccount'] = sec_acc_1
         change_parameters['AllocQty'] = self.qty

@@ -66,3 +66,28 @@ class FixMessageNewOrderSingleTaker(FixMessageNewOrderSingle):
         }
         super().change_parameters(base_parameters)
         return self
+
+    def set_default_care(self) -> FixMessageNewOrderSingle:
+        instrument = dict(
+            Symbol=self.get_data_set().get_symbol_by_name("symbol_1"),                      # 55
+            SecurityType=self.get_data_set().get_security_type_by_name("fx_spot")           # 167
+        )
+        base_parameters = {
+            "ClOrdID": bca.client_orderid(9),                                                # 11
+            "Account": self.get_data_set().get_client_by_name("client_5"),                   # 1
+            "HandlInst": "3",                                                                # 21
+            "Side": "1",                                                                     # 54
+            "OrderQty": "5000000",                                                           # 38
+            "TimeInForce": "0",                                                              # 59
+            "OrdType": "2",                                                                  # 40
+            "TransactTime": datetime.utcnow().isoformat(),                                   # 60
+            "Price": "1.18999",                                                              # 44
+            "Currency": self.get_data_set().get_currency_by_name("currency_eur"),            # 15
+            "Instrument": instrument,
+            "SettlDate": self.get_data_set().get_settle_date_by_name("spot"),                # 64
+            "SettlType": self.get_data_set().get_settle_type_by_name("spot"),                # 63
+            # "ExDestination": "CITI-SW"                                                       # 100
+
+        }
+        super().change_parameters(base_parameters)
+        return self

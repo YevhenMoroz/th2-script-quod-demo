@@ -3,8 +3,10 @@ import string
 import sys
 import time
 import traceback
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_instrument_external_clients_sub_wizard import \
     ClientTiersInstrumentExternalClientsSubWizard
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_instrument_forward_venues_sub_wizard import \
@@ -76,117 +78,111 @@ class QAP_T3991(CommonTestCase):
         client_tiers_wizard.click_on_save_changes()
         time.sleep(2)
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
-
+        self.precondition()
+        client_tiers_main_page = ClientTiersPage(self.web_driver_container)
         try:
-            self.precondition()
-            client_tiers_main_page = ClientTiersPage(self.web_driver_container)
-            try:
-                client_tiers_main_page.set_name(self.name)
-                self.verify("Is client tier created correctly? ", True, True)
-            except Exception as e:
-                self.verify("Is client  created INCORRECTLY !!!", True, e.__class__.__name__)
-            time.sleep(2)
-            client_tiers_main_page.click_on_more_actions()
-            time.sleep(3)
-            # step 4
-            client_tier_instrument_main_page = ClientTierInstrumentsPage(self.web_driver_container)
-            client_tier_instrument_main_page.click_on_new()
-            # step 5
-            time.sleep(2)
-            client_tier_instrument_values_sub_wizard = ClientTierInstrumentValuesSubWizard(self.web_driver_container)
-            client_tier_instrument_values_sub_wizard.set_symbol(self.symbol)
-            client_tier_instrument_values_sub_wizard.set_tod_end_time(self.tod_end_time)
-            time.sleep(1)
-            client_tier_instrument_values_sub_wizard.set_rfq_response_stream_ttl(self.rfq_response_stream_ttl)
-            time.sleep(1)
-            client_tier_instrument_values_sub_wizard.set_core_spot_price_strategy(self.core_spot_price_strategy)
-            time.sleep(1)
-            # step 6
-            client_tier_instrument_spot_venues_sub_wizard = ClientTiersInstrumentSpotVenuesSubWizard(
-                self.web_driver_container)
-            client_tier_instrument_spot_venues_sub_wizard.click_on_plus()
-            time.sleep(2)
-            client_tier_instrument_spot_venues_sub_wizard.set_venue(self.venue_at_spot_venues_tab)
-            client_tier_instrument_spot_venues_sub_wizard.click_on_checkmark()
-            time.sleep(2)
-            client_tier_instrument_forward_venues_sub_wizard = ClientTiersInstrumentForwardVenuesSubWizard(
-                self.web_driver_container)
-            client_tier_instrument_forward_venues_sub_wizard.click_on_plus()
-            time.sleep(2)
-            client_tier_instrument_forward_venues_sub_wizard.set_venue(self.venue_at_forward_venues_tab)
-            client_tier_instrument_forward_venues_sub_wizard.click_on_checkmark()
-            time.sleep(2)
-            # step 7
-            client_tier_instrument_external_clients_sub_wizard = ClientTiersInstrumentExternalClientsSubWizard(
-                self.web_driver_container)
-            client_tier_instrument_external_clients_sub_wizard.click_on_plus()
-            time.sleep(2)
-            client_tier_instrument_external_clients_sub_wizard.set_client(self.client_at_external_clients_tab)
-            client_tier_instrument_external_clients_sub_wizard.click_on_checkmark()
-            time.sleep(1)
-            client_tier_instrument_internal_clients_sub_wizard = ClientTiersInstrumentInternalClientsSubWizard(
-                self.web_driver_container)
-            client_tier_instrument_internal_clients_sub_wizard.click_on_plus()
-            time.sleep(2)
-            client_tier_instrument_internal_clients_sub_wizard.set_client(self.client_at_internal_clients_tab)
-            client_tier_instrument_internal_clients_sub_wizard.click_on_checkmark()
-            time.sleep(1)
-            # step 9
-            client_tier_instrument_sweepable_quantities_sub_wizard = ClientTiersInstrumentSweepableQuantitiesSubWizard(
-                self.web_driver_container)
-            client_tier_instrument_sweepable_quantities_sub_wizard.click_on_plus()
-            client_tier_instrument_sweepable_quantities_sub_wizard.set_quantity(self.quantity)
-            client_tier_instrument_sweepable_quantities_sub_wizard.click_on_published_checkbox()
-            client_tier_instrument_sweepable_quantities_sub_wizard.click_on_checkmark()
-            time.sleep(1)
-            # step 8
-            client_tier_instrument_tenors_sub_wizard = ClientTiersInstrumentTenorsSubWizard(self.web_driver_container)
-            client_tier_instrument_tenors_sub_wizard.click_on_plus()
-            time.sleep(2)
-            client_tier_instrument_tenors_sub_wizard.set_tenor(self.tenor)
-            time.sleep(2)
-            client_tier_instrument_tenors_sub_wizard.set_min_spread(self.min_spread)
-            time.sleep(2)
-            client_tier_instrument_tenors_sub_wizard.set_max_spread(self.max_spread)
-            time.sleep(2)
-
-            # step 10
-            client_tier_instrument_position_levels_sub_wizard = ClientTiersInstrumentTenorsSubWizard(
-                self.web_driver_container)
-            client_tier_instrument_position_levels_sub_wizard.click_on_plus_button_at_position_levels_tab()
-            time.sleep(2)
-            client_tier_instrument_position_levels_sub_wizard.set_position_at_position_levels_tab(self.position)
-            time.sleep(2)
-            client_tier_instrument_position_levels_sub_wizard.set_bid_margin_at_position_levels_tab(self.bid_margin)
-            time.sleep(2)
-            client_tier_instrument_position_levels_sub_wizard.set_offer_margin_at_position_levels_tab(self.offer_margin)
-            time.sleep(2)
-            client_tier_instrument_position_levels_sub_wizard.click_on_checkmark_at_position_levels_tab()
-            time.sleep(2)
-            client_tier_instrument_tenors_sub_wizard.click_on_checkmark()
-            # step 11
-            client_tier_instrument_wizard = ClientTiersWizard(self.web_driver_container)
-            time.sleep(2)
-            client_tier_instrument_wizard.click_on_save_changes()
-            time.sleep(2)
-            client_tiers_main_page = ClientTiersPage(self.web_driver_container)
             client_tiers_main_page.set_name(self.name)
+            self.verify("Is client tier created correctly? ", True, True)
+        except Exception as e:
+            self.verify("Is client  created INCORRECTLY !!!", True, e.__class__.__name__)
+        time.sleep(2)
+        client_tiers_main_page.click_on_more_actions()
+        time.sleep(3)
+        # step 4
+        client_tier_instrument_main_page = ClientTierInstrumentsPage(self.web_driver_container)
+        client_tier_instrument_main_page.click_on_new()
+        # step 5
+        time.sleep(2)
+        client_tier_instrument_values_sub_wizard = ClientTierInstrumentValuesSubWizard(self.web_driver_container)
+        client_tier_instrument_values_sub_wizard.set_symbol(self.symbol)
+        client_tier_instrument_values_sub_wizard.set_tod_end_time(self.tod_end_time)
+        time.sleep(1)
+        client_tier_instrument_values_sub_wizard.set_rfq_response_stream_ttl(self.rfq_response_stream_ttl)
+        time.sleep(1)
+        client_tier_instrument_values_sub_wizard.set_core_spot_price_strategy(self.core_spot_price_strategy)
+        time.sleep(1)
+        # step 6
+        client_tier_instrument_spot_venues_sub_wizard = ClientTiersInstrumentSpotVenuesSubWizard(
+            self.web_driver_container)
+        client_tier_instrument_spot_venues_sub_wizard.click_on_plus()
+        time.sleep(2)
+        client_tier_instrument_spot_venues_sub_wizard.set_venue(self.venue_at_spot_venues_tab)
+        client_tier_instrument_spot_venues_sub_wizard.click_on_checkmark()
+        time.sleep(2)
+        client_tier_instrument_forward_venues_sub_wizard = ClientTiersInstrumentForwardVenuesSubWizard(
+            self.web_driver_container)
+        client_tier_instrument_forward_venues_sub_wizard.click_on_plus()
+        time.sleep(2)
+        client_tier_instrument_forward_venues_sub_wizard.set_venue(self.venue_at_forward_venues_tab)
+        client_tier_instrument_forward_venues_sub_wizard.click_on_checkmark()
+        time.sleep(2)
+        # step 7
+        client_tier_instrument_external_clients_sub_wizard = ClientTiersInstrumentExternalClientsSubWizard(
+            self.web_driver_container)
+        client_tier_instrument_external_clients_sub_wizard.click_on_plus()
+        time.sleep(2)
+        client_tier_instrument_external_clients_sub_wizard.set_client(self.client_at_external_clients_tab)
+        client_tier_instrument_external_clients_sub_wizard.click_on_checkmark()
+        time.sleep(1)
+        client_tier_instrument_internal_clients_sub_wizard = ClientTiersInstrumentInternalClientsSubWizard(
+            self.web_driver_container)
+        client_tier_instrument_internal_clients_sub_wizard.click_on_plus()
+        time.sleep(2)
+        client_tier_instrument_internal_clients_sub_wizard.set_client(self.client_at_internal_clients_tab)
+        client_tier_instrument_internal_clients_sub_wizard.click_on_checkmark()
+        time.sleep(1)
+        # step 9
+        client_tier_instrument_sweepable_quantities_sub_wizard = ClientTiersInstrumentSweepableQuantitiesSubWizard(
+            self.web_driver_container)
+        client_tier_instrument_sweepable_quantities_sub_wizard.click_on_plus()
+        client_tier_instrument_sweepable_quantities_sub_wizard.set_quantity(self.quantity)
+        client_tier_instrument_sweepable_quantities_sub_wizard.click_on_published_checkbox()
+        client_tier_instrument_sweepable_quantities_sub_wizard.click_on_checkmark()
+        time.sleep(1)
+        # step 8
+        client_tier_instrument_tenors_sub_wizard = ClientTiersInstrumentTenorsSubWizard(self.web_driver_container)
+        client_tier_instrument_tenors_sub_wizard.click_on_plus()
+        time.sleep(2)
+        client_tier_instrument_tenors_sub_wizard.set_tenor(self.tenor)
+        time.sleep(2)
+        client_tier_instrument_tenors_sub_wizard.set_min_spread(self.min_spread)
+        time.sleep(2)
+        client_tier_instrument_tenors_sub_wizard.set_max_spread(self.max_spread)
+        time.sleep(2)
+
+        # step 10
+        client_tier_instrument_position_levels_sub_wizard = ClientTiersInstrumentTenorsSubWizard(
+            self.web_driver_container)
+        client_tier_instrument_position_levels_sub_wizard.click_on_plus_button_at_position_levels_tab()
+        time.sleep(2)
+        client_tier_instrument_position_levels_sub_wizard.set_position_at_position_levels_tab(self.position)
+        time.sleep(2)
+        client_tier_instrument_position_levels_sub_wizard.set_bid_margin_at_position_levels_tab(self.bid_margin)
+        time.sleep(2)
+        client_tier_instrument_position_levels_sub_wizard.set_offer_margin_at_position_levels_tab(self.offer_margin)
+        time.sleep(2)
+        client_tier_instrument_position_levels_sub_wizard.click_on_checkmark_at_position_levels_tab()
+        time.sleep(2)
+        client_tier_instrument_tenors_sub_wizard.click_on_checkmark()
+        # step 11
+        client_tier_instrument_wizard = ClientTiersWizard(self.web_driver_container)
+        time.sleep(2)
+        client_tier_instrument_wizard.click_on_save_changes()
+        time.sleep(2)
+        client_tiers_main_page = ClientTiersPage(self.web_driver_container)
+        client_tiers_main_page.set_name(self.name)
+        time.sleep(2)
+        client_tiers_main_page.click_on_more_actions()
+        time.sleep(2)
+        client_tier_instrument_main_page.set_symbol(self.symbol)
+        time.sleep(2)
+        try:
+            client_tier_instrument_main_page.click_on_more_actions()
             time.sleep(2)
-            client_tiers_main_page.click_on_more_actions()
-            time.sleep(2)
-            client_tier_instrument_main_page.set_symbol(self.symbol)
-            time.sleep(2)
-            try:
-                client_tier_instrument_main_page.click_on_more_actions()
-                time.sleep(2)
-                client_tier_instrument_main_page.click_on_edit()
-                self.verify("Check that instrument saved ", True, True)
-            except Exception as e:
-                self.verify("Instrument saved INCORRECTLY !!!", True, e.__class__.__name__)
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+            client_tier_instrument_main_page.click_on_edit()
+            self.verify("Check that instrument saved ", True, True)
+        except Exception as e:
+            self.verify("Instrument saved INCORRECTLY !!!", True, e.__class__.__name__)
+

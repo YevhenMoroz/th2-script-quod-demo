@@ -108,8 +108,8 @@ class QAP_T10662(TestCase):
         # region manual execute order
         expected_result_comm = {
             JavaApiFields.RootMiscFeeBasis.value: 'B',
-            JavaApiFields.RootMiscFeeAmt.value: '1.0',
-            JavaApiFields.RootMiscFeeRate.value: '5.0',
+            JavaApiFields.RootMiscFeeAmt.value: '0.2',
+            JavaApiFields.RootMiscFeeRate.value: '1.0',
             JavaApiFields.RootMiscFeeType.value: 'EXC',
             JavaApiFields.RootMiscFeeCurr.value: self.comm_cur
         }
@@ -160,7 +160,7 @@ class QAP_T10662(TestCase):
         self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
 
         # region step 3 - Check commission
-        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameter(
+        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value, JavaApiFields.BookingAllocInstructionID.value).get_parameter(
             JavaApiFields.AllocationReportBlock.value)
         alloc_report_fee = alloc_report[JavaApiFields.RootMiscFeesList.value][
             JavaApiFields.RootMiscFeesBlock.value][0]
@@ -173,8 +173,8 @@ class QAP_T10662(TestCase):
         # region step 4 - Allocate order
         expected_result_fee = {
             JavaApiFields.MiscFeeBasis.value: 'B',
-            JavaApiFields.MiscFeeAmt.value: '0.01',
-            JavaApiFields.MiscFeeRate.value: '5.0',
+            JavaApiFields.MiscFeeAmt.value: '0.02',
+            JavaApiFields.MiscFeeRate.value: '1.0',
             JavaApiFields.MiscFeeType.value: 'EXC',
             JavaApiFields.MiscFeeCurr.value: self.comm_cur
         }

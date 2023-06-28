@@ -129,8 +129,8 @@ class QAP_T10663(TestCase):
 
         expected_result_comm = {
             JavaApiFields.CommissionBasis.value: 'BPS',
-            JavaApiFields.CommissionAmount.value: '1.0',
-            JavaApiFields.CommissionRate.value: '5.0',
+            JavaApiFields.CommissionAmount.value: '0.2',
+            JavaApiFields.CommissionRate.value: '1.0',
             JavaApiFields.CommissionAmountType.value: 'BRK',
             JavaApiFields.CommissionCurrency.value: self.comm_cur
         }
@@ -155,7 +155,7 @@ class QAP_T10663(TestCase):
         self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
 
         # region step 3 - Check commission
-        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameter(
+        alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value, JavaApiFields.BookingAllocInstructionID.value).get_parameter(
             JavaApiFields.AllocationReportBlock.value)
         alloc_report_comm = alloc_report[JavaApiFields.ClientCommissionList.value][
             JavaApiFields.ClientCommissionBlock.value][0]
@@ -168,8 +168,8 @@ class QAP_T10663(TestCase):
         # region step 4 - Allocate order
         expected_result_comm = {
             JavaApiFields.CommissionBasis.value: 'BPS',
-            JavaApiFields.CommissionAmount.value: '0.01',
-            JavaApiFields.CommissionRate.value: '5.0',
+            JavaApiFields.CommissionAmount.value: '0.002',
+            JavaApiFields.CommissionRate.value: '1.0',
             JavaApiFields.CommissionAmountType.value: 'BRK',
             JavaApiFields.CommissionCurrency.value: self.comm_cur
         }

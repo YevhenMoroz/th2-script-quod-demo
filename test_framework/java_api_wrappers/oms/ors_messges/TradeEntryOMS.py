@@ -1,3 +1,4 @@
+from copy import deepcopy
 from datetime import datetime, timedelta
 
 from pandas import Timestamp as tm
@@ -42,7 +43,7 @@ class TradeEntryOMS(TradeEntryRequest):
 
     def set_default_execution_summary(self, order_id, exec_ids: list, price, qty):
         exec_id_list = [{'ExecID': exec_id} for exec_id in exec_ids]
-        self.change_parameters(self.base_parameters)
+        self.change_parameters(deepcopy(self.base_parameters))
         self.update_fields_in_component('TradeEntryRequestBlock',
                                         {'ExecToDiscloseList': {'ExecToDiscloseBlock': exec_id_list},
                                          'OrdID': order_id,

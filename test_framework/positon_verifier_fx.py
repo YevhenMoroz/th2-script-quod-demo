@@ -54,6 +54,13 @@ class PositionVerifier:
         self.verifier.verify()
         self.verifier = Verifier(self.test_id)
 
+    def check_working_positions(self, report, expected_value):
+        working_positions = report[1].get_parameters()["PositionAmountData"][9]
+        position = working_positions["PosAmt"]
+        self.verifier.set_event_name("Check Working Position")
+        self.verifier.compare_values("Compare Position", expected_value, position)
+        self.verifier.verify()
+        self.verifier = Verifier(self.test_id)
     # TODO Add new fields to check
 
     def calculate_quote_position(self, qty, price):

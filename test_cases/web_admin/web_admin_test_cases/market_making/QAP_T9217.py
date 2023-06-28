@@ -1,8 +1,10 @@
 import sys
 import time
 import traceback
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.market_making.auto_hedger.auto_hedger_instruments_sub_wizard \
     import AutoHedgerInstrumentsSubWizard
 from test_framework.web_admin_core.pages.market_making.auto_hedger.auto_hedger_page import AutoHedgerPage
@@ -29,23 +31,17 @@ class QAP_T9217(CommonTestCase):
         page = AutoHedgerPage(self.web_driver_container)
         page.click_on_new()
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
-        try:
-            self.precondition()
-            instruments_tab = AutoHedgerInstrumentsSubWizard(self.web_driver_container)
-            instruments_tab.click_on_plus_button()
-            time.sleep(1)
-            expected_result = [True for _ in range(4)]
-            actual_result = [instruments_tab.is_execution_strategy_field_displayed(),
-                             instruments_tab.is_execution_strategy_tif_field_displayed(),
-                             instruments_tab.is_execution_strategy_max_duration_field_displayed(),
-                             instruments_tab.is_request_approval_checkbox_displayed()]
+        self.precondition()
+        instruments_tab = AutoHedgerInstrumentsSubWizard(self.web_driver_container)
+        instruments_tab.click_on_plus_button()
+        time.sleep(1)
+        expected_result = [True for _ in range(4)]
+        actual_result = [instruments_tab.is_execution_strategy_field_displayed(),
+                         instruments_tab.is_execution_strategy_tif_field_displayed(),
+                         instruments_tab.is_execution_strategy_max_duration_field_displayed(),
+                         instruments_tab.is_request_approval_checkbox_displayed()]
 
-            self.verify("New fields for Instrument displayed", expected_result, actual_result)
+        self.verify("New fields for Instrument displayed", expected_result, actual_result)
 
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)

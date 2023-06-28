@@ -109,7 +109,7 @@ class QAP_T10723(CommonTestCase):
             cash_position_wizard.click_on_save_changes()
 
         self.db_manager.my_db.execute(
-            f"UPDATE cashaccount SET cashloaned = '100' WHERE cashaccountname = {self.cash_position_name}")
+            f"UPDATE cashaccount SET cashloaned = '100' WHERE cashaccountname = '{self.cash_position_name}'")
 
     def test_context(self):
         cash_positions_page = CashPositionsPage(self.web_driver_container)
@@ -138,7 +138,7 @@ class QAP_T10723(CommonTestCase):
                 cash_position_wizard.click_on_ok_button()
 
             self.db_manager.my_db.execute(
-                f"UPDATE cashaccount SET bookedcashloan = '20' WHERE cashaccountname = {self.cash_position_name}")
+                f"UPDATE cashaccount SET bookedcashloan = '20' WHERE cashaccountname = '{self.cash_position_name}'")
 
             cash_positions_page.set_name(self.cash_position_name)
             time.sleep(1)

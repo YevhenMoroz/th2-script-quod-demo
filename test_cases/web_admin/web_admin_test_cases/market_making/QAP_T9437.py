@@ -3,8 +3,10 @@ import string
 import sys
 import time
 import traceback
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tiers_page import ClientTiersPage
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tiers_values_sub_wizard import \
     ClientTiersValuesSubWizard
@@ -37,47 +39,40 @@ class QAP_T9437(CommonTestCase):
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_client_tier_page()
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page = ClientTiersPage(self.web_driver_container)
-            main_page.click_on_new()
-            values_tab = ClientTiersValuesSubWizard(self.web_driver_container)
-            values_tab.click_on_manage_button_for_schedules()
-            schedule_wizard = ClientTiersSchedulesSubWizard(self.web_driver_container)
-            schedule_wizard.click_on_plus_button_at_schedule_name()
-            schedule_wizard.set_schedule_name(self.schedule)
-            schedule_wizard.click_on_plus_button_at_schedules()
-            schedule_wizard.set_day(self.day)
-            schedule_wizard.set_from_time(self.from_time)
-            schedule_wizard.set_to_time(self.to_time)
-            schedule_wizard.click_on_checkmark_button_at_schedules()
-            schedule_wizard.click_on_checkmark_button_at_schedule_name()
+        main_page = ClientTiersPage(self.web_driver_container)
+        main_page.click_on_new()
+        values_tab = ClientTiersValuesSubWizard(self.web_driver_container)
+        values_tab.click_on_manage_button_for_schedules()
+        schedule_wizard = ClientTiersSchedulesSubWizard(self.web_driver_container)
+        schedule_wizard.click_on_plus_button_at_schedule_name()
+        schedule_wizard.set_schedule_name(self.schedule)
+        schedule_wizard.click_on_plus_button_at_schedules()
+        schedule_wizard.set_day(self.day)
+        schedule_wizard.set_from_time(self.from_time)
+        schedule_wizard.set_to_time(self.to_time)
+        schedule_wizard.click_on_checkmark_button_at_schedules()
+        schedule_wizard.click_on_checkmark_button_at_schedule_name()
 
-            wizard = ClientTiersWizard(self.web_driver_container)
-            wizard.click_on_go_back_button()
+        wizard = ClientTiersWizard(self.web_driver_container)
+        wizard.click_on_go_back_button()
 
-            values_tab.set_name(self.name)
-            values_tab.set_core_spot_price_strategy(self.core_spot_price_strategy)
-            values_tab.set_tod_end_time(self.tod_end_time)
-            values_tab.select_schedule_checkbox()
-            values_tab.set_schedule(self.schedule)
-            wizard.click_on_save_changes()
+        values_tab.set_name(self.name)
+        values_tab.set_core_spot_price_strategy(self.core_spot_price_strategy)
+        values_tab.set_tod_end_time(self.tod_end_time)
+        values_tab.select_schedule_checkbox()
+        values_tab.set_schedule(self.schedule)
+        wizard.click_on_save_changes()
 
-            main_page.set_name(self.name)
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
+        main_page.set_name(self.name)
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
 
-            expected_result = [self.name, self.schedule]
-            actual_result = [values_tab.get_name(), values_tab.get_schedule()]
+        expected_result = [self.name, self.schedule]
+        actual_result = [values_tab.get_name(), values_tab.get_schedule()]
 
-            self.verify("New Client Tiers with new Schedule created", expected_result, actual_result)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("New Client Tiers with new Schedule created", expected_result, actual_result)
