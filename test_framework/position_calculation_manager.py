@@ -13,8 +13,16 @@ class PositionCalculationManager:
     def update_cumulative_quote_pos(self, quote_pos):
         self.cumulative_quote_pos = quote_pos
 
-    def calculate_quote_position(self, qty, price):
-        quote_pos = -float(qty) * float(price)
+    def calculate_quote_position(self, qty, price, side):
+        quote_pos = copy.deepcopy(self.get_cumulative_quote_pos())  # Get the cumulative quote position for the symbol
+
+        if side == "B":
+            quote_pos += -float(qty) * float(price)
+        else:
+            quote_pos += float(qty) * float(price)
+
+        self.update_cumulative_quote_pos(quote_pos)
+
         if str(quote_pos).endswith(".0"):
             return str(quote_pos)[:-2]
         else:

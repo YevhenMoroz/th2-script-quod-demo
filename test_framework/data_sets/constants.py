@@ -615,3 +615,11 @@ class TriggerPriceTypeScope(Enum):
 class TriggerPriceDirection(Enum):
     PriceGoesUp='U'
     PriceGoesDown='D'
+
+class PosAmtType(Enum):
+    BasePosition = "BASE"
+    AvgPX = "AVG"
+    QuotePosition = "QUOQ"
+    SysCurPosition = "SYSQ"
+    SysQuotePosition = "QSYS"
+    WorkingPosition = "WORK"
