@@ -527,6 +527,7 @@ class OrdTypes(Enum):
     StopLimit = 'STL'
     StopLimit_FULL = 'StopLimit'
     Limit_FULL = 'Limit'
+    Funari = 'FUN'
 
 
 class PegScopes(Enum):
