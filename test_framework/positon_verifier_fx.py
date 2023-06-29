@@ -79,5 +79,19 @@ class PositionVerifier:
         else:
             return str(round(quote_pos, 3))
 
+    def find_position_report_by_type(self, report, type):
+        position_report_list = report.get_parameter('PositionAmountData')
+        for position_report in position_report_list:
+            if position_report["PosAmtType"] == type:
+                return position_report.get("PosAmt")
+            print("Position report with type {} not found".format(type))
+            return None
+
+    def count_position_change(self, old_position, new_position, expected_change, account):
+        actual_change = int(new_position) - int(old_position)
+        self.verifier.set_event_name("Check Position Change of {}".format(account))
+        self.verifier.compare_values("Compare Base", str(expected_change), str(actual_change))
+        self.verifier.verify()
+        self.verifier = Verifier(self.test_id)
 
 
