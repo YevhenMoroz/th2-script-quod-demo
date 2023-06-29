@@ -111,8 +111,6 @@ class QAP_T11192(TestCase):
         self.java_api_manager.compare_values({JavaApiFields.AccountGroupID.value: self.client,
                                               JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value},
                                              ord_reply, 'Verify that order has properly status and client (step 1)')
-        ord_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
-            JavaApiFields.OrdReplyBlock.value]
         self.java_api_manager.compare_values({JavaApiFields.AllocAccountID.value: account},
                                              ord_reply[JavaApiFields.PreTradeAllocationBlock.value][
                                                  JavaApiFields.PreTradeAllocationList.value][
