@@ -3,6 +3,7 @@ from custom import basic_custom_actions as bca
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.data_sets.constants import PosAmtType
 from test_framework.environments.full_environment import FullEnvironment
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
@@ -37,6 +38,7 @@ class QAP_T9209(TestCase):
         self.mxn_jpy = self.data_set.get_symbol_by_name("symbol_28")
         self.mxn = self.data_set.get_currency_by_name("currency_mxn")
         self.security_type = self.data_set.get_security_type_by_name("fx_spot")
+        self.base = PosAmtType.BasePosition
         self.gbp_usd_spot = {"Symbol": self.mxn_jpy,
                              "SecurityType": self.security_type}
         self.main_rule_result = {"alive": "true", "gatingRuleResultAction": "REJ",
@@ -86,7 +88,7 @@ class QAP_T9209(TestCase):
         self.fix_manager_pks.send_message_and_receive_response(self.request_for_position_int, self.test_id)
         internal_report_before = self.fix_manager_pks.get_last_message("PositionReport",
                                                                        "'Account': '{}'".format(self.quod2))
-        internal_report_before = self.position_verifier.find_position_report_by_type(internal_report_before, "BASE")
+        internal_report_before = self.position_verifier.get_amount(internal_report_before, self.base)
         # region Step 1
         self.trade_management_rule.apply_rule(self.rule)
         self.trade_management_rule.enable_trade_management_rule()
@@ -103,7 +105,7 @@ class QAP_T9209(TestCase):
         self.fix_manager_pks.send_message_and_receive_response(self.request_for_position_int, self.test_id)
         internal_report_after = self.fix_manager_pks.get_last_message("PositionReport",
                                                                       "'Account': '{}'".format(self.quod2))
-        internal_report_after = self.position_verifier.find_position_report_by_type(internal_report_after, "BASE")
+        internal_report_after = self.position_verifier.get_amount(internal_report_after, self.base)
         # endregion
         # region Step 2
         self.position_verifier.count_position_change(internal_report_before, internal_report_after, 1000000, self.quod2)
