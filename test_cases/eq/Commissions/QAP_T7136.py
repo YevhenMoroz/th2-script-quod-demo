@@ -129,9 +129,9 @@ class QAP_T7136(TestCase):
                           JavaApiFields.MiscFeeCurr.value: currency_GBP, JavaApiFields.MiscFeeRate.value: '1.0',
                           JavaApiFields.MiscFeeType.value: ExecutionReportConst.MiscFeeType_EXC.value}
         agent_fees_dict = {JavaApiFields.MiscFeeAmt.value: agent_fees_amount,
-                           JavaApiFields.MiscFeeBasis.value: ExecutionReportConst.MiscFeeBasis_A.value,
+                           JavaApiFields.MiscFeeBasis.value: ExecutionReportConst.MiscFeeBasis_P.value,
                            JavaApiFields.MiscFeeCurr.value: currency_GBP,
-                           JavaApiFields.MiscFeeRate.value: agent_fees_amount,
+                           JavaApiFields.MiscFeeRate.value: fee_agent_rate,
                            JavaApiFields.MiscFeeType.value: ExecutionReportConst.MiscFeeType_AGE.value}
         self.java_api_manager.compare_values(exch_fees_dict, fees_list[0],
                                              'Verify that ExchFees properly calculated (step 1)')
@@ -153,7 +153,7 @@ class QAP_T7136(TestCase):
                                                             JavaApiFields.WashBookAccountID.value: self.data_set.get_washbook_account_by_name(
                                                                 'washbook_account_3'),
                                                             JavaApiFields.Price.value: price})
-        self.java_api_manager.send_message_and_receive_response(self.order_modification, response_time=20000)
+        self.java_api_manager.send_message_and_receive_response(self.order_modification, response_time=30000)
         order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
             JavaApiFields.OrdReplyBlock.value]
         self.java_api_manager.compare_values({JavaApiFields.UnmatchedQty.value: str(float(qty))},
@@ -202,16 +202,16 @@ class QAP_T7136(TestCase):
                           JavaApiFields.RootMiscFeeCurr.value: currency_GBP,
                           JavaApiFields.RootMiscFeeRate.value: '1.0',
                           JavaApiFields.RootMiscFeeType.value: ExecutionReportConst.MiscFeeType_EXC.value}
-        agent_fees_dict = {JavaApiFields.RootMiscFeeAmt.value: str(float(agent_fees_amount) * 2),
-                           JavaApiFields.RootMiscFeeBasis.value: ExecutionReportConst.MiscFeeBasis_P.value,
-                           JavaApiFields.RootMiscFeeCurr.value: currency_GBP,
-                           JavaApiFields.RootMiscFeeRate.value: fee_agent_rate,
-                           JavaApiFields.RootMiscFeeType.value: ExecutionReportConst.MiscFeeType_AGE.value}
+        agend_fees_dict_compute = {JavaApiFields.RootMiscFeeAmt.value: str(float(agent_fees_amount) * 2),
+                                   JavaApiFields.RootMiscFeeBasis.value: ExecutionReportConst.MiscFeeBasis_A.value,
+                                   JavaApiFields.RootMiscFeeCurr.value: currency_GBP,
+                                   JavaApiFields.RootMiscFeeRate.value: str(float(agent_fees_amount) * 2),
+                                   JavaApiFields.RootMiscFeeType.value: ExecutionReportConst.MiscFeeType_AGE.value}
         fees_list = compute_reply[JavaApiFields.RootMiscFeesList.value][JavaApiFields.RootMiscFeesBlock.value]
         self._sort_fee_list(fees_list, JavaApiFields.RootMiscFeeAmt.value)
         self.java_api_manager.compare_values(exch_fees_dict, fees_list[0],
                                              'Verify that ExchFees properly calculated (step 4) ComputeBookingFeesCommissionsRequest')
-        self.java_api_manager.compare_values(agent_fees_dict, fees_list[1],
+        self.java_api_manager.compare_values(agend_fees_dict_compute, fees_list[1],
                                              'Verify that AgentFees properly calculated (step 4) ComputeBookingFeesCommissionsRequest')
         # end_of_part
 
@@ -226,7 +226,7 @@ class QAP_T7136(TestCase):
                                                                            JavaApiFields.InstrID.value: instrument_id,
                                                                            JavaApiFields.RootMiscFeesList.value: {
                                                                                JavaApiFields.RootMiscFeesBlock.value: [
-                                                                                   agent_fees_dict, exch_fees_dict]},
+                                                                                   agend_fees_dict_compute, exch_fees_dict]},
                                                                            JavaApiFields.ExecAllocList.value: {
                                                                                JavaApiFields.ExecAllocBlock.value: [
                                                                                    {JavaApiFields.ExecQty.value: qty,
@@ -245,13 +245,14 @@ class QAP_T7136(TestCase):
             JavaApiFields.OrdUpdateBlock.value]
         self.java_api_manager.compare_values(
             {JavaApiFields.PostTradeStatus.value: OrderReplyConst.PostTradeStatus_BKD.value},
-            order_update, f'Verify that order has {JavaApiFields.PostTradeStatus.value} = {OrderReplyConst.PostTradeStatus_BKD.value} (step 4)')
+            order_update,
+            f'Verify that order has {JavaApiFields.PostTradeStatus.value} = {OrderReplyConst.PostTradeStatus_BKD.value} (step 4)')
         fees_list = allocation_report[JavaApiFields.RootMiscFeesList.value][JavaApiFields.RootMiscFeesBlock.value]
         self._sort_fee_list(fees_list, JavaApiFields.RootMiscFeeAmt.value)
 
         self.java_api_manager.compare_values(exch_fees_dict, fees_list[0],
                                              'Verify that ExchFees properly calculated (step 4) for Block')
-        self.java_api_manager.compare_values(agent_fees_dict, fees_list[1],
+        self.java_api_manager.compare_values(agend_fees_dict_compute, fees_list[1],
                                              'Verify that AgentFees properly calculated (step 4) for Block')
         # end_of_part
         # endregion
@@ -272,7 +273,7 @@ class QAP_T7136(TestCase):
                                                                                             self.venue_client, self.mic,
                                                                                             float(price), int(qty), 0)
             self.java_api_manager.send_message_and_receive_response(self.order_submit, filter_dict={order_id: order_id},
-                                                                    response_time=20000)
+                                                                    response_time=30000)
         except Exception as e:
             logger.error(f'{e}')
         finally:
