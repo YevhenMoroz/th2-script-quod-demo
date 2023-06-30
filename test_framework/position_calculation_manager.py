@@ -18,7 +18,7 @@ class PositionCalculationManager:
         return self.cumulative_base_pos
 
     def update_cumulative_base_pos(self, base_pos):
-        self.cumulative_base_pos += base_pos
+        self.cumulative_base_pos = base_pos
 
     def calculate_base_position(self, qty, side):
         base_pos = copy.deepcopy(self.get_cumulative_base_pos())
