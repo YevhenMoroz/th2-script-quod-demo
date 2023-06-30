@@ -15,7 +15,7 @@ class FixOrderCancelRequestFX(FixOrderCancelRequest):
 
         self.base_parameters = {
             'SEND_SUBJECT': 'QUOD.ORS.FIX',
-            'REPLY_SUBJECT': 'QUOD.FIX_REPLY.gtwquod4',
+            'REPLY_SUBJECT': 'QUOD.FIX_REPLY.gtwquod8',
             'OrderCancelRequestBlock': {
                 "ClOrdID": "cl_ord_id",
                 "OrigClOrdID": "cl_ord_id",

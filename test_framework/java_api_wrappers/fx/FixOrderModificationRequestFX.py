@@ -14,7 +14,7 @@ class FixOrderModificationRequestFX(FixOrderModificationRequest):
         self.data_set = data_set
         self.base_parameters = {
             'SEND_SUBJECT': 'QUOD.ORS.FIX',
-            'REPLY_SUBJECT': 'QUOD.FIX_REPLY.gtwquod4',
+            'REPLY_SUBJECT': 'QUOD.FIX_REPLY.gtwquod8',
             'OrderModificationRequestBlock': {
                 'ClOrdID': "*",
                 'OrigClOrdID': "*",
