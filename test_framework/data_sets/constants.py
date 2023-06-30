@@ -623,3 +623,5 @@ class PosAmtType(Enum):
     SysCurPosition = "SYSQ"
     SysQuotePosition = "QSYS"
     WorkingPosition = "WORK"
+    MTMPnl = "QUPL"
+    SysMTMPnl = "SYUPL"
