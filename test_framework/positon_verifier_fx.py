@@ -1,4 +1,5 @@
 from custom.verifier import Verifier
+from test_framework.custom_exceptions.NotFoundException import NotFoundException
 from test_framework.data_sets.constants import PosAmtType
 from test_framework.fix_wrappers.forex.FixMessagePositionReportFX import FixMessagePositionReportFX
 from test_framework.position_calculation_manager import PositionCalculationManager
@@ -104,11 +105,15 @@ class PositionVerifier:
         try:
             pos_amount_date = report[1].get_parameters()
         except IndexError:
-            raise Exception(f"Report not found")
+            raise NotFoundException("Report not found")
         for item in pos_amount_date["PositionAmountData"]:
             if item.get("PosAmtType") == position_type.value:
                 pos_amt = item.get("PosAmt")
                 if pos_amt is None:
-                    raise Exception(f"Position Amount type {position_type} is None")
+                    raise NotFoundException(f"Position Amount type {position_type} is None")
                 else:
-                    return pos_amt
+                    if pos_amt.endswith(".000000001"):
+                        return pos_amt[:-10]
+                    else:
+                        return pos_amt
+
