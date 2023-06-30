@@ -69,7 +69,7 @@ class PositionCalculationManager:
         if str(pnl).endswith(".0"):
             return str(pnl)[:-2]
         else:
-            return str(round(pnl, 8))
+            return str(round(pnl, 9))
 
     def calculate_system_mtm_pnl(self, qty, price, symbol, side):
         cross_rate = get_cross_rate(symbol)
