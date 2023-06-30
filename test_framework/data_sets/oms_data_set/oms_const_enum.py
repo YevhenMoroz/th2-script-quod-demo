@@ -279,6 +279,7 @@ class OmsAccounts(Enum):
     client_com_2_acc_3 = "CLIENT_COMM_2_SA3"
     client_rest_api_acc_1 = 'CLIENT_REST_API_ACC_1'
     client_rest_api_acc_2 = 'CLIENT_REST_API_SA2'
+    client_rest_api_acc_3 = 'CLIENT_REST_API_SA3'
     client_fees_1_acc_1 = "CLIENT_FEES_1_SA1"
     """Counterparts"""
     client_counterpart_1_acc_1 = "CLIENT_COUNTERPART_SA1"
