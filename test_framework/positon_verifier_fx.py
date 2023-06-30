@@ -101,11 +101,14 @@ class PositionVerifier:
     # TODO Add new fields to check
 
     def get_amount(self, report, position_type: PosAmtType):
-        pos_amount_date = report[1].get_parameters()
+        try:
+            pos_amount_date = report[1].get_parameters()
+        except IndexError:
+            raise Exception(f"Report not found")
         for item in pos_amount_date["PositionAmountData"]:
             if item.get("PosAmtType") == position_type.value:
                 pos_amt = item.get("PosAmt")
                 if pos_amt is None:
-                    raise Exception("Position Amount is None")
+                    raise Exception(f"Position Amount type {position_type} is None")
                 else:
                     return pos_amt
