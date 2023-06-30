@@ -37,6 +37,7 @@ class QAP_T10350(TestCase):
         self.currency = self.data_set.get_currency_by_name('currency_3')
         self.currency_post_trade = self.data_set.get_currency_by_name('currency_2')
         self.client = self.data_set.get_client('client_rest_api')
+        self.account = self.data_set.get_account_by_name('client_rest_api_acc_1')
         self.wa_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
         self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
         self.rest_api_manager = RestApiManager(self.wa_connectivity, self.test_id)
@@ -100,13 +101,19 @@ class QAP_T10350(TestCase):
                                                            JavaApiFields.AccountGroupID.value: self.client,
                                                            JavaApiFields.RouteList.value: route_params,
                                                            JavaApiFields.Price.value: self.price,
-                                                           'ListingList': {'ListingBlock': [{'ListingID':
-                                                               self.data_set.get_listing_id_by_name(
-                                                                   "listing_2")}]},
-                                                           JavaApiFields.InstrID.value: instrument_id
-                                                           }
-                                                       )
-        self.submit_request.remove_fields_from_component('NewOrderSingleBlock', ['SettlCurrency'])
+                                                           JavaApiFields.ListingList.value: {
+                                                               JavaApiFields.ListingBlock.value: [
+                                                                   {JavaApiFields.ListingID.value:
+                                                                       self.data_set.get_listing_id_by_name(
+                                                                           "listing_2")}]},
+                                                           JavaApiFields.InstrID.value: instrument_id,
+                                                           JavaApiFields.PreTradeAllocationBlock.value: {
+                                                               JavaApiFields.PreTradeAllocationList.value: {
+                                                                   JavaApiFields.PreTradeAllocAccountBlock.value: [
+                                                                       {
+                                                                           JavaApiFields.AllocAccountID.value: self.account,
+                                                                           JavaApiFields.AllocQty.value: self.qty}]}}})
+        self.submit_request.remove_fields_from_component(JavaApiFields.NewOrderSingleBlock.value, [JavaApiFields.SettlCurrency.value])
         self.java_api_manager.send_message_and_receive_response(self.submit_request)
         order_reply_message = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
             JavaApiFields.OrdReplyBlock.value]
@@ -122,7 +129,7 @@ class QAP_T10350(TestCase):
         self.trade_entry.update_fields_in_component(JavaApiFields.TradeEntryRequestBlock.value,
                                                     {JavaApiFields.CounterpartList.value: {
                                                         JavaApiFields.CounterpartBlock.value: [contra_firm]},
-                                                     JavaApiFields.LastMkt.value: self.mic})
+                                                        JavaApiFields.LastMkt.value: self.mic})
         self.java_api_manager.send_message_and_receive_response(self.trade_entry)
         execution_report = \
             self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
