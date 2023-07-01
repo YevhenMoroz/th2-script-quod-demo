@@ -44,8 +44,8 @@ class QAP_T8456(TestCase):
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.bs_connectivity = self.fix_env.buy_side
         self.ss_connectivity = self.fix_env.sell_side
-        self.qty = '999'
-        self.price = '99'
+        self.qty = '1000'
+        self.price = '55'
         self.rule_manager = RuleManager(sim=Simulators.equity)
         self.currency = self.data_set.get_currency_by_name('currency_3')
         self.currency_post_trade = self.data_set.get_currency_by_name('currency_2')
