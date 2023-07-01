@@ -273,7 +273,7 @@ class QAP_T8458(TestCase):
             "OrdStatus": "B",
             "ClOrdID": cl_ord_id,
             'NoMiscFees': [
-                {'MiscFeeAmt': str(int(misc_fee_amount)),
+                {'MiscFeeAmt': str(float(misc_fee_amount)),
                  'MiscFeeCurr': self.currency_post_trade,
                  'MiscFeeType': '12'}]
         }
