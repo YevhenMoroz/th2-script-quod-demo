@@ -59,6 +59,7 @@ class QAP_T10270(TestCase):
         # endregion
 
         # region Create order
+        self.nos.set_unsolicited_dma_limit()
         self.nos.update_fields_in_component("NewOrderReplyBlock",
                                             {"VenueAccount": {"VenueActGrpName": self.venue_client_names}})
         self.java_api_manager.send_message_and_receive_response(self.nos)
