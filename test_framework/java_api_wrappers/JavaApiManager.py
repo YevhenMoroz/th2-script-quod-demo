@@ -301,7 +301,8 @@ class JavaApiManager:
                 request=ActJavaSubmitMessageRequest(
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
-                    parent_event_id=self.get_case_id(), response_time=response_time, responseFilter=response_filter_dict))
+                    parent_event_id=self.get_case_id(), response_time=response_time,
+                    responseFilter=response_filter_dict))
         elif message.get_message_type() == ORSMessageType.MarkOrderRequest.value:
             response = self.act.submitMarkOrderRequest(
                 request=ActJavaSubmitMessageRequest(
@@ -608,6 +609,8 @@ class JavaApiManager:
     def key_is_absent(self, key: str, actual_values: dict, event_name: str):
         if key not in actual_values:
             self.verifier.success = True
+        else:
+            self.verifier.success = False
 
         self.verifier.fields.update(
             {"Is absent:": {"expected": key, "key": False, "type": "field",

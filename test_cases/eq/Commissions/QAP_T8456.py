@@ -1,13 +1,9 @@
 import logging
 import time
 from pathlib import Path
-import xml.etree.ElementTree as ET
-
-from pkg_resources import resource_filename
 
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
-from custom.verifier import VerificationMethod
 from rule_management import RuleManager, Simulators
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
@@ -20,7 +16,7 @@ from test_framework.fix_wrappers.oms.FixMessageConfirmationReportOMS import FixM
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, ExecutionReportConst, \
-    OrderReplyConst, SubmitRequestConst, ConfirmationReportConst, AllocationInstructionConst
+    OrderReplyConst, SubmitRequestConst, ConfirmationReportConst
 from test_framework.java_api_wrappers.oms.ors_messges.AllocationInstructionOMS import AllocationInstructionOMS
 from test_framework.java_api_wrappers.oms.ors_messges.ComputeBookingFeesCommissionsRequestOMS import \
     ComputeBookingFeesCommissionsRequestOMS
@@ -38,8 +34,6 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 seconds, nanos = timestamps()
-
-
 
 
 class QAP_T8456(TestCase):
@@ -88,7 +82,6 @@ class QAP_T8456(TestCase):
         commission_profile = self.data_set.get_comm_profile_by_name('perc_amt')
         fee = self.data_set.get_fee_by_name('fee3')
         instr_type = self.data_set.get_instr_type('equity')
-        venue_id = self.data_set.get_venue_id('eurex')
         contra_firm = self.data_set.get_counterpart_id_java_api('counterpart_contra_firm')
         self.rest_commission_sender.clear_fees()
         all_exec_exec_scope = self.data_set.get_fee_exec_scope_by_name('all_exec')
@@ -135,8 +128,11 @@ class QAP_T8456(TestCase):
 
         # region trade CO order with ContraFirm (step 2)
         self.trade_entry.set_default_trade(order_id, self.price, self.qty)
-        self.trade_entry.update_fields_in_component('TradeEntryRequestBlock',
-                                                    {'CounterpartList': {'CounterpartBlock': [contra_firm]}})
+        self.trade_entry.update_fields_in_component(JavaApiFields.TradeEntryRequestBlock.value,
+                                                    {JavaApiFields.CounterpartList.value: {
+                                                        JavaApiFields.CounterpartBlock.value: [contra_firm]},
+                                                     JavaApiFields.LastMkt.value: self.data_set.get_mic_by_name(
+                                                         'mic_2')})
         self.java_api_manager.send_message_and_receive_response(self.trade_entry)
         execution_report = \
             self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()
@@ -151,9 +147,19 @@ class QAP_T8456(TestCase):
         # endregion
 
         # region check that execution has  Agent Fee (step 3)
+        agent_fees_rate = '5.0'
+        agent_fees_amt = str(float(agent_fees_rate) * float(self.qty) * float(self.price) / 10000)
+        agent_fees = {
+            JavaApiFields.MiscFeeType.value: ExecutionReportConst.MiscFeeType_AGE.value,
+            JavaApiFields.MiscFeeBasis.value: ExecutionReportConst.MiscFeeBasis_P.value,
+            JavaApiFields.MiscFeeCurr.value: self.currency_post_trade,
+            JavaApiFields.MiscFeeRate.value: agent_fees_rate,
+            JavaApiFields.MiscFeeAmt.value: agent_fees_amt,
+            JavaApiFields.MiscFeeCategory.value: 'LOC'
+        }
         self.java_api_manager.compare_values(
-            {JavaApiFields.ExecutionReportBlock.value: JavaApiFields.MiscFeesList.value}, execution_report,
-            'Check that Agent fee is not present in Execution Report (step 3)', VerificationMethod.NOT_CONTAINS)
+            agent_fees, execution_report_block[JavaApiFields.MiscFeesList.value][JavaApiFields.MiscFeesBlock.value][0],
+            'Check that Agent fee is not present in Execution Report (step 3)')
         # endregion
 
         # region complete CO order step 4
@@ -263,12 +269,13 @@ class QAP_T8456(TestCase):
         # endregion
 
         # region step 8
-        # check that execution report doesn`t have Agent fee(part of step 8)
+        # check that execution report  has Agent fee(part of step 8)
+        no_misc_fee = [{'MiscFeeAmt': agent_fees_amt, 'MiscFeeCurr': self.currency_post_trade, 'MiscFeeType': '12'}]
         params_of_execution_report_message = {
             "ExecType": "F",
             "OrdStatus": "2",
             "ClOrdID": cl_ord_id,
-            'NoMiscFees': '#'
+            'NoMiscFees': no_misc_fee
         }
         list_of_ignored_fields = ['Account', 'ExecID', 'OrderQtyData', 'LastQty', 'OrderID',
                                   'TransactTime', 'Side', 'AvgPx', 'QuodTradeQualifier', 'BookID',
