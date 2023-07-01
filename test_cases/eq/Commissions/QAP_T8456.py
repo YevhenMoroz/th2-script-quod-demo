@@ -159,7 +159,7 @@ class QAP_T8456(TestCase):
         }
         self.java_api_manager.compare_values(
             agent_fees, execution_report_block[JavaApiFields.MiscFeesList.value][JavaApiFields.MiscFeesBlock.value][0],
-            'Check that Agent fee is not present in Execution Report (step 3)')
+            'Check that Agent fee  presents in Execution Report (step 3)')
         # endregion
 
         # region complete CO order step 4
