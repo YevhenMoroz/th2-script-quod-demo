@@ -63,6 +63,9 @@ class UsersClientSubWizard(CommonPage):
         time.sleep(1)
         self.click_on_checkmark_button()
 
+    def click_on_delete_button_for_last_entry_in_table(self):
+        self.find_by_xpath(UsersConstants.DELETE_LAST_ENTRY_AT_CLIENT_SUB_WIZARD).click()
+
 
 
 

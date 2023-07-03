@@ -129,15 +129,16 @@ class UsersConstants:
     ROLE_ID_AT_ROLE_SUB_WIZARD = '//*[text()="Role Id"]/preceding-sibling::input'
 
     # Client
-    PLUS_BUTTON_AT_CLIENT_SUB_WIZARD = '//*[text()=" Client "]/ancestor::*[@class="expanded"]//*[@data-name="plus"]'
-    CHECKMARK_AT_CLIENT_WIZARD = '//*[text()=" Client "]/ancestor::*[@class="expanded"]//*[@data-name="checkmark"]'
-    CANCEL_AT_CLIENT_SUB_WIZARD = '//*[text()=" Client "]/ancestor::*[@class="expanded"]//*[@data-name="close"]'
-    EDIT_AT_CLIENT_SUB_WIZARD = '//*[text()=" Client "]/ancestor::*[@class="expanded"]//*[@data-name="edit"]'
-    DELETE_AT_CLIENT_SUB_WIZARD = '//*[text()=" Client "]/ancestor::*[@class="expanded"]//*[@data-name="trash-2"]'
+    PLUS_BUTTON_AT_CLIENT_SUB_WIZARD = '//*[normalize-space()="Client"]/ancestor::*[@class="expanded"]//*[@data-name="plus"]'
+    CHECKMARK_AT_CLIENT_WIZARD = '//*[normalize-space()="Client"]/ancestor::*[@class="expanded"]//*[@data-name="checkmark"]'
+    CANCEL_AT_CLIENT_SUB_WIZARD = '//*[normalize-space()="Client"]/ancestor::*[@class="expanded"]//*[@data-name="close"]'
+    EDIT_AT_CLIENT_SUB_WIZARD = '//*[normalize-space()="Client"]/ancestor::*[@class="expanded"]//*[@data-name="edit"]'
+    DELETE_AT_CLIENT_SUB_WIZARD = '//*[normalize-space()="Client"]/ancestor::*[@class="expanded"]//*[@data-name="trash-2"]'
+    DELETE_LAST_ENTRY_AT_CLIENT_SUB_WIZARD = '(//*[normalize-space()="Clients"]//..//*[@data-name="trash-2"])[last()]'
     CLIENT_AT_CLIENT_SUB_WIZARD = '//*[@placeholder = "Client *"]'
     TYPE_AT_CLIENT_SUB_WIZARD = '//nb-accordion-item-header[normalize-space()="Clients"]//..//nb-select'
-    CLIENT_FILTER_AT_CLIENT_SUB_WIZARD = '(//*[text()=" Client "]//following-sibling::nb-accordion-item-body//thead//input)[1]'
-    TYPE_FILTER_AT_CLIENT_SUB_WIZARD = '//*[text()=" Client "]//following-sibling::nb-accordion-item-body//thead//input)[2]'
+    CLIENT_FILTER_AT_CLIENT_SUB_WIZARD = '//*[normalize-space()="Client"]//following-sibling::nb-accordion-item-body//thead//input)[1]'
+    TYPE_FILTER_AT_CLIENT_SUB_WIZARD = '//*[normalize-space()="Client"]//following-sibling::nb-accordion-item-body//thead//input)[2]'
     CLIENT_IN_TABLE_AT_CLIENT_SUB_WIZARD = '//*[normalize-space()="Clients"]//..//tbody//td[2]//span'
 
     # Venue trader
@@ -157,6 +158,8 @@ class UsersConstants:
     CREATED_VENUE_AT_VENUE_TRADER_TAB = "//*[text()=' Venue Trader ']/following-sibling::nb-accordion-item-body//*[@class='ui-table-scrollable-body ng-star-inserted']//td[2]//span"
     CREATED_VENUE_TRADE_NAME_AT_VENUE_TRADER_TAB = "//*[text()=' Venue Trader ']/following-sibling::nb-accordion-item-body//*[@class='ui-table-scrollable-body ng-star-inserted']//td[3]//span"
     CREATED_TRADER_GROUP_AT_VENUE_TRADER_TAB = "//*[text()=' Venue Trader ']/following-sibling::nb-accordion-item-body//*[@class='ui-table-scrollable-body ng-star-inserted']//td[4]//span"
+    EXPIRY_DATE_AT_VENUE_TRADE_TAB = '//*[@placeholder="Expiry Date"]'
+    ENTRIES_AT_VENUE_TRADE_TAB = '//*[normalize-space()="Venue Trader"]//..//tbody//tr[not(normalize-space()="No data found")]'
 
     # Manage Trader Groups
     PLUS_BUTTON_AT_TRADER_GROUPS_SUB_WIZARD = '//*[@class="nb-plus"]'

@@ -60,7 +60,11 @@ from test_cases.web_admin.web_admin_test_cases.users.QAP_T11206 import QAP_T1120
 from test_cases.web_admin.web_admin_test_cases.users.QAP_T11215 import QAP_T11215
 from test_cases.web_admin.web_admin_test_cases.users.QAP_T11232 import QAP_T11232
 from test_cases.web_admin.web_admin_test_cases.users.QAP_T11252 import QAP_T11252
+from test_cases.web_admin.web_admin_test_cases.users.QAP_T11287 import QAP_T11287
+from test_cases.web_admin.web_admin_test_cases.users.QAP_T11288 import QAP_T11288
+from test_cases.web_admin.web_admin_test_cases.users.QAP_T11289 import QAP_T11289
 from test_cases.web_admin.web_admin_test_cases.users.QAP_T11585 import QAP_T11585
+from test_cases.web_admin.web_admin_test_cases.users.QAP_T11694 import QAP_T11694
 
 
 class RunUsers:
@@ -182,7 +186,15 @@ class RunUsers:
                        environment=configuration.environment).run()
             QAP_T11232(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                        environment=configuration.environment, db_manager=self.db_manager).run()
+            QAP_T11287(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                       environment=configuration.environment, db_manager=self.db_manager).run()
+            QAP_T11288(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                       environment=configuration.environment).run()
+            QAP_T11289(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                       environment=configuration.environment, db_manager=self.db_manager).run()
             QAP_T11585(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                       environment=configuration.environment).run()
+            QAP_T11694(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                        environment=configuration.environment).run()
 
             end_time = time.monotonic()
