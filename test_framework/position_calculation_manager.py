@@ -122,6 +122,12 @@ class PositionCalculationManager:
         else:
             return str(round(pnl, 9))
 
+    def calculate_daily_avg_px(self, qty, price, side):
+        daily_quote_pos = self.calculate_daily_mtm_quote_position(qty, price, side)
+        base_pos = self.calculate_base_position(qty, side)
+        daily_avg_px = float(daily_quote_pos) / float(base_pos)
+        return str(round(daily_avg_px, 2))
+
     @staticmethod
     def calculate_position_buy(position_before: str, order_qty: str) -> str:
         expected_pos = int(position_before.replace(",", "")) + int(order_qty)

@@ -635,3 +635,5 @@ class PosAmtType(Enum):
     SysMTMPnl = "SYUPL"
     DailyMTMPnl = "QDPL"
     SysDailyMTMPnl = "SYDPL"
+    DailyAvgPX = "SYDPL"
+

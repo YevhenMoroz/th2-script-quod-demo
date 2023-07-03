@@ -107,6 +107,17 @@ class PositionVerifier:
         self.verifier.verify()
         self.verifier = Verifier(self.test_id)
 
+    def check_daily_avg_px(self, report, trade):
+        qty = trade.get_exec_qty()
+        price = trade.get_exec_price()
+        side = trade.get_side()
+        expected_value = self.pos_calc.calculate_daily_avg_px(qty, price, side)
+        amount = self.get_amount(report, PosAmtType.DailyAvgPX)
+        self.verifier.set_event_name("Check Daily Avg PX")
+        self.verifier.compare_values("Compare Daily Avg PX", expected_value, amount)
+        self.verifier.verify()
+        self.verifier = Verifier(self.test_id)
+
     def check_transact_time(self, report, expected_value):
         transact_time = report[1].get_parameters()["TransactTime"]
         transact_time = transact_time[0:19]
