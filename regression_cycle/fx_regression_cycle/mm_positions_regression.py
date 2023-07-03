@@ -34,6 +34,7 @@ from test_cases.fx.fx_mm_positions.QAP_T2932 import QAP_T2932
 from test_cases.fx.fx_mm_positions.QAP_T2933 import QAP_T2933
 from test_cases.fx.fx_mm_positions.QAP_T2934 import QAP_T2934
 from test_cases.fx.fx_mm_positions.QAP_T2935 import QAP_T2935
+from test_cases.fx.fx_mm_positions.QAP_T8424 import QAP_T8424
 from test_cases.fx.fx_mm_positions.QAP_T9408 import QAP_T9408
 from test_cases.fx.fx_mm_positions.prepare_position import prepare_position
 from stubs import Stubs
@@ -68,6 +69,7 @@ def test_run(parent_id=None, version="5.1.178.194"):
         QAP_T2933(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2934(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2935(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T8424(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T9408(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10342(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10400(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
@@ -83,6 +85,7 @@ def test_run(parent_id=None, version="5.1.178.194"):
         QAP_T10649(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10760(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10840(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T10842(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10842(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T10845(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T11080(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
