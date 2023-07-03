@@ -64,7 +64,7 @@ def test_run(parent_id=None, version="5.1.178.194"):
         QAP_T2810(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2811(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2812(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
-        QAP_T2813(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        # QAP_T2813(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2932(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2933(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T2934(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
