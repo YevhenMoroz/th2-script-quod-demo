@@ -633,3 +633,5 @@ class PosAmtType(Enum):
     WorkingPosition = "WORK"
     MTMPnl = "QUPL"
     SysMTMPnl = "SYUPL"
+    DailyMTMPnl = "QDPL"
+    SysDailyMTMPnl = "SYDPL"
