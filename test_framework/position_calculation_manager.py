@@ -7,6 +7,8 @@ class PositionCalculationManager:
     def __init__(self):
         self.cumulative_quote_pos = 0
         self.cumulative_base_pos = 0
+        self.cumulative_daily_quote_pos = 0
+        self.call_count = 0
 
     def get_cumulative_quote_pos(self):
         return self.cumulative_quote_pos
@@ -19,6 +21,12 @@ class PositionCalculationManager:
 
     def update_cumulative_base_pos(self, base_pos):
         self.cumulative_base_pos = base_pos
+
+    def get_cumulative_daily_quote_pos(self):
+        return self.cumulative_daily_quote_pos
+
+    def update_cumulative_daily_quote_pos(self, daily_quote_pos):
+        self.cumulative_daily_quote_pos = daily_quote_pos
 
     def calculate_base_position(self, qty, side):
         base_pos = copy.deepcopy(self.get_cumulative_base_pos())
@@ -70,6 +78,39 @@ class PositionCalculationManager:
             return str(pnl)[:-2]
         else:
             return str(round(pnl, 9))
+
+    def calculate_daily_mtm_quote_position(self, qty, price, side):
+        daily_quote_pos = copy.deepcopy(self.get_cumulative_daily_quote_pos())
+        self.call_count += 1
+        if self.call_count == 1:
+            return 0
+        if side == "B":
+            daily_quote_pos += -float(qty) * float(price)
+        else:
+            daily_quote_pos += float(qty) * float(price)
+        self.update_cumulative_daily_quote_pos(daily_quote_pos)
+        return daily_quote_pos
+
+    def calculate_daily_mtm_pnl(self, qty, price, symbol, side):
+        position = self.calculate_base_position(qty, side)
+        cross_rate = get_cross_rate(symbol)
+        daily_pnl = float(position) * float(cross_rate) + self.calculate_daily_mtm_quote_position(qty, price, side)
+        suffixes = (".0", ".000000001")
+        if any(str(daily_pnl).endswith(suffix) for suffix in suffixes):
+            return str(daily_pnl).split(".")[0]  # remove the .0 or .000000001
+        else:
+            return str(round(daily_pnl, 9))
+
+    def calculate_sys_daily_mtm_pnl(self, qty, price, symbol, side):
+        position = self.calculate_base_position(qty, side)
+        cross_rate = get_cross_rate(symbol)
+        daily_pnl = (float(position) * float(cross_rate) +
+                     self.calculate_daily_mtm_quote_position(qty, price, side)) / float(cross_rate)
+        suffixes = (".0", ".000000001")
+        if any(str(daily_pnl).endswith(suffix) for suffix in suffixes):
+            return str(daily_pnl).split(".")[0]  # remove the .0 or .000000001
+        else:
+            return str(round(daily_pnl, 8))
 
     def calculate_system_mtm_pnl(self, qty, price, symbol, side):
         cross_rate = get_cross_rate(symbol)
