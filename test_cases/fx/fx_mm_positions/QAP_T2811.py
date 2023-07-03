@@ -71,7 +71,7 @@ class QAP_T2811(TestCase):
         self.request_for_position.set_unsubscribe()
         self.fix_manager.send_message(self.request_for_position)
         # endregion
-        # region Step 3 Send sell order on 8M and check System MTM PnL
+        # region Step 3 Send sell order on 8M and check MTM PnL
         self.trade_request.set_default_params()
         self.trade_request.update_fields_in_component("TradeEntryRequestBlock",
                                                       {"ClientAccountGroupID": self.client,
