@@ -1,8 +1,5 @@
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.site.desks.desks_assignments_sub_wizard import DesksAssignmentsSubWizard
@@ -41,20 +38,12 @@ class QAP_T3704(CommonTestCase):
         assignments_sub_wizard = DesksAssignmentsSubWizard(self.web_driver_container)
         location_values_sub_wizard = LocationsValuesSubWizard(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            expected_values = [self.desk_name, "Collaborative"]
-            actual_values = [values_sub_wizard.get_name(), values_sub_wizard.get_desk_mode()]
-            self.verify("Is required fields have values", expected_values, actual_values)
+        expected_values = [self.desk_name, "Collaborative"]
+        actual_values = [values_sub_wizard.get_name(), values_sub_wizard.get_desk_mode()]
+        self.verify("Is required fields have values", expected_values, actual_values)
 
-            self.verify("Is users field has link", True, assignments_sub_wizard.is_user_link_exist(self.user))
-            assignments_sub_wizard.click_on_location(self.location)
-            self.verify("Is location field has hyperlinked value", self.location, location_values_sub_wizard.get_name())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("Is users field has link", True, assignments_sub_wizard.is_user_link_exist(self.user))
+        assignments_sub_wizard.click_on_location(self.location)
+        self.verify("Is location field has hyperlinked value", self.location, location_values_sub_wizard.get_name())

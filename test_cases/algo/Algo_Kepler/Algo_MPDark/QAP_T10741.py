@@ -266,7 +266,7 @@ class QAP_T10741(TestCase):
 
         # region Check that there are no unexpected messages
         self.fix_verifier_buy.set_case_id(bca.create_event("Check that there are no unexpected messages", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([nos_chixlis_rfq, nos_trql_rfq, self.dma_chixdelta_order, self.dma_batsdark_order, self.dma_cboeeudark_order], [self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child], self.FromQuod, pre_filter=self.pre_filter)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([nos_chixlis_rfq, nos_trql_rfq, self.dma_chixdelta_order, self.dma_batsdark_order, self.dma_cboeeudark_order], [self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child], self.FromQuod, pre_filter=self.pre_filter)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

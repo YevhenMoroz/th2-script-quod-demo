@@ -1,8 +1,5 @@
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -22,15 +19,7 @@ class QAP_T8645(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            side_menu = SideMenu(self.web_driver_container)
-            self.verify("Wash Books Rules section is present", True, side_menu.is_washbook_rule_page_tab_displayed())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        side_menu = SideMenu(self.web_driver_container)
+        self.verify("Wash Books Rules section is present", True, side_menu.is_washbook_rule_page_tab_displayed())

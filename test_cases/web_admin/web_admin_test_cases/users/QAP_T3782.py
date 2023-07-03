@@ -1,10 +1,7 @@
 import random
-import sys
 import time
-import traceback
 import string
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.users.users.users_page import UsersPage
 from test_framework.web_admin_core.pages.users.users.users_wizard import UsersWizard
@@ -58,33 +55,26 @@ class QAP_T3782(CommonTestCase):
             time.sleep(1)
 
     def test_context(self):
+        self.precondition()
+
+        main_page = UsersPage(self.web_driver_container)
+        main_page.click_on_more_actions()
+        time.sleep(1)
+        main_page.click_on_edit_at_more_actions()
+        time.sleep(2)
+        value_tab = UsersValuesSubWizard(self.web_driver_container)
         try:
-            self.precondition()
+            values_at_non_visible_position_flattening_period = \
+                [str(i).strip() for i in value_tab.get_non_visible_position_flattening_periods().split(",")]
+            if "" not in values_at_non_visible_position_flattening_period:
+                value_tab.set_non_visible_position_flattening_periods(values_at_non_visible_position_flattening_period)
+        except:
+            pass
+        wizard = UsersWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
+        time.sleep(2)
+        main_page.set_user_id(self.user_id)
+        time.sleep(1)
+        self.verify("User has been saved with the empty Non-Visible Position Flattering Period field", True,
+                    main_page.is_searched_user_found(self.user_id))
 
-            main_page = UsersPage(self.web_driver_container)
-            main_page.click_on_more_actions()
-            time.sleep(1)
-            main_page.click_on_edit_at_more_actions()
-            time.sleep(2)
-            value_tab = UsersValuesSubWizard(self.web_driver_container)
-            try:
-                values_at_non_visible_position_flattening_period = \
-                    [str(i).strip() for i in value_tab.get_non_visible_position_flattening_periods().split(",")]
-                if "" not in values_at_non_visible_position_flattening_period:
-                    value_tab.set_non_visible_position_flattening_periods(values_at_non_visible_position_flattening_period)
-            except:
-                pass
-            wizard = UsersWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
-            time.sleep(2)
-            main_page.set_user_id(self.user_id)
-            time.sleep(1)
-            self.verify("User has been saved with the empty Non-Visible Position Flattering Period field", True,
-                        main_page.is_searched_user_found(self.user_id))
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)

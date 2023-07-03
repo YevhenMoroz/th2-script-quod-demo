@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.users.users.users_user_details_sub_wizard import \
@@ -61,26 +58,17 @@ class QAP_T11252(CommonTestCase):
         wizard = UsersWizard(self.web_driver_container)
         details_tab = UsersUserDetailsSubWizard(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            self.verify("User Disabled", False, users_page.is_user_enable_disable())
-            users_page.click_on_more_actions()
-            users_page.click_on_edit_at_more_actions()
-            self.verify("Edit wizard open", True, wizard.is_wizard_open())
-            details_tab.set_first_name(self.first_name)
-            wizard.click_on_save_changes()
-            time.sleep(1)
-            self.verify("User still Disabled after modify", False, users_page.is_user_enable_disable())
-            users_page.click_on_more_actions()
-            users_page.click_on_edit_at_more_actions()
-            self.verify("Edit wizard open", True, wizard.is_wizard_open())
-            self.verify("User changed applied", self.first_name, details_tab.get_first_name())
-
-        except Exception:
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            errors = f'"{[traceback.extract_tb(exc_traceback, limit=4)]}"'.replace("\\", "/")
-            basic_custom_actions.create_event(f"FAILED", self.test_case_id, status='FAILED',
-                                              body="[{\"type\": \"message\", \"data\":" + f"{errors}" + "}]")
-            traceback.print_tb(exc_traceback, limit=3, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("User Disabled", False, users_page.is_user_enable_disable())
+        users_page.click_on_more_actions()
+        users_page.click_on_edit_at_more_actions()
+        self.verify("Edit wizard open", True, wizard.is_wizard_open())
+        details_tab.set_first_name(self.first_name)
+        wizard.click_on_save_changes()
+        time.sleep(1)
+        self.verify("User still Disabled after modify", False, users_page.is_user_enable_disable())
+        users_page.click_on_more_actions()
+        users_page.click_on_edit_at_more_actions()
+        self.verify("Edit wizard open", True, wizard.is_wizard_open())
+        self.verify("User changed applied", self.first_name, details_tab.get_first_name())

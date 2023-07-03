@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_page import AccountsPage
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_wizard import AccountsWizard
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
@@ -51,29 +48,21 @@ class QAP_T3944(CommonTestCase):
     def test_context(self):
         accounts_wizard = AccountsWizard(self.web_driver_container)
         accounts_main_page = AccountsPage(self.web_driver_container)
+        self.precondition()
         try:
-            self.precondition()
-            try:
-                for i in self.clearing_type:
-                    accounts_wizard.set_clearing_account_type(i)
-                    time.sleep(1)
-                self.verify(f"\"Clearing Account Type\" drop-down contains {self.clearing_type}", True, True)
-
-                accounts_wizard.set_client(self.client)
-                accounts_wizard.click_save_button()
-                self.verify("Account edit correctly", True, True)
-                time.sleep(2)
-                accounts_main_page.set_id(self.test_client)
+            for i in self.clearing_type:
+                accounts_wizard.set_clearing_account_type(i)
                 time.sleep(1)
-                expected_saved_data = [self.client, self.clearing_type[1]]
-                actual_saved_data = [accounts_main_page.get_client(), accounts_main_page.get_clearing_account_type()]
-                self.verify("Values displayed correctly", expected_saved_data, actual_saved_data)
-            except Exception as e:
-                self.verify("Problem in Save Changes", True, e.__class__.__name__)
+            self.verify(f"\"Clearing Account Type\" drop-down contains {self.clearing_type}", True, True)
 
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+            accounts_wizard.set_client(self.client)
+            accounts_wizard.click_save_button()
+            self.verify("Account edit correctly", True, True)
+            time.sleep(2)
+            accounts_main_page.set_id(self.test_client)
+            time.sleep(1)
+            expected_saved_data = [self.client, self.clearing_type[1]]
+            actual_saved_data = [accounts_main_page.get_client(), accounts_main_page.get_clearing_account_type()]
+            self.verify("Values displayed correctly", expected_saved_data, actual_saved_data)
+        except Exception as e:
+            self.verify("Problem in Save Changes", True, e.__class__.__name__)

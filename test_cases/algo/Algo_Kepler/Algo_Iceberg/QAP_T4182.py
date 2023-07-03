@@ -182,7 +182,7 @@ class QAP_T4182(TestCase):
 
         # region Check that child has Open status
         self.fix_verifier_buy.set_case_id(bca.create_event("Check that child has Open status", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([self.er_pending_new_dma_1_order_params, self.er_new_dma_1_order_params], key_parameters_list=[None, None], direction=self.ToQuod, pre_filter=None)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([self.er_pending_new_dma_1_order_params, self.er_new_dma_1_order_params], key_parameters_list=[None, None], direction=self.ToQuod, pre_filter=None)
         # endregion
         
         # region Set up Open phase

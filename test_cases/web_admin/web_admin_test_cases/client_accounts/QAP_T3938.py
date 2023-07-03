@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_dimensions_subwizard import \
     AccountsDimensionsSubWizard
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_page import AccountsPage
@@ -47,22 +44,16 @@ class QAP_T3938(CommonTestCase):
 
     def test_context(self):
 
-        try:
-            self.precondition()
-            main_page = AccountsPage(self.web_driver_container)
-            wizard = AccountsWizard(self.web_driver_container)
-            expected_pdf_content = [self.venue_account,
-                                    self.venue,
-                                    self.account_id_source]
-            self.verify("Is PDF contains correctly values", True,
-                        wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
-            ext_id_client = wizard.get_ext_id_client()
-            wizard.click_save_button()
-            time.sleep(2)
-            self.verify("Is entity saved correctly", ext_id_client, main_page.get_ext_id_client())
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.precondition()
+        main_page = AccountsPage(self.web_driver_container)
+        wizard = AccountsWizard(self.web_driver_container)
+        expected_pdf_content = [self.venue_account,
+                                self.venue,
+                                self.account_id_source]
+        self.verify("Is PDF contains correctly values", True,
+                    wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
+        ext_id_client = wizard.get_ext_id_client()
+        wizard.click_save_button()
+        time.sleep(2)
+        self.verify("Is entity saved correctly", ext_id_client, main_page.get_ext_id_client())
+

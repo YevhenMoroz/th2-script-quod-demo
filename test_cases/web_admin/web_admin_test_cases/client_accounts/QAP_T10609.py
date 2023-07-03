@@ -1,10 +1,7 @@
-import sys
 import time
-import traceback
 import random
 import string
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_wizard import ClientsWizard
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_values_sub_wizard import \
@@ -58,42 +55,34 @@ class QAP_T10609(CommonTestCase):
         manage_sub_wizard.click_on_delete_button(True)
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            values_tab = ClientsValuesSubWizard(self.web_driver_container)
-            self.verify("Allocation Matching Service field is disable", False,
-                        values_tab.is_external_allocation_matching_service_field_enable())
+        values_tab = ClientsValuesSubWizard(self.web_driver_container)
+        self.verify("Allocation Matching Service field is disable", False,
+                    values_tab.is_external_allocation_matching_service_field_enable())
 
-            values_tab.set_allocation_matching_service(self.allocation_matching_service[0])
-            time.sleep(1)
-            self.verify("Allocation Matching Service field is enable", True,
-                        values_tab.is_external_allocation_matching_service_field_enable())
+        values_tab.set_allocation_matching_service(self.allocation_matching_service[0])
+        time.sleep(1)
+        self.verify("Allocation Matching Service field is enable", True,
+                    values_tab.is_external_allocation_matching_service_field_enable())
 
-            values_tab.set_external_allocation_matching_service(self.name_at_manage)
+        values_tab.set_external_allocation_matching_service(self.name_at_manage)
 
-            values_tab.clear_allocation_matching_service_field()
-            time.sleep(1)
-            self.verify("Allocation Matching Service field is disable", False,
-                        values_tab.is_external_allocation_matching_service_field_enable())
+        values_tab.clear_allocation_matching_service_field()
+        time.sleep(1)
+        self.verify("Allocation Matching Service field is disable", False,
+                    values_tab.is_external_allocation_matching_service_field_enable())
 
-            values_tab.set_allocation_matching_service(self.allocation_matching_service[1])
-            time.sleep(1)
-            self.verify("Allocation Matching Service field is disable", False,
-                        values_tab.is_external_allocation_matching_service_field_enable())
+        values_tab.set_allocation_matching_service(self.allocation_matching_service[1])
+        time.sleep(1)
+        self.verify("Allocation Matching Service field is disable", False,
+                    values_tab.is_external_allocation_matching_service_field_enable())
 
-            values_tab.set_allocation_matching_service(self.allocation_matching_service[0])
-            time.sleep(1)
-            self.verify("Allocation Matching Service field is enable", True,
-                        values_tab.is_external_allocation_matching_service_field_enable())
+        values_tab.set_allocation_matching_service(self.allocation_matching_service[0])
+        time.sleep(1)
+        self.verify("Allocation Matching Service field is enable", True,
+                    values_tab.is_external_allocation_matching_service_field_enable())
 
-            values_tab.set_external_allocation_matching_service(self.name_at_manage)
+        values_tab.set_external_allocation_matching_service(self.name_at_manage)
 
-            self.post_condition()
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.post_condition()

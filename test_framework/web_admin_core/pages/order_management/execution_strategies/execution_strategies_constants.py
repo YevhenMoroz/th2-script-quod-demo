@@ -4,7 +4,7 @@ class ExecutionStrategiesConstants:
 
     # --MAIN MENU--
     ENABLE_DISABLE_BUTTON_XPATH = "//div[contains(@class, 'toggle')]"
-    OK_BUTTON_XPATH="//*[text()='Ok']"
+    OK_BUTTON_XPATH="//*[normalize-space()='Ok']"
     DISPLAYED_EXECUTION_STRATEGY_XPATH = '//*[text()="{}"]'
     # --more actions
     MORE_ACTIONS_BUTTON_XPATH = "//nb-icon[@title='More Actions']"
@@ -35,8 +35,8 @@ class ExecutionStrategiesConstants:
     STRATEGY_TYPE_VALUE_AT_MAIN_MENU_XPATH = "//*[@class='ag-center-cols-container']//div[1]//div[3]"
 
     # --EXECUTION STR WIZARD--
-    SAVE_CHANGES_AT_WIZARD = '//*[text()="Save Changes"]'
-    CLEAR_CHANGES_AT_WIZARD = '//*[text()="Clear Changes"]'
+    SAVE_CHANGES_AT_WIZARD = '//*[normalize-space()="Save Changes"]'
+    CLEAR_CHANGES_AT_WIZARD = '//*[normalize-space()="Clear Changes"]'
     REVERT_CHANGES_AT_WIZARD = "//*[text()='Revert Changes']"
     CLOSE_WIZARD = '//*[@data-name="close"]'
     # --VALUES TAB--

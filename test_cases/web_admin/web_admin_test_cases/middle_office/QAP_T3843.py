@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.middle_office.settlement_models.main_page import \
     SettlementModelsPage
@@ -44,33 +41,23 @@ class QAP_T3843(CommonTestCase):
         values_sub_wizard.set_settl_location(self.settl_location)
 
     def test_context(self):
+        self.precondition()
+        page = SettlementModelsPage(self.web_driver_container)
+        wizard = SettlementModelsWizard(self.web_driver_container)
+        excepted_pdf_values = [self.name,
+                               self.description,
+                               self.settl_location]
+
+        self.verify("Is all data displayed correctly in PDF", True,
+                    wizard.click_download_pdf_entity_button_and_check_pdf(excepted_pdf_values))
+
+        time.sleep(1)
+        wizard.click_on_save_changes()
+        time.sleep(2)
+        page.set_name(self.name)
+        time.sleep(1)
         try:
-            self.precondition()
-            page = SettlementModelsPage(self.web_driver_container)
-            wizard = SettlementModelsWizard(self.web_driver_container)
-            excepted_pdf_values = [self.name,
-                                   self.description,
-                                   self.settl_location]
+            self.verify("entity created correctly", self.name, page.get_name())
 
-            self.verify("Is all data displayed correctly in PDF", True,
-                        wizard.click_download_pdf_entity_button_and_check_pdf(excepted_pdf_values))
-
-            time.sleep(1)
-            wizard.click_on_save_changes()
-            time.sleep(2)
-            page.set_name(self.name)
-            time.sleep(1)
-            try:
-                self.verify("entity created correctly", self.name, page.get_name())
-
-            except Exception as e:
-                self.verify("entity not created", True, e.__class__.__name__)
-
-
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        except Exception as e:
+            self.verify("entity not created", True, e.__class__.__name__)

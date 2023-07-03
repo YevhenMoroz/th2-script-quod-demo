@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.venues.venues_page import VenuesPage
 from test_framework.web_admin_core.pages.markets.venues.venues_values_sub_wizard import \
@@ -53,34 +50,26 @@ class QAP_T3115(CommonTestCase):
             time.sleep(1)
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            page = VenuesPage(self.web_driver_container)
-            page.click_on_more_actions()
-            time.sleep(1)
-            page.click_on_edit()
-            features_tab = VenuesFeaturesSubWizard(self.web_driver_container)
-            features_tab.set_open_time(self.open_time[0])
-            features_tab.set_close_time(self.close_time[0])
-            wizard = VenuesWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
-            page.set_name_filter(self.name)
-            time.sleep(1)
-            page.click_on_more_actions()
-            page.click_on_edit()
+        page = VenuesPage(self.web_driver_container)
+        page.click_on_more_actions()
+        time.sleep(1)
+        page.click_on_edit()
+        features_tab = VenuesFeaturesSubWizard(self.web_driver_container)
+        features_tab.set_open_time(self.open_time[0])
+        features_tab.set_close_time(self.close_time[0])
+        wizard = VenuesWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
+        page.set_name_filter(self.name)
+        time.sleep(1)
+        page.click_on_more_actions()
+        page.click_on_edit()
 
-            self.verify("Open and Close time has been save", [self.open_time[0], self.close_time[0]],
-                        [features_tab.get_open_time(), features_tab.get_close_time()])
+        self.verify("Open and Close time has been save", [self.open_time[0], self.close_time[0]],
+                    [features_tab.get_open_time(), features_tab.get_close_time()])
 
-            features_tab.set_open_time(self.open_time[1])
-            features_tab.set_close_time(self.close_time[1])
-            wizard = VenuesWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        features_tab.set_open_time(self.open_time[1])
+        features_tab.set_close_time(self.close_time[1])
+        wizard = VenuesWizard(self.web_driver_container)
+        wizard.click_on_save_changes()

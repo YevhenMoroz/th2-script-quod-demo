@@ -37,6 +37,7 @@ class QAP_T5035(TestCase):
         self.price_bid = 30
         self.qty_bid = self.qty_ask = 5000
         self.delay = 0
+        self.currency = self.data_set.get_currency_by_name("currency_4")
         # endregion
 
         # region Gateway Side
@@ -88,7 +89,7 @@ class QAP_T5035(TestCase):
 
         self.DMA_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Kepler_params()
         self.DMA_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.DMA_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.ex_destination_xbru))
+        self.DMA_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.ex_destination_xbru, Currency=self.currency))
 
         self.fix_manager_sell.send_message_and_receive_response(self.DMA_order, case_id_1)
 

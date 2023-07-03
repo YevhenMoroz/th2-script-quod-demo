@@ -1,9 +1,7 @@
 import random
 import string
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.site.institution.institution_values_sub_wizard import \
@@ -50,29 +48,23 @@ class QAP_T3306(CommonTestCase):
         page.click_on_edit()
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            values_tab = InstitutionsValuesSubWizard(self.web_driver_container)
-            values_tab.set_cash_account_currency_rate_source(self.cash_account_currency_rate_source[1])
-            values_tab.set_cross_currency_hair_cut(self.cross_currency_hair_cut[1])
+        values_tab = InstitutionsValuesSubWizard(self.web_driver_container)
+        values_tab.set_cash_account_currency_rate_source(self.cash_account_currency_rate_source[1])
+        values_tab.set_cross_currency_hair_cut(self.cross_currency_hair_cut[1])
 
-            wizard = InstitutionsWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
+        wizard = InstitutionsWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
 
-            page = InstitutionsPage(self.web_driver_container)
-            page.set_institution_name(self.name)
-            time.sleep(1)
-            page.click_on_more_actions()
-            page.click_on_edit()
+        page = InstitutionsPage(self.web_driver_container)
+        page.set_institution_name(self.name)
+        time.sleep(1)
+        page.click_on_more_actions()
+        page.click_on_edit()
 
-            expected_result = [self.cross_currency_hair_cut[1], self.cash_account_currency_rate_source[1]]
-            actual_result = [values_tab.get_cross_currency_hair_cut(),
-                             values_tab.get_cash_account_currency_rate_source()]
+        expected_result = [self.cross_currency_hair_cut[1], self.cash_account_currency_rate_source[1]]
+        actual_result = [values_tab.get_cross_currency_hair_cut(),
+                         values_tab.get_cash_account_currency_rate_source()]
 
-            self.verify("New data saved", expected_result, actual_result)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)
+        self.verify("New data saved", expected_result, actual_result)

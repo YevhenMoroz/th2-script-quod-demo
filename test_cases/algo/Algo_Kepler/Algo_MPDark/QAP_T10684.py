@@ -171,7 +171,7 @@ class QAP_T10684(TestCase):
 
         # region Check that the Cancel request on child is timed out
         self.fix_verifier_buy.set_case_id(bca.create_event("Check that the Cancel request on child is timed out", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([er_pending_new_dma_chix_order_params, er_new_dma_chix_order_params], [self.key_params_ER_child, self.key_params_ER_child], self.ToQuod, pre_filter=None)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([er_pending_new_dma_chix_order_params, er_new_dma_chix_order_params], [self.key_params_ER_child, self.key_params_ER_child], self.ToQuod, pre_filter=None)
         # endregion
 
         # region Check that the CHIXLIS RFQ accepted
@@ -196,7 +196,7 @@ class QAP_T10684(TestCase):
 
         # region Check that there are no LIS childs
         self.fix_verifier_buy.set_case_id(bca.create_event("Check that there are no LIS childs", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([nos_chixlis_rfq, nos_trql_rfq, self.dma_chix_order], [self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child], self.FromQuod, pre_filter=self.pre_filter)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([nos_chixlis_rfq, nos_trql_rfq, self.dma_chix_order], [self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child], self.FromQuod, pre_filter=self.pre_filter)
         # endregion
 
         time.sleep(10)

@@ -186,7 +186,7 @@ class QAP_T9292(TestCase):
 
         # region Check those are no child orders on the venue which were discarded
         self.fix_verifier_buy.set_case_id(bca.create_event("Check those are no child orders on the venue which were discarded", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([self.dma_chix_order, self.dma_bats_order, self.dma_cboe_order], [self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child], self.FromQuod, pre_filter=self.pre_filter)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([self.dma_chix_order, self.dma_bats_order, self.dma_cboe_order], [self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child], self.FromQuod, pre_filter=self.pre_filter)
         # endregion
 
         # region Check that parent order eliminated

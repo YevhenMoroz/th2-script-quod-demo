@@ -18,7 +18,8 @@ from test_framework.data_sets import constants
 from test_framework.fix_wrappers.FixMessageOrderCancelRequest import FixMessageOrderCancelRequest
 from test_framework.algo_formulas_manager import AlgoFormulasManager as AFM
 from test_framework.rest_api_wrappers.algo.RestApiStrategyManager import RestApiAlgoManager
-
+from test_framework.ssh_wrappers.ssh_client import SshClient
+from test_framework.formulas_and_calculation.trading_phase_manager import TradingPhaseManager, TimeSlot
 
 class QAP_T4225(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
@@ -59,6 +60,8 @@ class QAP_T4225(TestCase):
 
         self.price_bid_3 = 21.8
         self.qty_bid_3 = 1000
+        
+        self.qty_bid_0 = 0
 
         self.qty_child_1 = AFM.get_pov_child_qty(self.percentage_volume, self.qty_bid_1, self.qty)
         self.qty_child_2 = AFM.get_pov_child_qty(self.percentage_volume, self.qty_bid_2, self.qty)
@@ -89,7 +92,7 @@ class QAP_T4225(TestCase):
         self.ex_destination_1 = self.data_set.get_mic_by_name("mic_1")
         self.client = self.data_set.get_client_by_name("client_2")
         self.account = self.data_set.get_account_by_name("account_2")
-        self.s_par = self.data_set.get_listing_id_by_name("listing_36")
+        self.listing_id = self.data_set.get_listing_id_by_name("listing_36")
         # endregion
 
         # region Key parameters
@@ -102,8 +105,22 @@ class QAP_T4225(TestCase):
 
         self.rest_api_manager = RestApiAlgoManager(session_alias=self.restapi_env1.session_alias_wa, case_id=self.test_id)
 
+        # region SSH
+        self.config_file = "client_sats.xml"
+        self.xpath = ".//Participate/levels"
+        self.new_config_value = "3"
+        self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
+        self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user, self.ssh_client_env.password, self.ssh_client_env.su_user, self.ssh_client_env.su_password)
+        self.default_config_value = self.ssh_client.get_and_update_file(self.config_file, {self.xpath: self.new_config_value})
+        # endregion
+
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
+        # region precondition: Prepare SATS configuration
+        self.ssh_client.send_command("qrestart SATS")
+        time.sleep(35)
+        # endregion
+
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
         nos_ioc_rule_1 = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account, self.ex_destination_1, self.price_bid_1)
@@ -116,13 +133,15 @@ class QAP_T4225(TestCase):
 
         # region Update Trading Phase
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Modify trading phase profile", self.test_id))
-        trading_phases = AFM.get_timestamps_for_current_phase(TradingPhases.Open)
+        trading_phase_manager = TradingPhaseManager()
+        trading_phase_manager.build_timestamps_for_trading_phase_sequence(TradingPhases.Open)
+        trading_phases = trading_phase_manager.get_trading_phase_list()
         self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
         # endregion
 
         # region Clear Market Data
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data SnapShot to clear the MarketDepth", self.test_id))
-        market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.s_par, self.fix_env1.feed_handler)
+        market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id, self.fix_env1.feed_handler)
         market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid_1, MDEntrySize=self.qty_bid_1, MDEntryPositionNo=1)
         market_data_snap_shot_par.add_fields_into_repeating_group('NoMDEntries',  [dict(MDEntryType=0, MDEntryPx=self.price_bid_2, MDEntrySize=self.qty_bid_2, MDEntryPositionNo=2)])
         market_data_snap_shot_par.add_fields_into_repeating_group('NoMDEntries',  [dict(MDEntryType=0, MDEntryPx=self.price_bid_3, MDEntrySize=self.qty_bid_3, MDEntryPositionNo=3)])
@@ -130,7 +149,7 @@ class QAP_T4225(TestCase):
         self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
 
         self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data Incremental to clear the MarketDepth", self.test_id))
-        market_data_incremental_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.s_par, self.fix_env1.feed_handler).set_phase(TradingPhases.Open)
+        market_data_incremental_par = FixMessageMarketDataIncrementalRefreshAlgo().set_market_data_incr_refresh_ltq().update_MDReqID(self.listing_id, self.fix_env1.feed_handler).set_phase(TradingPhases.Open)
         market_data_incremental_par.update_repeating_group_by_index('NoMDEntriesIR', 0, MDEntryPx=self.price_ltq, MDEntrySize=self.price_ltq)
         self.fix_manager_feed_handler.send_message(market_data_incremental_par)
 
@@ -190,6 +209,16 @@ class QAP_T4225(TestCase):
         new_passive_child_order_2_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.passive_child_order_2, self.gateway_side_buy, self.status_new)
         self.fix_verifier_buy.check_fix_message(new_passive_child_order_2_params, key_parameters=self.key_params, direction=self.ToQuod, message_name='Buy side ExecReport New  DMA Child 2')
         # endregion
+        
+        # region Clear Market Data
+        self.fix_manager_feed_handler.set_case_id(bca.create_event("Send Market Data SnapShot to clear the MarketDepth", self.test_id))
+        market_data_snap_shot_par = FixMessageMarketDataSnapshotFullRefreshAlgo().set_market_data().update_MDReqID(self.listing_id, self.fix_env1.feed_handler)
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 0, MDEntryPx=self.price_bid_1, MDEntrySize=self.qty_bid_0, MDEntryPositionNo=1)
+        market_data_snap_shot_par.add_fields_into_repeating_group('NoMDEntries',  [dict(MDEntryType=0, MDEntryPx=self.price_bid_2, MDEntrySize=self.qty_bid_0, MDEntryPositionNo=2)])
+        market_data_snap_shot_par.add_fields_into_repeating_group('NoMDEntries',  [dict(MDEntryType=0, MDEntryPx=self.price_bid_3, MDEntrySize=self.qty_bid_0, MDEntryPositionNo=3)])
+        market_data_snap_shot_par.update_repeating_group_by_index('NoMDEntries', 1, MDEntryPx=self.price_ask, MDEntrySize=self.qty_ask)
+        self.fix_manager_feed_handler.send_message(market_data_snap_shot_par)
+        # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
@@ -204,11 +233,20 @@ class QAP_T4225(TestCase):
 
         time.sleep(3)
 
+        # region config reset
+        self.ssh_client.get_and_update_file(self.config_file, {self.xpath: self.default_config_value})
+        self.ssh_client.send_command("qrestart SATS")
+        time.sleep(35)
+        self.ssh_client.close()
+        # endregion
+
         RuleManager(Simulators.algo).remove_rules(self.rule_list)
 
         # region Update Trading Phase
         self.rest_api_manager.set_case_id(case_id=bca.create_event("Revert trading phase profile", self.test_id))
-        trading_phases = AFM.get_default_timestamp_for_trading_phase()
+        trading_phase_manager = TradingPhaseManager()
+        trading_phase_manager.build_default_timestamp_for_trading_phase()
+        trading_phases = trading_phase_manager.get_trading_phase_list(new_standard=False)
         self.rest_api_manager.modify_trading_phase_profile(self.trading_phase_profile, trading_phases)
         # endregion
 

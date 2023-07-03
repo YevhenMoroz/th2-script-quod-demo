@@ -4,7 +4,7 @@ class AutoHedgerConstants:
 
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"
-    SAVE_CHANGES_BUTTON_XPATH = "//*[text()='Save Changes']"
+    SAVE_CHANGES_BUTTON_XPATH = "//*[normalize-space()='Save Changes']"
     CLEAR_CHANGES_BUTTON_XPATH = "//*[normalize-space()='Clear Changes']"
     CLOSE_WIZARD_XPATH = "//*[@data-name='close']"
     OK_BUTTON_XPATH = '//*[normalize-space()="Ok" or normalize-space()="OK"]'

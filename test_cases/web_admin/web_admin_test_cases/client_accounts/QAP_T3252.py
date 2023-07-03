@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_page import AccountsPage
@@ -43,38 +40,30 @@ class QAP_T3252(CommonTestCase):
             client_page.click_on_enable_disable()
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            side_menu = SideMenu(self.web_driver_container)
-            side_menu.open_accounts_page()
-            account_page = AccountsPage(self.web_driver_container)
-            account_page.set_id(self.test_client)
+        side_menu = SideMenu(self.web_driver_container)
+        side_menu.open_accounts_page()
+        account_page = AccountsPage(self.web_driver_container)
+        account_page.set_id(self.test_client)
+        time.sleep(1)
+        account_status = account_page.is_account_enabled()
+
+        side_menu.open_clients_page()
+        client_page = ClientsPage(self.web_driver_container)
+        client_page.set_name(self.test_client)
+        time.sleep(1)
+        if not client_page.is_client_enable():
+            client_page.click_on_enable_disable()
             time.sleep(1)
-            account_status = account_page.is_account_enabled()
+            client_page.click_on_enable_disable()
+        else:
+            client_page.click_on_enable_disable()
 
-            side_menu.open_clients_page()
-            client_page = ClientsPage(self.web_driver_container)
-            client_page.set_name(self.test_client)
-            time.sleep(1)
-            if not client_page.is_client_enable():
-                client_page.click_on_enable_disable()
-                time.sleep(1)
-                client_page.click_on_enable_disable()
-            else:
-                client_page.click_on_enable_disable()
+        side_menu.open_accounts_page()
 
-            side_menu.open_accounts_page()
+        account_page.set_id(self.test_client)
+        time.sleep(1)
+        self.verify("Account still enable", account_status, account_page.is_account_enabled())
 
-            account_page.set_id(self.test_client)
-            time.sleep(1)
-            self.verify("Account still enable", account_status, account_page.is_account_enabled())
-
-            self.post_condition()
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.post_condition()

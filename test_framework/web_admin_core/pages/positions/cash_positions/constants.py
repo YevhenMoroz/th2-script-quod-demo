@@ -3,20 +3,20 @@ class Constants:
         PAGE_TITLE = "//span[@class='entity-title left'][normalize-space()='Cash Positions']"
         PAGE_ICON = '//span[@class="entity-title left"]//*[@data-name="bar-chart"]//*[@d]'
         REFRESH_PAGE_BUTTON = "//*[@data-name='refresh']"
-        OK_BUTTON = '//*[text()="Ok"]'
-        CANCEL_BUTTON = '//*[text()="Cancel"]'
-        NEW_BUTTON = '//*[text()="New"]'
+        OK_BUTTON = '//*[normalize-space()="Ok"]'
+        CANCEL_BUTTON = '//*[normalize-space()="Cancel"]'
+        NEW_BUTTON = '//*[normalize-space()="New"]'
         DOWNLOAD_CSV_BUTTON = '//*[@data-name="download"]'
         DISPLAYED_CASH_POSITIONS = "//*[text()='{}']"
         TOGGLE_BUTTON = '//nb-toggle'
         TRANSACTION_BUTTON = '//*[@nbtooltip="Transaction"]//*[@data-name="swap"]'
         TRANSACTION_POP_UP = '//cash-account-transfer-popup'
 
-        NAME_FILTER = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
-        CURRENCY_FILTER = '//*[@class="ag-header-container"]/div[2]/div[2]//input'
-        CLIENT_FILTER = '//*[@class="ag-header-container"]/div[2]/div[3]//input'
-        VENUE_CASH_ACCOUNT_ID_FILTER = '//*[@class="ag-header-container"]/div[2]/div[4]//input'
-        CLIENT_CASH_ACCOUNT_ID_FILTER = '//*[@class="ag-header-container"]/div[2]/div[5]//input'
+        NAME_FILTER = '(//*[@class="ag-header-row"]//div[@class="ag-input-wrapper"]//input)[1]'
+        CURRENCY_FILTER = '(//*[@class="ag-header-row"]//div[@class="ag-input-wrapper"]//input)[2]'
+        CLIENT_FILTER = '(//*[@class="ag-header-row"]//div[@class="ag-input-wrapper"]//input)[3]'
+        VENUE_CASH_ACCOUNT_ID_FILTER = '(//*[@class="ag-header-row"]//div[@class="ag-input-wrapper"]//input)[4]'
+        CLIENT_CASH_ACCOUNT_ID_FILTER = '(//*[@class="ag-header-row"]//div[@class="ag-input-wrapper"]//input)[5]'
         ENABLED_FILTER = '//*[@class="boolean-filter ng-untouched ng-pristine ng-valid"]'
 
         NAME = '//*[@col-id="cashAccountName"]//span//span[4]'
@@ -38,8 +38,8 @@ class Constants:
         TRANSACTION_TYPE_DROP_MENU = '//*[@class="option-list"]//nb-option'
 
     class Wizard:
-        SAVE_CHANGES_BUTTON = "//*[text()='Save Changes']"
-        CLEAR_CHANGES_BUTTON = "//*[text()='Clear Changes']"
+        SAVE_CHANGES_BUTTON = "//*[normalize-space()='Save Changes']"
+        CLEAR_CHANGES_BUTTON = "//*[normalize-space()='Clear Changes']"
         CLOSE_WIZARD_BUTTON = "//*[@data-name='close']"
         CANCEL_BUTTON = '//button[normalize-space()="Cancel"]'
         OK_BUTTON = '//button[normalize-space()="OK"]'

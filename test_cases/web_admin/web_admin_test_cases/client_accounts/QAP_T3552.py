@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_values_sub_wizard import \
     ClientsValuesSubWizard
@@ -64,24 +61,16 @@ class QAP_T3552(CommonTestCase):
         assignments_sub_wizard = ClientsAssignmentsSubWizard(self.web_driver_container)
         wizard = ClientsWizard(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page.click_on_new()
-            values_sub_wizard.set_id(self.id[1])
-            values_sub_wizard.set_name(self.client_name)
-            values_sub_wizard.set_ext_id_client(self.ext_id_client[1])
-            values_sub_wizard.set_disclose_exec(self.disclose_exec)
-            values_sub_wizard.click_on_dummy_checkbox()
-            assignments_sub_wizard.set_desk(self.desk)
-            wizard.click_on_save_changes()
-            time.sleep(2)
+        main_page.click_on_new()
+        values_sub_wizard.set_id(self.id[1])
+        values_sub_wizard.set_name(self.client_name)
+        values_sub_wizard.set_ext_id_client(self.ext_id_client[1])
+        values_sub_wizard.set_disclose_exec(self.disclose_exec)
+        values_sub_wizard.click_on_dummy_checkbox()
+        assignments_sub_wizard.set_desk(self.desk)
+        wizard.click_on_save_changes()
+        time.sleep(2)
 
-            self.verify("Second DUMMY client is not saving", True, wizard.is_request_failed_message_displayed())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("Second DUMMY client is not saving", True, wizard.is_request_failed_message_displayed())

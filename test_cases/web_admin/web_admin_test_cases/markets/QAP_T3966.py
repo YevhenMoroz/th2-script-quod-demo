@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.routes.main_page import RoutesPage
 from test_framework.web_admin_core.pages.markets.routes.strategy_type_subwizard import \
@@ -47,21 +44,14 @@ class QAP_T3966(CommonTestCase):
         time.sleep(1)
 
     def test_context(self):
-        try:
-            self.precondition()
-            routes_main_menu = RoutesPage(self.web_driver_container)
-            self.verify("New Default Scenario after saved", self.default_scenario,
-                        routes_main_menu.get_default_strategy_type_value())
-            routes_main_menu.click_on_more_actions()
-            expected_pdf_content = [self.name, self.default_scenario]
-            self.verify(f"Is PDF contains {expected_pdf_content}", True,
-                        routes_main_menu.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
-            routes_main_menu.click_on_more_actions()
-            routes_main_menu.click_on_delete_at_more_actions()
-            routes_main_menu.click_on_ok()
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.precondition()
+        routes_main_menu = RoutesPage(self.web_driver_container)
+        self.verify("New Default Scenario after saved", self.default_scenario,
+                    routes_main_menu.get_default_strategy_type_value())
+        routes_main_menu.click_on_more_actions()
+        expected_pdf_content = [self.name, self.default_scenario]
+        self.verify(f"Is PDF contains {expected_pdf_content}", True,
+                    routes_main_menu.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
+        routes_main_menu.click_on_more_actions()
+        routes_main_menu.click_on_delete_at_more_actions()
+        routes_main_menu.click_on_ok()

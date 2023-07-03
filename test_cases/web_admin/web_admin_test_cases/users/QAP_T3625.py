@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.users.users.users_page import UsersPage
 from test_framework.web_admin_core.pages.users.users.users_wizard import UsersWizard
 from test_framework.web_admin_core.pages.users.users.users_values_sub_wizard import UsersValuesSubWizard
@@ -79,44 +76,36 @@ class QAP_T3625(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            login_page = LoginPage(self.web_driver_container)
-            login_page.login_to_web_admin(self.test_data['test_user']['login'], self.test_data['test_user']['password'])
-            time.sleep(2)
-            side_menu = SideMenu(self.web_driver_container)
-            side_menu.open_users_page()
-            time.sleep(2)
-            user_page = UsersPage(self.web_driver_container)
-            user_page.set_user_id(self.test_data['user']['user_id'])
-            time.sleep(1)
-            self.verify("User from different Zones is not displayed", False,
-                        user_page.is_searched_user_found(self.test_data['user']['user_id']))
+        login_page = LoginPage(self.web_driver_container)
+        login_page.login_to_web_admin(self.test_data['test_user']['login'], self.test_data['test_user']['password'])
+        time.sleep(2)
+        side_menu = SideMenu(self.web_driver_container)
+        side_menu.open_users_page()
+        time.sleep(2)
+        user_page = UsersPage(self.web_driver_container)
+        user_page.set_user_id(self.test_data['user']['user_id'])
+        time.sleep(1)
+        self.verify("User from different Zones is not displayed", False,
+                    user_page.is_searched_user_found(self.test_data['user']['user_id']))
 
-            user_page.set_user_id(self.test_data['zone_user'])
-            time.sleep(1)
-            self.verify("User from the same Zones is not displayed", False,
-                        user_page.is_searched_user_found(self.test_data['zone_user']))
+        user_page.set_user_id(self.test_data['zone_user'])
+        time.sleep(1)
+        self.verify("User from the same Zones is not displayed", False,
+                    user_page.is_searched_user_found(self.test_data['zone_user']))
 
-            user_page.set_user_id(self.test_data['inst_user'])
-            time.sleep(1)
-            self.verify("User assignee to Institution is not displayed", False,
-                        user_page.is_searched_user_found(self.test_data['inst_user']))
+        user_page.set_user_id(self.test_data['inst_user'])
+        time.sleep(1)
+        self.verify("User assignee to Institution is not displayed", False,
+                    user_page.is_searched_user_found(self.test_data['inst_user']))
 
-            user_page.set_user_id(self.test_data['desk_user'])
-            time.sleep(1)
-            self.verify("User assignee to Desk displayed", True,
-                        user_page.is_searched_user_found(self.test_data['desk_user']))
+        user_page.set_user_id(self.test_data['desk_user'])
+        time.sleep(1)
+        self.verify("User assignee to Desk displayed", True,
+                    user_page.is_searched_user_found(self.test_data['desk_user']))
 
-            user_page.set_user_id(self.test_data['location_user'])
-            time.sleep(1)
-            self.verify("User assignee to Location displayed", True,
-                        user_page.is_searched_user_found(self.test_data['location_user']))
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        user_page.set_user_id(self.test_data['location_user'])
+        time.sleep(1)
+        self.verify("User assignee to Location displayed", True,
+                    user_page.is_searched_user_found(self.test_data['location_user']))

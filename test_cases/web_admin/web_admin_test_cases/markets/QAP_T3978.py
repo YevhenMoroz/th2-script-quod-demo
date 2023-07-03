@@ -1,9 +1,6 @@
 import random
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.instrument_symbols.main_page import \
     InstrumentSymbolsMainPage
@@ -46,38 +43,30 @@ class QAP_T3978(CommonTestCase):
         page.click_on_delete(True)
 
     def test_context(self):
-        try:
-            self.precondition()
-            page = InstrumentSymbolsMainPage(self.web_driver_container)
-            wizard = InstrumentSymbolsWizard(self.web_driver_container)
-            self.verify("Incorrect or missing values displayed", True,
-                        page.is_incorrect_or_missing_value_message_displayed())
+        self.precondition()
+        page = InstrumentSymbolsMainPage(self.web_driver_container)
+        wizard = InstrumentSymbolsWizard(self.web_driver_container)
+        self.verify("Incorrect or missing values displayed", True,
+                    page.is_incorrect_or_missing_value_message_displayed())
 
-            all_instr_symbol = wizard.get_all_instr_symbols_from_drop_menu()
-            wizard.set_instr_symbol(self.instr_symbol)
-            wizard.set_cum_trading_limit_percentage(self.cum_trading_limit_percentage)
-            wizard.click_on_save_changes()
-            time.sleep(2)
-            if wizard.is_error_message_displayed():
-                while wizard.is_error_message_displayed():
-                    wizard.click_on_error_message_pop_up()
-                    self.instr_symbol = random.choice(all_instr_symbol)
-                    wizard.set_instr_symbol(self.instr_symbol)
-                    all_instr_symbol.remove(self.instr_symbol)
-                    time.sleep(1)
-                    wizard.click_on_save_changes()
-                    time.sleep(2)
-            page.set_instr_symbol(self.instr_symbol)
-            time.sleep(2)
-            expected_values = [self.instr_symbol, self.cum_trading_limit_percentage]
-            actual_values = [page.get_instr_symbol(), page.get_cum_trading_limit_percentage()]
-            self.verify("Is entity saved correctly", expected_values, actual_values)
+        all_instr_symbol = wizard.get_all_instr_symbols_from_drop_menu()
+        wizard.set_instr_symbol(self.instr_symbol)
+        wizard.set_cum_trading_limit_percentage(self.cum_trading_limit_percentage)
+        wizard.click_on_save_changes()
+        time.sleep(2)
+        if wizard.is_error_message_displayed():
+            while wizard.is_error_message_displayed():
+                wizard.click_on_error_message_pop_up()
+                self.instr_symbol = random.choice(all_instr_symbol)
+                wizard.set_instr_symbol(self.instr_symbol)
+                all_instr_symbol.remove(self.instr_symbol)
+                time.sleep(1)
+                wizard.click_on_save_changes()
+                time.sleep(2)
+        page.set_instr_symbol(self.instr_symbol)
+        time.sleep(2)
+        expected_values = [self.instr_symbol, self.cum_trading_limit_percentage]
+        actual_values = [page.get_instr_symbol(), page.get_cum_trading_limit_percentage()]
+        self.verify("Is entity saved correctly", expected_values, actual_values)
 
-            self.post_condition()
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.post_condition()

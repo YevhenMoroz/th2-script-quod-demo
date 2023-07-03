@@ -1,8 +1,5 @@
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
@@ -34,18 +31,10 @@ class QAP_T9446(CommonTestCase):
         time.sleep(5)
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            common_act = CommonPage(self.web_driver_container)
-            console_error = common_act.get_console_error()
+        common_act = CommonPage(self.web_driver_container)
+        console_error = common_act.get_console_error()
 
-            self.verify("Only 1 error appears in console", 1, len(console_error))
-            self.verify("Error related with login", True, self.error_message in console_error[0]["message"])
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("Only 1 error appears in console", 1, len(console_error))
+        self.verify("Error related with login", True, self.error_message in console_error[0]["message"])

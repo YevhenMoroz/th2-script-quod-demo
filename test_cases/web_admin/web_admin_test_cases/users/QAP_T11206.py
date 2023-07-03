@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.users.users.users_user_details_sub_wizard import \
@@ -76,32 +73,23 @@ class QAP_T11206(CommonTestCase):
         route_tab = UsersRoutesSubWizard(self.web_driver_container)
         wizard = UsersWizard(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            users_page.set_user_id(self.user_id)
-            time.sleep(1)
-            users_page.click_on_more_actions()
-            users_page.click_on_edit_at_more_actions()
-            values_tab.set_ext_id_venue(self.ext_id_venue)
-            details_tab.set_first_name(self.first_name)
-            routes_in_table = route_tab.get_all_route_in_table()
-            route_tab.click_on_delete_button_for_last_entry_in_table()
-            wizard.click_on_save_changes()
-            users_page.set_user_id(self.user_id)
-            time.sleep(1)
-            users_page.click_on_more_actions()
-            users_page.click_on_edit_at_more_actions()
-            time.sleep(1)
-            self.verify("User Ext Id Venue is changed", self.ext_id_venue, values_tab.get_ext_id_venue())
-            self.verify("Firs Name is changed", self.first_name, details_tab.get_first_name())
-            self.verify("Deleted Route is not displayed",
-                        False, routes_in_table[-1] in route_tab.get_all_route_in_table())
-
-        except Exception:
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            errors = f'"{[traceback.extract_tb(exc_traceback, limit=4)]}"'.replace("\\", "/")
-            basic_custom_actions.create_event(f"FAILED", self.test_case_id, status='FAILED',
-                                              body="[{\"type\": \"message\", \"data\":" + f"{errors}" + "}]")
-            traceback.print_tb(exc_traceback, limit=3, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        users_page.set_user_id(self.user_id)
+        time.sleep(1)
+        users_page.click_on_more_actions()
+        users_page.click_on_edit_at_more_actions()
+        values_tab.set_ext_id_venue(self.ext_id_venue)
+        details_tab.set_first_name(self.first_name)
+        routes_in_table = route_tab.get_all_route_in_table()
+        route_tab.click_on_delete_button_for_last_entry_in_table()
+        wizard.click_on_save_changes()
+        users_page.set_user_id(self.user_id)
+        time.sleep(1)
+        users_page.click_on_more_actions()
+        users_page.click_on_edit_at_more_actions()
+        time.sleep(1)
+        self.verify("User Ext Id Venue is changed", self.ext_id_venue, values_tab.get_ext_id_venue())
+        self.verify("Firs Name is changed", self.first_name, details_tab.get_first_name())
+        self.verify("Deleted Route is not displayed",
+                    False, routes_in_table[-1] in route_tab.get_all_route_in_table())

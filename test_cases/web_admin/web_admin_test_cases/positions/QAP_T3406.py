@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
@@ -26,45 +23,37 @@ class QAP_T3406(CommonTestCase):
         self.account = ''
 
     def test_context(self):
-        try:
-            login_page = LoginPage(self.web_driver_container)
-            login_page.login_to_web_admin(self.test_data["zones_user"]["login"],
-                                          self.test_data["zones_user"]["password"])
-            time.sleep(2)
-            side_menu = SideMenu(self.web_driver_container)
-            self.verify("WashBook page is not displayed for zones user", False,
-                        side_menu.is_washbook_page_tab_displayed())
-            self.verify("WashBookRule page is not displayed for zones user", False,
-                        side_menu.is_washbook_rule_page_tab_displayed())
-            common_act = CommonPage(self.web_driver_container)
-            common_act.click_on_user_icon()
-            common_act.click_on_logout()
-            common_act.refresh_page(True)
-            time.sleep(2)
-            login_page = LoginPage(self.web_driver_container)
-            login_page.login_to_web_admin(self.test_data["locations_user"]["login"],
-                                          self.test_data["locations_user"]["password"])
-            time.sleep(2)
-            self.verify("WashBook page is not displayed for locations user", False,
-                        side_menu.is_washbook_page_tab_displayed())
-            self.verify("WashBookRule page is not displayed for locations user", False,
-                        side_menu.is_washbook_rule_page_tab_displayed())
-            common_act.click_on_user_icon()
-            common_act.click_on_logout()
-            common_act.refresh_page(True)
-            time.sleep(2)
-            login_page = LoginPage(self.web_driver_container)
-            login_page.login_to_web_admin(self.test_data["desks_user"]["login"],
-                                          self.test_data["desks_user"]["password"])
-            time.sleep(2)
-            self.verify("WashBook page is not displayed for desks user", False,
-                        side_menu.is_washbook_rule_page_tab_displayed())
-            self.verify("WashBookRule page is not displayed for desks user", False,
-                        side_menu.is_washbook_rule_page_tab_displayed())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        login_page = LoginPage(self.web_driver_container)
+        login_page.login_to_web_admin(self.test_data["zones_user"]["login"],
+                                      self.test_data["zones_user"]["password"])
+        time.sleep(2)
+        side_menu = SideMenu(self.web_driver_container)
+        self.verify("WashBook page is not displayed for zones user", False,
+                    side_menu.is_washbook_page_tab_displayed())
+        self.verify("WashBookRule page is not displayed for zones user", False,
+                    side_menu.is_washbook_rule_page_tab_displayed())
+        common_act = CommonPage(self.web_driver_container)
+        common_act.click_on_user_icon()
+        common_act.click_on_logout()
+        common_act.refresh_page(True)
+        time.sleep(2)
+        login_page = LoginPage(self.web_driver_container)
+        login_page.login_to_web_admin(self.test_data["locations_user"]["login"],
+                                      self.test_data["locations_user"]["password"])
+        time.sleep(2)
+        self.verify("WashBook page is not displayed for locations user", False,
+                    side_menu.is_washbook_page_tab_displayed())
+        self.verify("WashBookRule page is not displayed for locations user", False,
+                    side_menu.is_washbook_rule_page_tab_displayed())
+        common_act.click_on_user_icon()
+        common_act.click_on_logout()
+        common_act.refresh_page(True)
+        time.sleep(2)
+        login_page = LoginPage(self.web_driver_container)
+        login_page.login_to_web_admin(self.test_data["desks_user"]["login"],
+                                      self.test_data["desks_user"]["password"])
+        time.sleep(2)
+        self.verify("WashBook page is not displayed for desks user", False,
+                    side_menu.is_washbook_rule_page_tab_displayed())
+        self.verify("WashBookRule page is not displayed for desks user", False,
+                    side_menu.is_washbook_rule_page_tab_displayed())

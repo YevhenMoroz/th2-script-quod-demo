@@ -1,10 +1,7 @@
-import sys
 import time
 import random
 import string
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.users.users.users_assignments_sub_wizard import UsersAssignmentsSubWizard
@@ -61,38 +58,30 @@ class QAP_T3292(CommonTestCase):
 
     def test_context(self):
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            routes_tab = UsersRoutesSubWizard(self.web_driver_container)
-            routes_tab.click_on_plus_button()
-            self.routes = random.choice(routes_tab.get_all_routes_from_drop_menu())
-            routes_tab.set_route(self.routes)
-            routes_tab.set_route_user_name(self.rote_name)
-            routes_tab.click_on_checkmark_button()
-            wizard = UsersWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
+        routes_tab = UsersRoutesSubWizard(self.web_driver_container)
+        routes_tab.click_on_plus_button()
+        self.routes = random.choice(routes_tab.get_all_routes_from_drop_menu())
+        routes_tab.set_route(self.routes)
+        routes_tab.set_route_user_name(self.rote_name)
+        routes_tab.click_on_checkmark_button()
+        wizard = UsersWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
 
-            main_page = UsersPage(self.web_driver_container)
-            main_page.set_user_id(self.user_id)
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit_at_more_actions()
+        main_page = UsersPage(self.web_driver_container)
+        main_page.set_user_id(self.user_id)
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit_at_more_actions()
 
-            routes_tab.set_route_filter(self.routes)
-            time.sleep(1)
-            routes_tab.click_on_edit_button()
+        routes_tab.set_route_filter(self.routes)
+        time.sleep(1)
+        routes_tab.click_on_edit_button()
 
-            self.verify("Rotes has been save", self.routes, routes_tab.get_route())
+        self.verify("Rotes has been save", self.routes, routes_tab.get_route())
 
-            routes_tab.click_on_cancel_button()
-            routes_tab.click_on_delete_button()
+        routes_tab.click_on_cancel_button()
+        routes_tab.click_on_delete_button()
 
-            wizard.click_on_save_changes()
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        wizard.click_on_save_changes()

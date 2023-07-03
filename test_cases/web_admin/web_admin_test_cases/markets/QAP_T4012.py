@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.market_data_sources.main_page import \
     MarketDataSourcesPage
@@ -47,26 +44,19 @@ class QAP_T4012(CommonTestCase):
         main_page.click_on_edit_at_more_actions()
 
     def test_context(self):
-        try:
-            self.precondition()
-            wizard = MarketDataSourcesWizard(self.web_driver_container)
-            main_page = MarketDataSourcesPage(self.web_driver_container)
-            headers = ["Symbol", "User", "Venue"]
-            is_actual_fields_enabled = [wizard.is_symbol_field_enabled(), wizard.is_user_field_enabled(),
-                                        wizard.is_venue_field_enabled()]
-            expected_result = [False, False, False]
-            self.verify_arrays_of_data_objects("Is fields enabled", headers, expected_result, is_actual_fields_enabled)
-            time.sleep(2)
-            wizard.set_md_source(self.md_source_edited)
-            time.sleep(2)
-            wizard.click_on_save_changes()
-            time.sleep(2)
-            main_page.set_md_source_at_filter(self.md_source_edited)
-            time.sleep(2)
-            self.verify("After saved ", self.md_source_edited, main_page.get_md_source())
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.precondition()
+        wizard = MarketDataSourcesWizard(self.web_driver_container)
+        main_page = MarketDataSourcesPage(self.web_driver_container)
+        headers = ["Symbol", "User", "Venue"]
+        is_actual_fields_enabled = [wizard.is_symbol_field_enabled(), wizard.is_user_field_enabled(),
+                                    wizard.is_venue_field_enabled()]
+        expected_result = [False, False, False]
+        self.verify_arrays_of_data_objects("Is fields enabled", headers, expected_result, is_actual_fields_enabled)
+        time.sleep(2)
+        wizard.set_md_source(self.md_source_edited)
+        time.sleep(2)
+        wizard.click_on_save_changes()
+        time.sleep(2)
+        main_page.set_md_source_at_filter(self.md_source_edited)
+        time.sleep(2)
+        self.verify("After saved ", self.md_source_edited, main_page.get_md_source())

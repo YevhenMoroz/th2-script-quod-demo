@@ -1,11 +1,8 @@
 import random
 import string
-import sys
 import time
-import traceback
 from datetime import datetime
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.listings.listings_attachment_sub_wizard import \
     ListingsAttachmentSubWizard
@@ -36,6 +33,7 @@ class QAP_T3799(CommonTestCase):
         self.strike_price = str(random.randint(0, 10))
         self.call_put = 'Call'
         self.maturity_month_year = '01, 25, 2027'
+        self.security_exchange = ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
 
         self.venue = self.data_set.get_venue_by_name("venue_3")
         self.currency = self.data_set.get_currency_by_name("currency_1")
@@ -49,62 +47,55 @@ class QAP_T3799(CommonTestCase):
 
     def test_context(self):
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page = ListingsPage(self.web_driver_container)
-            main_page.click_on_new()
-            values_tab = ListingsValuesSubWizard(self.web_driver_container)
+        main_page = ListingsPage(self.web_driver_container)
+        main_page.click_on_new()
+        values_tab = ListingsValuesSubWizard(self.web_driver_container)
 
-            values_tab.set_instr_type(self.instr_type)
+        values_tab.set_instr_type(self.instr_type)
 
-            expected_result = [True for _ in range(4)]
-            actual_result = [values_tab.is_instr_symbol_field_required(),
-                             values_tab.is_maturity_month_year_field_required(),
-                             values_tab.is_strike_price_field_required(),
-                             values_tab.is_call_put_field_required()]
+        expected_result = [True for _ in range(4)]
+        actual_result = [values_tab.is_instr_symbol_field_required(),
+                         values_tab.is_maturity_month_year_field_required(),
+                         values_tab.is_strike_price_field_required(),
+                         values_tab.is_call_put_field_required()]
 
-            self.verify("Is Instr Symbol, Maturity Month Year, StrikePrice, CallPut fields required",
-                        expected_result, actual_result)
+        self.verify("Is Instr Symbol, Maturity Month Year, StrikePrice, CallPut fields required",
+                    expected_result, actual_result)
 
-            values_tab.set_symbol(self.symbol)
-            values_tab.set_lookup_symbol(self.lookup_symbol)
-            values_tab.set_instr_symbol(self.instr_symbol)
-            values_tab.set_strike_price(self.strike_price)
-            values_tab.set_call_put(self.call_put)
-            values_tab.set_maturity_month_year(self.maturity_month_year)
+        values_tab.set_symbol(self.symbol)
+        values_tab.set_lookup_symbol(self.lookup_symbol)
+        values_tab.set_instr_symbol(self.instr_symbol)
+        values_tab.set_security_exchange(self.security_exchange)
+        values_tab.set_strike_price(self.strike_price)
+        values_tab.set_call_put(self.call_put)
+        values_tab.set_maturity_month_year(self.maturity_month_year)
 
-            attachment_tab = ListingsAttachmentSubWizard(self.web_driver_container)
-            attachment_tab.set_venue(self.venue)
+        attachment_tab = ListingsAttachmentSubWizard(self.web_driver_container)
+        attachment_tab.set_venue(self.venue)
 
-            currency_tab = ListingsCurrencySubWizard(self.web_driver_container)
-            currency_tab.set_currency(self.currency)
+        currency_tab = ListingsCurrencySubWizard(self.web_driver_container)
+        currency_tab.set_currency(self.currency)
 
-            wizard = ListingsWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
-            main_page.load_listing_from_global_filter(self.lookup_symbol)
+        wizard = ListingsWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
+        main_page.load_listing_from_global_filter(self.lookup_symbol)
 
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
-            date = self.maturity_month_year.split(",")
-            maturity_month_year = datetime(int(date[-1]), int(date[0]), int(date[1])).strftime('%b, %Y')
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
+        date = self.maturity_month_year.split(",")
+        maturity_month_year = datetime(int(date[-1]), int(date[0]), int(date[1])).strftime('%b, %Y')
 
-            expected_result = [self.instr_symbol, maturity_month_year, self.strike_price, self.call_put]
-            actual_result = [values_tab.get_instr_symbol(),
-                             values_tab.get_maturity_month_year(),
-                             values_tab.get_strike_price()[:len(self.strike_price)],
-                             values_tab.get_call_put()]
+        expected_result = [self.instr_symbol, maturity_month_year, self.strike_price, self.call_put]
+        actual_result = [values_tab.get_instr_symbol(),
+                         values_tab.get_maturity_month_year(),
+                         values_tab.get_strike_price()[:len(self.strike_price)],
+                         values_tab.get_call_put()]
 
-            self.verify("Entered data saved correct", expected_result, actual_result)
+        self.verify("Entered data saved correct", expected_result, actual_result)
 
-            maturity_month_year_for_pdf = str(f"{date[-1].split()[0]}-{date[0].split()[0]}-01")
-            expected_result = [self.instr_symbol, maturity_month_year_for_pdf, self.strike_price, self.call_put]
-            self.verify("PDF contains saved data", True,
-                        wizard.click_download_pdf_entity_button_and_check_pdf(expected_result))
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        maturity_month_year_for_pdf = str(f"{date[-1].split()[0]}-{date[0].split()[0]}-01")
+        expected_result = [self.instr_symbol, maturity_month_year_for_pdf, self.strike_price, self.call_put]
+        self.verify("PDF contains saved data", True,
+                    wizard.click_download_pdf_entity_button_and_check_pdf(expected_result))

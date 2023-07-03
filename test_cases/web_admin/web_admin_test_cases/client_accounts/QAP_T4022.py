@@ -1,10 +1,7 @@
-import sys
 import time
-import traceback
 import string
 import random
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.client_groups.client_groups_page \
     import ClientGroupsPage
 from test_framework.web_admin_core.pages.clients_accounts.client_groups.client_groups_wizard import ClientGroupsWizard
@@ -62,47 +59,39 @@ class QAP_T4022(CommonTestCase):
         values_tab = ClientGroupsValuesSubWizard(self.web_driver_container)
         policies_tab = ClientGroupsDimensionsSubWizard(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page.set_name(self.name)
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
-            values_tab.set_name(self.new_name)
-            self.block_approval = random.choice(values_tab.get_all_block_approval_from_drop_menu())
-            values_tab.set_block_approval(self.block_approval)
-            self.confirmation_service = random.choice(values_tab.get_all_confirmation_service_from_drop_menu())
-            values_tab.set_confirmation_service(self.confirmation_service)
-            self.user_manager = random.choice(values_tab.get_all_user_manager_from_drop_menu())
-            values_tab.set_user_manager(self.user_manager)
-            values_tab.set_price_precision(self.price_precision)
+        main_page.set_name(self.name)
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
+        values_tab.set_name(self.new_name)
+        self.block_approval = random.choice(values_tab.get_all_block_approval_from_drop_menu())
+        values_tab.set_block_approval(self.block_approval)
+        self.confirmation_service = random.choice(values_tab.get_all_confirmation_service_from_drop_menu())
+        values_tab.set_confirmation_service(self.confirmation_service)
+        self.user_manager = random.choice(values_tab.get_all_user_manager_from_drop_menu())
+        values_tab.set_user_manager(self.user_manager)
+        values_tab.set_price_precision(self.price_precision)
 
-            self.default_execution_strategy = random.choice(
-                policies_tab.get_all_default_execution_strategy_from_drop_menu())
-            policies_tab.set_default_execution_strategy(self.default_execution_strategy)
-            wizard.click_on_save_changes()
+        self.default_execution_strategy = random.choice(
+            policies_tab.get_all_default_execution_strategy_from_drop_menu())
+        policies_tab.set_default_execution_strategy(self.default_execution_strategy)
+        wizard.click_on_save_changes()
 
-            main_page.set_name(self.new_name)
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
+        main_page.set_name(self.new_name)
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
 
-            actual_result = [values_tab.get_name(), values_tab.get_block_approval(),
-                             values_tab.get_confirmation_service(), values_tab.get_user_manager(),
-                             values_tab.get_price_precision(), policies_tab.get_default_execution_strategy()]
-            expected_result = [self.new_name, self.block_approval, self.confirmation_service, self.user_manager,
-                               str(self.price_precision), self.default_execution_strategy]
+        actual_result = [values_tab.get_name(), values_tab.get_block_approval(),
+                         values_tab.get_confirmation_service(), values_tab.get_user_manager(),
+                         values_tab.get_price_precision(), policies_tab.get_default_execution_strategy()]
+        expected_result = [self.new_name, self.block_approval, self.confirmation_service, self.user_manager,
+                           str(self.price_precision), self.default_execution_strategy]
 
-            self.verify("Changed data save correct", expected_result, actual_result)
+        self.verify("Changed data save correct", expected_result, actual_result)
 
-            wizard.click_on_save_changes()
+        wizard.click_on_save_changes()
 
-            self.post_condition()
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.post_condition()

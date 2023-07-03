@@ -1,10 +1,7 @@
-import sys
 import time
-import traceback
 import random
 import string
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_values_sub_wizard import ClientsValuesSubWizard
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_wizard import ClientsWizard
@@ -56,49 +53,41 @@ class QAP_T3349(CommonTestCase):
 
     def test_context(self):
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page = ClientsPage(self.web_driver_container)
-            main_page.set_name(self.name)
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
+        main_page = ClientsPage(self.web_driver_container)
+        main_page.set_name(self.name)
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
 
-            venues_tab = ClientsVenuesSubWizard(self.web_driver_container)
-            venues_tab.click_on_plus()
-            venues_tab.set_venue(self.venue)
-            venues_tab.set_venue_client_name(self.venue_client_name)
-            venues_tab.click_on_stamp_fee_exemption_checkbox()
-            venues_tab.click_on_levy_fee_exemption()
-            venues_tab.click_per_transac_fee_exemption()
-            venues_tab.click_on_checkmark()
+        venues_tab = ClientsVenuesSubWizard(self.web_driver_container)
+        venues_tab.click_on_plus()
+        venues_tab.set_venue(self.venue)
+        venues_tab.set_venue_client_name(self.venue_client_name)
+        venues_tab.click_on_stamp_fee_exemption_checkbox()
+        venues_tab.click_on_levy_fee_exemption()
+        venues_tab.click_per_transac_fee_exemption()
+        venues_tab.click_on_checkmark()
 
-            actual_result = [venues_tab.is_stamp_fee_exemption_selected(), venues_tab.is_levy_fee_exemption_selected(),
-                             venues_tab.is_per_transac_fee_exemption_selected()]
+        actual_result = [venues_tab.is_stamp_fee_exemption_selected(), venues_tab.is_levy_fee_exemption_selected(),
+                         venues_tab.is_per_transac_fee_exemption_selected()]
 
-            wizard = ClientsWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
-            time.sleep(1)
-            main_page.set_name(self.name)
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
+        wizard = ClientsWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
+        time.sleep(1)
+        main_page.set_name(self.name)
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
 
-            expected_result = [venues_tab.is_stamp_fee_exemption_selected(), venues_tab.is_levy_fee_exemption_selected(),
-                               venues_tab.is_per_transac_fee_exemption_selected()]
+        expected_result = [venues_tab.is_stamp_fee_exemption_selected(), venues_tab.is_levy_fee_exemption_selected(),
+                           venues_tab.is_per_transac_fee_exemption_selected()]
 
-            self.verify("All checkboxes has been save", actual_result, expected_result)
+        self.verify("All checkboxes has been save", actual_result, expected_result)
 
-            venues_tab.set_venue_filter(self.venue)
-            time.sleep(1)
-            venues_tab.click_on_delete()
+        venues_tab.set_venue_filter(self.venue)
+        time.sleep(1)
+        venues_tab.click_on_delete()
 
-            wizard.click_on_save_changes()
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        wizard.click_on_save_changes()

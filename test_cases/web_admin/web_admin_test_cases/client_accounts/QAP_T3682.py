@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_assignments_sub_wizard import \
     ClientsAssignmentsSubWizard
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
@@ -85,22 +82,16 @@ class QAP_T3682(CommonTestCase):
 
     def test_context(self):
         trade_confirm_sub_wizard = ClientsTradeConfirmSubWizard(self.web_driver_container)
-        try:
-            self.precondition()
-            actual_result = [trade_confirm_sub_wizard.get_trade_confirm_generation(),
-                             trade_confirm_sub_wizard.get_trade_confirm_preference(),
-                             trade_confirm_sub_wizard.get_net_gross_ind_type()]
-            trade_confirm_sub_wizard.click_on_edit()
-            time.sleep(1)
-            actual_result.append(trade_confirm_sub_wizard.get_email_address())
-            actual_result.append(trade_confirm_sub_wizard.get_recipient_types())
-            expected_result = [self.trade_confirm_generation, self.trade_confirm_preference, self.net_gross_ind_type,
-                               self.email_address, self.recipient_types]
 
-            self.verify("Edit entity saved correctly", expected_result, actual_result)
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.precondition()
+        actual_result = [trade_confirm_sub_wizard.get_trade_confirm_generation(),
+                         trade_confirm_sub_wizard.get_trade_confirm_preference(),
+                         trade_confirm_sub_wizard.get_net_gross_ind_type()]
+        trade_confirm_sub_wizard.click_on_edit()
+        time.sleep(1)
+        actual_result.append(trade_confirm_sub_wizard.get_email_address())
+        actual_result.append(trade_confirm_sub_wizard.get_recipient_types())
+        expected_result = [self.trade_confirm_generation, self.trade_confirm_preference, self.net_gross_ind_type,
+                           self.email_address, self.recipient_types]
+
+        self.verify("Edit entity saved correctly", expected_result, actual_result)

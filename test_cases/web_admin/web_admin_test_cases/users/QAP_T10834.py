@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.users.users.users_user_details_sub_wizard import \
@@ -15,7 +12,6 @@ from test_framework.web_admin_core.pages.users.users.users_permissions_sub_wizar
     UsersPermissionsSubWizard
 from test_framework.web_admin_core.pages.users.users.users_values_sub_wizard import UsersValuesSubWizard
 from test_framework.web_admin_core.pages.users.users.users_page import UsersPage
-from test_framework.web_admin_core.pages.users.users.users_wizard import UsersWizard
 
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from test_cases.web_admin.web_admin_test_cases.common_test_case import CommonTestCase
@@ -48,25 +44,15 @@ class QAP_T10834(CommonTestCase):
         values_tab = UsersValuesSubWizard(self.web_driver_container)
         details_tab = UsersUserDetailsSubWizard(self.web_driver_container)
         permission_tab = UsersPermissionsSubWizard(self.web_driver_container)
-        wizard = UsersWizard(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            users_page.click_on_new_button()
-            values_tab.set_user_id(self.user_id)
-            values_tab.set_ext_id_client(self.ext_id_client)
-            details_tab.set_mail(self.email)
-            assignments_tab.set_institution(self.institution)
-            permission_tab.set_permission_profile(self.permission_profile)
-            time.sleep(1)
-            self.verify("Institution still showing after adding permission",
-                        self.institution, assignments_tab.get_institution())
-
-        except Exception:
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            errors = f'"{[traceback.extract_tb(exc_traceback, limit=4)]}"'.replace("\\", "/")
-            basic_custom_actions.create_event(f"FAILED", self.test_case_id, status='FAILED',
-                                              body="[{\"type\": \"message\", \"data\":" + f"{errors}" + "}]")
-            traceback.print_tb(exc_traceback, limit=3, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        users_page.click_on_new_button()
+        values_tab.set_user_id(self.user_id)
+        values_tab.set_ext_id_client(self.ext_id_client)
+        details_tab.set_mail(self.email)
+        assignments_tab.set_institution(self.institution)
+        permission_tab.set_permission_profile(self.permission_profile)
+        time.sleep(1)
+        self.verify("Institution still showing after adding permission",
+                    self.institution, assignments_tab.get_institution())

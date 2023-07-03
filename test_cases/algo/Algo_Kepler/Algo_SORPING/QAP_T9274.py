@@ -182,7 +182,7 @@ class QAP_T9274(TestCase):
 
         # region Check that all child orders are eliminated
         self.fix_verifier_buy.set_case_id(bca.create_event("Check that all child orders are eliminated", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([er_eliminate_dma_1_qdl1_order_params, er_eliminate_dma_2_qdl1_order_params, er_eliminate_dma_3_qdl1_order_params, er_eliminate_dma_1_qdl2_order_params, er_eliminate_dma_2_qdl2_order_params, er_eliminate_dma_3_qdl2_order_params], [None, None, None, None, None, None], self.ToQuod, pre_filter=None)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([er_eliminate_dma_1_qdl1_order_params, er_eliminate_dma_2_qdl1_order_params, er_eliminate_dma_3_qdl1_order_params, er_eliminate_dma_1_qdl2_order_params, er_eliminate_dma_2_qdl2_order_params, er_eliminate_dma_3_qdl2_order_params], [None, None, None, None, None, None], self.ToQuod, pre_filter=None)
         # endregion
 
         # region check eliminate parent algo order

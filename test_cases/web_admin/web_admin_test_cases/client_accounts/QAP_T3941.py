@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_dimensions_subwizard import \
     AccountsDimensionsSubWizard
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_page import AccountsPage
@@ -67,37 +64,30 @@ class QAP_T3941(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
-        try:
-            self.precondition()
-            main_page = AccountsPage(self.web_driver_container)
-            wizard = AccountsWizard(self.web_driver_container)
-            dimensions_sub_wizard = AccountsDimensionsSubWizard(self.web_driver_container)
-            time.sleep(5)
-            dimensions_sub_wizard.click_delete_button()
-            time.sleep(2)
-            expected_pdf_content = [
-                self.ext_id_client,
-                self.client_id_source, ]
-            self.verify("Is PDF contains correctly values", True,
-                        wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
-            wizard.click_save_button()
-            time.sleep(2)
-            main_page.set_id(self.id)
-            time.sleep(2)
-            main_page.click_more_actions_button()
-            time.sleep(1)
-            main_page.click_edit_entity_button()
-            time.sleep(2)
-            dimensions_sub_wizard.filter_dimensions(venue_account=self.venue_account)
-            time.sleep(1)
+        self.precondition()
+        main_page = AccountsPage(self.web_driver_container)
+        wizard = AccountsWizard(self.web_driver_container)
+        dimensions_sub_wizard = AccountsDimensionsSubWizard(self.web_driver_container)
+        time.sleep(5)
+        dimensions_sub_wizard.click_delete_button()
+        time.sleep(2)
+        expected_pdf_content = [
+            self.ext_id_client,
+            self.client_id_source, ]
+        self.verify("Is PDF contains correctly values", True,
+                    wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
+        wizard.click_save_button()
+        time.sleep(2)
+        main_page.set_id(self.id)
+        time.sleep(2)
+        main_page.click_more_actions_button()
+        time.sleep(1)
+        main_page.click_edit_entity_button()
+        time.sleep(2)
+        dimensions_sub_wizard.filter_dimensions(venue_account=self.venue_account)
+        time.sleep(1)
 
-            try:
-                self.verify("Venue account deleted correctly", False, dimensions_sub_wizard.is_venue_account_present())
-            except Exception as e:
-                self.verify("Error Venue account not  deleted !", True, e.__class__.__name__)
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        try:
+            self.verify("Venue account deleted correctly", False, dimensions_sub_wizard.is_venue_account_present())
+        except Exception as e:
+            self.verify("Error Venue account not  deleted !", True, e.__class__.__name__)

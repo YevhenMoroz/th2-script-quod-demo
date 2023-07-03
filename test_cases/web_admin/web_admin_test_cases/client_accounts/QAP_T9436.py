@@ -1,10 +1,7 @@
-import sys
 import time
-import traceback
 import random
 import string
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.client_lists.main_page import ClientListsPage
 from test_framework.web_admin_core.pages.clients_accounts.client_lists.wizard import ClientListsWizard
 from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
@@ -71,13 +68,6 @@ class QAP_T9436(CommonTestCase):
             expected_result = self.clients
             actual_result = wizard.get_all_client_from_table()
             self.verify("Saved client names displayed and not empty.", sorted(expected_result), sorted(actual_result))
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
 
         finally:
             self.db_manager.my_db.execute(

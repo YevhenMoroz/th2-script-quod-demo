@@ -1,8 +1,5 @@
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.middle_office.fees.fees_page import FeesPage
 from test_framework.web_admin_core.pages.middle_office.fees.fees_dimensions_sub_wizard import FeesDimensionsSubWizard
@@ -30,24 +27,16 @@ class QAP_T3124(CommonTestCase):
 
     def test_context(self):
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page = FeesPage(self.web_driver_container)
-            main_page.click_on_new()
+        main_page = FeesPage(self.web_driver_container)
+        main_page.click_on_new()
 
-            values_tab = FeesValuesSubWizard(self.web_driver_container)
-            values_tab.set_misc_fee_type(self.misk_fee_type)
+        values_tab = FeesValuesSubWizard(self.web_driver_container)
+        values_tab.set_misc_fee_type(self.misk_fee_type)
 
-            dimensions_tab = FeesDimensionsSubWizard(self.web_driver_container)
-            available_route = dimensions_tab.get_all_route_from_drop_menu()
-            excepted_result = set(available_route)
+        dimensions_tab = FeesDimensionsSubWizard(self.web_driver_container)
+        available_route = dimensions_tab.get_all_route_from_drop_menu()
+        excepted_result = set(available_route)
 
-            self.verify("Value is present in list of routes and unique", len(available_route), len(excepted_result))
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("Value is present in list of routes and unique", len(available_route), len(excepted_result))

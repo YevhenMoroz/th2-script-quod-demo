@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.venues.venues_page import VenuesPage
 from test_framework.web_admin_core.pages.markets.venues.venues_values_sub_wizard import \
@@ -42,51 +39,43 @@ class QAP_T7876(CommonTestCase):
         side_menu.open_venues_page()
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            page = VenuesPage(self.web_driver_container)
-            page.click_on_new()
-            values_tab = VenuesValuesSubWizard(self.web_driver_container)
-            values_tab.set_name(self.name)
-            values_tab.set_id(self.id)
-            values_tab.set_type(self.type)
-            values_tab.set_client_venue_id(self.client_venue_id)
+        page = VenuesPage(self.web_driver_container)
+        page.click_on_new()
+        values_tab = VenuesValuesSubWizard(self.web_driver_container)
+        values_tab.set_name(self.name)
+        values_tab.set_id(self.id)
+        values_tab.set_type(self.type)
+        values_tab.set_client_venue_id(self.client_venue_id)
 
-            phase_session_tab = VenuesPhaseSessionSubWizard(self.web_driver_container)
-            phase_session_tab.click_on_plus_button()
-            phase_session_tab.set_trading_phase(self.trading_phase)
-            phase_session_tab.set_trading_session(self.trading_session)
-            phase_session_tab.click_on_support_min_quantity()
-            phase_session_tab.set_peg_price_type(self.peg_price_type)
-            phase_session_tab.click_on_plus_button_at_type_tif()
-            phase_session_tab.set_time_in_force(self.time_in_force)
-            phase_session_tab.set_ord_type(self.ord_type)
-            phase_session_tab.click_on_support_display_quantity()
-            phase_session_tab.click_on_checkmark_at_type_tif()
-            phase_session_tab.click_on_checkmark()
+        phase_session_tab = VenuesPhaseSessionSubWizard(self.web_driver_container)
+        phase_session_tab.click_on_plus_button()
+        phase_session_tab.set_trading_phase(self.trading_phase)
+        phase_session_tab.set_trading_session(self.trading_session)
+        phase_session_tab.click_on_support_min_quantity()
+        phase_session_tab.set_peg_price_type(self.peg_price_type)
+        phase_session_tab.click_on_plus_button_at_type_tif()
+        phase_session_tab.set_time_in_force(self.time_in_force)
+        phase_session_tab.set_ord_type(self.ord_type)
+        phase_session_tab.click_on_support_display_quantity()
+        phase_session_tab.click_on_checkmark_at_type_tif()
+        phase_session_tab.click_on_checkmark()
 
-            wizard = VenuesWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
-            page.set_name_filter(self.name)
-            time.sleep(1)
-            page.click_on_more_actions()
-            page.click_on_edit()
-            phase_session_tab.click_on_edit()
-            phase_session_tab.click_on_edit_at_type_tif()
+        wizard = VenuesWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
+        page.set_name_filter(self.name)
+        time.sleep(1)
+        page.click_on_more_actions()
+        page.click_on_edit()
+        phase_session_tab.click_on_edit()
+        phase_session_tab.click_on_edit_at_type_tif()
 
-            expected_result = [self.trading_phase, self.trading_session, True, self.peg_price_type, self.time_in_force,
-                               self.ord_type, True]
-            actual_result = [phase_session_tab.get_trading_phase(), phase_session_tab.get_trading_session(),
-                             phase_session_tab.is_support_min_quantity_selected(),
-                             [_.strip() for _ in phase_session_tab.get_peg_price_type().split(",")],
-                             phase_session_tab.get_time_in_force(), phase_session_tab.get_ord_type(),
-                             phase_session_tab.is_support_display_quantity_selected()]
-            self.verify("Phase Session saved data displayed", expected_result, actual_result)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        expected_result = [self.trading_phase, self.trading_session, True, self.peg_price_type, self.time_in_force,
+                           self.ord_type, True]
+        actual_result = [phase_session_tab.get_trading_phase(), phase_session_tab.get_trading_session(),
+                         phase_session_tab.is_support_min_quantity_selected(),
+                         [_.strip() for _ in phase_session_tab.get_peg_price_type().split(",")],
+                         phase_session_tab.get_time_in_force(), phase_session_tab.get_ord_type(),
+                         phase_session_tab.is_support_display_quantity_selected()]
+        self.verify("Phase Session saved data displayed", expected_result, actual_result)

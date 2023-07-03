@@ -3,18 +3,18 @@ class CommissionsConstants:
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//nb-icon[@icon='download-outline']//*[@data-name='download']"
     DOWNLOAD_PDF_IN_EDIT_WIZARD_XPATH ="//*[@data-name='download']"
-    SAVE_CHANGES_BUTTON_XPATH = "//*[text()='Save Changes']"
-    CLEAR_CHANGES_BUTTON_XPATH = "//*[text()='Clear Changes']"
+    SAVE_CHANGES_BUTTON_XPATH = "//*[normalize-space()='Save Changes']"
+    CLEAR_CHANGES_BUTTON_XPATH = "//*[normalize-space()='Clear Changes']"
     CLOSE_WIZARD_XPATH = "//*[@data-name='close']"
     OK_BUTTON_XPATH = '//*[text()="Ok" or text()="OK"]'
-    CANCEL_BUTTON_XPATH = '//*[text()="Cancel"]'
+    CANCEL_BUTTON_XPATH = '//*[normalize-space()="Cancel"]'
     REVERT_CHANGES_XPATH = "//*[text()='Revert Changes']"
     MORE_ACTIONS_XPATH = "//*[@data-name = 'more-vertical']"
     EDIT_XPATH = "//*[@data-name = 'edit']"
     CLONE_XPATH = "//*[@data-name = 'copy']"
     DELETE_XPATH = "//*[@data-name = 'trash-2']"
     PIN_ROW_XPATH = "//*[@nbtooltip ='Click to Pin Row']"
-    NEW_BUTTON_XPATH = '//*[text()="New"]'
+    NEW_BUTTON_XPATH = '//*[normalize-space()="New"]'
     USER_ICON_AT_RIGHT_CORNER = "//*[@class='control-item icon-btn context-menu-host']"
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
@@ -23,7 +23,7 @@ class CommissionsConstants:
     DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//nb-option | span'
 
     # main page
-    MAIN_PAGE_NAME_FILTER_XPATH = '//*[text()="Name"]//following::*[contains(@style, "left: 0px;")]//input'
+    MAIN_PAGE_NAME_FILTER_XPATH = '//*[@col-id="clCommissionName"]//following::input[@ref="eFloatingFilterText"][1]'
     MAIN_PAGE_DESCRIPTION_FILTER_XPATH = '//*[text()="Description"]//following::*[contains(@style, "left: 200px;")]//input'
     MAIN_PAGE_INSTR_TYPE_FILTER_XPATH = '//*[text()="Instr Type"]//following::*[contains(@style, "left: 1000px;")]//input'
     MAIN_PAGE_VENUE_FILTER_XPATH = '//*[text()="Venue"]//following::*[contains(@style, "left: 1200px;")]//input'
@@ -52,7 +52,7 @@ class CommissionsConstants:
     DIMENSIONS_TAB_COMMISSION_AMOUNT_TYPE_XPATH = '//*[@id="commissionAmountType"]'
     DIMENSIONS_TAB_COMMISSION_AMOUNT_SUB_TYPE_XPATH = '//*[@id="commissionAmountSubType"]'
     DIMENSIONS_TAB_COMMISSION_PROFILE_XPATH = '//*[@id="commissionProfile"]'
-    DIMENSIONS_TAB_MANAGE_COMMISSION_PROFILE_XPATH = '//*[text()="Manage"]'
+    DIMENSIONS_TAB_MANAGE_COMMISSION_PROFILE_XPATH = '//button[normalize-space()="Manage"]'
 
     # values tab
     VALUES_TAB_NAME_XPATH = '//*[@formcontrolname="clCommissionName"]'

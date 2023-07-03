@@ -1,11 +1,8 @@
 import random
 import string
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
-from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_values_sub_wizard import \
     ClientsValuesSubWizard
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_assignments_sub_wizard import \
@@ -38,29 +35,23 @@ class QAP_T8329(CommonTestCase):
         side_menu.open_clients_page()
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page = ClientsPage(self.web_driver_container)
-            main_page.click_on_new()
-            values_sub_wizard = ClientsValuesSubWizard(self.web_driver_container)
-            values_sub_wizard.set_id(self.id)
-            values_sub_wizard.set_name(self.name)
-            values_sub_wizard.set_disclose_exec(self.disclose_exec)
-            values_sub_wizard.set_ext_id_client(self.ext_id)
+        main_page = ClientsPage(self.web_driver_container)
+        main_page.click_on_new()
+        values_sub_wizard = ClientsValuesSubWizard(self.web_driver_container)
+        values_sub_wizard.set_id(self.id)
+        values_sub_wizard.set_name(self.name)
+        values_sub_wizard.set_disclose_exec(self.disclose_exec)
+        values_sub_wizard.set_ext_id_client(self.ext_id)
 
-            assignments_tab = ClientsAssignmentsSubWizard(self.web_driver_container)
-            self.user_manager = random.choice(assignments_tab.get_all_user_manager_from_drop_menu())
-            assignments_tab.set_user_manager(self.user_manager)
+        assignments_tab = ClientsAssignmentsSubWizard(self.web_driver_container)
+        self.user_manager = random.choice(assignments_tab.get_all_user_manager_from_drop_menu())
+        assignments_tab.set_user_manager(self.user_manager)
 
-            wizard = ClientsWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
-            time.sleep(1)
+        wizard = ClientsWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
+        time.sleep(1)
 
-            self.verify("Client is not save, error appears", True,
-                        wizard.is_incorrect_or_missing_value_message_displayed())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)
+        self.verify("Client is not save, error appears", True,
+                    wizard.is_incorrect_or_missing_value_message_displayed())

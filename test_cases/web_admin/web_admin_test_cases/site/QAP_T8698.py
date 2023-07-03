@@ -1,9 +1,7 @@
 import random
 import string
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.site.desks.desks_assignments_sub_wizard import DesksAssignmentsSubWizard
@@ -41,28 +39,22 @@ class QAP_T8698(CommonTestCase):
         wizard.click_on_save_changes()
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page = DesksPage(self.web_driver_container)
-            main_page.set_name_filter(self.desk_name)
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
+        main_page = DesksPage(self.web_driver_container)
+        main_page.set_name_filter(self.desk_name)
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
 
-            values_tab = DesksValuesSubWizard(self.web_driver_container)
-            values_tab.set_ctm_bic(self.ctm_bic)
+        values_tab = DesksValuesSubWizard(self.web_driver_container)
+        values_tab.set_ctm_bic(self.ctm_bic)
 
-            wizard = DesksWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
+        wizard = DesksWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
 
-            main_page.set_name_filter(self.desk_name)
-            time.sleep(1)
-            expected_result = [True, self.ctm_bic]
-            actual_result = [main_page.is_desk_enable_disable(), main_page.get_ctm_bic()]
-            self.verify("Desk is enabled and changes are saved", actual_result, expected_result)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)
+        main_page.set_name_filter(self.desk_name)
+        time.sleep(1)
+        expected_result = [True, self.ctm_bic]
+        actual_result = [main_page.is_desk_enable_disable(), main_page.get_ctm_bic()]
+        self.verify("Desk is enabled and changes are saved", actual_result, expected_result)

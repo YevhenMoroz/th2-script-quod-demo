@@ -204,7 +204,7 @@ class QAP_T4712(TestCase):
 
         # region Check there are no LIS Phase and no RFQ
         self.fix_verifier_buy.set_case_id(bca.create_event("Check there are no LIS Phase and no RFQ", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([self.dma_1_chix_order, self.dma_1_bats_order, self.dma_2_chix_order, self.dma_2_bats_order], key_parameters_list=[None, None, None, None], direction=self.FromQuod, pre_filter=self.pre_filter)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([self.dma_1_chix_order, self.dma_1_bats_order, self.dma_2_chix_order, self.dma_2_bats_order], key_parameters_list=[None, None, None, None], direction=self.FromQuod, pre_filter=self.pre_filter)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

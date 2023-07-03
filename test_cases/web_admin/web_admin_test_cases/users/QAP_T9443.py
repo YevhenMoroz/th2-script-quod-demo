@@ -1,8 +1,5 @@
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
@@ -27,26 +24,17 @@ class QAP_T9443(CommonTestCase):
         wizard = UsersWizard(self.web_driver_container)
         common_act = CommonPage(self.web_driver_container)
 
-        try:
-            login_page.login_to_web_admin(self.login, self.password)
-            side_menu.open_users_page()
-            users_page.click_on_more_actions()
-            users_page.click_on_edit_at_more_actions()
-            time.sleep(1)
-            common_act.click_on_user_icon()
-            common_act.click_on_logout()
-            time.sleep(2)
-            login_page.login_to_web_admin(self.login, self.password)
-            time.sleep(1)
-            wizard.click_on_user_header_link()
-            time.sleep(1)
-            self.verify("Opened the main page of users and and displayed entities",
-                        True, users_page.is_users_displayed())
-
-        except Exception:
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            errors = f'"{[traceback.extract_tb(exc_traceback, limit=4)]}"'.replace("\\", "/")
-            basic_custom_actions.create_event(f"FAILED", self.test_case_id, status='FAILED',
-                                              body="[{\"type\": \"message\", \"data\":" + f"{errors}" + "}]")
-            traceback.print_tb(exc_traceback, limit=3, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        login_page.login_to_web_admin(self.login, self.password)
+        side_menu.open_users_page()
+        users_page.click_on_more_actions()
+        users_page.click_on_edit_at_more_actions()
+        time.sleep(1)
+        common_act.click_on_user_icon()
+        common_act.click_on_logout()
+        time.sleep(2)
+        login_page.login_to_web_admin(self.login, self.password)
+        time.sleep(1)
+        wizard.click_on_user_header_link()
+        time.sleep(1)
+        self.verify("Opened the main page of users and and displayed entities",
+                    True, users_page.is_users_displayed())

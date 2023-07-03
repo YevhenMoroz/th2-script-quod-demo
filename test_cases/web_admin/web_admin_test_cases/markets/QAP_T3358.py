@@ -1,8 +1,5 @@
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.listings.listings_page import ListingsPage
 from test_framework.web_admin_core.pages.markets.listings.listings_wizard import ListingsWizard
@@ -40,17 +37,9 @@ class QAP_T3358(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
-        try:
-            self.precondition()
-            listing_page = ListingsPage(self.web_driver_container)
-            listing_page.search_listing_and_click_edit_btn("us")
-            listing_market_identifier_tab = ListingsMarketIdentifiersSubWizard(self.web_driver_container)
-            self.verify("\"Product Complex\" field set correctly", self.product_complex,
-                        listing_market_identifier_tab.get_product_complex())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.precondition()
+        listing_page = ListingsPage(self.web_driver_container)
+        listing_page.search_listing_and_click_edit_btn("us")
+        listing_market_identifier_tab = ListingsMarketIdentifiersSubWizard(self.web_driver_container)
+        self.verify("\"Product Complex\" field set correctly", self.product_complex,
+                    listing_market_identifier_tab.get_product_complex())

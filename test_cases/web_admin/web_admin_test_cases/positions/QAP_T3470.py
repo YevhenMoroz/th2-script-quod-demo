@@ -1,10 +1,6 @@
 import random
 import string
-import sys
 import time
-import traceback
-
-from custom import basic_custom_actions
 
 from test_framework.web_admin_core.pages.positions.cash_positions.main_page import *
 from test_framework.web_admin_core.pages.positions.cash_positions.wizards import *
@@ -72,24 +68,16 @@ class QAP_T3470(CommonTestCase):
         cash_positions_page = MainPage(self.web_driver_container)
         positions_tab = PositionsTab(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            cash_positions_page.click_on_transaction()
-            cash_positions_page.set_transaction_type(self.transaction_type)
-            cash_positions_page.set_amount(self.amount)
-            cash_positions_page.click_on_ok_button()
-            time.sleep(1)
-            cash_positions_page.click_on_more_actions()
-            cash_positions_page.click_on_edit()
-            time.sleep(1)
-            self.verify(f"Temporary cash = Temporary cash ({int(self.temporary_cash)})+10",
-                        "{:.2f}".format(int(self.temporary_cash) + int(self.amount)),
-                        positions_tab.get_temporary_cash())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        cash_positions_page.click_on_transaction()
+        cash_positions_page.set_transaction_type(self.transaction_type)
+        cash_positions_page.set_amount(self.amount)
+        cash_positions_page.click_on_ok_button()
+        time.sleep(1)
+        cash_positions_page.click_on_more_actions()
+        cash_positions_page.click_on_edit()
+        time.sleep(1)
+        self.verify(f"Temporary cash = Temporary cash ({int(self.temporary_cash)})+10",
+                    "{:.2f}".format(int(self.temporary_cash) + int(self.amount)),
+                    positions_tab.get_temporary_cash())

@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.middle_office.fees.fees_wizard import FeesWizard
 from test_framework.web_admin_core.pages.middle_office.fees.fees_commission_profile_points_sub_wizard import \
@@ -68,36 +65,28 @@ class QAP_T3794(CommonTestCase):
         commission_profile = FeesOrderFeeProfileSubWizard(self.web_driver_container)
         commission_profile_points = FeesCommissionProfilePointsSubWizard(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            fees_values_sub_wizard.click_on_manage_order_fee_profile()
-            commission_profile.set_commission_profile_name_filter(self.commission_profile_name)
-            time.sleep(1)
-            commission_profile.click_on_edit()
-            commission_profile_points.click_on_edit()
-            commission_profile_points.set_base_value(self.base_value[2])
-            commission_profile_points.set_min_commission(self.min_commission)
-            commission_profile_points.set_upper_limit(self.upper_limit)
-            commission_profile_points.set_slope(self.slope)
-            commission_profile_points.click_on_checkmark()
-            commission_profile.click_on_checkmark()
+        fees_values_sub_wizard.click_on_manage_order_fee_profile()
+        commission_profile.set_commission_profile_name_filter(self.commission_profile_name)
+        time.sleep(1)
+        commission_profile.click_on_edit()
+        commission_profile_points.click_on_edit()
+        commission_profile_points.set_base_value(self.base_value[2])
+        commission_profile_points.set_min_commission(self.min_commission)
+        commission_profile_points.set_upper_limit(self.upper_limit)
+        commission_profile_points.set_slope(self.slope)
+        commission_profile_points.click_on_checkmark()
+        commission_profile.click_on_checkmark()
 
-            commission_profile.set_commission_profile_name_filter(self.commission_profile_name)
-            time.sleep(1)
-            commission_profile.click_on_edit()
-            commission_profile_points.click_on_edit()
+        commission_profile.set_commission_profile_name_filter(self.commission_profile_name)
+        time.sleep(1)
+        commission_profile.click_on_edit()
+        commission_profile_points.click_on_edit()
 
-            expected_result = [self.base_value[2], self.min_commission, self.upper_limit, self.slope]
-            actual_result = [commission_profile_points.get_base_value(), commission_profile_points.get_min_commission(),
-                             commission_profile_points.get_upper_limit(), commission_profile_points.get_slope()]
+        expected_result = [self.base_value[2], self.min_commission, self.upper_limit, self.slope]
+        actual_result = [commission_profile_points.get_base_value(), commission_profile_points.get_min_commission(),
+                         commission_profile_points.get_upper_limit(), commission_profile_points.get_slope()]
 
-            self.verify("Commission Profile shows all the existing values/options in the Amend window",
-                        expected_result, actual_result)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("Commission Profile shows all the existing values/options in the Amend window",
+                    expected_result, actual_result)

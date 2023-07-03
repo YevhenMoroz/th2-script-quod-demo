@@ -1,10 +1,7 @@
-import sys
 import time
-import traceback
 import random
 import string
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_values_sub_wizard import ClientsValuesSubWizard
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_wizard import ClientsWizard
@@ -36,41 +33,33 @@ class QAP_T3813(CommonTestCase):
 
     def test_context(self):
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            client_page = ClientsPage(self.web_driver_container)
-            client_page.click_on_more_actions()
-            client_page.click_on_edit()
+        client_page = ClientsPage(self.web_driver_container)
+        client_page.click_on_more_actions()
+        client_page.click_on_edit()
 
-            values_tab = ClientsValuesSubWizard(self.web_driver_container)
-            self.client_name = values_tab.get_name()
+        values_tab = ClientsValuesSubWizard(self.web_driver_container)
+        self.client_name = values_tab.get_name()
 
-            external_source_tab = ClientsExternalSourcesSubWizard(self.web_driver_container)
-            external_source_tab.set_bo_field_1(self.client_bo_fields[0])
-            external_source_tab.set_bo_field_2(self.client_bo_fields[1])
-            external_source_tab.set_bo_field_3(self.client_bo_fields[2])
-            external_source_tab.set_bo_field_4(self.client_bo_fields[3])
-            external_source_tab.set_bo_field_5(self.client_bo_fields[4])
+        external_source_tab = ClientsExternalSourcesSubWizard(self.web_driver_container)
+        external_source_tab.set_bo_field_1(self.client_bo_fields[0])
+        external_source_tab.set_bo_field_2(self.client_bo_fields[1])
+        external_source_tab.set_bo_field_3(self.client_bo_fields[2])
+        external_source_tab.set_bo_field_4(self.client_bo_fields[3])
+        external_source_tab.set_bo_field_5(self.client_bo_fields[4])
 
-            wizard = ClientsWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
+        wizard = ClientsWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
 
-            client_page.set_name(self.client_name)
-            time.sleep(1)
-            client_page.click_on_more_actions()
-            client_page.click_on_edit()
+        client_page.set_name(self.client_name)
+        time.sleep(1)
+        client_page.click_on_more_actions()
+        client_page.click_on_edit()
 
-            expected_result = self.client_bo_fields
-            actual_result = [external_source_tab.get_bo_field_1(), external_source_tab.get_bo_field_2(),
-                             external_source_tab.get_bo_field_3(), external_source_tab.get_bo_field_4(),
-                             external_source_tab.get_bo_field_5()]
+        expected_result = self.client_bo_fields
+        actual_result = [external_source_tab.get_bo_field_1(), external_source_tab.get_bo_field_2(),
+                         external_source_tab.get_bo_field_3(), external_source_tab.get_bo_field_4(),
+                         external_source_tab.get_bo_field_5()]
 
-            self.verify("BO Fields saved correct", expected_result, actual_result)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("BO Fields saved correct", expected_result, actual_result)

@@ -1,10 +1,7 @@
-import sys
 import time
-import traceback
 import random
 import string
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_values_sub_wizard import ClientsValuesSubWizard
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_wizard import ClientsWizard
@@ -117,14 +114,6 @@ class QAP_T3466(CommonTestCase):
             actual_result = [main_page.get_venue_names().split(','), main_page.get_route_names()]
             self.verify("Venue Names and Route Names are displayed on the main page",
                         expected_result, actual_result)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
-
         finally:
             self.db_manager.my_db.execute(
                 "UPDATE QUODSETTINGS SET settingvalue = '500' WHERE settingkey = 'WEB_ADMIN_CACHE_THRESHOLD'")

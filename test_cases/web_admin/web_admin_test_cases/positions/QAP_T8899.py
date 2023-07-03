@@ -1,7 +1,3 @@
-import sys
-import traceback
-
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.positions.cash_positions.main_page import *
 from test_framework.web_admin_core.pages.positions.wash_book_rules.wash_book_rules_page import WashBookRulesPage
 from test_framework.web_admin_core.pages.positions.wash_books.wash_books_page import WashBookPage
@@ -30,26 +26,18 @@ class QAP_T8899(CommonTestCase):
         wash_book_rules_page = WashBookRulesPage(self.web_driver_container)
         wash_book_page = WashBookPage(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            position_tab_icon_attributes = side_menu.get_position_tab_icon_attributes()
-            side_menu.open_cash_positions_page()
-            time.sleep(1)
-            self.verify("Cash Positions main page has the same icon as parent tab",
-                        position_tab_icon_attributes, cash_positions_page.get_page_icon_attributes())
-            side_menu.open_washbook_rules_page()
-            time.sleep(1)
-            self.verify("Wash Book Rules main page has the same icon as parent tab",
-                        position_tab_icon_attributes, wash_book_rules_page.get_page_icon_attributes())
-            side_menu.open_washbook_page()
-            time.sleep(1)
-            self.verify("Wash Book Rules main page has the same icon as parent tab",
-                        position_tab_icon_attributes, wash_book_page.get_page_icon_attributes())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        position_tab_icon_attributes = side_menu.get_position_tab_icon_attributes()
+        side_menu.open_cash_positions_page()
+        time.sleep(1)
+        self.verify("Cash Positions main page has the same icon as parent tab",
+                    position_tab_icon_attributes, cash_positions_page.get_page_icon_attributes())
+        side_menu.open_washbook_rules_page()
+        time.sleep(1)
+        self.verify("Wash Book Rules main page has the same icon as parent tab",
+                    position_tab_icon_attributes, wash_book_rules_page.get_page_icon_attributes())
+        side_menu.open_washbook_page()
+        time.sleep(1)
+        self.verify("Wash Book Rules main page has the same icon as parent tab",
+                    position_tab_icon_attributes, wash_book_page.get_page_icon_attributes())

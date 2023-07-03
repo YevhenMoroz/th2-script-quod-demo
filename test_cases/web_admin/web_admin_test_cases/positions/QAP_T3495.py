@@ -1,9 +1,4 @@
-import sys
-import traceback
-
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.positions.cash_positions.main_page import *
-
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -31,18 +26,10 @@ class QAP_T3495(CommonTestCase):
     def test_context(self):
         cash_positions_page = MainPage(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            cash_positions_page.click_on_transaction()
-            transaction_type_options = cash_positions_page.get_all_transaction_type_from_drop_down()
+        cash_positions_page.click_on_transaction()
+        transaction_type_options = cash_positions_page.get_all_transaction_type_from_drop_down()
 
-            self.verify(f"These drop-down contains such values {self.transaction_type}",
-                        sorted(self.transaction_type), sorted(transaction_type_options))
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify(f"These drop-down contains such values {self.transaction_type}",
+                    sorted(self.transaction_type), sorted(transaction_type_options))

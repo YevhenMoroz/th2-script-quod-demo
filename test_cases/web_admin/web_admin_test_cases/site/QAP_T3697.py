@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.site.zones.zones_assignments_sub_wizard import ZonesAssignmentsSubWizard
@@ -48,51 +45,43 @@ class QAP_T3697(CommonTestCase):
         wizard = ZonesWizard(self.web_driver_container)
         values_sub_wizard = ZonesValuesSubWizard(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            page.set_name(self.name)
-            time.sleep(1)
-            page.click_on_more_actions()
-            page.click_on_edit()
-            values_sub_wizard.set_name(self.new_name)
-            assignments_sub_wizard.set_institution(self.new_institution)
-            wizard.click_on_save_changes()
-            page.set_name(self.new_name)
-            time.sleep(1)
-            self.verify("Zone has been change", True, page.is_searched_zone_found(self.new_name))
+        page.set_name(self.name)
+        time.sleep(1)
+        page.click_on_more_actions()
+        page.click_on_edit()
+        values_sub_wizard.set_name(self.new_name)
+        assignments_sub_wizard.set_institution(self.new_institution)
+        wizard.click_on_save_changes()
+        page.set_name(self.new_name)
+        time.sleep(1)
+        self.verify("Zone has been change", True, page.is_searched_zone_found(self.new_name))
 
-            page.click_on_more_actions()
-            page.click_on_clone()
-            values_sub_wizard.set_name(self.name)
-            assignments_sub_wizard.set_institution(self.institution)
-            wizard.click_on_save_changes()
-            page.set_name(self.name)
-            time.sleep(1)
-            self.verify("Zone has been clone", True, page.is_searched_zone_found(self.name))
+        page.click_on_more_actions()
+        page.click_on_clone()
+        values_sub_wizard.set_name(self.name)
+        assignments_sub_wizard.set_institution(self.institution)
+        wizard.click_on_save_changes()
+        page.set_name(self.name)
+        time.sleep(1)
+        self.verify("Zone has been clone", True, page.is_searched_zone_found(self.name))
 
-            page.click_on_enable_disable_button()
-            time.sleep(1)
-            self.verify("Zone disabled", False, page.is_zone_enable())
-            page.click_on_enable_disable_button()
-            time.sleep(1)
-            self.verify("Zone disabled", True, page.is_zone_enable())
+        page.click_on_enable_disable_button()
+        time.sleep(1)
+        self.verify("Zone disabled", False, page.is_zone_enable())
+        page.click_on_enable_disable_button()
+        time.sleep(1)
+        self.verify("Zone disabled", True, page.is_zone_enable())
 
-            expected_pdf_content = [self.name, self.institution]
-            page.click_on_more_actions()
-            self.verify("is pdf contains correctly values", True, page.click_download_pdf_entity_button_and_check_pdf(
-                            expected_pdf_content))
+        expected_pdf_content = [self.name, self.institution]
+        page.click_on_more_actions()
+        self.verify("is pdf contains correctly values", True, page.click_download_pdf_entity_button_and_check_pdf(
+                        expected_pdf_content))
 
-            common_act = CommonPage(self.web_driver_container)
-            common_act.click_on_info_error_message_pop_up()
-            csv_content = page.click_on_download_csv_button_and_get_content()
-            actual_result = self.name in csv_content[0].values()
+        common_act = CommonPage(self.web_driver_container)
+        common_act.click_on_info_error_message_pop_up()
+        csv_content = page.click_on_download_csv_button_and_get_content()
+        actual_result = self.name in csv_content[0].values()
 
-            self.verify("CSV file contains created and cloned entities", True, actual_result)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("CSV file contains created and cloned entities", True, actual_result)

@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.users.users.users_user_details_sub_wizard import \
@@ -76,55 +73,46 @@ class QAP_T8890(CommonTestCase):
         values_tab = UsersValuesSubWizard(self.web_driver_container)
         common_act = CommonPage(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            common_act.click_on_user_icon()
-            time.sleep(1)
-            common_act.click_on_change_password_in_user_menu()
+        common_act.click_on_user_icon()
+        time.sleep(1)
+        common_act.click_on_change_password_in_user_menu()
 
-            time.sleep(1)
-            expected_result = ["Pop-up appears: True",
-                               "Current Password field displayed: True",
-                               "New Password field displayed: True",
-                               "Confirm New Password field displayed: True"]
-            actual_result = [f"Pop-up appears: {common_act.is_change_password_pop_up_displayed()}",
-                             f"Current Password field displayed: {common_act.is_current_password_field_displayed_in_change_password_pop_up()}"
-                             f"New Password field displayed: {common_act.is_new_password_filed_displayed_in_change_password_pop_up()}",
-                             f"Confirm New Password field displayed: {common_act.is_confirm_new_password_field_displayed_in_change_password_pop_up()}"]
-            self.verify("Change Password pop-up appears", expected_result, actual_result)
+        time.sleep(1)
+        expected_result = ["Pop-up appears: True",
+                           "Current Password field displayed: True",
+                           "New Password field displayed: True",
+                           "Confirm New Password field displayed: True"]
+        actual_result = [f"Pop-up appears: {common_act.is_change_password_pop_up_displayed()}",
+                         f"Current Password field displayed: {common_act.is_current_password_field_displayed_in_change_password_pop_up()}"
+                         f"New Password field displayed: {common_act.is_new_password_filed_displayed_in_change_password_pop_up()}",
+                         f"Confirm New Password field displayed: {common_act.is_confirm_new_password_field_displayed_in_change_password_pop_up()}"]
+        self.verify("Change Password pop-up appears", expected_result, actual_result)
 
-            common_act.click_on_change_password_button_in_change_password_pop_up()
-            time.sleep(1)
-            self.verify("Incorrect or missing values appears",
-                        self.error_message[0], values_tab.get_error_message_text_in_change_password_pop_up())
-            common_act.set_current_password_in_change_password_pop_up(self.user_password)
-            common_act.set_new_password_in_change_password_pop_up(self.new_password)
-            common_act.set_confirm_new_password_in_change_password_pop_up(self.wrong_password)
-            common_act.click_on_change_password_button_in_change_password_pop_up()
-            time.sleep(1)
-            self.verify("New passwords don't match appears",
-                        self.error_message[1], values_tab.get_error_message_text_in_change_password_pop_up())
-            common_act.set_current_password_in_change_password_pop_up(self.ext_id_client)
-            common_act.set_new_password_in_change_password_pop_up(self.new_password)
-            common_act.set_confirm_new_password_in_change_password_pop_up(self.wrong_password)
-            common_act.click_on_change_password_button_in_change_password_pop_up()
-            time.sleep(1)
-            self.verify("New passwords don't match appears",
-                        self.error_message[1], values_tab.get_error_message_text_in_change_password_pop_up())
-            common_act.click_on_cancel_button()
-            time.sleep(1)
-            common_act.click_on_user_icon()
-            common_act.click_on_logout()
-            time.sleep(5)
-            login_page.login_to_web_admin(self.user_id, self.user_password)
-            time.sleep(1)
-            self.verify("Login with common password successful", True, common_act.is_user_icon_displayed())
-
-        except Exception:
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            errors = f'"{[traceback.extract_tb(exc_traceback, limit=4)]}"'.replace("\\", "/")
-            basic_custom_actions.create_event(f"FAILED", self.test_case_id, status='FAILED',
-                                              body="[{\"type\": \"message\", \"data\":" + f"{errors}" + "}]")
-            traceback.print_tb(exc_traceback, limit=3, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        common_act.click_on_change_password_button_in_change_password_pop_up()
+        time.sleep(1)
+        self.verify("Incorrect or missing values appears",
+                    self.error_message[0], values_tab.get_error_message_text_in_change_password_pop_up())
+        common_act.set_current_password_in_change_password_pop_up(self.user_password)
+        common_act.set_new_password_in_change_password_pop_up(self.new_password)
+        common_act.set_confirm_new_password_in_change_password_pop_up(self.wrong_password)
+        common_act.click_on_change_password_button_in_change_password_pop_up()
+        time.sleep(1)
+        self.verify("New passwords don't match appears",
+                    self.error_message[1], values_tab.get_error_message_text_in_change_password_pop_up())
+        common_act.set_current_password_in_change_password_pop_up(self.ext_id_client)
+        common_act.set_new_password_in_change_password_pop_up(self.new_password)
+        common_act.set_confirm_new_password_in_change_password_pop_up(self.wrong_password)
+        common_act.click_on_change_password_button_in_change_password_pop_up()
+        time.sleep(1)
+        self.verify("New passwords don't match appears",
+                    self.error_message[1], values_tab.get_error_message_text_in_change_password_pop_up())
+        common_act.click_on_cancel_button()
+        time.sleep(1)
+        common_act.click_on_user_icon()
+        common_act.click_on_logout()
+        time.sleep(5)
+        login_page.login_to_web_admin(self.user_id, self.user_password)
+        time.sleep(1)
+        self.verify("Login with common password successful", True, common_act.is_user_icon_displayed())

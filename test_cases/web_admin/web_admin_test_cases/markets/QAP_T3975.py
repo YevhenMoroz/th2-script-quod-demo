@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.listings.listings_attachment_sub_wizard import \
     ListingsAttachmentSubWizard
@@ -64,21 +61,13 @@ class QAP_T3975(CommonTestCase):
         time.sleep(1)
 
     def test_context(self):
+        self.precondition()
+        page = ListingsPage(self.web_driver_container)
         try:
-            self.precondition()
-            page = ListingsPage(self.web_driver_container)
-            try:
-                page.click_on_load_button()
-                time.sleep(2)
-                page.click_on_more_actions()
-                time.sleep(2)
-                self.verify("Listing created correctly", True, True)
-            except Exception as e:
-                self.verify("Listing NOT created", True, e.__class__.__name__)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+            page.click_on_load_button()
+            time.sleep(2)
+            page.click_on_more_actions()
+            time.sleep(2)
+            self.verify("Listing created correctly", True, True)
+        except Exception as e:
+            self.verify("Listing NOT created", True, e.__class__.__name__)

@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.users.users.users_user_details_sub_wizard import \
@@ -42,27 +39,18 @@ class QAP_T11585(CommonTestCase):
         details_tab = UsersUserDetailsSubWizard(self.web_driver_container)
         wizard = UsersWizard(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            users_page.set_user_id(self.login)
-            time.sleep(1)
-            users_page.click_on_more_actions()
-            users_page.click_on_clone_at_more_actions()
-            time.sleep(1)
-            values_tab.set_user_id(self.user_id)
-            values_tab.set_ext_id_client(self.ext_id_client)
-            values_tab.set_ext_id_venue("")
-            details_tab.set_mail(self.email)
-            wizard.click_on_save_changes()
-            users_page.set_user_id(self.user_id)
-            time.sleep(1)
-            self.verify("New user has been cloned", True, users_page.is_searched_user_found(self.user_id))
-
-        except Exception:
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            errors = f'"{[traceback.extract_tb(exc_traceback, limit=4)]}"'.replace("\\", "/")
-            basic_custom_actions.create_event(f"FAILED", self.test_case_id, status='FAILED',
-                                              body="[{\"type\": \"message\", \"data\":" + f"{errors}" + "}]")
-            traceback.print_tb(exc_traceback, limit=3, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        users_page.set_user_id(self.login)
+        time.sleep(1)
+        users_page.click_on_more_actions()
+        users_page.click_on_clone_at_more_actions()
+        time.sleep(1)
+        values_tab.set_user_id(self.user_id)
+        values_tab.set_ext_id_client(self.ext_id_client)
+        values_tab.set_ext_id_venue("")
+        details_tab.set_mail(self.email)
+        wizard.click_on_save_changes()
+        users_page.set_user_id(self.user_id)
+        time.sleep(1)
+        self.verify("New user has been cloned", True, users_page.is_searched_user_found(self.user_id))

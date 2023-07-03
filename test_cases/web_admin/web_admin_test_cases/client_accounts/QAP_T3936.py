@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_assignments_sub_wizard import \
     ClientsAssignmentsSubWizard
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
@@ -76,32 +73,24 @@ class QAP_T3936(CommonTestCase):
         main_page = ClientsPage(self.web_driver_container)
         wizard = ClientsWizard(self.web_driver_container)
         venues_sub_wizard = ClientsVenuesSubWizard(self.web_driver_container)
-        try:
-            self.precondition()
 
-            self.verify("PDF file don't contains venue", False,
-                        wizard.click_download_pdf_entity_button_and_check_pdf(self.venue))
-            self.verify("PDF file don't contains venue client", False,
-                        wizard.click_download_pdf_entity_button_and_check_pdf(self.venue_client_name))
-            self.verify("Is PDF  don't contains venue client account group name", False,
-                        wizard.click_download_pdf_entity_button_and_check_pdf(self.venue_client_account_group_name))
-            time.sleep(2)
-            wizard.click_on_save_changes()
-            time.sleep(2)
-            main_page.set_name(self.name)
-            time.sleep(2)
-            main_page.click_on_more_actions()
-            time.sleep(2)
-            main_page.click_on_edit()
-            time.sleep(2)
+        self.precondition()
 
-            self.verify("Venue is delete", False,
-                        venues_sub_wizard.is_venue_present())
+        self.verify("PDF file don't contains venue", False,
+                    wizard.click_download_pdf_entity_button_and_check_pdf(self.venue))
+        self.verify("PDF file don't contains venue client", False,
+                    wizard.click_download_pdf_entity_button_and_check_pdf(self.venue_client_name))
+        self.verify("Is PDF  don't contains venue client account group name", False,
+                    wizard.click_download_pdf_entity_button_and_check_pdf(self.venue_client_account_group_name))
+        time.sleep(2)
+        wizard.click_on_save_changes()
+        time.sleep(2)
+        main_page.set_name(self.name)
+        time.sleep(2)
+        main_page.click_on_more_actions()
+        time.sleep(2)
+        main_page.click_on_edit()
+        time.sleep(2)
 
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("Venue is delete", False,
+                    venues_sub_wizard.is_venue_present())

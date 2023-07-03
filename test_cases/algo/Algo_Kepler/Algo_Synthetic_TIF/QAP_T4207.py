@@ -158,7 +158,7 @@ class QAP_T4207(TestCase):
         # endregion
 
         # region Check child orders
-        self.fix_verifier_buy.check_fix_message_sequence([self.dma_1_order, self.dma_2_order], [self.key_params_NOS_child, self.key_params_NOS_child], self.FromQuod, pre_filter=self.pre_filter)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([self.dma_1_order, self.dma_2_order], [self.key_params_NOS_child, self.key_params_NOS_child], self.FromQuod, pre_filter=self.pre_filter)
         # endregion
 
         time.sleep(10)

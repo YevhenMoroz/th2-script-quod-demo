@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.venue_lists.main_page import VenueListsPage
 from test_framework.web_admin_core.pages.markets.venue_lists.wizard import VenuesListsWizard
@@ -69,36 +66,28 @@ class QAP_T3450(CommonTestCase):
         main_page = VenueListsPage(self.web_driver_container)
         wizard_page = VenuesListsWizard(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            wizard_page.set_name(self.new_name)
-            wizard_page.set_description(self.new_description)
-            wizard_page.set_venue_list(self.venue_list)
-            wizard_page.set_venue_list(self.new_venue_list)
-            wizard_page.click_on_save_changes()
-            time.sleep(2)
-            main_page.set_name_filter(self.new_name)
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            time.sleep(1)
-            main_page.click_on_edit()
-            time.sleep(2)
+        wizard_page.set_name(self.new_name)
+        wizard_page.set_description(self.new_description)
+        wizard_page.set_venue_list(self.venue_list)
+        wizard_page.set_venue_list(self.new_venue_list)
+        wizard_page.click_on_save_changes()
+        time.sleep(2)
+        main_page.set_name_filter(self.new_name)
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        time.sleep(1)
+        main_page.click_on_edit()
+        time.sleep(2)
 
-            actual_result = [wizard_page.get_name(), wizard_page.get_description()]
-            for i in wizard_page.get_venue_list().split(","):
-                actual_result.append(str(i).strip())
-            excepted_result = [self.new_name, self.new_description]
-            for i in self.new_venue_list:
-                excepted_result.append(i)
+        actual_result = [wizard_page.get_name(), wizard_page.get_description()]
+        for i in wizard_page.get_venue_list().split(","):
+            actual_result.append(str(i).strip())
+        excepted_result = [self.new_name, self.new_description]
+        for i in self.new_venue_list:
+            excepted_result.append(i)
 
-            self.verify("Values saved correctly", actual_result, excepted_result)
+        self.verify("Values saved correctly", actual_result, excepted_result)
 
-            self.post_conditions()
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.post_conditions()

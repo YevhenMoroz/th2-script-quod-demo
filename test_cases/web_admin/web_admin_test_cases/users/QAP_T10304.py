@@ -1,8 +1,5 @@
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
@@ -20,7 +17,6 @@ class QAP_T10304(CommonTestCase):
 
     def precondition(self):
         login_page = LoginPage(self.web_driver_container)
-
         login_page.login_to_web_admin(self.login, self.password)
 
     def test_context(self):
@@ -28,25 +24,16 @@ class QAP_T10304(CommonTestCase):
         common_page = CommonPage(self.web_driver_container)
         login_page = LoginPage(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            side_menu.open_users_page()
-            time.sleep(2)
-            current_url = common_page.get_current_page_url()
-            common_page.open_new_browser_tab_and_set_url(current_url)
-            common_page.click_on_user_icon()
-            common_page.click_on_logout()
-            time.sleep(2)
-            common_page.switch_to_browser_tab_or_window(0)
-            time.sleep(60)
+        side_menu.open_users_page()
+        time.sleep(2)
+        current_url = common_page.get_current_page_url()
+        common_page.open_new_browser_tab_and_set_url(current_url)
+        common_page.click_on_user_icon()
+        common_page.click_on_logout()
+        time.sleep(2)
+        common_page.switch_to_browser_tab_or_window(0)
+        time.sleep(60)
 
-            self.verify("Login page is opened", True, login_page.is_login_page_opened())
-
-        except Exception:
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            errors = f'"{[traceback.extract_tb(exc_traceback, limit=4)]}"'.replace("\\", "/")
-            basic_custom_actions.create_event("FAILED", self.test_case_id, status='FAILED',
-                                              body="[{\"type\": \"message\", \"data\":" + f"{errors}" + "}]")
-            traceback.print_tb(exc_traceback, limit=3, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("Login page is opened", True, login_page.is_login_page_opened())

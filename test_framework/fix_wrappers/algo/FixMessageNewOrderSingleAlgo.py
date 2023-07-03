@@ -37,6 +37,26 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
+    # set_DMA_ME_params
+    def set_DMA_ME_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            "Account": "CLIENT2",
+            'ClOrdID': '*',
+            'Currency': 'EUR',
+            'HandlInst': '1',
+            'OrderQty': '1000',
+            'OrdType': '2',
+            'Price': '20',
+            'Side': '1',
+            'Instrument': Instrument.BUI.value,
+            'TimeInForce': '0',
+            "TransactTime": datetime.utcnow().isoformat(),
+            'ExDestination': "XMCE",
+            'OrderCapacity': 'A'
+        }
+        super().change_parameters(base_parameters)
+        return self
+
     def set_DMA_RB_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": "XPAR_CLIENT2",
@@ -192,6 +212,12 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             }
         }
         super().change_parameters(base_parameters)
+        return self
+
+
+    def set_VWAP_buy_back_params(self):
+        self.set_VWAP_params()
+        self.update_fields_in_component('QuodFlatParameters', dict(Custom='Passive'))
         return self
 
     def set_VWAP_Redburn_params(self) -> FixMessageNewOrderSingle:
@@ -539,6 +565,31 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
+    def set_MOO_Would_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            'Account': self.get_data_set().get_account_by_name("account_1"),
+            'ClOrdID': basic_custom_actions.client_orderid(9),
+            "HandlInst": "2",
+            "Side": "1",
+            "OrderQty": "500000",
+            "TimeInForce": "0",
+            "OrdType": "2",
+            "TransactTime": datetime.utcnow().isoformat(),
+            "OrderCapacity": "A",
+            "Price": "30",
+            'Currency': self.get_data_set().get_currency_by_name("currency_1"),
+            'ExDestination': self.get_data_set().get_mic_by_name("mic_1"),
+            "Instrument": self.get_data_set().get_fix_instrument_by_name("instrument_1"),
+            "TargetStrategy": "1012",
+            'QuodFlatParameters': {
+                'WouldInAuction': '1',
+                'ExcludePricePoint2': '1',
+                'TriggerPriceRed': '29'
+            }
+        }
+        super().change_parameters(base_parameters)
+        return self
+
     def set_MOO_Scaling_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             "Account": self.get_data_set().get_account_by_name('account_1'),
@@ -711,6 +762,26 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
+    def set_Multilisting_with_algopolicy_params(self) -> FixMessageNewOrderSingle:
+        base_parameters = {
+            'Account': self.get_data_set().get_account_by_name('account_1'),
+            'ClOrdID': basic_custom_actions.client_orderid(9),
+            'HandlInst': '2',
+            'Side': '1',
+            'OrderQty': '500000',
+            'TimeInForce': '0',
+            'OrdType': '2',
+            'TransactTime': datetime.utcnow().isoformat(),
+            "OrderCapacity": "A",
+            "Price": "30",
+            "Currency": self.get_data_set().get_currency_by_name('currency_1'),
+            'Instrument': self.get_data_set().get_fix_instrument_by_name("instrument_1"),
+            'TargetStrategy': '1008',
+            'ClientAlgoPolicyID': 'QA_Auto_SORPING_Single_1',
+        }
+        super().change_parameters(base_parameters)
+        return self
+
     def set_Multilisting_RB_params(self) -> FixMessageNewOrderSingle:
         base_parameters = {
             'Account': self.get_data_set().get_account_by_name('account_1'),
@@ -798,7 +869,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
         super().change_parameters(base_parameters)
         return self
 
-    def set_Native_Iceberg_with_Peg_params(self):
+    def set_Single_listed_LitSOR_with_Iceberg_and_Peg_params(self):
         base_parameters = {
             'Account': "CLIENT1",
             'ClOrdID': '*',
@@ -812,6 +883,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             'Instrument': self.get_data_set().get_fix_instrument_by_name('instrument_2'),
             'OrderCapacity': 'A',
             'Currency': 'EUR',
+            'TargetStrategy': '1008',
             "DisplayInstruction": {
                 'DisplayQty': '15000'
             },
@@ -950,6 +1022,7 @@ class FixMessageNewOrderSingleAlgo(FixMessageNewOrderSingle):
             "ExDestination": "LISX",
             "AlgoCst01": "ioi",
             "QtyType": "0",
+            "IClOrdIdAO": "*"
         }
         super().change_parameters(base_parameters)
         return self

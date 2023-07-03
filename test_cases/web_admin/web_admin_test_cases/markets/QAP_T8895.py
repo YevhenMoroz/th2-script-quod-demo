@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 
 from test_framework.web_admin_core.pages.markets.venues.venues_page import VenuesPage
@@ -38,38 +35,30 @@ class QAP_T8895(CommonTestCase):
 
     def test_context(self):
 
+        self.precondition()
+
+        page = VenuesPage(self.web_driver_container)
+        page.click_on_new()
+        profiles_tab = VenuesProfilesSubWizard(self.web_driver_container)
+        profiles_tab.click_on_trading_phase_profile_manage_button()
+        trading_phase_profile_wizard = VenuesTradingPhaseProfileSubWizard(self.web_driver_container)
+        trading_phase_profile_wizard.click_on_edit()
+        name = trading_phase_profile_wizard.get_trading_phase_profile_desc()
+
+        trading_phase_profile_wizard.click_on_close()
+        trading_phase_profile_wizard.set_trading_phase_profile_desc_filter(name)
+        time.sleep(1)
+        trading_phase_profile_wizard.click_on_delete()
+        wizard = VenuesWizard(self.web_driver_container)
+        wizard.click_on_ok_button()
+        trading_phase_profile_wizard.set_trading_phase_profile_desc_filter(name)
+        time.sleep(1)
+        self.verify('Trading Phase Profile not displaying after delete', False,
+                    trading_phase_profile_wizard.is_searched_trading_phase_profile_found(name))
+
+        wizard.click_on_go_back_button()
         try:
-            self.precondition()
-
-            page = VenuesPage(self.web_driver_container)
-            page.click_on_new()
-            profiles_tab = VenuesProfilesSubWizard(self.web_driver_container)
-            profiles_tab.click_on_trading_phase_profile_manage_button()
-            trading_phase_profile_wizard = VenuesTradingPhaseProfileSubWizard(self.web_driver_container)
-            trading_phase_profile_wizard.click_on_edit()
-            name = trading_phase_profile_wizard.get_trading_phase_profile_desc()
-
-            trading_phase_profile_wizard.click_on_close()
-            trading_phase_profile_wizard.set_trading_phase_profile_desc_filter(name)
-            time.sleep(1)
-            trading_phase_profile_wizard.click_on_delete()
-            wizard = VenuesWizard(self.web_driver_container)
-            wizard.click_on_ok_button()
-            trading_phase_profile_wizard.set_trading_phase_profile_desc_filter(name)
-            time.sleep(1)
-            self.verify('Trading Phase Profile not displaying after delete', False,
-                        trading_phase_profile_wizard.is_searched_trading_phase_profile_found(name))
-
-            wizard.click_on_go_back_button()
-            try:
-                profiles_tab.set_trading_phase_profile(name)
-                self.verify('Delete Trading Phase Profile can be selected in the Venue wizard', True, False)
-            except:
-                self.verify('Trading Phase Profile not displaying  in the Venue wizard after delete', True, True)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+            profiles_tab.set_trading_phase_profile(name)
+            self.verify('Delete Trading Phase Profile can be selected in the Venue wizard', True, False)
+        except:
+            self.verify('Trading Phase Profile not displaying  in the Venue wizard after delete', True, True)

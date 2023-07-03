@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.venue_lists.main_page import VenueListsPage
 from test_framework.web_admin_core.pages.markets.venue_lists.wizard import VenuesListsWizard
@@ -37,24 +34,16 @@ class QAP_T3451(CommonTestCase):
         main_page = VenueListsPage(self.web_driver_container)
         wizard_page = VenuesListsWizard(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page.click_on_new()
-            time.sleep(2)
-            wizard_page.set_name(self.name)
-            wizard_page.set_description(self.description)
-            wizard_page.set_venue_list(self.venue_list)
-            wizard_page.click_on_save_changes()
-            time.sleep(2)
-            main_page.set_name_filter(self.name)
-            time.sleep(1)
+        main_page.click_on_new()
+        time.sleep(2)
+        wizard_page.set_name(self.name)
+        wizard_page.set_description(self.description)
+        wizard_page.set_venue_list(self.venue_list)
+        wizard_page.click_on_save_changes()
+        time.sleep(2)
+        main_page.set_name_filter(self.name)
+        time.sleep(1)
 
-            self.verify("New Venue Listing is create", True, main_page.is_searched_venue_list_found(self.name))
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("New Venue Listing is create", True, main_page.is_searched_venue_list_found(self.name))

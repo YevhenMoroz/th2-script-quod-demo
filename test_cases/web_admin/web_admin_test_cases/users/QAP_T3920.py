@@ -1,8 +1,5 @@
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.users.users.users_page import UsersPage
@@ -63,21 +60,13 @@ class QAP_T3920(CommonTestCase):
         side_menu.open_users_page()
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            users_page = UsersPage(self.web_driver_container)
-            users_page.set_user_id(self.user_for_block)
-            time.sleep(1)
-            self.verify("User is locked", "lock", users_page.get_lock_unlock_status())
-            time.sleep(1)
-            users_page.click_on_lock_unlock_button()
-            time.sleep(2)
-            self.verify("User is unlocked", "unlock", users_page.get_lock_unlock_status())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        users_page = UsersPage(self.web_driver_container)
+        users_page.set_user_id(self.user_for_block)
+        time.sleep(1)
+        self.verify("User is locked", "lock", users_page.get_lock_unlock_status())
+        time.sleep(1)
+        users_page.click_on_lock_unlock_button()
+        time.sleep(2)
+        self.verify("User is unlocked", "unlock", users_page.get_lock_unlock_status())

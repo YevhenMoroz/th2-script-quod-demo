@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.middle_office.commissions.commissions_dimensions_sub_wizard import \
     CommissionsDimensionsSubWizard
@@ -57,35 +54,27 @@ class QAP_T3905(CommonTestCase):
 
     def test_context(self):
 
+        self.precondition()
+        wizard = CommissionsWizard(self.web_driver_container)
+        main_page = CommissionsPage(self.web_driver_container)
+        expected_pdf_result = [self.name,
+                               self.description,
+                               self.instr_type,
+                               self.venue,
+                               self.side,
+                               self.execution_policy,
+                               self.client,
+                               self.commission_amount_type,
+                               self.commission_profile]
+        self.verify("Is pdf contains correctly values", True,
+                    wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_result))
+
+        wizard.click_on_save_changes()
+        time.sleep(2)
         try:
-            self.precondition()
-            wizard = CommissionsWizard(self.web_driver_container)
-            main_page = CommissionsPage(self.web_driver_container)
-            expected_pdf_result = [self.name,
-                                   self.description,
-                                   self.instr_type,
-                                   self.venue,
-                                   self.side,
-                                   self.execution_policy,
-                                   self.client,
-                                   self.commission_amount_type,
-                                   self.commission_profile]
-            self.verify("Is pdf contains correctly values", True,
-                        wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_result))
-
-            wizard.click_on_save_changes()
+            main_page.set_name(self.name)
             time.sleep(2)
-            try:
-                main_page.set_name(self.name)
-                time.sleep(2)
-                main_page.click_on_more_actions()
-                self.verify("Entity saved correctly", True, True)
-            except Exception as e:
-                self.verify("Entity did not save !!!Error!!!", True, e.__class__.__name__)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+            main_page.click_on_more_actions()
+            self.verify("Entity saved correctly", True, True)
+        except Exception as e:
+            self.verify("Entity did not save !!!Error!!!", True, e.__class__.__name__)

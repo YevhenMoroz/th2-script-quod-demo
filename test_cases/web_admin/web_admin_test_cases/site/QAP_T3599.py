@@ -1,8 +1,5 @@
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.site.institution.institution_assignments_sub_wizard import \
@@ -34,28 +31,20 @@ class QAP_T3599(CommonTestCase):
         side_menu.open_institutions_page()
 
     def test_context(self):
+        self.precondition()
         try:
-            self.precondition()
-            try:
-                institution_page = InstitutionsPage(self.web_driver_container)
-                institution_page.set_institution_name(self.institution_name)
-                time.sleep(1)
-                institution_page.click_on_more_actions()
-                institution_page.click_on_edit()
-                location_assignments_sub_wizard = InstitutionAssignmentsSubWizard(self.web_driver_container)
-                location_assignments_sub_wizard.click_on_zones(self.zone)
-                zone_assignments_sub_wizard = ZonesAssignmentsSubWizard(self.web_driver_container)
-                zone_assignments_sub_wizard.click_on_locations(self.location)
-                time.sleep(2)
-                locations_assignments_sub_wizard = LocationsAssignmentsSubWizard(self.web_driver_container)
-                locations_assignments_sub_wizard.click_on_desks(self.desk)
-                self.verify("All links works correctly", True, True)
-            except Exception as e:
-                self.verify("Some link not active", True, e.__class__.__name__)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+            institution_page = InstitutionsPage(self.web_driver_container)
+            institution_page.set_institution_name(self.institution_name)
+            time.sleep(1)
+            institution_page.click_on_more_actions()
+            institution_page.click_on_edit()
+            location_assignments_sub_wizard = InstitutionAssignmentsSubWizard(self.web_driver_container)
+            location_assignments_sub_wizard.click_on_zones(self.zone)
+            zone_assignments_sub_wizard = ZonesAssignmentsSubWizard(self.web_driver_container)
+            zone_assignments_sub_wizard.click_on_locations(self.location)
+            time.sleep(2)
+            locations_assignments_sub_wizard = LocationsAssignmentsSubWizard(self.web_driver_container)
+            locations_assignments_sub_wizard.click_on_desks(self.desk)
+            self.verify("All links works correctly", True, True)
+        except Exception as e:
+            self.verify("Some link not active", True, e.__class__.__name__)

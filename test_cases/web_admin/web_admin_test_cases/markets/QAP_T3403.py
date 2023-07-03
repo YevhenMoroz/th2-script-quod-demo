@@ -1,10 +1,7 @@
-import sys
 import time
-import traceback
 import random
 import string
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.listings.listings_page import ListingsPage
 from test_framework.web_admin_core.pages.markets.listings.listings_wizard import ListingsWizard
@@ -58,36 +55,28 @@ class QAP_T3403(CommonTestCase):
         listing_wizard.click_on_save_changes()
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            listing_page = ListingsPage(self.web_driver_container)
-            listing_page.search_listing_and_click_edit_btn(self.lookup_symbol)
-            time.sleep(2)
-            listing_wizard_features_tab = ListingsFeatureSubWizard(self.web_driver_container)
-            listing_wizard_features_tab.set_contract_multiplier(self.contract_multiplier_value)
-            time.sleep(1)
-            listing_wizard = ListingsWizard(self.web_driver_container)
-            listing_wizard.click_on_save_changes()
-            time.sleep(2)
-            listing_page.search_listing_and_click_edit_btn(self.lookup_symbol)
-            time.sleep(2)
-            self.verify("Contract Multiplier field is set correctly",
-                        self.contract_multiplier_value, listing_wizard_features_tab.get_contract_multiplier())
+        listing_page = ListingsPage(self.web_driver_container)
+        listing_page.search_listing_and_click_edit_btn(self.lookup_symbol)
+        time.sleep(2)
+        listing_wizard_features_tab = ListingsFeatureSubWizard(self.web_driver_container)
+        listing_wizard_features_tab.set_contract_multiplier(self.contract_multiplier_value)
+        time.sleep(1)
+        listing_wizard = ListingsWizard(self.web_driver_container)
+        listing_wizard.click_on_save_changes()
+        time.sleep(2)
+        listing_page.search_listing_and_click_edit_btn(self.lookup_symbol)
+        time.sleep(2)
+        self.verify("Contract Multiplier field is set correctly",
+                    self.contract_multiplier_value, listing_wizard_features_tab.get_contract_multiplier())
 
-            time.sleep(1)
-            listing_wizard_features_tab.set_contract_multiplier(" ")
-            time.sleep(1)
-            listing_wizard.click_on_save_changes()
-            time.sleep(2)
-            listing_page.search_listing_and_click_edit_btn(self.lookup_symbol)
-            time.sleep(2)
-            self.verify("Contract Multiplier field is empty",
-                        True, listing_wizard_features_tab.is_contract_multiplier_empty())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        time.sleep(1)
+        listing_wizard_features_tab.set_contract_multiplier(" ")
+        time.sleep(1)
+        listing_wizard.click_on_save_changes()
+        time.sleep(2)
+        listing_page.search_listing_and_click_edit_btn(self.lookup_symbol)
+        time.sleep(2)
+        self.verify("Contract Multiplier field is empty",
+                    True, listing_wizard_features_tab.is_contract_multiplier_empty())

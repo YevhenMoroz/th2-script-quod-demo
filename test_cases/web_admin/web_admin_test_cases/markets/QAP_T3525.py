@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.listings.listings_attachment_sub_wizard import \
     ListingsAttachmentSubWizard
@@ -69,37 +66,29 @@ class QAP_T3525(CommonTestCase):
 
     def test_context(self):
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page = ListingsPage(self.web_driver_container)
-            main_page.load_listing_from_global_filter(self.lookup_symbol)
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
+        main_page = ListingsPage(self.web_driver_container)
+        main_page.load_listing_from_global_filter(self.lookup_symbol)
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
 
-            status_tab = ListingsStatusSubWizard(self.web_driver_container)
-            status_tab.set_trading_phase(self.trading_phase)
-            status_tab.set_trading_status(self.trading_status)
-            status_tab.set_trading_session(self.trading_session)
-            status_tab.set_external_trading_status(self.external_trading_status)
-            wizard = ListingsWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
+        status_tab = ListingsStatusSubWizard(self.web_driver_container)
+        status_tab.set_trading_phase(self.trading_phase)
+        status_tab.set_trading_status(self.trading_status)
+        status_tab.set_trading_session(self.trading_session)
+        status_tab.set_external_trading_status(self.external_trading_status)
+        wizard = ListingsWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
 
-            main_page.load_listing_from_global_filter(self.lookup_symbol)
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
+        main_page.load_listing_from_global_filter(self.lookup_symbol)
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
 
-            expected_result = [self.trading_phase, self.trading_status, self.trading_session,
-                               self.external_trading_status]
-            actual_result = [status_tab.get_trading_phase(), status_tab.get_trading_status(),
-                             status_tab.get_trading_session(), status_tab.get_external_trading_status()]
-            self.verify("Status tab displayed saved data after save", expected_result, actual_result)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        expected_result = [self.trading_phase, self.trading_status, self.trading_session,
+                           self.external_trading_status]
+        actual_result = [status_tab.get_trading_phase(), status_tab.get_trading_status(),
+                         status_tab.get_trading_session(), status_tab.get_external_trading_status()]
+        self.verify("Status tab displayed saved data after save", expected_result, actual_result)
