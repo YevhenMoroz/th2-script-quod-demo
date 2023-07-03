@@ -62,12 +62,13 @@ class QAP_T2402(TestCase):
         self.bands_gbp_usd = ["1000000"]
         self.time_client_1 = (datetime.now() - timedelta(hours=4))
         self.time_client_2 = (datetime.now() + timedelta(hours=4))
-        self.timestamp_client_1 = str(datetime.timestamp(self.time_client_1)).replace(".", "")[:13]
-        self.timestamp_client_2 = str(datetime.timestamp(self.time_client_2)).replace(".", "")[:13]
+        self.timestamp_client_1 = self.time_client_1.isoformat().rsplit("T")[1].rsplit(".")[0]
+        self.timestamp_client_2 = self.time_client_2.isoformat().rsplit("T")[1].rsplit(".")[0]
         self.time_instr_1 = (datetime.now() - timedelta(hours=2))
         self.time_instr_2 = (datetime.now() - timedelta(hours=1))
-        self.timestamp_instr_1 = str(datetime.timestamp(self.time_instr_1)).replace(".", "")[:13]
-        self.timestamp_instr_2 = str(datetime.timestamp(self.time_instr_2)).replace(".", "")[:13]
+        self.timestamp_instr_1 = self.time_instr_1.isoformat().rsplit("T")[1].rsplit(".")[0]
+        self.timestamp_instr_2 = self.time_instr_2.isoformat().rsplit("T")[1].rsplit(".")[0]
+
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):

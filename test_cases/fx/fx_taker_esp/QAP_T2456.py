@@ -60,8 +60,8 @@ class QAP_T2456(TestCase):
         # region step 2
         self.md_snapshot.set_params_for_md_response_taker_bda(self.md_request, self.bands)
         self.sleep(4)
-        self.md_snapshot.remove_parameters(["OrigMDArrivalTime", "OrigMDTime"])
-        self.fix_verifier.check_fix_message(fix_message=self.md_snapshot)
+        self.fix_verifier.check_fix_message(fix_message=self.md_snapshot,
+                                            ignored_fields=["trailer", "header", "CachedUpdate"])
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

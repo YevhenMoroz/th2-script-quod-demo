@@ -5,6 +5,7 @@ from test_cases.fx.fx_wrapper.common_tools import random_qty
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.environments.full_environment import FullEnvironment
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
@@ -17,6 +18,7 @@ from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.fx.OrderQuoteFX import OrderQuoteFX
 from test_framework.java_api_wrappers.fx.QuoteRequestActionRequestFX import QuoteRequestActionRequestFX
 from test_framework.java_api_wrappers.fx.TradeEntryRequestFX import TradeEntryRequestFX
+from test_framework.java_api_wrappers.java_api_constants import JavaApiFields
 
 
 class QAP_T9406(TestCase):
@@ -58,10 +60,12 @@ class QAP_T9406(TestCase):
         # region Step 1
         self.trade_request.set_default_params()
         exec_misc = self.trade_request.get_parameters()["TradeEntryRequestBlock"]["ExecMiscBlock"]["ExecMisc0"]
-        response: list = self.java_api_manager.send_message_and_receive_response(self.trade_request)[0].get_parameters()
+        self.java_api_manager.send_message_and_receive_response(self.trade_request)
+        response = self.java_api_manager.get_first_message(ORSMessageType.ExecutionReport.value,
+                                                           "ExecMiscBlock").get_parameter(
+                                                           JavaApiFields.ExecutionReportBlock.value)
         self.verifier.set_parent_id(self.test_id)
         self.verifier.set_event_name("Check ExecMisc")
-        self.verifier.compare_values("ExecMisc", exec_misc, response["ExecutionReportBlock"]["ExecMiscBlock"]["ExecMisc0"])
+        self.verifier.compare_values("ExecMisc", exec_misc, response["ExecMiscBlock"]["ExecMisc0"])
         self.verifier.verify()
         # endregion
-

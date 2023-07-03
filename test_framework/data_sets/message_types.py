@@ -156,6 +156,8 @@ class ORSMessageType(Enum):
     BenchmarkNotification = 'Order_BenchmarkNotification'
     CrossAnnouncementReply = 'Order_CrossAnnouncementReply'
     CrossAnnouncement = 'Order_CrossAnnouncement'
+    OrderValidate = 'Order_OrderValidate'
+    OrderValidateReply = 'Order_OrderValidateReply'
 
 
 class TradingRestApiMessageType(Enum):
@@ -212,6 +214,7 @@ class ResAPIMessageType(Enum):
     DeleteOrderCompression = "DeleteOrderCompression"
     FindAllOrderPricing = "FindAllOrderPricing"
     FindAllOrderCompression = "FindAllOrderCompression"
+    ManageListingCounterpart = "ManageListingCounterpart"
 
 
 class PKSMessageType(Enum):

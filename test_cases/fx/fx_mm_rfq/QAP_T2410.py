@@ -46,8 +46,8 @@ class QAP_T2410(TestCase):
         self.current_time = datetime.now().strftime("%H:%M:%S.%f")
         self.minus_2 = (datetime.now() - timedelta(hours=2))
         self.minus_1 = (datetime.now() - timedelta(hours=1))
-        self.timestamp_2 = str(datetime.timestamp(self.minus_2)).replace(".", "")[:13]
-        self.timestamp_1 = str(datetime.timestamp(self.minus_1)).replace(".", "")[:13]
+        self.timestamp_client_1 = self.minus_2.isoformat().rsplit("T")[1].rsplit(".")[0]
+        self.timestamp_client_2 = self.minus_1.isoformat().rsplit("T")[1].rsplit(".")[0]
         self.expected_error_id = "11900"
         self.validation_text = "Check error ID"
         # self.text = f"11900 Validation failed: current time ({self.current_time}) > end time ({self.minus_1})"

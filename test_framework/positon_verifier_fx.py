@@ -152,3 +152,9 @@ class PositionVerifier:
                     else:
                         return pos_amt
 
+    def count_position_change(self, old_position, new_position, expected_change, account):
+        actual_change = int(new_position) - int(old_position)
+        self.verifier.set_event_name("Check Position Change of {}".format(account))
+        self.verifier.compare_values("Compare Base", str(expected_change), str(actual_change))
+        self.verifier.verify()
+        self.verifier = Verifier(self.test_id)

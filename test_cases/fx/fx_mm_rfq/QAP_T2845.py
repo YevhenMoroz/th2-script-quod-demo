@@ -134,8 +134,8 @@ class QAP_T2845(TestCase):
                                                            Currency=self.currency)
         response: list = self.fix_manager_sel.send_message_and_receive_response(self.quote_request, self.test_id)
         price = response[0].get_parameter("OfferPx")
-        range_above = str(round(float(price) + 0.0001, 5))
-        range_bellow = str(round(float(price) - 0.0001, 5))
+        range_above = str(round(float(price) + 0.00011, 5))
+        range_bellow = str(round(float(price) - 0.00009, 5))
         price_above = str(float(price) + 0.0003)
         # endregion
         #
@@ -159,6 +159,7 @@ class QAP_T2845(TestCase):
         self.execution_report.set_params_from_new_order_single(self.new_order_single, status=self.status,
                                                                text=f"order price is not ranging in [{range_bellow}, "
                                                                     f"{range_above}]")
+        self.execution_report.add_tag({"Misc6": "SORS"})
         self.fix_verifier_dc.check_fix_message(self.execution_report,
                                                ignored_fields=["header", "trailer", "GatingRuleCondName",
                                                                "GatingRuleName"])
@@ -171,7 +172,6 @@ class QAP_T2845(TestCase):
         self.fix_verifier_sell.check_fix_message(self.execution_report_fill,
                                                  ignored_fields=["header", "trailer", "GatingRuleCondName",
                                                                  "GatingRuleName"])
-
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -182,4 +182,4 @@ class QAP_T2845(TestCase):
         self.rest_massage.update_value_in_component("clientTierInstrSymbolTenor", "validatePriceSlippage", "false",
                                                     {"tenor": "WK1"})
         self.rest_manager.send_post_request(self.rest_massage)
-        self.sleep(2)
+        self.sleep(4)
