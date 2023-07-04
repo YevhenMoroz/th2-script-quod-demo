@@ -1,6 +1,8 @@
 from test_framework.db_wrapper.db_connector import DBConnector
 from test_framework.environments.data_base_environment import DataBaseEnvironment
-from test_framework.environments.full_environment import FullEnvironment
+import logging
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 class DBManager:

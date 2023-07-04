@@ -26,7 +26,10 @@ from th2_grpc_sim_fix_quod.sim_pb2 import TemplateQuodNOSRule, TemplateQuodOCRRR
     TemplateOrderCancelRequestWithQty, TemplateNewOrdSingleRQFRejected, TemplateNewOrdSingleExecutionReportOnlyPending, \
     TemplateExternalExecutionReport, TemplateNewOrdSingleExecutionReportTradeByOrdQtyRBCustom, \
     TemplateNOSExecutionReportTradeWithTradeDateFIXStandard, TemplateNewOrdSingleIOCTradeOnFullQty, \
-    TemplateNewOrdSingleExecutionReportDoneForDay, TemplateNewOrdSingleIOCTradeByOrderQty, TemplateFXOrderReject, TemplateNewOrdSingleTradeOnFullQty, TemplateNewOrdSingleExecutionReportAll, TemplateNewOrdSingleExecutionReportIOCAll, TemplateMarketDataRequestWithTimeout
+    TemplateNewOrdSingleExecutionReportDoneForDay, TemplateNewOrdSingleIOCTradeByOrderQty, TemplateFXOrderReject, \
+    TemplateNewOrdSingleTradeOnFullQty, TemplateNewOrdSingleExecutionReportAll, \
+    TemplateNewOrdSingleExecutionReportIOCAll, TemplateMarketDataRequestWithTimeout, \
+    TemplateNewOrdSingleExecutionReportRejectFIXStandard
 
 from th2_grpc_sim.sim_pb2 import RuleID
 from th2_grpc_common.common_pb2 import ConnectionID
@@ -441,6 +444,14 @@ class RuleManager:
     def add_NewOrderSingle_ExecutionReport_Reject(self, session: str, account: str, ex_destination: str, price: float):
         return self.sim.createNewOrdSingleExecutionReportReject(
             request=TemplateNewOrdSingleExecutionReportReject(connection_id=ConnectionID(session_alias=session),
+                                                              account=account,
+                                                              exdestination=ex_destination,
+                                                              price=price
+                                                              ))
+
+    def add_NewOrderSingle_ExecutionReport_Reject_FIXStandard(self, session: str, account: str, ex_destination: str, price: float):
+        return self.sim.createNewOrdSingleExecutionReportRejectFIXStandard(
+            request=TemplateNewOrdSingleExecutionReportRejectFIXStandard(connection_id=ConnectionID(session_alias=session),
                                                               account=account,
                                                               exdestination=ex_destination,
                                                               price=price

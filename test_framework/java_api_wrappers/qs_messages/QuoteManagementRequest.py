@@ -14,8 +14,6 @@ class QuoteManagementRequest(JavaApiMessage):
             'REPLY_SUBJECT': 'QUOD.FE.QS',
             'QuoteManagementRequestBlock': {
                 'QuoteManagementList': {"QuoteManagementBlock": [{
-                    "OfferPx": "10",
-                    "BidPx": "10",
                     "CDOrdFreeNotes": "MMM",
                     "ListingID": listing_id,
 
