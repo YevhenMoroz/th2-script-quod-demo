@@ -101,7 +101,10 @@ class PositionVerifier:
     # TODO Add new fields to check
 
     def get_amount(self, report, position_type: PosAmtType):
-        pos_amount_date = report[1].get_parameters()
+        if isinstance(report, list):
+            pos_amount_date = report[1].get_parameters()
+        else:
+            pos_amount_date = report.get_parameters()
         for item in pos_amount_date["PositionAmountData"]:
             if item.get("PosAmtType") == position_type.value:
                 pos_amt = item.get("PosAmt")
