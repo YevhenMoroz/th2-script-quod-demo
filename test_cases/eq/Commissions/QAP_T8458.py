@@ -35,8 +35,6 @@ logger.setLevel(logging.INFO)
 seconds, nanos = timestamps()
 
 
-
-
 class QAP_T8458(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
@@ -162,7 +160,7 @@ class QAP_T8458(TestCase):
         # endregion
 
         # region check that execution doesn`t have Agent Fee (step 4)
-        misc_fee_rate = '10'
+        misc_fee_rate = '5'
         execution_report[JavaApiFields.MiscFeesList.value][JavaApiFields.MiscFeesBlock.value][0][
             JavaApiFields.MiscFeeAmt.value] = str(round(float(
             execution_report[JavaApiFields.MiscFeesList.value][JavaApiFields.MiscFeesBlock.value][0][
@@ -269,13 +267,13 @@ class QAP_T8458(TestCase):
         # endregion
 
         # region step 8
-        # check that execution report doesn`t have Agent fee(part of step 8)
+        # check that execution report  has Agent fee(part of step 8)
         params_of_execution_report_message = {
             "ExecType": "B",
             "OrdStatus": "B",
             "ClOrdID": cl_ord_id,
             'NoMiscFees': [
-                {'MiscFeeAmt': str(int(misc_fee_amount)),
+                {'MiscFeeAmt': str(float(misc_fee_amount)),
                  'MiscFeeCurr': self.currency_post_trade,
                  'MiscFeeType': '12'}]
         }

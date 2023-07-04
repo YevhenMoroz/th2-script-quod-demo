@@ -17,7 +17,6 @@ class MassConfirmationOMS(MassConfirmation):
 
     def __init__(self, parameters: dict = None):
         super().__init__(parameters)
-        super().change_parameters(parameters)
         self.__list_of_main_information_of_confirmation_instance = []
         self.__list_of_full_information_confirmation_instance = []
 
