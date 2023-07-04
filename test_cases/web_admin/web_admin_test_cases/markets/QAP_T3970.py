@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.routes.main_page import RoutesPage
 from test_framework.web_admin_core.pages.markets.routes.wizard import RoutesWizard
@@ -50,26 +47,19 @@ class QAP_T3970(CommonTestCase):
         time.sleep(1)
 
     def test_context(self):
-        try:
-            self.precondition()
-            routes_main_menu = RoutesPage(self.web_driver_container)
-            routes_wizard = RoutesWizard(self.web_driver_container)
-            self.verify("Name after edited at main menu", self.new_name, routes_main_menu.get_name_value())
-            routes_main_menu.click_on_more_actions()
-            time.sleep(1)
-            routes_main_menu.click_on_edit_at_more_actions()
-            self.verify("Name after edited at values tab", self.new_name, routes_wizard.get_name_value_at_values_tab())
-            routes_wizard.click_on_save_changes()
-            routes_main_menu.set_name_at_filter(self.new_name)
-            time.sleep(1)
-            routes_main_menu.click_on_more_actions()
-            time.sleep(1)
-            routes_main_menu.click_on_delete_at_more_actions()
-            time.sleep(1)
-            routes_main_menu.click_on_ok()
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.precondition()
+        routes_main_menu = RoutesPage(self.web_driver_container)
+        routes_wizard = RoutesWizard(self.web_driver_container)
+        self.verify("Name after edited at main menu", self.new_name, routes_main_menu.get_name_value())
+        routes_main_menu.click_on_more_actions()
+        time.sleep(1)
+        routes_main_menu.click_on_edit_at_more_actions()
+        self.verify("Name after edited at values tab", self.new_name, routes_wizard.get_name_value_at_values_tab())
+        routes_wizard.click_on_save_changes()
+        routes_main_menu.set_name_at_filter(self.new_name)
+        time.sleep(1)
+        routes_main_menu.click_on_more_actions()
+        time.sleep(1)
+        routes_main_menu.click_on_delete_at_more_actions()
+        time.sleep(1)
+        routes_main_menu.click_on_ok()

@@ -11,12 +11,12 @@ class MarketDataSourcesConstants:
     PIN_TO_ROW_AT_MORE_ACTIONS_XPATH = '//*[@nbtooltip="Click to Pin Row"]'
     DELETE_AT_MORE_ACTIONS_XPATH = '//*[@data-name="trash-2"]'
 
-    OK_BUTTON_XPATH = "//*[text()='Ok']"
-    CANCEL_BUTTON_XPATH ="//*[text()='Cancel']"
+    OK_BUTTON_XPATH = "//*[normalize-space()='Ok']"
+    CANCEL_BUTTON_XPATH ="//*[normalize-space()='Cancel']"
     NO_BUTTON_XPATH ="//*[text()='No']"
 
 
-    NEW_BUTTON_XPATH = "//*[text()='New']"
+    NEW_BUTTON_XPATH = "//*[normalize-space()='New']"
     DOWNLOAD_CSV_BUTTON_XPATH = '//*[@data-name="download"]'
     REFRESH_PAGE_BUTTON_XPATH = '//*[@data-name="refresh"]'
 
@@ -38,8 +38,8 @@ class MarketDataSourcesConstants:
     WIZARD_VENUE_XPATH = "//*[text()='Venue *']/preceding-sibling::input"
     WIZARD_MDSOURCE_XPATH = "//*[text()='MD Source *']/preceding-sibling::input"
 
-    SAVE_CHANGES_XPATH = '//*[text()="Save Changes"]'
-    CLEAR_CHANGES_XPATH = '//*[text()="Clear Changes"]'
+    SAVE_CHANGES_XPATH = '//*[normalize-space()="Save Changes"]'
+    CLEAR_CHANGES_XPATH = '//*[normalize-space()="Clear Changes"]'
     WIZARD_DOWNLOAD_PDF_XPATH = '//*[@data-name="download"]'
 
     INCORECT_VALUE_MESSAGE = '//*[text()="Incorrect or missing values"]'

@@ -1,9 +1,6 @@
 import random
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.middle_office.fees.fees_page import FeesPage
 from test_framework.web_admin_core.pages.middle_office.fees.fees_dimensions_sub_wizard import FeesDimensionsSubWizard
@@ -32,23 +29,15 @@ class QAP_T3390(CommonTestCase):
 
     def test_context(self):
 
-        try:
-            self.precondition()
-            time.sleep(2)
-            fees_dimension_tab = FeesDimensionsSubWizard(self.web_driver_container)
-            fees_dimension_tab.set_venue(random.choice(fees_dimension_tab.get_all_venue_from_drop_menu()))
-            time.sleep(1)
-            self.verify("Venue List field become disable", False, fees_dimension_tab.is_venue_list_field_enable())
-            time.sleep(1)
-            fees_dimension_tab.set_venue("Not found")
-            time.sleep(1)
-            fees_dimension_tab.set_venue_list(random.choice(fees_dimension_tab.get_all_venue_list_from_drop_menu()))
-            time.sleep(1)
-            self.verify("Venue field become disable", False, fees_dimension_tab.is_venue_field_enable())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.precondition()
+        time.sleep(2)
+        fees_dimension_tab = FeesDimensionsSubWizard(self.web_driver_container)
+        fees_dimension_tab.set_venue(random.choice(fees_dimension_tab.get_all_venue_from_drop_menu()))
+        time.sleep(1)
+        self.verify("Venue List field become disable", False, fees_dimension_tab.is_venue_list_field_enable())
+        time.sleep(1)
+        fees_dimension_tab.set_venue("Not found")
+        time.sleep(1)
+        fees_dimension_tab.set_venue_list(random.choice(fees_dimension_tab.get_all_venue_list_from_drop_menu()))
+        time.sleep(1)
+        self.verify("Venue field become disable", False, fees_dimension_tab.is_venue_field_enable())

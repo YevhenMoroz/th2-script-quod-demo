@@ -13,7 +13,7 @@ class Constants:
         CLONE_BUTTON = "//*[@data-name = 'copy']"
         DELETE_BUTTON = "//*[@data-name = 'trash-2']"
         PIN_ROW_BUTTON = "//*[@nbtooltip ='Click to Pin Row']"
-        NEW_BUTTON = '//*[normalize-space()="Allocation Matching Profiles"]//..//*[text()="New"]'
+        NEW_BUTTON = '//*[normalize-space()="Allocation Matching Profiles"]//..//*[normalize-space()="New"]'
         DOWNLOAD_CSV_BUTTON = '//*[@data-name="download"]'
         DISPLAYED_ENTITY = "//*[text()='{}']"
 
@@ -27,13 +27,13 @@ class Constants:
         SIDE_COLUMN = '//*[@col-id="matchSide"]'
 
     class Wizard:
-        SAVE_CHANGES_BUTTON = "//*[text()='Save Changes']"
-        CLEAR_CHANGES_BUTTON = "//*[text()='Clear Changes']"
+        SAVE_CHANGES_BUTTON = "//*[normalize-space()='Save Changes']"
+        CLEAR_CHANGES_BUTTON = "//*[normalize-space()='Clear Changes']"
         CLOSE_WIZARD = "//*[@data-name='close']"
         REVERT_CHANGES = "//*[text()='Revert Changes']"
         DOWNLOAD_PDF_BUTTON = '//*[@nbtooltip="Download PDF"]//*[@data-name="download"]'
-        OK_BUTTON = '//*[text()="Ok"]'
-        CANCEL_BUTTON = '//*[text()="Cancel"]'
+        OK_BUTTON = '//*[normalize-space()="Ok"]'
+        CANCEL_BUTTON = '//*[normalize-space()="Cancel"]'
         INCORRECT_OR_MISSING_VALUES = "//*[text()='Incorrect or missing values']"
 
     class ValuesTab:

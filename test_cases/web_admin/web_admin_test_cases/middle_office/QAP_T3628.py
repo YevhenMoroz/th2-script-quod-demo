@@ -1,8 +1,5 @@
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.middle_office.commissions.commissions_commision_profiles_sub_wizard import \
     CommissionsCommissionProfilesSubWizard
@@ -49,16 +46,8 @@ class QAP_T3628(CommonTestCase):
 
     def test_context(self):
 
-        try:
-            self.precondition()
-            commissions_profiles_points = CommissionsCommissionProfilePointsSubWizard(self.web_driver_container)
-            commissions_profiles_points.click_on_edit()
-            time.sleep(2)
-            self.verify("Is base value set as zero", self.base_value, commissions_profiles_points.get_base_value())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.precondition()
+        commissions_profiles_points = CommissionsCommissionProfilePointsSubWizard(self.web_driver_container)
+        commissions_profiles_points.click_on_edit()
+        time.sleep(2)
+        self.verify("Is base value set as zero", self.base_value, commissions_profiles_points.get_base_value())

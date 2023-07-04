@@ -1,7 +1,3 @@
-import sys
-import traceback
-
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -21,21 +17,13 @@ class QAP_T3650(CommonTestCase):
         login_page.login_to_web_admin(self.login, self.password)
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            side_menu = SideMenu(self.web_driver_container)
-            side_menu.open_desks_page()
-            self.verify("Only Desks tab displayed",
-                        [side_menu.is_institutions_page_tab_displayed(),
-                         side_menu.is_zones_page_tab_displayed(),
-                         side_menu.is_locations_page_tab_displayed(),
-                         side_menu.is_desks_page_tab_displayed()],
-                        [False, False, False, True])
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        side_menu = SideMenu(self.web_driver_container)
+        side_menu.open_desks_page()
+        self.verify("Only Desks tab displayed",
+                    [side_menu.is_institutions_page_tab_displayed(),
+                     side_menu.is_zones_page_tab_displayed(),
+                     side_menu.is_locations_page_tab_displayed(),
+                     side_menu.is_desks_page_tab_displayed()],
+                    [False, False, False, True])

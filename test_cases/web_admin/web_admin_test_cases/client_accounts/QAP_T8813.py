@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_assignments_sub_wizard import \
     ClientsAssignmentsSubWizard
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
@@ -68,32 +65,25 @@ class QAP_T8813(CommonTestCase):
         wizard = ClientsWizard(self.web_driver_container)
         main_page = ClientsPage(self.web_driver_container)
         venues_sub_wizard = ClientsVenuesSubWizard(self.web_driver_container)
-        try:
-            self.precondition()
 
-            main_page.set_name(self.name)
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
+        self.precondition()
 
-            venue_to_delete = random.choice(self.venue_client_name)
-            venues_sub_wizard.set_venue_client_name_filter(venue_to_delete)
-            time.sleep(1)
-            venues_sub_wizard.click_on_delete()
-            wizard.click_on_save_changes()
+        main_page.set_name(self.name)
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
 
-            main_page.set_name(self.name)
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
+        venue_to_delete = random.choice(self.venue_client_name)
+        venues_sub_wizard.set_venue_client_name_filter(venue_to_delete)
+        time.sleep(1)
+        venues_sub_wizard.click_on_delete()
+        wizard.click_on_save_changes()
 
-            venues_sub_wizard.set_venue_client_name_filter(venue_to_delete)
-            time.sleep(1)
-            self.verify("Venue has been delete", False, venues_sub_wizard.is_venue_present())
+        main_page.set_name(self.name)
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
 
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        venues_sub_wizard.set_venue_client_name_filter(venue_to_delete)
+        time.sleep(1)
+        self.verify("Venue has been delete", False, venues_sub_wizard.is_venue_present())

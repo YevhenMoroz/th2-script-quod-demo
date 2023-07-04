@@ -1,8 +1,5 @@
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.site.zones.zones_assignments_sub_wizard import ZonesAssignmentsSubWizard
@@ -42,25 +39,17 @@ class QAP_T3695(CommonTestCase):
         zone_page = ZonesPage(self.web_driver_container)
         assignments_tab = ZonesAssignmentsSubWizard(self.web_driver_container)
 
-        try:
-            self.precondition()
-            zone_page.set_name(self.zone_name)
-            time.sleep(1)
-            zone_page.click_on_more_actions()
-            zone_page.click_on_edit()
-            locations = assignments_tab.get_all_locations()
-            users = assignments_tab.get_all_users()
+        self.precondition()
+        zone_page.set_name(self.zone_name)
+        time.sleep(1)
+        zone_page.click_on_more_actions()
+        zone_page.click_on_edit()
+        locations = assignments_tab.get_all_locations()
+        users = assignments_tab.get_all_users()
 
-            expected_result = [True for _ in range(3)]
-            actual_result = [assignments_tab.get_institution() == self.institution,
-                             True if len(locations) >= 1 else False,
-                             True if len(users) >= 1 else False]
+        expected_result = [True for _ in range(3)]
+        actual_result = [assignments_tab.get_institution() == self.institution,
+                         True if len(locations) >= 1 else False,
+                         True if len(users) >= 1 else False]
 
-            self.verify("Zone contains assigned Institution, Locations, Users", expected_result, actual_result)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("Zone contains assigned Institution, Locations, Users", expected_result, actual_result)

@@ -6,14 +6,14 @@ class Constants:
         DOWNLOAD_CSV_BUTTON = '//*[@nbtooltip="Download CSV"]//a'
         FULL_SCREEN_BUTTON = '//*[@nbtooltip="Full Screen"]//a'
         REFRESH_PAGE_BUTTON = '//*[@nbtooltip="Refresh Page"]//a'
-        NEW_BUTTON = '//*[text()="New"]'
+        NEW_BUTTON = '//*[normalize-space()="New"]'
 
         NAME_FILTER = '//*[@style="width: 200px; left: 0px;"]//input[@ref="eFloatingFilterText"]'
         ENABLED_FILTER = '//*[@style="width: 200px; left: 200px;"]//select'
         TOGGLE_BUTTON = "//div[contains(@class, 'toggle')]"
 
-        OK_BUTTON = '//*[text()="Ok"]'
-        CANCEL_BUTTON = '//*[text()="Cancel"]'
+        OK_BUTTON = '//*[normalize-space()="Ok"]'
+        CANCEL_BUTTON = '//*[normalize-space()="Cancel"]'
 
         SEARCHED_ENTITY = '//*[text() = "{}"]'
         ENTITY_NAME = '//*[@col-id="gatingRuleName" and @tabindex]//*[@ref="eValue"]'
@@ -35,8 +35,8 @@ class Constants:
 
     class Wizard:
         DOWNLOAD_PDF_BUTTON = '//*[@data-name="download"]'
-        SAVE_CHANGES_BUTTON = '//*[text()="Save Changes"]'
-        CLEAR_CHANGES_BUTTON = '//*[text()="Clear Changes"]'
+        SAVE_CHANGES_BUTTON = '//*[normalize-space()="Save Changes"]'
+        CLEAR_CHANGES_BUTTON = '//*[normalize-space()="Clear Changes"]'
         CLOSE_WIZARD_BUTTON = '//*[@data-name="close"]'
         OK_BUTTON = '//*[text()="Ok" or text()="OK"]'
         CANCEL_BUTTON = '//*[normalize-space()="Cancel"]'

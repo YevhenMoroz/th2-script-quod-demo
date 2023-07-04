@@ -1,8 +1,5 @@
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_policies_sub_wizard import \
     ClientsPoliciesSubWizard
@@ -33,16 +30,7 @@ class QAP_T3714(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
-        try:
-            self.precondition()
-            policies_sub_wizard = ClientsPoliciesSubWizard(self.web_driver_container)
-            self.verify("Is default execution strategy has italic font", True,
-                        policies_sub_wizard.is_default_execution_strategy_has_italic_font())
-
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.precondition()
+        policies_sub_wizard = ClientsPoliciesSubWizard(self.web_driver_container)
+        self.verify("Is default execution strategy has italic font", True,
+                    policies_sub_wizard.is_default_execution_strategy_has_italic_font())

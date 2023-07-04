@@ -1,8 +1,5 @@
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
@@ -26,29 +23,21 @@ class QAP_T3894(CommonTestCase):
 
     def test_context(self):
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            side_menu = SideMenu(self.web_driver_container)
-            side_menu.open_settings_page()
-            time.sleep(2)
+        side_menu = SideMenu(self.web_driver_container)
+        side_menu.open_settings_page()
+        time.sleep(2)
 
-            common_page = CommonPage(self.web_driver_container)
-            common_page.refresh_page(True)
+        common_page = CommonPage(self.web_driver_container)
+        common_page.refresh_page(True)
 
-            settings_page = SettingsPage(self.web_driver_container)
-            self.verify("Page is not changed after reload", True, settings_page.is_title_page_displayed())
+        settings_page = SettingsPage(self.web_driver_container)
+        self.verify("Page is not changed after reload", True, settings_page.is_title_page_displayed())
 
-            current_url = common_page.get_current_page_url()
-            common_page.open_new_browser_tab_and_set_url(current_url)
+        current_url = common_page.get_current_page_url()
+        common_page.open_new_browser_tab_and_set_url(current_url)
 
-            time.sleep(2)
-            self.verify("Users page of WebAdmin is opened, login page is not displayed, login is not requested.",
-                        True, settings_page.is_title_page_displayed())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        time.sleep(2)
+        self.verify("Users page of WebAdmin is opened, login page is not displayed, login is not requested.",
+                    True, settings_page.is_title_page_displayed())

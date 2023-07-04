@@ -17,7 +17,7 @@ from test_framework.core.test_case import TestCase
 from test_framework.data_sets import constants
 
 
-class QAP_T11452(TestCase):
+class QAP_T11456(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, data_set=None, environment=None):
         super().__init__(report_id=report_id, data_set=data_set, environment=environment)
@@ -60,7 +60,7 @@ class QAP_T11452(TestCase):
 
         # region Gateway Side
         self.gateway_side_buy = GatewaySide.Buy
-        self.gateway_side_sell = GatewaySide.KeplerSell
+        self.gateway_side_sell = GatewaySide.Sell
         # endregion
 
         # region Status
@@ -106,9 +106,9 @@ class QAP_T11452(TestCase):
     def run_pre_conditions_and_steps(self):
         # region Rule creation
         rule_manager = RuleManager(Simulators.algo)
-        nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_qlv1, self.ex_destination_qlv1, self.price)
-        nos_2_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_qlv2, self.ex_destination_qlv2, self.price)
-        nos_3_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_qlv3, self.ex_destination_qlv3, self.price)
+        nos_1_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_qlv1, self.ex_destination_qlv1, self.price_1_qlv1_child)
+        nos_2_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_qlv2, self.ex_destination_qlv2, self.price_1_qlv2_child)
+        nos_3_rule = rule_manager.add_NewOrdSingleExecutionReportPendingAndNew(self.fix_env1.buy_side, self.account_qlv3, self.ex_destination_qlv3, self.price_1_qlv3_child)
         ocrr_rule = rule_manager.add_OrderCancelReplaceRequest_ExecutionReport(self.fix_env1.buy_side, False)
         ocr_1_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_qlv1, self.ex_destination_qlv1, True)
         ocr_2_rule = rule_manager.add_OrderCancelRequest(self.fix_env1.buy_side, self.account_qlv2, self.ex_destination_qlv2, True)
@@ -151,9 +151,9 @@ class QAP_T11452(TestCase):
         case_id_1 = bca.create_event("Create SORPING Order", self.test_id)
         self.fix_verifier_sell.set_case_id(case_id_1)
 
-        self.Multilisted_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Native_Iceberg_with_Peg_params()
+        self.Multilisted_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Multilisting_with_Peg_params()
         self.Multilisted_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.Multilisted_order.change_parameters(dict(Account=self.account_qlv1, OrderQty=self.qty, Price=self.price, Instrument=self.instrument, ExDestination=self.ex_destination_qlv1, DisplayInstruction=dict(DisplayQty=self.display_qty)))
+        self.Multilisted_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Price=self.price, Instrument=self.instrument)).add_tag(dict(DisplayInstruction=dict(DisplayQty=self.display_qty)))
 
         self.fix_manager_sell.send_message_and_receive_response(self.Multilisted_order, case_id_1)
 

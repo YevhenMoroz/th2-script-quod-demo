@@ -1,10 +1,6 @@
-import sys
 import time
-import traceback
 import random
 import string
-
-from custom import basic_custom_actions
 
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_values_sub_wizard import \
     ClientsValuesSubWizard
@@ -112,62 +108,54 @@ class QAP_T10721(CommonTestCase):
         cash_position_wizard = CashPositionsWizard(self.web_driver_container)
         cash_position_values_tab = CashPositionsValuesTab(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            cash_positions_page.set_name(self.cash_position_name)
-            time.sleep(1)
-            cash_positions_page.click_on_more_actions()
-            cash_positions_page.click_on_edit()
+        cash_positions_page.set_name(self.cash_position_name)
+        time.sleep(1)
+        cash_positions_page.click_on_more_actions()
+        cash_positions_page.click_on_edit()
 
-            expected_result = [self.cash_position_name, self.currency, self.client_name, self.account_id,
-                               'Margin Account checkbox = False', 'WARN displayed = False']
-            actual_result = [cash_position_values_tab.get_name(), cash_position_values_tab.get_currency(),
-                             cash_position_values_tab.get_client(), cash_position_values_tab.get_security_accounts(),
-                             f'Margin Account checkbox = {cash_position_values_tab.is_margin_account_checkbox_selected()}',
-                             f'WARN displayed = {cash_position_values_tab.is_warning_message_displayed()}']
-            self.verify("Cash Position values are corresponding test data", expected_result, actual_result)
+        expected_result = [self.cash_position_name, self.currency, self.client_name, self.account_id,
+                           'Margin Account checkbox = False', 'WARN displayed = False']
+        actual_result = [cash_position_values_tab.get_name(), cash_position_values_tab.get_currency(),
+                         cash_position_values_tab.get_client(), cash_position_values_tab.get_security_accounts(),
+                         f'Margin Account checkbox = {cash_position_values_tab.is_margin_account_checkbox_selected()}',
+                         f'WARN displayed = {cash_position_values_tab.is_warning_message_displayed()}']
+        self.verify("Cash Position values are corresponding test data", expected_result, actual_result)
 
-            cash_position_values_tab.select_margin_account_checkbox()
-            time.sleep(1)
-            expected_result = ['Enabled = True', 'Selected = True']
-            actual_result = [f'Enabled = {cash_position_values_tab.is_margin_account_checkbox_enabled()}',
-                             f'Selected = {cash_position_values_tab.is_margin_account_checkbox_selected()}']
-            self.verify("Margin Account checkbox is enabled and Selected", expected_result, actual_result)
+        cash_position_values_tab.select_margin_account_checkbox()
+        time.sleep(1)
+        expected_result = ['Enabled = True', 'Selected = True']
+        actual_result = [f'Enabled = {cash_position_values_tab.is_margin_account_checkbox_enabled()}',
+                         f'Selected = {cash_position_values_tab.is_margin_account_checkbox_selected()}']
+        self.verify("Margin Account checkbox is enabled and Selected", expected_result, actual_result)
 
-            cash_position_values_tab.set_security_accounts(self.account_id)
-            time.sleep(1)
-            expected_result = ['Enabled = False', 'Selected = False', 'WARN displayed = True']
-            actual_result = [f'Enabled = {cash_position_values_tab.is_margin_account_checkbox_enabled()}',
-                             f'Selected = {cash_position_values_tab.is_margin_account_checkbox_selected()}',
-                             f'WARN displayed = {cash_position_values_tab.is_warning_message_displayed()}']
-            self.verify("Margin Account checkbox is Disabled and Unselected, WARN message displayed",
-                        expected_result, actual_result)
+        cash_position_values_tab.set_security_accounts(self.account_id)
+        time.sleep(1)
+        expected_result = ['Enabled = False', 'Selected = False', 'WARN displayed = True']
+        actual_result = [f'Enabled = {cash_position_values_tab.is_margin_account_checkbox_enabled()}',
+                         f'Selected = {cash_position_values_tab.is_margin_account_checkbox_selected()}',
+                         f'WARN displayed = {cash_position_values_tab.is_warning_message_displayed()}']
+        self.verify("Margin Account checkbox is Disabled and Unselected, WARN message displayed",
+                    expected_result, actual_result)
 
-            cash_position_values_tab.set_security_accounts(self.account_id)
-            time.sleep(1)
-            cash_position_values_tab.select_margin_account_checkbox()
-            cash_position_wizard.click_on_save_changes()
-            time.sleep(1)
-            cash_positions_page.set_name(self.cash_position_name)
-            time.sleep(1)
-            cash_positions_page.click_on_more_actions()
-            cash_positions_page.click_on_edit()
-            time.sleep(1)
-            expected_result = [self.cash_position_name, self.currency, self.client_name, self.account_id,
-                               'Margin Account checkbox = True', 'WARN displayed = False']
-            actual_result = [cash_position_values_tab.get_name(), cash_position_values_tab.get_currency(),
-                             cash_position_values_tab.get_client(), cash_position_values_tab.get_security_accounts(),
-                             f'Margin Account checkbox = {cash_position_values_tab.is_margin_account_checkbox_selected()}',
-                             f'WARN displayed = {cash_position_values_tab.is_warning_message_displayed()}']
-            self.verify("Cash Position values are corresponding test data", expected_result, actual_result)
+        cash_position_values_tab.set_security_accounts(self.account_id)
+        time.sleep(1)
+        cash_position_values_tab.select_margin_account_checkbox()
+        cash_position_wizard.click_on_save_changes()
+        time.sleep(1)
+        cash_positions_page.set_name(self.cash_position_name)
+        time.sleep(1)
+        cash_positions_page.click_on_more_actions()
+        cash_positions_page.click_on_edit()
+        time.sleep(1)
+        expected_result = [self.cash_position_name, self.currency, self.client_name, self.account_id,
+                           'Margin Account checkbox = True', 'WARN displayed = False']
+        actual_result = [cash_position_values_tab.get_name(), cash_position_values_tab.get_currency(),
+                         cash_position_values_tab.get_client(), cash_position_values_tab.get_security_accounts(),
+                         f'Margin Account checkbox = {cash_position_values_tab.is_margin_account_checkbox_selected()}',
+                         f'WARN displayed = {cash_position_values_tab.is_warning_message_displayed()}']
+        self.verify("Cash Position values are corresponding test data", expected_result, actual_result)
 
-            self.db_manager.my_db.execute(
-                f"UPDATE cashaccount SET ismarginaccount = 'N' WHERE cashaccountname = '{self.cash_position_name}'")
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.db_manager.my_db.execute(
+            f"UPDATE cashaccount SET ismarginaccount = 'N' WHERE cashaccountname = '{self.cash_position_name}'")

@@ -1,8 +1,5 @@
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.users.users.users_page import UsersPage
@@ -30,45 +27,36 @@ class QAP_T8891(CommonTestCase):
         users_page = UsersPage(self.web_driver_container)
         assignments_tab = UsersAssignmentsSubWizard(self.web_driver_container)
 
-        try:
-            login_page.login_to_web_admin(self.login, self.password)
-            side_menu.open_users_page()
-            users_page.click_on_new_button()
-            assignments_tab.set_desks(self.desk)
-            time.sleep(1)
-            self.verify('The fields "Location", "Zone", "Institution" became read-only',
-                        [False for _ in range(3)],
-                        [assignments_tab.is_location_field_enabled(), assignments_tab.is_zone_field_enabled(),
-                         assignments_tab.is_institution_field_enabled()])
-            assignments_tab.set_desks(self.desk)
-            assignments_tab.set_location(self.location)
-            time.sleep(1)
-            self.verify('The fields "Desks", "Zone", "Institution" became read-only',
-                        [False for _ in range(3)],
-                        [assignments_tab.is_desks_field_enabled(),
-                         assignments_tab.is_zone_field_enabled(),
-                         assignments_tab.is_institution_field_enabled()])
-            assignments_tab.set_location(self.clear_option)
-            time.sleep(1)
-            assignments_tab.set_zone(self.zone)
-            time.sleep(1)
-            self.verify('The fields "Desks", "Location", "Institution" became read-only',
-                        [False for _ in range(3)],
-                        [assignments_tab.is_location_field_enabled(), assignments_tab.is_location_field_enabled(),
-                         assignments_tab.is_institution_field_enabled()])
-            assignments_tab.set_zone(self.clear_option)
-            time.sleep(1)
-            assignments_tab.set_institution(self.institution)
-            time.sleep(1)
-            self.verify('The fields "Desks", "Location", "Zone" became read-only',
-                        [False for _ in range(3)],
-                        [assignments_tab.is_location_field_enabled(), assignments_tab.is_location_field_enabled(),
-                         assignments_tab.is_zone_field_enabled()])
-
-        except Exception:
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            errors = f'"{[traceback.extract_tb(exc_traceback, limit=4)]}"'.replace("\\", "/")
-            basic_custom_actions.create_event(f"FAILED", self.test_case_id, status='FAILED',
-                                              body="[{\"type\": \"message\", \"data\":" + f"{errors}" + "}]")
-            traceback.print_tb(exc_traceback, limit=3, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        login_page.login_to_web_admin(self.login, self.password)
+        side_menu.open_users_page()
+        users_page.click_on_new_button()
+        assignments_tab.set_desks(self.desk)
+        time.sleep(1)
+        self.verify('The fields "Location", "Zone", "Institution" became read-only',
+                    [False for _ in range(3)],
+                    [assignments_tab.is_location_field_enabled(), assignments_tab.is_zone_field_enabled(),
+                     assignments_tab.is_institution_field_enabled()])
+        assignments_tab.set_desks(self.desk)
+        assignments_tab.set_location(self.location)
+        time.sleep(1)
+        self.verify('The fields "Desks", "Zone", "Institution" became read-only',
+                    [False for _ in range(3)],
+                    [assignments_tab.is_desks_field_enabled(),
+                     assignments_tab.is_zone_field_enabled(),
+                     assignments_tab.is_institution_field_enabled()])
+        assignments_tab.set_location(self.clear_option)
+        time.sleep(1)
+        assignments_tab.set_zone(self.zone)
+        time.sleep(1)
+        self.verify('The fields "Desks", "Location", "Institution" became read-only',
+                    [False for _ in range(3)],
+                    [assignments_tab.is_location_field_enabled(), assignments_tab.is_location_field_enabled(),
+                     assignments_tab.is_institution_field_enabled()])
+        assignments_tab.set_zone(self.clear_option)
+        time.sleep(1)
+        assignments_tab.set_institution(self.institution)
+        time.sleep(1)
+        self.verify('The fields "Desks", "Location", "Zone" became read-only',
+                    [False for _ in range(3)],
+                    [assignments_tab.is_location_field_enabled(), assignments_tab.is_location_field_enabled(),
+                     assignments_tab.is_zone_field_enabled()])

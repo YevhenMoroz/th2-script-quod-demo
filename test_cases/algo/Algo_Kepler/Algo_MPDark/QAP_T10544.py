@@ -239,7 +239,7 @@ class QAP_T10544(TestCase):
 
         time.sleep(15)
         self.fix_verifier_buy.set_case_id(bca.create_event("Check that there is no unexpected messages", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([nos_chixlis_rfq, nos_trql_rfq, dma_chixlis_order, nos_chixlis_rfq_2, nos_trql_rfq_2, self.dma_chixdelta_order], [None, None, None, None, None, None], self.FromQuod, pre_filter=self.pre_filter)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([nos_chixlis_rfq, nos_trql_rfq, dma_chixlis_order, nos_chixlis_rfq_2, nos_trql_rfq_2, self.dma_chixdelta_order], [None, None, None, None, None, None], self.FromQuod, pre_filter=self.pre_filter)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):

@@ -1,8 +1,5 @@
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_values_sub_wizard import \
     ClientsValuesSubWizard
@@ -29,37 +26,29 @@ class QAP_T8205(CommonTestCase):
         side_menu.open_clients_page()
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page = ClientsPage(self.web_driver_container)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
+        main_page = ClientsPage(self.web_driver_container)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
 
-            values_sub_wizard = ClientsValuesSubWizard(self.web_driver_container)
-            values_sub_wizard.clear_allocation_matching_service_field()
-            time.sleep(1)
-            self.verify("Allocation Matching Service field is disable", False,
-                        values_sub_wizard.is_external_allocation_matching_service_field_enable())
+        values_sub_wizard = ClientsValuesSubWizard(self.web_driver_container)
+        values_sub_wizard.clear_allocation_matching_service_field()
+        time.sleep(1)
+        self.verify("Allocation Matching Service field is disable", False,
+                    values_sub_wizard.is_external_allocation_matching_service_field_enable())
 
-            values_sub_wizard.set_allocation_matching_service(self.allocation_matching_service[0])
-            time.sleep(1)
-            self.verify("Allocation Matching Service field is enable", True,
-                        values_sub_wizard.is_external_allocation_matching_service_field_enable())
+        values_sub_wizard.set_allocation_matching_service(self.allocation_matching_service[0])
+        time.sleep(1)
+        self.verify("Allocation Matching Service field is enable", True,
+                    values_sub_wizard.is_external_allocation_matching_service_field_enable())
 
-            values_sub_wizard.set_allocation_matching_service(self.allocation_matching_service[1])
-            time.sleep(1)
-            self.verify("Allocation Matching Service field is disable", False,
-                        values_sub_wizard.is_external_allocation_matching_service_field_enable())
+        values_sub_wizard.set_allocation_matching_service(self.allocation_matching_service[1])
+        time.sleep(1)
+        self.verify("Allocation Matching Service field is disable", False,
+                    values_sub_wizard.is_external_allocation_matching_service_field_enable())
 
-            values_sub_wizard.set_allocation_matching_service(self.allocation_matching_service[2])
-            time.sleep(1)
-            self.verify("Allocation Matching Service field is disable", False,
-                        values_sub_wizard.is_external_allocation_matching_service_field_enable())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        values_sub_wizard.set_allocation_matching_service(self.allocation_matching_service[2])
+        time.sleep(1)
+        self.verify("Allocation Matching Service field is disable", False,
+                    values_sub_wizard.is_external_allocation_matching_service_field_enable())

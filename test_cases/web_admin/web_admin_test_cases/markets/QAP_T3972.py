@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.routes.main_page import RoutesPage
 from test_framework.web_admin_core.pages.markets.routes.venues_subwizard import RoutesVenuesSubWizard
@@ -54,26 +51,19 @@ class QAP_T3972(CommonTestCase):
         venues_sub_wizard.click_on_edit_at_venues_tab()
 
     def test_context(self):
-        try:
-            self.precondition()
-            venues_sub_wizard = RoutesVenuesSubWizard(self.web_driver_container)
-            self.verify("New venue", self.second_venue, venues_sub_wizard.get_venue_at_venues_tab())
-            venues_sub_wizard.click_on_check_mark_at_venues_tab()
-            time.sleep(1)
-            routes_wizard = RoutesWizard(self.web_driver_container)
-            routes_wizard.click_on_save_changes()
-            routes_main_menu = RoutesPage(self.web_driver_container)
-            time.sleep(2)
-            routes_main_menu.set_name_at_filter(self.name)
-            time.sleep(2)
-            self.verify("After saved", self.name, routes_main_menu.get_name_value())
-            time.sleep(1)
-            routes_main_menu.click_on_more_actions()
-            time.sleep(1)
-            routes_main_menu.click_on_delete_at_more_actions()
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.precondition()
+        venues_sub_wizard = RoutesVenuesSubWizard(self.web_driver_container)
+        self.verify("New venue", self.second_venue, venues_sub_wizard.get_venue_at_venues_tab())
+        venues_sub_wizard.click_on_check_mark_at_venues_tab()
+        time.sleep(1)
+        routes_wizard = RoutesWizard(self.web_driver_container)
+        routes_wizard.click_on_save_changes()
+        routes_main_menu = RoutesPage(self.web_driver_container)
+        time.sleep(2)
+        routes_main_menu.set_name_at_filter(self.name)
+        time.sleep(2)
+        self.verify("After saved", self.name, routes_main_menu.get_name_value())
+        time.sleep(1)
+        routes_main_menu.click_on_more_actions()
+        time.sleep(1)
+        routes_main_menu.click_on_delete_at_more_actions()

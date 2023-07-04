@@ -1,10 +1,7 @@
-import sys
 import time
-import traceback
 import random
 import string
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_values_sub_wizard import \
     ClientsValuesSubWizard
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_assignments_sub_wizard \
@@ -59,49 +56,41 @@ class QAP_T8508(CommonTestCase):
         page.click_on_edit()
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            values_tab = ClientsValuesSubWizard(self.web_driver_container)
-            values_tab.set_order_attribute(self.order_attributes[0])
-            wizard = ClientsWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
+        values_tab = ClientsValuesSubWizard(self.web_driver_container)
+        values_tab.set_order_attribute(self.order_attributes[0])
+        wizard = ClientsWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
 
-            page = ClientsPage(self.web_driver_container)
-            page.set_name(self.name)
-            time.sleep(1)
-            page.click_on_more_actions()
-            page.click_on_edit()
+        page = ClientsPage(self.web_driver_container)
+        page.set_name(self.name)
+        time.sleep(1)
+        page.click_on_more_actions()
+        page.click_on_edit()
 
-            self.verify(f"Order Attribute = {self.order_attributes[0]}", self.order_attributes[0],
-                        values_tab.get_order_attribute())
+        self.verify(f"Order Attribute = {self.order_attributes[0]}", self.order_attributes[0],
+                    values_tab.get_order_attribute())
 
-            values_tab.set_order_attribute(self.order_attributes[1])
-            wizard.click_on_save_changes()
+        values_tab.set_order_attribute(self.order_attributes[1])
+        wizard.click_on_save_changes()
 
-            page = ClientsPage(self.web_driver_container)
-            page.set_name(self.name)
-            time.sleep(1)
-            page.click_on_more_actions()
-            page.click_on_edit()
+        page = ClientsPage(self.web_driver_container)
+        page.set_name(self.name)
+        time.sleep(1)
+        page.click_on_more_actions()
+        page.click_on_edit()
 
-            self.verify(f"Order Attribute = {self.order_attributes[1]}", self.order_attributes[1],
-                        values_tab.get_order_attribute())
+        self.verify(f"Order Attribute = {self.order_attributes[1]}", self.order_attributes[1],
+                    values_tab.get_order_attribute())
 
-            values_tab.set_order_attribute(self.order_attributes[2])
-            wizard.click_on_save_changes()
+        values_tab.set_order_attribute(self.order_attributes[2])
+        wizard.click_on_save_changes()
 
-            page.set_name(self.name)
-            time.sleep(1)
-            page.click_on_more_actions()
-            page.click_on_edit()
+        page.set_name(self.name)
+        time.sleep(1)
+        page.click_on_more_actions()
+        page.click_on_edit()
 
-            self.verify(f"Order Attribute = {self.order_attributes[2]}", self.order_attributes[2],
-                        values_tab.get_order_attribute())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify(f"Order Attribute = {self.order_attributes[2]}", self.order_attributes[2],
+                    values_tab.get_order_attribute())

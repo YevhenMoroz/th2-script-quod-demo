@@ -1,9 +1,6 @@
 import random
 import string
-import sys
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.venue_lists.main_page import VenueListsPage
 from test_framework.web_admin_core.pages.markets.venue_lists.wizard import VenuesListsWizard
@@ -35,25 +32,17 @@ class QAP_T7932(CommonTestCase):
         main_page = VenueListsPage(self.web_driver_container)
         wizard = VenuesListsWizard(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page.click_on_new()
+        main_page.click_on_new()
 
-            self.verify("The PDF file contains all fields name with/without data", True,
-                        wizard.click_download_pdf_entity_button_and_check_pdf(self.basic_fields))
+        self.verify("The PDF file contains all fields name with/without data", True,
+                    wizard.click_download_pdf_entity_button_and_check_pdf(self.basic_fields))
 
-            wizard.set_name(self.name)
-            wizard.set_description(self.description)
-            wizard.set_venue_list(self.venue_list)
-            expected_result = [self.name, self.description, self.venue_list]
+        wizard.set_name(self.name)
+        wizard.set_description(self.description)
+        wizard.set_venue_list(self.venue_list)
+        expected_result = [self.name, self.description, self.venue_list]
 
-            self.verify("The PDF file contains all fields name with/without data", True,
-                        wizard.click_download_pdf_entity_button_and_check_pdf(expected_result))
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("The PDF file contains all fields name with/without data", True,
+                    wizard.click_download_pdf_entity_button_and_check_pdf(expected_result))

@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.listings.listings_attachment_sub_wizard import \
     ListingsAttachmentSubWizard
@@ -44,65 +41,57 @@ class QAP_T3240(CommonTestCase):
 
     def test_context(self):
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page = ListingsPage(self.web_driver_container)
-            main_page.click_on_new()
-            values_tab = ListingsValuesSubWizard(self.web_driver_container)
-            attachment_tab = ListingsAttachmentSubWizard(self.web_driver_container)
-            currency_tab = ListingsCurrencySubWizard(self.web_driver_container)
-            wizard = ListingsWizard(self.web_driver_container)
+        main_page = ListingsPage(self.web_driver_container)
+        main_page.click_on_new()
+        values_tab = ListingsValuesSubWizard(self.web_driver_container)
+        attachment_tab = ListingsAttachmentSubWizard(self.web_driver_container)
+        currency_tab = ListingsCurrencySubWizard(self.web_driver_container)
+        wizard = ListingsWizard(self.web_driver_container)
 
-            values_tab.set_symbol(self.symbol)
-            values_tab.set_lookup_symbol(self.lookup_symbol)
-            wizard.click_on_save_changes()
-            time.sleep(0.5)
-            self.verify("Listing not save, filled: Symbol, Lookup Symbol", True, wizard.is_error_message_displayed())
+        values_tab.set_symbol(self.symbol)
+        values_tab.set_lookup_symbol(self.lookup_symbol)
+        wizard.click_on_save_changes()
+        time.sleep(0.5)
+        self.verify("Listing not save, filled: Symbol, Lookup Symbol", True, wizard.is_error_message_displayed())
 
-            values_tab.set_instr_symbol(self.instr_symbol)
-            wizard.click_on_save_changes()
-            time.sleep(0.5)
-            self.verify("Listing not save, filled: Symbol, Lookup Symbol, Inst Symbol", True,
-                        wizard.is_error_message_displayed())
+        values_tab.set_instr_symbol(self.instr_symbol)
+        wizard.click_on_save_changes()
+        time.sleep(0.5)
+        self.verify("Listing not save, filled: Symbol, Lookup Symbol, Inst Symbol", True,
+                    wizard.is_error_message_displayed())
 
-            values_tab.set_instr_type(self.instr_type)
-            wizard.click_on_save_changes()
-            time.sleep(0.5)
-            self.verify("Listing not save, filled: Symbol, Lookup Symbol, Inst Symbol, Instr Type", True,
-                        wizard.is_error_message_displayed())
+        values_tab.set_instr_type(self.instr_type)
+        wizard.click_on_save_changes()
+        time.sleep(0.5)
+        self.verify("Listing not save, filled: Symbol, Lookup Symbol, Inst Symbol, Instr Type", True,
+                    wizard.is_error_message_displayed())
 
-            values_tab.set_security_exchange(self.security_exchange)
-            wizard.click_on_save_changes()
-            time.sleep(0.5)
-            self.verify("Listing not save, filled: Symbol, Lookup Symbol, Inst Symbol, Instr Type, Security Exchange",
-                        True,
-                        wizard.is_error_message_displayed())
+        values_tab.set_security_exchange(self.security_exchange)
+        wizard.click_on_save_changes()
+        time.sleep(0.5)
+        self.verify("Listing not save, filled: Symbol, Lookup Symbol, Inst Symbol, Instr Type, Security Exchange",
+                    True,
+                    wizard.is_error_message_displayed())
 
-            attachment_tab.set_venue(self.venue)
-            wizard.click_on_save_changes()
-            time.sleep(0.5)
-            self.verify("Listing not save, filled: Symbol, Lookup Symbol, Inst Symbol, Instr Type, Venue", True,
-                        wizard.is_error_message_displayed())
+        attachment_tab.set_venue(self.venue)
+        wizard.click_on_save_changes()
+        time.sleep(0.5)
+        self.verify("Listing not save, filled: Symbol, Lookup Symbol, Inst Symbol, Instr Type, Venue", True,
+                    wizard.is_error_message_displayed())
 
-            attachment_tab.set_venue('Not found')
-            currency_tab.set_currency(self.currency)
-            wizard.click_on_save_changes()
-            time.sleep(0.5)
-            self.verify("Listing not save, filled: Symbol, Lookup Symbol, Inst Symbol, Instr Type, Currency", True,
-                        wizard.is_error_message_displayed())
+        attachment_tab.set_venue('Not found')
+        currency_tab.set_currency(self.currency)
+        wizard.click_on_save_changes()
+        time.sleep(0.5)
+        self.verify("Listing not save, filled: Symbol, Lookup Symbol, Inst Symbol, Instr Type, Currency", True,
+                    wizard.is_error_message_displayed())
 
-            attachment_tab.set_venue(self.venue)
-            wizard.click_on_save_changes()
-            time.sleep(2)
-            main_page.load_listing_from_global_filter(self.lookup_symbol)
-            time.sleep(1)
-            self.verify("Listing has been create with all required fields", True,
-                        main_page.is_searched_listing_found(self.symbol))
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        attachment_tab.set_venue(self.venue)
+        wizard.click_on_save_changes()
+        time.sleep(2)
+        main_page.load_listing_from_global_filter(self.lookup_symbol)
+        time.sleep(1)
+        self.verify("Listing has been create with all required fields", True,
+                    main_page.is_searched_listing_found(self.symbol))

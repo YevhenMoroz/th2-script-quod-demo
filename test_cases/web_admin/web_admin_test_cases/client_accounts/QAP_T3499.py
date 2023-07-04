@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_page import AccountsPage
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_wizard import AccountsWizard
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_routes_subwizard import \
@@ -53,18 +50,10 @@ class QAP_T3499(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page = AccountsPage(self.web_driver_container)
+        main_page = AccountsPage(self.web_driver_container)
 
-            main_page.set_id(self.id)
-            time.sleep(2)
-            self.verify("Account was found by Name", self.id, main_page.get_id_grid_value())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        main_page.set_id(self.id)
+        time.sleep(2)
+        self.verify("Account was found by Name", self.id, main_page.get_id_grid_value())

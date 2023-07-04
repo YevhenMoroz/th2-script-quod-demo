@@ -158,14 +158,14 @@ class QAP_T10592(TestCase):
         # endregion
 
         # region Check all childs on the venue DARKPOOL UK
-        self.fix_verifier_buy.check_fix_message_sequence([self.dma_1_chix_order, self.dma_2_chix_order, self.dma_3_chix_order], [self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child], self.FromQuod, pre_filter=self.pre_filter_1)
-        self.fix_verifier_buy.check_fix_message_sequence([er_reject_dma_1_chix_order_params, er_reject_dma_2_chix_order_params, er_reject_dma_3_chix_order_params], [self.key_params_ER_child, self.key_params_ER_child, self.key_params_ER_child], self.ToQuod, pre_filter=self.pre_filter_2)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([self.dma_1_chix_order, self.dma_2_chix_order, self.dma_3_chix_order], [self.key_params_NOS_child, self.key_params_NOS_child, self.key_params_NOS_child], self.FromQuod, pre_filter=self.pre_filter_1)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([er_reject_dma_1_chix_order_params, er_reject_dma_2_chix_order_params, er_reject_dma_3_chix_order_params], [self.key_params_ER_child, self.key_params_ER_child, self.key_params_ER_child], self.ToQuod, pre_filter=self.pre_filter_2)
         # endregion
         
         time.sleep(1)
         
         # region Check that the parent order didn't eliminate
-        self.fix_verifier_sell.check_fix_message_sequence([er_pending_new_MPDark_order_params, er_new_MPDark_order_params], [self.key_params_ER_parent, self.key_params_ER_parent], self.FromQuod, pre_filter=None)
+        self.fix_verifier_sell.check_fix_message_sequence_kepler([er_pending_new_MPDark_order_params, er_new_MPDark_order_params], [self.key_params_ER_parent, self.key_params_ER_parent], self.FromQuod, pre_filter=None)
         # endregion
 
         # region Check child DMA order on venue BATS DARKPOOL UK

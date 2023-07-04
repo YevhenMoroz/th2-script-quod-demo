@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.markets.listings.listings_page import ListingsPage
 from test_framework.web_admin_core.pages.markets.listings.listings_wizard import ListingsWizard
 from test_framework.web_admin_core.pages.markets.listings.listings_values_sub_wizard \
@@ -77,26 +74,18 @@ class QAP_T3550(CommonTestCase):
         main_page = ListingsPage(self.web_driver_container)
         wizard = ListingsWizard(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page.click_on_new()
-            values_tab.set_symbol(self.new_symbol)
-            values_tab.set_lookup_symbol(self.new_lookup_symbol)
-            values_tab.set_instr_symbol(self.new_instr_symbol)
-            values_tab.set_instr_type(self.instr_type)
-            values_tab.set_security_exchange(self.new_security_exchange)
-            values_tab.click_on_dummy()
-            attachment_tab.set_venue(self.venue)
-            currency_tab.set_currency(self.currency)
-            wizard.click_on_save_changes()
-            time.sleep(2)
+        main_page.click_on_new()
+        values_tab.set_symbol(self.new_symbol)
+        values_tab.set_lookup_symbol(self.new_lookup_symbol)
+        values_tab.set_instr_symbol(self.new_instr_symbol)
+        values_tab.set_instr_type(self.instr_type)
+        values_tab.set_security_exchange(self.new_security_exchange)
+        values_tab.click_on_dummy()
+        attachment_tab.set_venue(self.venue)
+        currency_tab.set_currency(self.currency)
+        wizard.click_on_save_changes()
+        time.sleep(2)
 
-            self.verify("Second DUMMY Listing is not saving", True, wizard.is_request_failed_message_displayed())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("Second DUMMY Listing is not saving", True, wizard.is_request_failed_message_displayed())

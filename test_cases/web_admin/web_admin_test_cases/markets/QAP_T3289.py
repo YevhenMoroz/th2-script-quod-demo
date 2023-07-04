@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.venues.venues_page import VenuesPage
 from test_framework.web_admin_core.pages.markets.venues.venues_values_sub_wizard import \
@@ -55,31 +52,23 @@ class QAP_T3289(CommonTestCase):
             time.sleep(1)
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            page = VenuesPage(self.web_driver_container)
-            page.click_on_more_actions()
-            time.sleep(1)
-            page.click_on_edit()
-            time.sleep(2)
-            features_tab = VenuesFeaturesSubWizard(self.web_driver_container)
-            self.time_zone = random.choice(features_tab.get_all_time_zones_from_drop_menu())
-            features_tab.set_time_zone(self.time_zone)
-            wizard = VenuesWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
-            time.sleep(2)
-            page.set_name_filter(self.name)
-            time.sleep(1)
-            page.click_on_more_actions()
-            time.sleep(1)
+        page = VenuesPage(self.web_driver_container)
+        page.click_on_more_actions()
+        time.sleep(1)
+        page.click_on_edit()
+        time.sleep(2)
+        features_tab = VenuesFeaturesSubWizard(self.web_driver_container)
+        self.time_zone = random.choice(features_tab.get_all_time_zones_from_drop_menu())
+        features_tab.set_time_zone(self.time_zone)
+        wizard = VenuesWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
+        time.sleep(2)
+        page.set_name_filter(self.name)
+        time.sleep(1)
+        page.click_on_more_actions()
+        time.sleep(1)
 
-            self.verify("PDF file contains new Time Zone", True,
-                        page.click_download_pdf_entity_button_and_check_pdf(self.time_zone))
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("PDF file contains new Time Zone", True,
+                    page.click_download_pdf_entity_button_and_check_pdf(self.time_zone))

@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.middle_office.commissions.commissions_page import CommissionsPage
 from test_framework.web_admin_core.pages.middle_office.commissions.commissions_wizard import CommissionsWizard
@@ -72,69 +69,61 @@ class QAP_T3847(CommonTestCase):
 
     def test_context(self):
 
-        try:
-            self.precondition()
-            commission_page = CommissionsPage(self.web_driver_container)
-            commission_page.set_name(self.name)
-            time.sleep(1)
-            commission_page.click_on_more_actions()
-            time.sleep(1)
-            commission_page.click_on_clone()
-            time.sleep(2)
+        self.precondition()
+        commission_page = CommissionsPage(self.web_driver_container)
+        commission_page.set_name(self.name)
+        time.sleep(1)
+        commission_page.click_on_more_actions()
+        time.sleep(1)
+        commission_page.click_on_clone()
+        time.sleep(2)
 
-            actual_result = [self.name,
-                             self.description,
-                             True,
-                             self.venue_list,
-                             self.instr_type,
-                             self.side,
-                             self.client,
-                             self.commission_amount_type,
-                             self.commission_profile]
+        actual_result = [self.name,
+                         self.description,
+                         True,
+                         self.venue_list,
+                         self.instr_type,
+                         self.side,
+                         self.client,
+                         self.commission_amount_type,
+                         self.commission_profile]
 
-            commission_wizard_value_tab = CommissionsValuesSubWizard(self.web_driver_container)
-            commission_wizard_dimensions_tab = CommissionsDimensionsSubWizard(self.web_driver_container)
+        commission_wizard_value_tab = CommissionsValuesSubWizard(self.web_driver_container)
+        commission_wizard_dimensions_tab = CommissionsDimensionsSubWizard(self.web_driver_container)
 
-            excepted_result = [commission_wizard_value_tab.get_name(),
-                               commission_wizard_value_tab.get_description(),
-                               commission_wizard_value_tab.is_re_calculate_for_allocations_selected(),
-                               commission_wizard_dimensions_tab.get_venue_list(),
-                               commission_wizard_dimensions_tab.get_instr_type(),
-                               commission_wizard_dimensions_tab.get_side(),
-                               commission_wizard_dimensions_tab.get_client(),
-                               commission_wizard_value_tab.get_commission_amount_type(),
-                               commission_wizard_value_tab.get_commission_profile()]
+        excepted_result = [commission_wizard_value_tab.get_name(),
+                           commission_wizard_value_tab.get_description(),
+                           commission_wizard_value_tab.is_re_calculate_for_allocations_selected(),
+                           commission_wizard_dimensions_tab.get_venue_list(),
+                           commission_wizard_dimensions_tab.get_instr_type(),
+                           commission_wizard_dimensions_tab.get_side(),
+                           commission_wizard_dimensions_tab.get_client(),
+                           commission_wizard_value_tab.get_commission_amount_type(),
+                           commission_wizard_value_tab.get_commission_profile()]
 
-            self.verify("Cloned entity contains all data", actual_result, excepted_result)
+        self.verify("Cloned entity contains all data", actual_result, excepted_result)
 
-            commission_wizard_value_tab.set_name(self.new_name)
-            commission_wizard = CommissionsWizard(self.web_driver_container)
-            commission_wizard.click_on_save_changes()
-            time.sleep(2)
-            commission_page.set_name(self.new_name)
-            time.sleep(1)
-            commission_page.click_on_more_actions()
-            time.sleep(1)
+        commission_wizard_value_tab.set_name(self.new_name)
+        commission_wizard = CommissionsWizard(self.web_driver_container)
+        commission_wizard.click_on_save_changes()
+        time.sleep(2)
+        commission_page.set_name(self.new_name)
+        time.sleep(1)
+        commission_page.click_on_more_actions()
+        time.sleep(1)
 
-            actual_result_after_change_name = [self.new_name,
-                                               self.description,
-                                               "true",
-                                               self.venue_list,
-                                               self.instr_type,
-                                               self.side,
-                                               self.client,
-                                               self.commission_amount_type,
-                                               self.commission_profile]
+        actual_result_after_change_name = [self.new_name,
+                                           self.description,
+                                           "true",
+                                           self.venue_list,
+                                           self.instr_type,
+                                           self.side,
+                                           self.client,
+                                           self.commission_amount_type,
+                                           self.commission_profile]
 
-            time.sleep(2)
-            excepted_result_after_change_name = commission_page.click_download_pdf_entity_button_and_check_pdf(
-                actual_result_after_change_name)
-            time.sleep(1)
-            self.verify("Is PDF contains all data", True, excepted_result_after_change_name)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        time.sleep(2)
+        excepted_result_after_change_name = commission_page.click_download_pdf_entity_button_and_check_pdf(
+            actual_result_after_change_name)
+        time.sleep(1)
+        self.verify("Is PDF contains all data", True, excepted_result_after_change_name)

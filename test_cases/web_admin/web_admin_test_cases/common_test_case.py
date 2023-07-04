@@ -1,5 +1,8 @@
 import abc
 
+from pathlib import Path
+from test_framework.core.try_exept_decorator import try_except
+
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
 from test_framework.data_sets.base_data_set import BaseDataSet
@@ -15,6 +18,7 @@ class CommonTestCase:
         self.data_set = data_set
         self.environment = environment
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def run(self):
         self.__start_driver()
         self.test_context()

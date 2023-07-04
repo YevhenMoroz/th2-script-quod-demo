@@ -17,4 +17,4 @@ class OrderConfirmationConstants:
     TOTAL_VALUE_XPATH = '//*[@id="Total_Value"]'
     CASH_BALANCE_XPATH = '//*[@id="Cash_Balance"]'
     PLACE_BUTTON_XPATH = '//*[text()="Place"]'
-    CANCEL_BUTTON_XPATH = '//*[text()="Cancel"]'
+    CANCEL_BUTTON_XPATH = '//*[normalize-space()="Cancel"]'

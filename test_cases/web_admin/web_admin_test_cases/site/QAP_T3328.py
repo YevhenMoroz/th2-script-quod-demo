@@ -1,9 +1,7 @@
 import random
 import string
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.site.institution.institution_values_sub_wizard import \
@@ -32,38 +30,32 @@ class QAP_T3328(CommonTestCase):
         side_menu.open_institutions_page()
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            page = InstitutionsPage(self.web_driver_container)
-            page.click_on_new()
+        page = InstitutionsPage(self.web_driver_container)
+        page.click_on_new()
 
-            values_tab = InstitutionsValuesSubWizard(self.web_driver_container)
-            self.verify("'Cross Currency Hair Cut' set to 0 by default", 0, values_tab.get_cross_currency_hair_cut())
-            self.verify("Checkbox 'Cross Currency Settlement' unchecked by default", False,
-                        values_tab.is_cross_currency_settlement_checkbox_selected())
+        values_tab = InstitutionsValuesSubWizard(self.web_driver_container)
+        self.verify("'Cross Currency Hair Cut' set to 0 by default", 0, values_tab.get_cross_currency_hair_cut())
+        self.verify("Checkbox 'Cross Currency Settlement' unchecked by default", False,
+                    values_tab.is_cross_currency_settlement_checkbox_selected())
 
-            values_tab.click_at_cross_currency_settlement_checkbox()
-            time.sleep(1)
-            values_tab.set_cash_account_currency_rate_source(self.cash_account_currency_rate_source)
-            values_tab.set_cross_currency_hair_cut(self.cross_currency_hair_cut)
-            values_tab.set_institution_name(self.name)
+        values_tab.click_at_cross_currency_settlement_checkbox()
+        time.sleep(1)
+        values_tab.set_cash_account_currency_rate_source(self.cash_account_currency_rate_source)
+        values_tab.set_cross_currency_hair_cut(self.cross_currency_hair_cut)
+        values_tab.set_institution_name(self.name)
 
-            wizard = InstitutionsWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
+        wizard = InstitutionsWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
 
-            page.set_institution_name(self.name)
-            time.sleep(1)
-            page.click_on_more_actions()
-            page.click_on_edit()
-            expected_result = [self.name, self.cross_currency_hair_cut, self.cash_account_currency_rate_source, True]
-            actual_result = [values_tab.get_institution_name(), values_tab.get_cross_currency_hair_cut(),
-                             values_tab.get_cash_account_currency_rate_source(),
-                             values_tab.is_cross_currency_settlement_checkbox_selected()]
+        page.set_institution_name(self.name)
+        time.sleep(1)
+        page.click_on_more_actions()
+        page.click_on_edit()
+        expected_result = [self.name, self.cross_currency_hair_cut, self.cash_account_currency_rate_source, True]
+        actual_result = [values_tab.get_institution_name(), values_tab.get_cross_currency_hair_cut(),
+                         values_tab.get_cash_account_currency_rate_source(),
+                         values_tab.is_cross_currency_settlement_checkbox_selected()]
 
-            self.verify("Filled data saved", expected_result, actual_result)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)
+        self.verify("Filled data saved", expected_result, actual_result)

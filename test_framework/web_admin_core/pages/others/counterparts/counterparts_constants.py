@@ -10,8 +10,8 @@ class CounterpartsConstants:
     CLONE_AT_MORE_ACTIONS_XPATH = '//*[@data-name="copy"]'
     DELETE_AT_MORE_ACTIONS_XPATH = '//*[@data-name="trash-2"]'
     DOWNLOAD_PDF_AT_MORE_ACTIONS_XPATH = '//*[@class="nb-overlay-left"]//*[@data-name="download"]'
-    CANCEL_BUTTON_XPATH = '//*[text()="Cancel"]'
-    OK_BUTTON_XPATH = '//*[text()="Ok"]'
+    CANCEL_BUTTON_XPATH = '//*[normalize-space()="Cancel"]'
+    OK_BUTTON_XPATH = '//*[normalize-space()="Ok"]'
     COUNTERPARTS_NAME_AT_MAIN_PAGE_XPATH = '//*[text()="{}"]'
 
     # ----------------COUNTERPARTS WIZARD---------------

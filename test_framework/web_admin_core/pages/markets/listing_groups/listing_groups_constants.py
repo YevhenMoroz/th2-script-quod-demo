@@ -2,11 +2,11 @@ class ListingGroupsConstants:
     LISTING_GROUPS_PAGE_TITLE_XPATH = "//*[@title='Listing Groups']//span"
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"
-    SAVE_CHANGES_BUTTON_XPATH = "//*[text()='Save Changes']"
-    CLEAR_CHANGES_BUTTON_XPATH = "//*[text()='Clear Changes']"
+    SAVE_CHANGES_BUTTON_XPATH = "//*[normalize-space()='Save Changes']"
+    CLEAR_CHANGES_BUTTON_XPATH = "//*[normalize-space()='Clear Changes']"
     CLOSE_WIZARD_XPATH = "//*[@data-name='close']"
-    OK_BUTTON_XPATH = '//*[text()="Ok"]'
-    CANCEL_BUTTON_XPATH = '//*[text()="Cancel"]'
+    OK_BUTTON_XPATH = '//*[normalize-space()="Ok"]'
+    CANCEL_BUTTON_XPATH = '//*[normalize-space()="Cancel"]'
     REVERT_CHANGES_XPATH = "//*[text()='Revert Changes']"
     MORE_ACTIONS_XPATH = "//*[@data-name = 'more-vertical']"
     EDIT_XPATH = "//*[@data-name = 'edit']"
@@ -20,7 +20,7 @@ class ListingGroupsConstants:
     DROP_DOWN_ENTITY = '//*[@class="option-list"]//span[normalize-space()="{}"]'
 
     # Main page
-    MAIN_PAGE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
+    MAIN_PAGE_NAME_FILTER_XPATH = '//*[@col-id="listingGroupName"]//following::input[@ref="eFloatingFilterText"][1]'
     MAIN_PAGE_NAME_XPATH = '//*[@col-id="listingGroupName"]//span//span[4]'
     MAIN_PAGE_EXT_ID_VENUE_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[2]//input'
     MAIN_PAGE_EXT_ID_VENUE_XPATH = '//*[@col-id="venueListingGroupID"]//span//span[4]'

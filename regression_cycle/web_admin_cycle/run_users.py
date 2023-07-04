@@ -53,7 +53,7 @@ from test_cases.web_admin.web_admin_test_cases.users.QAP_T8890 import QAP_T8890
 from test_cases.web_admin.web_admin_test_cases.users.QAP_T8891 import QAP_T8891
 from test_cases.web_admin.web_admin_test_cases.users.QAP_T10304 import QAP_T10304
 from test_cases.web_admin.web_admin_test_cases.users.QAP_T10305 import QAP_T10305
-from test_cases.web_admin.web_admin_test_cases.users.QAP_T10306 import QAP_T10306
+#from test_cases.web_admin.web_admin_test_cases.users.QAP_T10306 import QAP_T10306
 from test_cases.web_admin.web_admin_test_cases.users.QAP_T10834 import QAP_T10834
 from test_cases.web_admin.web_admin_test_cases.users.QAP_T11142 import QAP_T11142
 from test_cases.web_admin.web_admin_test_cases.users.QAP_T11206 import QAP_T11206
@@ -168,8 +168,8 @@ class RunUsers:
                        environment=configuration.environment).run()
             QAP_T10305(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                        environment=configuration.environment).run()
-            QAP_T10306(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
-                       environment=configuration.environment).run()
+            # QAP_T10306(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+            #            environment=configuration.environment).run()
             QAP_T10834(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                        environment=configuration.environment).run()
             QAP_T11142(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,

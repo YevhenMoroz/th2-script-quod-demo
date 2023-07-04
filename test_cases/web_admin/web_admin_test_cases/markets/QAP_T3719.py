@@ -1,8 +1,5 @@
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.venues.venues_values_sub_wizard \
     import VenuesValuesSubWizard
@@ -34,42 +31,34 @@ class QAP_T3719(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            values_sub_wizard = VenuesValuesSubWizard(self.web_driver_container)
-            values_sub_wizard.set_country_custom_value(self.test_data)
-            self.verify("Displays 'Not Found' in the Country if the entered data is not valid", "Not found",
-                        values_sub_wizard.is_not_found_present_in_drop_menu())
-            time.sleep(1)
-            values_sub_wizard.set_counterpart_custom_value(self.test_data)
-            self.verify("Displays 'Not Found' in the Counterpart if the entered data is not valid", "Not found",
-                        values_sub_wizard.is_not_found_present_in_drop_menu())
-            time.sleep(1)
-            profiles_sub_wizard = VenuesProfilesSubWizard(self.web_driver_container)
-            profiles_sub_wizard.set_price_limit_profile_custom_value(self.test_data)
-            self.verify("Displays 'Not Found' in the Price Limit Profile if the entered data is not valid", "Not found",
-                        values_sub_wizard.is_not_found_present_in_drop_menu())
-            time.sleep(1)
-            profiles_sub_wizard.set_tick_size_profile_custom_value(self.test_data)
-            self.verify("Displays 'Not Found' in the Tick Size Profile if the entered data is not valid", "Not found",
-                        values_sub_wizard.is_not_found_present_in_drop_menu())
-            time.sleep(1)
-            profiles_sub_wizard.set_trading_phase_profile_custom_value(self.test_data)
-            self.verify("Displays 'Not Found' in the Trading Phase Profile if the entered data is not valid",
-                        "Not found", values_sub_wizard.is_not_found_present_in_drop_menu())
-            time.sleep(1)
-            profiles_sub_wizard.set_routing_param_group_custom_value(self.test_data)
-            self.verify("Displays 'Not Found' in the Routing Param Group if the entered data is not valid",
-                        "Not found", values_sub_wizard.is_not_found_present_in_drop_menu())
-            time.sleep(1)
-            profiles_sub_wizard.set_holiday_custom_value(self.test_data)
-            self.verify("Displays 'Not Found' in the Holiday if the entered data is not valid",
-                        "Not found", values_sub_wizard.is_not_found_present_in_drop_menu())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        values_sub_wizard = VenuesValuesSubWizard(self.web_driver_container)
+        values_sub_wizard.set_country_custom_value(self.test_data)
+        self.verify("Displays 'Not Found' in the Country if the entered data is not valid", "Not found",
+                    values_sub_wizard.is_not_found_present_in_drop_menu())
+        time.sleep(1)
+        values_sub_wizard.set_counterpart_custom_value(self.test_data)
+        self.verify("Displays 'Not Found' in the Counterpart if the entered data is not valid", "Not found",
+                    values_sub_wizard.is_not_found_present_in_drop_menu())
+        time.sleep(1)
+        profiles_sub_wizard = VenuesProfilesSubWizard(self.web_driver_container)
+        profiles_sub_wizard.set_price_limit_profile_custom_value(self.test_data)
+        self.verify("Displays 'Not Found' in the Price Limit Profile if the entered data is not valid", "Not found",
+                    values_sub_wizard.is_not_found_present_in_drop_menu())
+        time.sleep(1)
+        profiles_sub_wizard.set_tick_size_profile_custom_value(self.test_data)
+        self.verify("Displays 'Not Found' in the Tick Size Profile if the entered data is not valid", "Not found",
+                    values_sub_wizard.is_not_found_present_in_drop_menu())
+        time.sleep(1)
+        profiles_sub_wizard.set_trading_phase_profile_custom_value(self.test_data)
+        self.verify("Displays 'Not Found' in the Trading Phase Profile if the entered data is not valid",
+                    "Not found", values_sub_wizard.is_not_found_present_in_drop_menu())
+        time.sleep(1)
+        profiles_sub_wizard.set_routing_param_group_custom_value(self.test_data)
+        self.verify("Displays 'Not Found' in the Routing Param Group if the entered data is not valid",
+                    "Not found", values_sub_wizard.is_not_found_present_in_drop_menu())
+        time.sleep(1)
+        profiles_sub_wizard.set_holiday_custom_value(self.test_data)
+        self.verify("Displays 'Not Found' in the Holiday if the entered data is not valid",
+                    "Not found", values_sub_wizard.is_not_found_present_in_drop_menu())

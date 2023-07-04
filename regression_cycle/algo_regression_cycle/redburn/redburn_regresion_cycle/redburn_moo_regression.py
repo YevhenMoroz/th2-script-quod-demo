@@ -5,6 +5,7 @@ from test_cases.algo.Algo_Redburn.Algo_MOC.QAP_T10675 import QAP_T10675
 from test_cases.algo.Algo_Redburn.Algo_MOO.QAP_T10308 import QAP_T10308
 from test_cases.algo.Algo_Redburn.Algo_MOO.QAP_T11010 import QAP_T11010
 from test_cases.algo.Algo_Redburn.Algo_MOO.QAP_T11126 import QAP_T11126
+from test_cases.algo.Algo_Redburn.Algo_MOO.QAP_T11588 import QAP_T11588
 from test_cases.algo.Algo_Redburn.Algo_MOO.QAP_T4196 import QAP_T4196
 from test_cases.algo.Algo_Redburn.Algo_MOO.QAP_T4197 import QAP_T4197
 from test_cases.algo.Algo_Redburn.Algo_MOO.QAP_T4309 import QAP_T4309
@@ -80,6 +81,7 @@ def test_run(parent_id=None, version=None):
         QAP_T4352(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4468(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         QAP_T4309(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T11588(report_id=report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
         # endregion
 
         # region MaxParticipation

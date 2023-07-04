@@ -1,10 +1,6 @@
 import random
 import string
-import sys
 import time
-import traceback
-
-from custom import basic_custom_actions
 
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_values_sub_wizard import \
@@ -57,40 +53,32 @@ class QAP_T3900(CommonTestCase):
             time.sleep(1)
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page = ClientsPage(self.web_driver_container)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
-            values_tab = ClientsValuesSubWizard(self.web_driver_container)
-            values_tab.set_block_approval(self.block_approval[0])
-            wizard = ClientsWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
-            main_page.set_name(self.name)
-            time.sleep(1)
-            main_page.click_on_more_actions()
+        main_page = ClientsPage(self.web_driver_container)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
+        values_tab = ClientsValuesSubWizard(self.web_driver_container)
+        values_tab.set_block_approval(self.block_approval[0])
+        wizard = ClientsWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
+        main_page.set_name(self.name)
+        time.sleep(1)
+        main_page.click_on_more_actions()
 
-            self.verify("PDF file contains Block Approval = Manual", True,
-                        main_page.click_download_pdf_entity_button_and_check_pdf(self.block_approval[0]))
+        self.verify("PDF file contains Block Approval = Manual", True,
+                    main_page.click_download_pdf_entity_button_and_check_pdf(self.block_approval[0]))
 
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
 
-            self.verify("Block Approval has been save correct", self.block_approval[0], values_tab.get_block_approval())
+        self.verify("Block Approval has been save correct", self.block_approval[0], values_tab.get_block_approval())
 
-            values_tab.set_block_approval(self.block_approval[1])
-            wizard.click_on_save_changes()
-            main_page.set_name(self.name)
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
+        values_tab.set_block_approval(self.block_approval[1])
+        wizard.click_on_save_changes()
+        main_page.set_name(self.name)
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
 
-            self.verify("Block Approval has been save correct", self.block_approval[1], values_tab.get_block_approval())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("Block Approval has been save correct", self.block_approval[1], values_tab.get_block_approval())

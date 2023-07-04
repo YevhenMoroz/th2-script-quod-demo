@@ -1,8 +1,5 @@
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.venues.venues_values_sub_wizard import \
     VenuesValuesSubWizard
@@ -46,23 +43,15 @@ class QAP_T3683(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
-        try:
-            self.precondition()
-            description_sub_wizard = VenuesValuesSubWizard(self.web_driver_container)
-            wizard = VenuesWizard(self.web_driver_container)
-            self.verify("Is name field saved", self.name, description_sub_wizard.get_name())
-            self.verify("Is id field saved", self.id, description_sub_wizard.get_id())
-            time.sleep(2)
-            description_sub_wizard.set_name(" ")
-            description_sub_wizard.set_id(" ")
-            time.sleep(2)
-            wizard.click_on_close()
-            time.sleep(2)
-            wizard.click_on_ok_button()
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.precondition()
+        description_sub_wizard = VenuesValuesSubWizard(self.web_driver_container)
+        wizard = VenuesWizard(self.web_driver_container)
+        self.verify("Is name field saved", self.name, description_sub_wizard.get_name())
+        self.verify("Is id field saved", self.id, description_sub_wizard.get_id())
+        time.sleep(2)
+        description_sub_wizard.set_name(" ")
+        description_sub_wizard.set_id(" ")
+        time.sleep(2)
+        wizard.click_on_close()
+        time.sleep(2)
+        wizard.click_on_ok_button()

@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
 from test_framework.web_admin_core.pages.middle_office.fees.fees_page import FeesPage
@@ -75,70 +72,62 @@ class QAP_T8857(CommonTestCase):
         wizard = FeesWizard(self.web_driver_container)
         common_act = CommonPage(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            values_tab.set_misc_fee_type(self.misc_fee_type[0])
-            values_tab.set_exec_scope(self.exec_scope[0])
-            values_tab.set_exec_fee_profile(self.commission_profile_name[0])
-            wizard.click_on_save_changes()
-            time.sleep(1)
-            self.verify("Fees is not saved. Exec Scope = AllExec, CommType = Absolute", True,
-                        common_act.is_error_message_displayed())
-            common_act.click_on_info_error_message_pop_up()
+        values_tab.set_misc_fee_type(self.misc_fee_type[0])
+        values_tab.set_exec_scope(self.exec_scope[0])
+        values_tab.set_exec_fee_profile(self.commission_profile_name[0])
+        wizard.click_on_save_changes()
+        time.sleep(1)
+        self.verify("Fees is not saved. Exec Scope = AllExec, CommType = Absolute", True,
+                    common_act.is_error_message_displayed())
+        common_act.click_on_info_error_message_pop_up()
 
-            values_tab.set_exec_scope(self.exec_scope[3])
-            values_tab.set_exec_fee_profile(self.commission_profile_name[0])
-            wizard.click_on_save_changes()
-            time.sleep(1)
-            self.verify("Fees is not saved. Exec Scope = OnCalculated, CommType = Absolute", True,
-                        common_act.is_error_message_displayed())
-            common_act.click_on_info_error_message_pop_up()
+        values_tab.set_exec_scope(self.exec_scope[3])
+        values_tab.set_exec_fee_profile(self.commission_profile_name[0])
+        wizard.click_on_save_changes()
+        time.sleep(1)
+        self.verify("Fees is not saved. Exec Scope = OnCalculated, CommType = Absolute", True,
+                    common_act.is_error_message_displayed())
+        common_act.click_on_info_error_message_pop_up()
 
-            values_tab.set_exec_scope(self.exec_scope[0])
-            values_tab.set_exec_fee_profile(self.commission_profile_name[1])
-            wizard.click_on_save_changes()
-            time.sleep(1)
-            self.verify("Fees is not saved. Exec Scope = AllExec, CommType = PerUnit", True,
-                        common_act.is_error_message_displayed())
-            common_act.click_on_info_error_message_pop_up()
+        values_tab.set_exec_scope(self.exec_scope[0])
+        values_tab.set_exec_fee_profile(self.commission_profile_name[1])
+        wizard.click_on_save_changes()
+        time.sleep(1)
+        self.verify("Fees is not saved. Exec Scope = AllExec, CommType = PerUnit", True,
+                    common_act.is_error_message_displayed())
+        common_act.click_on_info_error_message_pop_up()
 
-            values_tab.set_exec_scope(self.exec_scope[3])
-            values_tab.set_exec_fee_profile(self.commission_profile_name[1])
-            wizard.click_on_save_changes()
-            time.sleep(1)
-            self.verify("Fees is not saved. Exec Scope = OnCalculated, CommType = PerUnit", True,
-                        common_act.is_error_message_displayed())
-            common_act.click_on_info_error_message_pop_up()
+        values_tab.set_exec_scope(self.exec_scope[3])
+        values_tab.set_exec_fee_profile(self.commission_profile_name[1])
+        wizard.click_on_save_changes()
+        time.sleep(1)
+        self.verify("Fees is not saved. Exec Scope = OnCalculated, CommType = PerUnit", True,
+                    common_act.is_error_message_displayed())
+        common_act.click_on_info_error_message_pop_up()
 
-            values_tab.set_exec_scope(self.exec_scope[2])
-            values_tab.set_exec_fee_profile(self.commission_profile_name[1])
-            wizard.click_on_save_changes()
-            time.sleep(1)
-            self.verify("Fees is not saved. Exec Scope = FirstExec, CommType != Absolute", True,
-                        common_act.is_error_message_displayed())
-            common_act.click_on_info_error_message_pop_up()
+        values_tab.set_exec_scope(self.exec_scope[2])
+        values_tab.set_exec_fee_profile(self.commission_profile_name[1])
+        wizard.click_on_save_changes()
+        time.sleep(1)
+        self.verify("Fees is not saved. Exec Scope = FirstExec, CommType != Absolute", True,
+                    common_act.is_error_message_displayed())
+        common_act.click_on_info_error_message_pop_up()
 
-            values_tab.set_exec_scope(self.exec_scope[1])
-            values_tab.set_exec_fee_profile(self.commission_profile_name[1])
-            wizard.click_on_save_changes()
-            time.sleep(1)
-            self.verify("Fees is not saved. Exec Scope = DayFirstExec, CommType != Absolute", True,
-                        common_act.is_error_message_displayed())
-            common_act.click_on_info_error_message_pop_up()
+        values_tab.set_exec_scope(self.exec_scope[1])
+        values_tab.set_exec_fee_profile(self.commission_profile_name[1])
+        wizard.click_on_save_changes()
+        time.sleep(1)
+        self.verify("Fees is not saved. Exec Scope = DayFirstExec, CommType != Absolute", True,
+                    common_act.is_error_message_displayed())
+        common_act.click_on_info_error_message_pop_up()
 
-            values_tab.set_description(self.description)
-            values_tab.set_exec_scope(self.exec_scope[2])
-            values_tab.set_exec_fee_profile(self.commission_profile_name[0])
-            wizard.click_on_save_changes()
-            fees_page.set_description(self.description)
-            time.sleep(1)
-            self.verify("Fees saved. Exec Scope = FirstExec, CommType = Absolute", True,
-                        fees_page.is_searched_entity_found(self.description))
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        values_tab.set_description(self.description)
+        values_tab.set_exec_scope(self.exec_scope[2])
+        values_tab.set_exec_fee_profile(self.commission_profile_name[0])
+        wizard.click_on_save_changes()
+        fees_page.set_description(self.description)
+        time.sleep(1)
+        self.verify("Fees saved. Exec Scope = FirstExec, CommType = Absolute", True,
+                    fees_page.is_searched_entity_found(self.description))

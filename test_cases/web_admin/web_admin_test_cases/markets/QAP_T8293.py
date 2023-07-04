@@ -1,11 +1,8 @@
 import random
 import string
-import sys
 import time
-import traceback
 from datetime import date, timedelta
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 
 from test_framework.web_admin_core.pages.markets.venues.venues_page import VenuesPage
@@ -37,48 +34,40 @@ class QAP_T8293(CommonTestCase):
 
     def test_context(self):
 
+        self.precondition()
+
+        page = VenuesPage(self.web_driver_container)
+        page.click_on_new()
+        profiles_tab = VenuesProfilesSubWizard(self.web_driver_container)
+        profiles_tab.click_on_holiday_manage_button()
+        holidays_wizard = VenuesHolidaySubWizard(self.web_driver_container)
+        holidays_wizard.click_on_plus_button()
+        holidays_wizard.set_holiday_name(self.holiday_name)
+        holidays_wizard.click_on_plus_button_at_holiday_calendars()
+        holidays_wizard.set_date(self.holiday_day)
+        holidays_wizard.click_on_checkmark_at_holiday_calendars()
+        holidays_wizard.click_on_checkmark()
+        time.sleep(1)
+
+        wizard = VenuesWizard(self.web_driver_container)
+        wizard.click_on_go_back_button()
+        time.sleep(1)
+        profiles_tab.set_holiday(self.holiday_name)
+        self.verify("Newly Holidays select", self.holiday_name, profiles_tab.get_holiday())
+
+        profiles_tab.click_on_holiday_manage_button()
+        holidays_wizard.set_holiday_name_filter(self.holiday_name)
+        time.sleep(1)
+        holidays_wizard.click_on_delete()
+        wizard.click_on_ok_button()
+        time.sleep(1)
+        self.verify('Holiday not displaying after delete', False,
+                    holidays_wizard.is_holiday_found(self.holiday_name))
+
+        wizard.click_on_go_back_button()
+        time.sleep(0.5)
         try:
-            self.precondition()
-
-            page = VenuesPage(self.web_driver_container)
-            page.click_on_new()
-            profiles_tab = VenuesProfilesSubWizard(self.web_driver_container)
-            profiles_tab.click_on_holiday_manage_button()
-            holidays_wizard = VenuesHolidaySubWizard(self.web_driver_container)
-            holidays_wizard.click_on_plus_button()
-            holidays_wizard.set_holiday_name(self.holiday_name)
-            holidays_wizard.click_on_plus_button_at_holiday_calendars()
-            holidays_wizard.set_date(self.holiday_day)
-            holidays_wizard.click_on_checkmark_at_holiday_calendars()
-            holidays_wizard.click_on_checkmark()
-            time.sleep(1)
-
-            wizard = VenuesWizard(self.web_driver_container)
-            wizard.click_on_go_back_button()
-            time.sleep(1)
             profiles_tab.set_holiday(self.holiday_name)
-            self.verify("Newly Holidays select", self.holiday_name, profiles_tab.get_holiday())
-
-            profiles_tab.click_on_holiday_manage_button()
-            holidays_wizard.set_holiday_name_filter(self.holiday_name)
-            time.sleep(1)
-            holidays_wizard.click_on_delete()
-            wizard.click_on_ok_button()
-            time.sleep(1)
-            self.verify('Holiday not displaying after delete', False,
-                        holidays_wizard.is_holiday_found(self.holiday_name))
-
-            wizard.click_on_go_back_button()
-            time.sleep(0.5)
-            try:
-                profiles_tab.set_holiday(self.holiday_name)
-                self.verify('Delete Trading Phase Profile can be selected in the Venue wizard', True, False)
-            except:
-                self.verify('Trading Phase Profile not displaying  in the Venue wizard after delete', True, True)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+            self.verify('Delete Trading Phase Profile can be selected in the Venue wizard', True, False)
+        except:
+            self.verify('Trading Phase Profile not displaying  in the Venue wizard after delete', True, True)

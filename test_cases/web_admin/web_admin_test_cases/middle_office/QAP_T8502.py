@@ -1,10 +1,7 @@
-import sys
 import string
 import random
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.middle_office.fees.fees_page import FeesPage
 from test_framework.web_admin_core.pages.middle_office.fees.fees_wizard import FeesWizard
@@ -35,36 +32,28 @@ class QAP_T8502(CommonTestCase):
 
     def test_context(self):
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page = FeesPage(self.web_driver_container)
-            main_page.click_on_new()
+        main_page = FeesPage(self.web_driver_container)
+        main_page.click_on_new()
 
-            values_tab = FeesValuesSubWizard(self.web_driver_container)
-            values_tab.set_description(self.description)
-            self.misc_fee_type = values_tab.get_all_misc_fee_type_from_drop_menu()
-            [self.misc_fee_type.pop(self.misc_fee_type.index(i)) for i in self.except_misc_fee_type]
-            self.misc_fee_type = random.choice(self.misc_fee_type)
-            values_tab.set_misc_fee_type(self.misc_fee_type)
+        values_tab = FeesValuesSubWizard(self.web_driver_container)
+        values_tab.set_description(self.description)
+        self.misc_fee_type = values_tab.get_all_misc_fee_type_from_drop_menu()
+        [self.misc_fee_type.pop(self.misc_fee_type.index(i)) for i in self.except_misc_fee_type]
+        self.misc_fee_type = random.choice(self.misc_fee_type)
+        values_tab.set_misc_fee_type(self.misc_fee_type)
 
-            dimensions_tab = FeesDimensionsSubWizard(self.web_driver_container)
-            self.client_list = random.choice(dimensions_tab.get_all_client_list_from_drop_menu())
-            dimensions_tab.set_client_list(self.client_list)
+        dimensions_tab = FeesDimensionsSubWizard(self.web_driver_container)
+        self.client_list = random.choice(dimensions_tab.get_all_client_list_from_drop_menu())
+        dimensions_tab.set_client_list(self.client_list)
 
-            wizard = FeesWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
+        wizard = FeesWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
 
-            main_page.set_description(self.description)
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
+        main_page.set_description(self.description)
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
 
-            self.verify("ClientList saved", self.client_list, dimensions_tab.get_client_list())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("ClientList saved", self.client_list, dimensions_tab.get_client_list())

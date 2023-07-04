@@ -1,8 +1,5 @@
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_page import AccountsPage
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_wizard import AccountsWizard
 from test_framework.web_admin_core.pages.clients_accounts.account_lists.main_page import MainPage as AccountListPage
@@ -65,110 +62,100 @@ class QAP_T3670(CommonTestCase):
         client_lists_page = ClientListsPage(self.web_driver_container)
         client_lists_wizard = ClientListsWizard(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            side_menu.open_accounts_page()
+        side_menu.open_accounts_page()
+        accounts_page.set_id(self.account["id"])
+        time.sleep(1)
+        if not accounts_page.is_searched_account_found(self.account["id"]):
+            accounts_page.click_new_button()
+            accounts_wizard.set_id(self.account["id"])
+            accounts_wizard.set_name(self.account["name"])
+            accounts_wizard.set_ext_id_client(self.account["ext_id_client"])
+            accounts_wizard.set_client_id_source(self.account["client_id_source"])
+            accounts_wizard.click_save_button()
+            time.sleep(1)
             accounts_page.set_id(self.account["id"])
             time.sleep(1)
-            if not accounts_page.is_searched_account_found(self.account["id"]):
-                accounts_page.click_new_button()
-                accounts_wizard.set_id(self.account["id"])
-                accounts_wizard.set_name(self.account["name"])
-                accounts_wizard.set_ext_id_client(self.account["ext_id_client"])
-                accounts_wizard.set_client_id_source(self.account["client_id_source"])
-                accounts_wizard.click_save_button()
-                time.sleep(1)
-                accounts_page.set_id(self.account["id"])
-                time.sleep(1)
-            account_csv = accounts_page.click_on_download_csv_button_and_get_content()[0].values()
-            actual_result = ''
-            for i in list(self.account.items()):
-                if i[1] not in account_csv:
-                    actual_result = f'{i[0]} = {i[1]} - not in CSV'
-                    break
-                else: actual_result = True
-            self.verify("CSV file contains Account data", True, actual_result)
+        account_csv = accounts_page.click_on_download_csv_button_and_get_content()[0].values()
+        actual_result = ''
+        for i in list(self.account.items()):
+            if i[1] not in account_csv:
+                actual_result = f'{i[0]} = {i[1]} - not in CSV'
+                break
+            else: actual_result = True
+        self.verify("CSV file contains Account data", True, actual_result)
 
-            side_menu.open_account_list_page()
+        side_menu.open_account_list_page()
+        time.sleep(1)
+        account_lists_page.set_name(self.account_list["name"])
+        time.sleep(1)
+        if not account_lists_page.is_account_list_found(self.account_list["name"]):
+            account_lists_page.click_on_new()
+            account_lists_wizard.set_account_list_name(self.account_list["name"])
+            account_lists_wizard.click_on_plus()
+            account_lists_wizard.set_account(self.account_list["account"])
+            account_lists_wizard.click_on_checkmark()
+            account_lists_wizard.click_on_save_changes()
             time.sleep(1)
             account_lists_page.set_name(self.account_list["name"])
             time.sleep(1)
-            if not account_lists_page.is_account_list_found(self.account_list["name"]):
-                account_lists_page.click_on_new()
-                account_lists_wizard.set_account_list_name(self.account_list["name"])
-                account_lists_wizard.click_on_plus()
-                account_lists_wizard.set_account(self.account_list["account"])
-                account_lists_wizard.click_on_checkmark()
-                account_lists_wizard.click_on_save_changes()
-                time.sleep(1)
-                account_lists_page.set_name(self.account_list["name"])
-                time.sleep(1)
-            account_list_csv = account_lists_page.click_on_download_csv_button_and_get_content()[0].values()
-            self.account_list.pop("account")
-            actual_result = ''
-            for i in list(self.account_list.items()):
-                if i[1] not in account_list_csv:
-                    actual_result = f'{i[0]} = {i[1]} - not in CSV'
-                    break
-                else:
-                    actual_result = True
-            self.verify("CSV file contains Account List data", True, actual_result)
+        account_list_csv = account_lists_page.click_on_download_csv_button_and_get_content()[0].values()
+        self.account_list.pop("account")
+        actual_result = ''
+        for i in list(self.account_list.items()):
+            if i[1] not in account_list_csv:
+                actual_result = f'{i[0]} = {i[1]} - not in CSV'
+                break
+            else:
+                actual_result = True
+        self.verify("CSV file contains Account List data", True, actual_result)
 
-            side_menu.open_clients_page()
+        side_menu.open_clients_page()
+        clients_page.set_name(self.client["name"])
+        time.sleep(1)
+        if not clients_page.is_searched_client_found(self.client["name"]):
+            clients_page.click_on_new()
+            clients_values_tab.set_id(self.client["id"])
+            clients_values_tab.set_name(self.client["name"])
+            clients_values_tab.set_ext_id_client(self.client["ext_id_client"])
+            clients_values_tab.set_disclose_exec(self.client["disclose_exec"])
+            clients_assignments_tab.set_desk(self.client["desks"])
+            clients_wizard.click_on_save_changes()
+            time.sleep(1)
             clients_page.set_name(self.client["name"])
             time.sleep(1)
-            if not clients_page.is_searched_client_found(self.client["name"]):
-                clients_page.click_on_new()
-                clients_values_tab.set_id(self.client["id"])
-                clients_values_tab.set_name(self.client["name"])
-                clients_values_tab.set_ext_id_client(self.client["ext_id_client"])
-                clients_values_tab.set_disclose_exec(self.client["disclose_exec"])
-                clients_assignments_tab.set_desk(self.client["desks"])
-                clients_wizard.click_on_save_changes()
-                time.sleep(1)
-                clients_page.set_name(self.client["name"])
-                time.sleep(1)
-            clients_csv = clients_page.click_on_download_csv_button_and_get_content()[0].values()
-            self.client.pop("id")
-            actual_result = ''
-            for i in list(self.client.items()):
-                if i[1] not in clients_csv:
-                    actual_result = f'{i[0]} = {i[1]} - not in CSV'
-                    break
-                else:
-                    actual_result = True
-            self.verify("CSV file contains Client data", True, actual_result)
+        clients_csv = clients_page.click_on_download_csv_button_and_get_content()[0].values()
+        self.client.pop("id")
+        actual_result = ''
+        for i in list(self.client.items()):
+            if i[1] not in clients_csv:
+                actual_result = f'{i[0]} = {i[1]} - not in CSV'
+                break
+            else:
+                actual_result = True
+        self.verify("CSV file contains Client data", True, actual_result)
 
-            side_menu.open_client_list_page()
+        side_menu.open_client_list_page()
+        client_lists_page.set_name(self.client_list["name"])
+        time.sleep(1)
+        if not client_lists_page.is_client_list_found(self.client_list["name"]):
+            client_lists_page.click_on_new()
+            client_lists_wizard.set_client_list_name(self.client_list["name"])
+            client_lists_wizard.set_client_list_description(self.client_list["description"])
+            client_lists_wizard.click_on_plus()
+            client_lists_wizard.set_client(self.client_list["client"])
+            client_lists_wizard.click_on_checkmark()
+            client_lists_wizard.click_on_save_changes()
             client_lists_page.set_name(self.client_list["name"])
             time.sleep(1)
-            if not client_lists_page.is_client_list_found(self.client_list["name"]):
-                client_lists_page.click_on_new()
-                client_lists_wizard.set_client_list_name(self.client_list["name"])
-                client_lists_wizard.set_client_list_description(self.client_list["description"])
-                client_lists_wizard.click_on_plus()
-                client_lists_wizard.set_client(self.client_list["client"])
-                client_lists_wizard.click_on_checkmark()
-                client_lists_wizard.click_on_save_changes()
-                client_lists_page.set_name(self.client_list["name"])
-                time.sleep(1)
-            client_list_csv = client_lists_page.click_on_download_csv_button_and_get_content()[0].values()
-            self.client_list.pop("client")
-            actual_result = ''
-            for i in list(self.client_list.items()):
-                if i[1] not in client_list_csv:
-                    actual_result = f'{i[0]} = {i[1]} - not in CSV'
-                    break
-                else:
-                    actual_result = True
-            self.verify("CSV file contains Client List data", True, actual_result)
-
-        except Exception:
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            errors = f'"{[traceback.extract_tb(exc_traceback, limit=4)]}"'.replace("\\", "/")
-            basic_custom_actions.create_event(f"FAILED", self.test_case_id, status='FAILED',
-                                              body="[{\"type\": \"message\", \"data\":"+f"{errors}"+"}]")
-            traceback.print_tb(exc_traceback, limit=3, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
-
+        client_list_csv = client_lists_page.click_on_download_csv_button_and_get_content()[0].values()
+        self.client_list.pop("client")
+        actual_result = ''
+        for i in list(self.client_list.items()):
+            if i[1] not in client_list_csv:
+                actual_result = f'{i[0]} = {i[1]} - not in CSV'
+                break
+            else:
+                actual_result = True
+        self.verify("CSV file contains Client List data", True, actual_result)

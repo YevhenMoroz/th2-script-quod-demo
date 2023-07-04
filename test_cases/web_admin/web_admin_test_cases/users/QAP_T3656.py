@@ -1,10 +1,7 @@
 import random
-import sys
 import time
-import traceback
 import string
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.users.users.users_page import UsersPage
 from test_framework.web_admin_core.pages.users.users.users_wizard import UsersWizard
@@ -59,23 +56,15 @@ class QAP_T3656(CommonTestCase):
             time.sleep(1)
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page = UsersPage(self.web_driver_container)
-            main_page.click_on_more_actions()
-            time.sleep(1)
-            main_page.click_on_edit_at_more_actions()
-            time.sleep(2)
-            assignments_tab = UsersAssignmentsSubWizard(self.web_driver_container)
-            assignments_tab.clear_assignments_tab()
-            assignments_tab.set_institution(self.institution)
+        main_page = UsersPage(self.web_driver_container)
+        main_page.click_on_more_actions()
+        time.sleep(1)
+        main_page.click_on_edit_at_more_actions()
+        time.sleep(2)
+        assignments_tab = UsersAssignmentsSubWizard(self.web_driver_container)
+        assignments_tab.clear_assignments_tab()
+        assignments_tab.set_institution(self.institution)
 
-            self.verify("Head of Desk checkbox is disable", False, assignments_tab.is_head_of_desk_enabled())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("Head of Desk checkbox is disable", False, assignments_tab.is_head_of_desk_enabled())

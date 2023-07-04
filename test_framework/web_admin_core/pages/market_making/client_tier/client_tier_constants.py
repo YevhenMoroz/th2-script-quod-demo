@@ -3,10 +3,10 @@ class ClientTierConstants:
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"
     SAVE_CHANGES_BUTTON_XPATH = "//*[normalize-space()='Save Changes']"
-    CLEAR_CHANGES_BUTTON_XPATH = "//*[text()='Clear Changes']"
+    CLEAR_CHANGES_BUTTON_XPATH = "//*[normalize-space()='Clear Changes']"
     CLOSE_WIZARD_XPATH = "//*[@data-name='close']"
     OK_BUTTON_XPATH = '//*[text()="Ok" or text()="OK"]'
-    CANCEL_BUTTON_XPATH = '//*[text()="Cancel"]'
+    CANCEL_BUTTON_XPATH = '//*[normalize-space()="Cancel"]'
     GO_BACK_BUTTON_XPATH = '//button[normalize-space()="Go Back"]'
     REVERT_CHANGES_XPATH = "//*[text()='Revert Changes']"
     SUCH_RECORD_ALREADY_EXISTS_MASSEGE_XPATH = "//*[text()='Such a record already exists']"

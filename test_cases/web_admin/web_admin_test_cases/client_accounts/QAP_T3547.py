@@ -1,8 +1,5 @@
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.client_lists.main_page import ClientListsPage
 from test_framework.web_admin_core.pages.clients_accounts.client_lists.wizard import ClientListsWizard
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
@@ -68,45 +65,37 @@ class QAP_T3547(CommonTestCase):
 
     def test_context(self):
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            client_page = ClientsPage(self.web_driver_container)
-            client_page.set_name(self.clients[0])
-            time.sleep(1)
-            client_page.click_on_more_actions()
-            client_page.click_on_edit()
-            client_assignments_tab = ClientsAssignmentsSubWizard(self.web_driver_container)
-            assigned_client_lists = client_assignments_tab.get_all_assigned_client_lists()
-            actual_result = True if self.first_client_list_name and self.second_client_list_name in assigned_client_lists else False
-            self.verify("All assigned Client List displayed", True, actual_result)
+        client_page = ClientsPage(self.web_driver_container)
+        client_page.set_name(self.clients[0])
+        time.sleep(1)
+        client_page.click_on_more_actions()
+        client_page.click_on_edit()
+        client_assignments_tab = ClientsAssignmentsSubWizard(self.web_driver_container)
+        assigned_client_lists = client_assignments_tab.get_all_assigned_client_lists()
+        actual_result = True if self.first_client_list_name and self.second_client_list_name in assigned_client_lists else False
+        self.verify("All assigned Client List displayed", True, actual_result)
 
-            client_assignments_tab.click_on_client_list_link(self.second_client_list_name)
-            client_list_wizard = ClientListsWizard(self.web_driver_container)
-            time.sleep(2)
-            self.verify("Client List wizard has been open", True, client_list_wizard.is_client_list_wizard_opened())
-            side_menu = SideMenu(self.web_driver_container)
-            client_list_wizard.click_on_revert_changes()
-            time.sleep(1)
-            side_menu.open_clients_page()
-            time.sleep(1)
-            client_page.set_name(self.clients[1])
-            time.sleep(1)
-            client_page.click_on_more_actions()
-            client_page.click_on_edit()
-            client_assignments_tab = ClientsAssignmentsSubWizard(self.web_driver_container)
-            assigned_client_lists = client_assignments_tab.get_all_assigned_client_lists()
-            actual_result = True if self.first_client_list_name and self.second_client_list_name in assigned_client_lists else False
-            self.verify("All assigned Client List displayed", True, actual_result)
+        client_assignments_tab.click_on_client_list_link(self.second_client_list_name)
+        client_list_wizard = ClientListsWizard(self.web_driver_container)
+        time.sleep(2)
+        self.verify("Client List wizard has been open", True, client_list_wizard.is_client_list_wizard_opened())
+        side_menu = SideMenu(self.web_driver_container)
+        client_list_wizard.click_on_revert_changes()
+        time.sleep(1)
+        side_menu.open_clients_page()
+        time.sleep(1)
+        client_page.set_name(self.clients[1])
+        time.sleep(1)
+        client_page.click_on_more_actions()
+        client_page.click_on_edit()
+        client_assignments_tab = ClientsAssignmentsSubWizard(self.web_driver_container)
+        assigned_client_lists = client_assignments_tab.get_all_assigned_client_lists()
+        actual_result = True if self.first_client_list_name and self.second_client_list_name in assigned_client_lists else False
+        self.verify("All assigned Client List displayed", True, actual_result)
 
-            client_assignments_tab.click_on_client_list_link(self.first_client_list_name)
-            client_list_wizard = ClientListsWizard(self.web_driver_container)
-            time.sleep(2)
-            self.verify("Client List wizard has been open", True, client_list_wizard.is_client_list_wizard_opened())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        client_assignments_tab.click_on_client_list_link(self.first_client_list_name)
+        client_list_wizard = ClientListsWizard(self.web_driver_container)
+        time.sleep(2)
+        self.verify("Client List wizard has been open", True, client_list_wizard.is_client_list_wizard_opened())

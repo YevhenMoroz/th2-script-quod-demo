@@ -1,10 +1,7 @@
-import sys
 import time
-import traceback
 import random
 import string
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_page import AccountsPage
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_wizard import AccountsWizard
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
@@ -31,29 +28,20 @@ class QAP_T3857(CommonTestCase):
         side_menu.open_accounts_page()
 
     def test_context(self):
+        self.precondition()
 
-        try:
-            self.precondition()
+        main_page = AccountsPage(self.web_driver_container)
+        main_page.click_more_actions_button()
+        main_page.click_edit_entity_button()
 
-            main_page = AccountsPage(self.web_driver_container)
-            main_page.click_more_actions_button()
-            main_page.click_edit_entity_button()
+        values_tab = AccountsWizard(self.web_driver_container)
+        self.id = values_tab.get_id()
 
-            values_tab = AccountsWizard(self.web_driver_container)
-            self.id = values_tab.get_id()
+        values_tab.set_client_matching_id(self.client_matching_id)
+        wizard = AccountsWizard(self.web_driver_container)
+        wizard.click_save_button()
 
-            values_tab.set_client_matching_id(self.client_matching_id)
-            wizard = AccountsWizard(self.web_driver_container)
-            wizard.click_save_button()
-
-            main_page.set_id(self.id)
-            time.sleep(1)
-            self.verify("Client Matching Id saved and displayed at Main Page", self.client_matching_id,
-                        main_page.get_client_matching_id())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        main_page.set_id(self.id)
+        time.sleep(1)
+        self.verify("Client Matching Id saved and displayed at Main Page", self.client_matching_id,
+                    main_page.get_client_matching_id())

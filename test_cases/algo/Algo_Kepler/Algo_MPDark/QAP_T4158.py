@@ -192,14 +192,14 @@ class QAP_T4158(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Check that RFQ cancel requests received", self.test_id))
         rfq_cancel_trqx = FixMessageOrderCancelRequestAlgo().set_cancel_RFQ(nos_trql_1_rfq).change_parameter("ExDestination", self.ex_destination_trqx).add_header().add_DeliverToCompID(self.deliver_to_comp_id_tqlis)
         rfq_cancel_chixlis = FixMessageOrderCancelRequestAlgo().set_cancel_RFQ(nos_chixlis_1_rfq).change_parameter("ExDestination", self.ex_destination_trqx).add_header().add_DeliverToCompID(self.ex_destination_chixlis)
-        self.fix_verifier_buy.check_fix_message_sequence([rfq_cancel_chixlis, rfq_cancel_trqx], key_parameters_list=[None, None], direction=self.FromQuod, pre_filter=self.pre_filter_1)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([rfq_cancel_chixlis, rfq_cancel_trqx], key_parameters_list=[None, None], direction=self.FromQuod, pre_filter=self.pre_filter_1)
         # endregion
 
         # TRQX accepted cancel rfq
         self.fix_verifier_buy.set_case_id(bca.create_event("Check that RFQ cancel requests accepted", self.test_id))
         er_rfq_cancel_trqxlis_accepted = FixMessageExecutionReportAlgo().set_RFQ_cancel_accepted(nos_trql_1_rfq).change_parameter("ExDestination", "TRQX")
         er_rfq_cancel_chixlis_accepted = FixMessageExecutionReportAlgo().set_RFQ_cancel_accepted(nos_chixlis_1_rfq).change_parameter("ExDestination", "TRQX")
-        self.fix_verifier_buy.check_fix_message_sequence([er_rfq_cancel_chixlis_accepted, er_rfq_cancel_trqxlis_accepted], key_parameters_list=[None, None], direction=self.ToQuod, pre_filter=self.pre_filter_2)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([er_rfq_cancel_chixlis_accepted, er_rfq_cancel_trqxlis_accepted], key_parameters_list=[None, None], direction=self.ToQuod, pre_filter=self.pre_filter_2)
         # endregion
 
         # region check cancel first dma child order

@@ -1,10 +1,5 @@
-import random
-import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.site.desks.desks_page import DesksPage
@@ -29,26 +24,18 @@ class QAP_T3468(CommonTestCase):
         side_menu.open_desks_page()
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            desks_page = DesksPage(self.web_driver_container)
-            desks_page.set_name_filter(self.desk)
-            time.sleep(1)
-            desks_page.click_on_disable_enable_button()
-            time.sleep(1)
+        desks_page = DesksPage(self.web_driver_container)
+        desks_page.set_name_filter(self.desk)
+        time.sleep(1)
+        desks_page.click_on_disable_enable_button()
+        time.sleep(1)
 
-            self.verify("Desks button is Disable", False, desks_page.is_desk_enable_disable())
+        self.verify("Desks button is Disable", False, desks_page.is_desk_enable_disable())
 
-            time.sleep(1)
-            desks_page.click_on_disable_enable_button()
-            time.sleep(1)
+        time.sleep(1)
+        desks_page.click_on_disable_enable_button()
+        time.sleep(1)
 
-            self.verify("Desks button is Enable", True, desks_page.is_desk_enable_disable())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("Desks button is Enable", True, desks_page.is_desk_enable_disable())

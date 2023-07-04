@@ -1,8 +1,5 @@
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.general.system_components.main_page import MainPage
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
@@ -31,33 +28,26 @@ class QAP_T3254(CommonTestCase):
         time.sleep(15)
 
     def test_context(self):
-        try:
-            self.precondition()
 
-            main_page = MainPage(self.web_driver_container)
-            main_page.set_instance_id(self.preview["instance_id_1"])
-            main_page.set_short_name(self.preview["short_name_1"])
-            main_page.set_long_name(self.preview["long_name_1"])
-            main_page.set_version(self.version)
-            main_page.set_active(self.active[0])
+        self.precondition()
 
-            self.verify("AQS component displayed at main page with active status", True,
-                        main_page.is_active_status_displayed())
+        main_page = MainPage(self.web_driver_container)
+        main_page.set_instance_id(self.preview["instance_id_1"])
+        main_page.set_short_name(self.preview["short_name_1"])
+        main_page.set_long_name(self.preview["long_name_1"])
+        main_page.set_version(self.version)
+        main_page.set_active(self.active[0])
 
-            main_page.set_instance_id(self.preview["instance_id_2"])
-            main_page.set_short_name(self.preview["short_name_2"])
-            main_page.set_long_name(self.preview["long_name_2"])
-            main_page.set_version(self.version)
-            main_page.set_active(self.active[1])
+        self.verify("AQS component displayed at main page with active status", True,
+                    main_page.is_active_status_displayed())
 
-            time.sleep(1)
-            self.verify("BS component displayed", True, main_page.is_searched_entity_found_by_name(
-                self.preview["long_name_2"]))
-            self.verify("Active status not displayed", False, main_page.is_active_status_displayed())
+        main_page.set_instance_id(self.preview["instance_id_2"])
+        main_page.set_short_name(self.preview["short_name_2"])
+        main_page.set_long_name(self.preview["long_name_2"])
+        main_page.set_version(self.version)
+        main_page.set_active(self.active[1])
 
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        time.sleep(1)
+        self.verify("BS component displayed", True, main_page.is_searched_entity_found_by_name(
+            self.preview["long_name_2"]))
+        self.verify("Active status not displayed", False, main_page.is_active_status_displayed())

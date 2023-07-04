@@ -1,8 +1,5 @@
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.users.users.users_page import UsersPage
@@ -27,22 +24,13 @@ class QAP_T11142(CommonTestCase):
         users_page = UsersPage(self.web_driver_container)
         assignments_tab = UsersAssignmentsSubWizard(self.web_driver_container)
 
-        try:
-            login_page.login_to_web_admin(self.login, self.password)
-            side_menu.open_users_page()
+        login_page.login_to_web_admin(self.login, self.password)
+        side_menu.open_users_page()
 
-            users_page.set_user_id(self.test_user)
-            time.sleep(1)
-            users_page.click_on_more_actions()
-            users_page.click_on_edit_at_more_actions()
-            time.sleep(1)
-            self.verify("The clone user has the same desks as the original user",
-                        self.desk, assignments_tab.get_desks())
-
-        except Exception:
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            errors = f'"{[traceback.extract_tb(exc_traceback, limit=4)]}"'.replace("\\", "/")
-            basic_custom_actions.create_event(f"FAILED", self.test_case_id, status='FAILED',
-                                              body="[{\"type\": \"message\", \"data\":" + f"{errors}" + "}]")
-            traceback.print_tb(exc_traceback, limit=3, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        users_page.set_user_id(self.test_user)
+        time.sleep(1)
+        users_page.click_on_more_actions()
+        users_page.click_on_edit_at_more_actions()
+        time.sleep(1)
+        self.verify("The clone user has the same desks as the original user",
+                    self.desk, assignments_tab.get_desks())

@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_assignments_sub_wizard import \
     ClientsAssignmentsSubWizard
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
@@ -65,24 +62,17 @@ class QAP_T3945(CommonTestCase):
         values_sub_wizard = ClientsValuesSubWizard(self.web_driver_container)
         main_page = ClientsPage(self.web_driver_container)
         wizard = ClientsWizard(self.web_driver_container)
-        try:
-            self.precondition()
 
-            for i in self.clearing_account_type:
-                values_sub_wizard.set_clearing_account_type(i)
-                time.sleep(1)
-            self.verify(f"Drop-down list contains {self.clearing_account_type}", True, True)
+        self.precondition()
 
-            wizard.click_on_save_changes()
-            time.sleep(2)
-            main_page.set_name(self.name)
-            time.sleep(2)
-            self.verify("Is entity saved correctly", self.clearing_account_type[-1],
-                        main_page.get_clearing_account_type())
+        for i in self.clearing_account_type:
+            values_sub_wizard.set_clearing_account_type(i)
+            time.sleep(1)
+        self.verify(f"Drop-down list contains {self.clearing_account_type}", True, True)
 
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        wizard.click_on_save_changes()
+        time.sleep(2)
+        main_page.set_name(self.name)
+        time.sleep(2)
+        self.verify("Is entity saved correctly", self.clearing_account_type[-1],
+                    main_page.get_clearing_account_type())

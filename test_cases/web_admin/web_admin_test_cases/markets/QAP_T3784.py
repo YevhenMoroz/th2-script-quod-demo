@@ -1,10 +1,7 @@
 import random
-import sys
 import time
-import traceback
 import string
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.venues.venues_page import VenuesPage
 from test_framework.web_admin_core.pages.markets.venues.venues_wizard import VenuesWizard
@@ -72,58 +69,50 @@ class QAP_T3784(CommonTestCase):
             time.sleep(2)
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            side_menu = SideMenu(self.web_driver_container)
-            side_menu.open_venues_page()
-            time.sleep(2)
-            venues_page = VenuesPage(self.web_driver_container)
-            venues_page.set_name_filter(self.test_data["name"])
-            time.sleep(1)
-            venues_page.click_on_more_actions()
-            time.sleep(1)
-            venues_page.click_on_edit()
-            time.sleep(2)
-            venues_values_wizard = VenuesValuesSubWizard(self.web_driver_container)
-            selected_values_at_position_flattening_period = \
-                [str(i).strip() for i in venues_values_wizard.get_position_flattening_period().split(",")]
-            if len(selected_values_at_position_flattening_period) > 1:
-                venues_values_wizard.set_position_flattening_period(selected_values_at_position_flattening_period)
-            venues_wizard = VenuesWizard(self.web_driver_container)
-            venues_wizard.click_on_save_changes()
-            time.sleep(2)
-            venues_page.set_name_filter(self.test_data["name"])
-            time.sleep(1)
-            self.verify("Venue has been saved with the empty Position Flattering Period field", True,
-                        venues_page.is_searched_venue_found(self.test_data["name"]))
+        side_menu = SideMenu(self.web_driver_container)
+        side_menu.open_venues_page()
+        time.sleep(2)
+        venues_page = VenuesPage(self.web_driver_container)
+        venues_page.set_name_filter(self.test_data["name"])
+        time.sleep(1)
+        venues_page.click_on_more_actions()
+        time.sleep(1)
+        venues_page.click_on_edit()
+        time.sleep(2)
+        venues_values_wizard = VenuesValuesSubWizard(self.web_driver_container)
+        selected_values_at_position_flattening_period = \
+            [str(i).strip() for i in venues_values_wizard.get_position_flattening_period().split(",")]
+        if len(selected_values_at_position_flattening_period) > 1:
+            venues_values_wizard.set_position_flattening_period(selected_values_at_position_flattening_period)
+        venues_wizard = VenuesWizard(self.web_driver_container)
+        venues_wizard.click_on_save_changes()
+        time.sleep(2)
+        venues_page.set_name_filter(self.test_data["name"])
+        time.sleep(1)
+        self.verify("Venue has been saved with the empty Position Flattering Period field", True,
+                    venues_page.is_searched_venue_found(self.test_data["name"]))
 
-            side_menu.open_subvenues_page()
-            time.sleep(2)
-            subvenue_page = SubVenuesPage(self.web_driver_container)
-            subvenue_page.set_name_filter(self.test_data["name"])
-            time.sleep(1)
-            subvenue_page.click_on_more_actions()
-            time.sleep(1)
-            subvenue_page.click_on_edit()
-            time.sleep(2)
-            subvenue_description_wizard = SubVenuesDescriptionSubWizard(self.web_driver_container)
-            selected_values_at_position_flattening_period = \
-                [str(i).strip() for i in subvenue_description_wizard.get_position_flattening_period().split(",")]
-            if "" not in selected_values_at_position_flattening_period:
-                subvenue_description_wizard.set_position_flattening_period(
-                    selected_values_at_position_flattening_period)
-            subvenue_wizard = SubVenuesWizard(self.web_driver_container)
-            subvenue_wizard.click_on_save_changes()
-            time.sleep(2)
-            subvenue_page.set_name_filter(self.test_data["name"])
-            time.sleep(1)
-            self.verify("SubVenue has been saved with the empty Position Flattering Period field", True,
-                        subvenue_page.is_searched_subvenue_found(self.test_data["name"]))
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        side_menu.open_subvenues_page()
+        time.sleep(2)
+        subvenue_page = SubVenuesPage(self.web_driver_container)
+        subvenue_page.set_name_filter(self.test_data["name"])
+        time.sleep(1)
+        subvenue_page.click_on_more_actions()
+        time.sleep(1)
+        subvenue_page.click_on_edit()
+        time.sleep(2)
+        subvenue_description_wizard = SubVenuesDescriptionSubWizard(self.web_driver_container)
+        selected_values_at_position_flattening_period = \
+            [str(i).strip() for i in subvenue_description_wizard.get_position_flattening_period().split(",")]
+        if "" not in selected_values_at_position_flattening_period:
+            subvenue_description_wizard.set_position_flattening_period(
+                selected_values_at_position_flattening_period)
+        subvenue_wizard = SubVenuesWizard(self.web_driver_container)
+        subvenue_wizard.click_on_save_changes()
+        time.sleep(2)
+        subvenue_page.set_name_filter(self.test_data["name"])
+        time.sleep(1)
+        self.verify("SubVenue has been saved with the empty Position Flattering Period field", True,
+                    subvenue_page.is_searched_subvenue_found(self.test_data["name"]))

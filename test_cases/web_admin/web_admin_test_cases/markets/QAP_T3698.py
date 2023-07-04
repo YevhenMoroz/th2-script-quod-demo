@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.listings.listings_page import ListingsPage
 from test_framework.web_admin_core.pages.markets.listings.listings_wizard import ListingsWizard
@@ -46,49 +43,41 @@ class QAP_T3698(CommonTestCase):
         listing_wizard = ListingsWizard(self.web_driver_container)
         listing_values_sub_wizard = ListingsValuesSubWizard(self.web_driver_container)
 
-        try:
-            self.precondition()
-            time.sleep(2)
-            listing_wizard.click_on_save_changes()
+        self.precondition()
+        time.sleep(2)
+        listing_wizard.click_on_save_changes()
 
-            self.verify("Error after click on [SAVE CHANGES] button", "Incorrect or missing values",
-                        listing_wizard.get_error_message_inside_listing_wizard())
+        self.verify("Error after click on [SAVE CHANGES] button", "Incorrect or missing values",
+                    listing_wizard.get_error_message_inside_listing_wizard())
 
-            listing_values_sub_wizard.set_instr_type(self.instr_type[0])
-            time.sleep(1)
-            self.verify(f"Is tenor required for {self.instr_type[0]}", True,
-                        listing_values_sub_wizard.is_tenor_field_required())
+        listing_values_sub_wizard.set_instr_type(self.instr_type[0])
+        time.sleep(1)
+        self.verify(f"Is tenor required for {self.instr_type[0]}", True,
+                    listing_values_sub_wizard.is_tenor_field_required())
 
-            time.sleep(1)
-            listing_values_sub_wizard.set_instr_type(self.instr_type[1])
-            self.verify(f"Is tenor required for {self.instr_type[1]}", True,
-                        listing_values_sub_wizard.is_tenor_field_required())
-            time.sleep(1)
-            listing_values_sub_wizard.set_instr_type(self.instr_type[2])
-            self.verify(f"Is tenor required for {self.instr_type[2]}", True,
-                        listing_values_sub_wizard.is_tenor_field_required())
-            time.sleep(1)
-            listing_values_sub_wizard.set_instr_type(self.instr_type[3])
-            self.verify(f"Is maturity month year required for {self.instr_type[3]}", True,
-                        listing_values_sub_wizard.is_maturity_month_year_field_required())
-            time.sleep(1)
-            listing_values_sub_wizard.set_instr_type(self.instr_type[4])
-            self.verify(f"Is maturity month year required for {self.instr_type[4]}", True,
-                        listing_values_sub_wizard.is_maturity_month_year_field_required())
-            time.sleep(1)
-            listing_values_sub_wizard.set_instr_type(self.instr_type[5])
-            self.verify(f"Is strike price required required for {self.instr_type[5]}", True,
-                        listing_values_sub_wizard.is_strike_price_field_required())
-            time.sleep(1)
-            self.verify(f"Is call put  required for {self.instr_type[5]}", True,
-                        listing_values_sub_wizard.is_call_put_field_required())
-            time.sleep(1)
-            self.verify(f"Is maturity month year required for {self.instr_type[5]}", True,
-                        listing_values_sub_wizard.is_maturity_month_year_field_required())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        time.sleep(1)
+        listing_values_sub_wizard.set_instr_type(self.instr_type[1])
+        self.verify(f"Is tenor required for {self.instr_type[1]}", True,
+                    listing_values_sub_wizard.is_tenor_field_required())
+        time.sleep(1)
+        listing_values_sub_wizard.set_instr_type(self.instr_type[2])
+        self.verify(f"Is tenor required for {self.instr_type[2]}", True,
+                    listing_values_sub_wizard.is_tenor_field_required())
+        time.sleep(1)
+        listing_values_sub_wizard.set_instr_type(self.instr_type[3])
+        self.verify(f"Is maturity month year required for {self.instr_type[3]}", True,
+                    listing_values_sub_wizard.is_maturity_month_year_field_required())
+        time.sleep(1)
+        listing_values_sub_wizard.set_instr_type(self.instr_type[4])
+        self.verify(f"Is maturity month year required for {self.instr_type[4]}", True,
+                    listing_values_sub_wizard.is_maturity_month_year_field_required())
+        time.sleep(1)
+        listing_values_sub_wizard.set_instr_type(self.instr_type[5])
+        self.verify(f"Is strike price required required for {self.instr_type[5]}", True,
+                    listing_values_sub_wizard.is_strike_price_field_required())
+        time.sleep(1)
+        self.verify(f"Is call put  required for {self.instr_type[5]}", True,
+                    listing_values_sub_wizard.is_call_put_field_required())
+        time.sleep(1)
+        self.verify(f"Is maturity month year required for {self.instr_type[5]}", True,
+                    listing_values_sub_wizard.is_maturity_month_year_field_required())

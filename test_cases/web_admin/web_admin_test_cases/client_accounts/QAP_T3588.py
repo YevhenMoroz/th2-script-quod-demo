@@ -1,8 +1,5 @@
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_assignments_sub_wizard \
     import ClientsAssignmentsSubWizard
@@ -27,25 +24,17 @@ class QAP_T3588(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            side_menu = SideMenu(self.web_driver_container)
-            side_menu.open_clients_page()
-            time.sleep(2)
-            client_page = ClientsPage(self.web_driver_container)
-            client_page.click_on_new()
-            time.sleep(2)
-            client_assignments_tab = ClientsAssignmentsSubWizard(self.web_driver_container)
-            self.verify("The field User Manager is displayed", True,
-                        client_assignments_tab.is_user_manager_field_displayed_and_has_correct_name())
+        side_menu = SideMenu(self.web_driver_container)
+        side_menu.open_clients_page()
+        time.sleep(2)
+        client_page = ClientsPage(self.web_driver_container)
+        client_page.click_on_new()
+        time.sleep(2)
+        client_assignments_tab = ClientsAssignmentsSubWizard(self.web_driver_container)
+        self.verify("The field User Manager is displayed", True,
+                    client_assignments_tab.is_user_manager_field_displayed_and_has_correct_name())
 
-            self.verify("The field Desk is displayed", True,
-                        client_assignments_tab.is_desk_field_displayed_and_has_correct_name())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("The field Desk is displayed", True,
+                    client_assignments_tab.is_desk_field_displayed_and_has_correct_name())

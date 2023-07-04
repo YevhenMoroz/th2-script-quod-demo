@@ -8,10 +8,10 @@ class ClientsConstants:
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@nbtooltip = 'Download PDF']//*[@data-name='download']"
     DOWNLOAD_CSV_BUTTON = '//nb-card-header//*[@data-name="download"]'
     SAVE_CHANGES_BUTTON_XPATH = "//*[contains(text(), 'Save Changes')]"
-    CLEAR_CHANGES_BUTTON_XPATH = "//*[text()='Clear Changes']"
+    CLEAR_CHANGES_BUTTON_XPATH = "//*[normalize-space()='Clear Changes']"
     CLOSE_WIZARD_XPATH = "//*[@data-name='close']"
-    OK_BUTTON_XPATH = '//*[text()="Ok"]'
-    CANCEL_BUTTON_XPATH = '//*[text()="Cancel"]'
+    OK_BUTTON_XPATH = '//*[normalize-space()="Ok"]'
+    CANCEL_BUTTON_XPATH = '//*[normalize-space()="Cancel"]'
     REVERT_CHANGES_XPATH = "//*[text()='Revert Changes']"
     MORE_ACTIONS_XPATH = "//*[@data-name = 'more-vertical']"
     EDIT_XPATH = "//*[@data-name = 'edit']"
@@ -38,9 +38,9 @@ class ClientsConstants:
 
     # main page
     MAIN_PAGE_GLOBAL_FILTER_XPATH = '//*[@class="left ng-star-inserted"]//input'
-    MAIN_PAGE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
-    MAIN_PAGE_DESCRIPTION_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[2]//input'
-    MAIN_PAGE_CLEARING_ACCOUNT_TYPE_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[3]//input'
+    MAIN_PAGE_NAME_FILTER_XPATH = '//*[@col-id="accountGroupName"]//following::input[@ref="eFloatingFilterText"][1]'
+    MAIN_PAGE_DESCRIPTION_FILTER_XPATH = '//*[@col-id="accountGroupDesc"]//following::input[@ref="eFloatingFilterText"][2]'
+    MAIN_PAGE_CLEARING_ACCOUNT_TYPE_FILTER_XPATH = '//*[@col-id="clearingAccountType"]//following::input[@ref="eFloatingFilterText"][3]'
     MAIN_PAGE_BOOKING_INS_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[4]//input'
     MAIN_PAGE_ALLOCATION_PREFERENCE_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[5]//input'
     MAIN_PAGE_DISCLOSE_EXEC_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[6]//input'

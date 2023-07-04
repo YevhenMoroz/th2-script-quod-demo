@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.routes.main_page import RoutesPage
 from test_framework.web_admin_core.pages.markets.routes.wizard import RoutesWizard
@@ -64,26 +61,18 @@ class QAP_T3677(CommonTestCase):
         strategy_type.set_default_scenario_at_strategy_type_tab(self.default_scenario)
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            wizard = RoutesWizard(self.web_driver_container)
-            actual_result = [self.name, self.client_id, self.es_instance, self.description, self.counterpart,
-                             self.venue, self.instr_symbol, self.price_multiplier, self.strategy_type[0],
-                             self.default_scenario]
-            self.verify("PDF contains all tested data", True,
-                        wizard.click_download_pdf_entity_button_and_check_pdf(actual_result))
-            wizard.click_on_save_changes()
-            time.sleep(2)
+        wizard = RoutesWizard(self.web_driver_container)
+        actual_result = [self.name, self.client_id, self.es_instance, self.description, self.counterpart,
+                         self.venue, self.instr_symbol, self.price_multiplier, self.strategy_type[0],
+                         self.default_scenario]
+        self.verify("PDF contains all tested data", True,
+                    wizard.click_download_pdf_entity_button_and_check_pdf(actual_result))
+        wizard.click_on_save_changes()
+        time.sleep(2)
 
-            main_page = RoutesPage(self.web_driver_container)
-            main_page.set_name_at_filter(self.name)
-            time.sleep(2)
-            self.verify("New Route is saved", True, main_page.is_searched_route_found(self.name))
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        main_page = RoutesPage(self.web_driver_container)
+        main_page.set_name_at_filter(self.name)
+        time.sleep(2)
+        self.verify("New Route is saved", True, main_page.is_searched_route_found(self.name))

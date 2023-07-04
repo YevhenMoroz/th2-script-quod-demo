@@ -4,8 +4,8 @@ class VenuesConstants:
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@data-name='download']"
     DOWNLOAD_PDF_AT_MORE_ACTION_BUTTON_XPATH = "//nb-overlay-container//*[@data-name='download']"
-    SAVE_CHANGES_BUTTON_XPATH = "//*[text()='Save Changes']"
-    CLEAR_CHANGES_BUTTON_XPATH = "//*[text()='Clear Changes']"
+    SAVE_CHANGES_BUTTON_XPATH = "//*[normalize-space()='Save Changes']"
+    CLEAR_CHANGES_BUTTON_XPATH = "//*[normalize-space()='Clear Changes']"
     CLOSE_WIZARD_XPATH = "//*[@data-name='close']"
     OK_BUTTON_XPATH = '//*[normalize-space()="Ok" or normalize-space()="OK"]'
     NO_BUTTON_XPATH = '//*[normalize-space()="No" or normalize-space()="NO"]'
@@ -16,7 +16,7 @@ class VenuesConstants:
     CLONE_XPATH = "//*[@data-name = 'copy']"
     DELETE_XPATH = "//*[@data-name = 'trash-2']"
     PIN_ROW_XPATH = "//*[@nbtooltip ='Click to Pin Row']"
-    NEW_BUTTON_XPATH = '//*[normalize-space()="Venues"]//..//*[text()="New"]'
+    NEW_BUTTON_XPATH = '//*[normalize-space()="Venues"]//..//*[normalize-space()="New"]'
     USER_ICON_AT_RIGHT_CORNER = "//*[@class='control-item icon-btn context-menu-host']"
     LOGOUT_BUTTON_XPATH = "//*[text()='Logout']"
     GO_BACK_BUTTON_XPATH = "//*[text()='Go Back']"
@@ -25,7 +25,7 @@ class VenuesConstants:
     FOOTER_ERROR_XPATH = '//nb-card-footer//*[@outline="danger"]/div/span'
 
     # --Main page--
-    MAIN_PAGE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
+    MAIN_PAGE_NAME_FILTER_XPATH = '//*[@col-id="venueName"]//following::input[@ref="eFloatingFilterText"][1]'
     MAIN_PAGE_NAME_XPATH = '//*[@col-id="venueName"]//span//span[4]'
     MAIN_PAGE_ID_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[2]//input'
     MAIN_PAGE_ID_XPATH = '//*[@col-id="venueID"]//span//span[4]'
@@ -54,7 +54,7 @@ class VenuesConstants:
     VALUES_TAB_ROUTE_VENUE_ID_XPATH = '//*[@formcontrolname="routeVenueID"]'
     VALUES_TAB_TYPE_XPATH = '//*[@id="venueType"]'
     VALUES_TAB_COUNTERPART_XPATH = '//*[@id="counterpart"]'
-    VALUES_TAB_COUNTERPART_MANAGE_XPATH = '//*[@class="venue-detail-settings"]//nb-accordion//nb-accordion-item[1]//*[text()="Manage"]'
+    VALUES_TAB_COUNTERPART_MANAGE_XPATH = '//*[@class="venue-detail-settings"]//nb-accordion//nb-accordion-item[1]//button[normalize-space()="Manage"]'
     VALUES_TAB_BIC_XPATH = '//*[@formcontrolname="BIC"]'
     VALUES_TAB_MANAGE_MIC_BUTTON_XPATH ='//*[@id="MIC"]//ancestor::div[@class="row"]//button'
     VALUES_TAB_POSITION_FLATTENING_PERIOD_XPATH = '//*[@formcontrolname="venuePosValidity"]//button'

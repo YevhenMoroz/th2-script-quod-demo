@@ -193,6 +193,8 @@ class UsersPage(CommonPage):
         return len(self.find_elements_by_xpath(UsersConstants.ALL_DISPLAYED_USERS_XPATH))
 
     def count_online_status_for_displayed_users(self):
+        if not self.is_element_present(UsersConstants.MORE_ACTIONS_XPATH):
+            self.horizontal_scroll(UsersConstants.MORE_ACTIONS_XPATH)
         return len(self.find_elements_by_xpath(UsersConstants.ONLINE_STATUS_XPATH))
 
     def is_users_displayed(self):

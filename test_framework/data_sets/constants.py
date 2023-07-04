@@ -205,11 +205,13 @@ class ClientAlgoPolicy(Enum):
     qa_mpdark_14 = "QA_Auto_MPDark14"
     qa_mpdark_15 = "QA_Auto_MPDark15"
     qa_mpdark_16 = "QA_Auto_MPDark16"
+    qa_mpdark_spray_av = "QA_Auto_DarkPool_Spray_AV"
     qa_mpdark_rr_1 = "QA_Auto_MPDark_RR_1"
     qa_mpdark_rr_2 = "QA_Auto_MPDark_RR_2"
     qa_mpdark_rr_3 = "QA_Auto_MPDark_RR_3"
     qa_mpdark_rr_4 = "QA_Auto_MPDark_RR_4"
     qa_mpdark_rr_5 = "QA_Auto_MPDark_RR_5"
+    qa_mpdark_rr_av = "QA_Auto_DarkPool_RR_AV"
     qa_sorping = "QA_SORPING"
     qa_sorping_1 = "QA_Auto_SORPING_1"
     qa_sorping_2 = "QA_Auto_SORPING_2"
@@ -226,6 +228,8 @@ class ClientAlgoPolicy(Enum):
     qa_sorping_13 = "QA_Auto_SORPING_13"
     qa_sorping_14 = "QA_Auto_SORPING_14"
     qa_sorping_spray_1 = "QA_Auto_SORPING_Spray_1"
+    qa_sorping_spray_2 = "QA_Auto_SORPING_Spray_2"
+    qa_sorping_single_1 = "QA_Auto_SORPING_Single_1"
     qa_multiple_y = 'QA_Auto_SORPING_ME_Y'
     qa_multiple_n = 'QA_Auto_SORPING_ME_N'
     qa_iceberg = 'QA_Auto_ICEBERG'
@@ -616,6 +620,10 @@ class TriggerPriceDirection(Enum):
     PriceGoesUp='U'
     PriceGoesDown='D'
 
+class Rounding(Enum):
+    Ceil = '1'
+    Floor = '2'
+
 class PosAmtType(Enum):
     BasePosition = "BASE"
     AvgPX = "AVG"
@@ -623,3 +631,9 @@ class PosAmtType(Enum):
     SysCurPosition = "SYSQ"
     SysQuotePosition = "QSYS"
     WorkingPosition = "WORK"
+    MTMPnl = "QUPL"
+    SysMTMPnl = "SYUPL"
+    DailyMTMPnl = "QDPL"
+    SysDailyMTMPnl = "SYDPL"
+    DailyAvgPX = "SYDPL"
+

@@ -1,10 +1,7 @@
-import sys
 import time
-import traceback
 import random
 import string
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.users.users.users_values_sub_wizard import UsersValuesSubWizard
@@ -59,33 +56,25 @@ class QAP_T3658(CommonTestCase):
         wizard.click_on_save_changes()
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            users_page = UsersPage(self.web_driver_container)
-            users_page.click_on_more_actions()
-            time.sleep(1)
-            users_page.click_on_edit_at_more_actions()
-            time.sleep(2)
-            assignments_tab = UsersAssignmentsSubWizard(self.web_driver_container)
-            assignments_tab.select_technical_user_checkbox()
-            wizard = UsersWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
-            time.sleep(2)
-            users_page.set_user_id(self.user_id)
-            time.sleep(1)
-            users_page.click_on_more_actions()
-            time.sleep(1)
-            users_page.click_on_edit_at_more_actions()
-            time.sleep(2)
+        users_page = UsersPage(self.web_driver_container)
+        users_page.click_on_more_actions()
+        time.sleep(1)
+        users_page.click_on_edit_at_more_actions()
+        time.sleep(2)
+        assignments_tab = UsersAssignmentsSubWizard(self.web_driver_container)
+        assignments_tab.select_technical_user_checkbox()
+        wizard = UsersWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
+        time.sleep(2)
+        users_page.set_user_id(self.user_id)
+        time.sleep(1)
+        users_page.click_on_more_actions()
+        time.sleep(1)
+        users_page.click_on_edit_at_more_actions()
+        time.sleep(2)
 
-            self.verify("Technical user checkbox selected", True, assignments_tab.is_technical_user_selected())
+        self.verify("Technical user checkbox selected", True, assignments_tab.is_technical_user_selected())
 
-            self.post_conditions()
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.post_conditions()

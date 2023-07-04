@@ -1,10 +1,6 @@
 import random
 import string
-import sys
-import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_wizard import ClientsWizard
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_values_sub_wizard import ClientsValuesSubWizard
@@ -104,30 +100,22 @@ class QAP_T3632(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            login_page = LoginPage(self.web_driver_container)
-            login_page.login_to_web_admin(self.test_data['desk_user']['login'], self.test_data['desk_user']['password'])
-            time.sleep(2)
-            side_menu = SideMenu(self.web_driver_container)
-            side_menu.open_cash_positions_page()
-            time.sleep(2)
-            cash_positions_page = MainPage(self.web_driver_container)
-            cash_positions_page.set_name(self.test_data['cash_position']['name'])
-            time.sleep(2)
-            cash_positions_page.click_on_more_actions()
-            time.sleep(1)
-            cash_positions_page.click_on_edit()
-            time.sleep(2)
-            cash_positions_values_tab = ValuesTab(self.web_driver_container)
+        login_page = LoginPage(self.web_driver_container)
+        login_page.login_to_web_admin(self.test_data['desk_user']['login'], self.test_data['desk_user']['password'])
+        time.sleep(2)
+        side_menu = SideMenu(self.web_driver_container)
+        side_menu.open_cash_positions_page()
+        time.sleep(2)
+        cash_positions_page = MainPage(self.web_driver_container)
+        cash_positions_page.set_name(self.test_data['cash_position']['name'])
+        time.sleep(2)
+        cash_positions_page.click_on_more_actions()
+        time.sleep(1)
+        cash_positions_page.click_on_edit()
+        time.sleep(2)
+        cash_positions_values_tab = ValuesTab(self.web_driver_container)
 
-            self.verify("Client field displays pre-set Client value for User",
-                        self.test_data['cash_position']['client'], cash_positions_values_tab.get_client())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("Client field displays pre-set Client value for User",
+                    self.test_data['cash_position']['client'], cash_positions_values_tab.get_client())

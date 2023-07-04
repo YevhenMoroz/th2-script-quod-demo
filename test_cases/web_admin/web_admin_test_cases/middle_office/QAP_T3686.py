@@ -1,8 +1,5 @@
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.middle_office.fees.fees_dimensions_sub_wizard import FeesDimensionsSubWizard
 from test_framework.web_admin_core.pages.middle_office.fees.fees_page import FeesPage
@@ -49,14 +46,7 @@ class QAP_T3686(CommonTestCase):
 
     def test_context(self):
 
-        try:
-            self.precondition()
-            dimensions_tab = FeesDimensionsSubWizard(self.web_driver_container)
-            self.verify("whether the  Exec Fee Profile  was saved correctly", self.country_of_issue,
-                        dimensions_tab.get_country_of_issue())
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.precondition()
+        dimensions_tab = FeesDimensionsSubWizard(self.web_driver_container)
+        self.verify("whether the  Exec Fee Profile  was saved correctly", self.country_of_issue,
+                    dimensions_tab.get_country_of_issue())

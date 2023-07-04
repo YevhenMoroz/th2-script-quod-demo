@@ -1,6 +1,3 @@
-import traceback
-
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -20,16 +17,10 @@ class QAP_T3703(CommonTestCase):
         login_page.login_to_web_admin(self.login, self.password)
 
     def test_context(self):
+        self.precondition()
+        side_menu = SideMenu(self.web_driver_container)
         try:
-            self.precondition()
-            side_menu = SideMenu(self.web_driver_container)
-            try:
-                side_menu.open_institutions_page()
-                self.verify("Institution wizard opened correctly", True, True)
-            except Exception as e:
-                self.verify("Institution wizard not opened", True, e.__class__.__name__)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)
+            side_menu.open_institutions_page()
+            self.verify("Institution wizard opened correctly", True, True)
+        except Exception as e:
+            self.verify("Institution wizard not opened", True, e.__class__.__name__)

@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.middle_office.commissions.commissions_dimensions_sub_wizard import \
     CommissionsDimensionsSubWizard
@@ -61,28 +58,19 @@ class QAP_T3828(CommonTestCase):
 
     def test_context(self):
 
-        try:
-            self.precondition()
-            page = CommissionsPage(self.web_driver_container)
-            page.set_name(self.commission_name)
-            time.sleep(2)
-            page.click_on_more_actions()
-            expected_pdf = [self.instr_type,
-                            self.venue,
-                            self.side,
-                            self.execution_policy,
-                            self.client_list,
-                            self.commission_amount_type,
-                            self.commission_name,
-                            self.description
-                            ]
-            self.verify("Is PDF contains saved entity", True,
-                        page.click_download_pdf_entity_button_and_check_pdf(expected_pdf))
-
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.precondition()
+        page = CommissionsPage(self.web_driver_container)
+        page.set_name(self.commission_name)
+        time.sleep(2)
+        page.click_on_more_actions()
+        expected_pdf = [self.instr_type,
+                        self.venue,
+                        self.side,
+                        self.execution_policy,
+                        self.client_list,
+                        self.commission_amount_type,
+                        self.commission_name,
+                        self.description
+                        ]
+        self.verify("Is PDF contains saved entity", True,
+                    page.click_download_pdf_entity_button_and_check_pdf(expected_pdf))

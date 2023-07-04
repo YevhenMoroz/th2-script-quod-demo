@@ -1,8 +1,5 @@
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.middle_office.fees.fees_page import FeesPage
 from test_framework.web_admin_core.pages.middle_office.fees.fees_values_sub_wizard import FeesValuesSubWizard
@@ -34,27 +31,19 @@ class QAP_T3408(CommonTestCase):
 
     def test_context(self):
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page = FeesPage(self.web_driver_container)
-            value_tab = FeesValuesSubWizard(self.web_driver_container)
-            main_page.click_on_new()
-            value_tab.click_on_manage_exec_fee_profile()
-            fees_profiles = FeesExecFeeProfileSubWizard(self.web_driver_container)
-            fees_profiles.click_on_plus()
-            commissions_profiles_points = FeesCommissionProfilePointsSubWizard(self.web_driver_container)
-            commissions_profiles_points.click_on_plus()
-            commissions_profiles_points.set_base_value(self.base_value)
-            commissions_profiles_points.set_upper_limit(self.limit)
-            commissions_profiles_points.click_on_checkmark()
-            commissions_profiles_points.click_on_edit()
+        main_page = FeesPage(self.web_driver_container)
+        value_tab = FeesValuesSubWizard(self.web_driver_container)
+        main_page.click_on_new()
+        value_tab.click_on_manage_exec_fee_profile()
+        fees_profiles = FeesExecFeeProfileSubWizard(self.web_driver_container)
+        fees_profiles.click_on_plus()
+        commissions_profiles_points = FeesCommissionProfilePointsSubWizard(self.web_driver_container)
+        commissions_profiles_points.click_on_plus()
+        commissions_profiles_points.set_base_value(self.base_value)
+        commissions_profiles_points.set_upper_limit(self.limit)
+        commissions_profiles_points.click_on_checkmark()
+        commissions_profiles_points.click_on_edit()
 
-            self.verify("Is base value set as zero", self.base_value, commissions_profiles_points.get_base_value())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("Is base value set as zero", self.base_value, commissions_profiles_points.get_base_value())

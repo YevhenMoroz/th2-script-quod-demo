@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
 from test_framework.web_admin_core.pages.positions.wash_book_rules.wash_book_rules_page import WashBookRulesPage
@@ -43,27 +40,19 @@ class QAP_T3430(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            page = WashBookRulesPage(self.web_driver_container)
-            page.set_name_at_filter(self.name)
-            time.sleep(1)
-            page.click_on_more_actions()
-            time.sleep(1)
-            page.click_on_delete_and_confirmation(True)
-            time.sleep(1)
-            common_act = CommonPage(self.web_driver_container)
-            common_act.refresh_page(True)
-            time.sleep(3)
-            page.set_name_at_filter(self.name)
-            time.sleep(1)
+        page = WashBookRulesPage(self.web_driver_container)
+        page.set_name_at_filter(self.name)
+        time.sleep(1)
+        page.click_on_more_actions()
+        time.sleep(1)
+        page.click_on_delete_and_confirmation(True)
+        time.sleep(1)
+        common_act = CommonPage(self.web_driver_container)
+        common_act.refresh_page(True)
+        time.sleep(3)
+        page.set_name_at_filter(self.name)
+        time.sleep(1)
 
-            self.verify("Entity has been delete", False, page.is_searched_entity_found(self.name))
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("Entity has been delete", False, page.is_searched_entity_found(self.name))

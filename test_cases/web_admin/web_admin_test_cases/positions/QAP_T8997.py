@@ -59,31 +59,23 @@ class QAP_T8997(CommonTestCase):
         cash_positions_page = MainPage(self.web_driver_container)
         positions_tab = PositionsTab(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            cash_positions_page.click_on_transaction()
-            cash_positions_page.set_transaction_type(self.transaction_type)
-            cash_positions_page.set_amount(self.amount)
-            cash_positions_page.click_on_ok_button()
-            time.sleep(1)
-            cash_positions_page.click_on_more_actions()
-            cash_positions_page.click_on_edit()
-            time.sleep(1)
+        cash_positions_page.click_on_transaction()
+        cash_positions_page.set_transaction_type(self.transaction_type)
+        cash_positions_page.set_amount(self.amount)
+        cash_positions_page.click_on_ok_button()
+        time.sleep(1)
+        cash_positions_page.click_on_more_actions()
+        cash_positions_page.click_on_edit()
+        time.sleep(1)
 
-            self.verify(f"Value of the Collateral field added correct {self.amount}.",
-                        "{:.2f}".format(self.amount), str(positions_tab.get_collateral()))
-            # TODO
-            # Now only done for Postgres, needs to be completed for Oracle
-            self.db_manager.my_db.execute(f"SELECT collateralcash FROM cashaccount WHERE cashaccountname = '{self.name}'")
-            collateral_balance = self.db_manager.my_db.fetchall()[0][0]
+        self.verify(f"Value of the Collateral field added correct {self.amount}.",
+                    "{:.2f}".format(self.amount), str(positions_tab.get_collateral()))
+        # TODO
+        # Now only done for Postgres, needs to be completed for Oracle
+        self.db_manager.my_db.execute(f"SELECT collateralcash FROM cashaccount WHERE cashaccountname = '{self.name}'")
+        collateral_balance = self.db_manager.my_db.fetchall()[0][0]
 
-            self.verify("cash account transaction in the database is stored correct",
-                        int(self.amount), int(collateral_balance))
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("cash account transaction in the database is stored correct",
+                    int(self.amount), int(collateral_balance))
