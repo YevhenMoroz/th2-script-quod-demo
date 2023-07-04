@@ -71,11 +71,14 @@ class QAP_T10952(TestCase):
     def _create_co_dma_order(self, parameter_dict: dict, step, is_dma=False, expected_settl_date=None):
         if not is_dma:
             self.order_submit.update_fields_in_component(JavaApiFields.NewOrderSingleBlock.value, parameter_dict)
+            trans_status_expected = OrderReplyConst.TransStatus_OPN.value
+        else:
+            trans_status_expected = OrderReplyConst.TransStatus_SEN.value
         self.ja_manager.send_message_and_receive_response(self.order_submit)
         ord_rep = self.ja_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
             JavaApiFields.OrdReplyBlock.value]
         order_id = ord_rep[JavaApiFields.OrdID.value]
-        expected_result = {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value,
+        expected_result = {JavaApiFields.TransStatus.value: trans_status_expected,
                            JavaApiFields.SettlDate.value: expected_settl_date + 'T12:00'}
         self.ja_manager.compare_values(expected_result, ord_rep, f'Verify that Order created ({step})')
         return order_id
