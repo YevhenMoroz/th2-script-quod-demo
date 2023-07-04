@@ -56,7 +56,7 @@ class QAP_T10952(TestCase):
 
         # region step 2 part 1: Create DMA child order via Direct for first CO order
         self.order_submit.set_default_child_dma(order_id_first)
-        settl_date_expected = (datetime.datetime.now() + datetime.timedelta(days=1))
+        settl_date_expected = (datetime.datetime.now() + datetime.timedelta(days=2))
         self._create_co_dma_order({JavaApiFields.SettlDate.value: settl_date_expected.strftime('%Y-%m-%dT%H:%M:%S')},
                                   step='step 2 part 1', is_dma=True,
                                   expected_settl_date=settl_date_expected.strftime('%Y-%m-%d'))
