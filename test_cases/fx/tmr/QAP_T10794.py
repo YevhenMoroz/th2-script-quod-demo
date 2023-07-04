@@ -89,9 +89,8 @@ class QAP_T10794(TestCase):
         # region find out position of QUOD2
         self.request_for_position_int.set_default()
         self.request_for_position_int.change_parameters({"Account": self.quod2})
-        self.fix_manager_pks.send_message_and_receive_response(self.request_for_position_int, self.test_id)
-        internal_report_before = self.fix_manager_pks.get_last_message("PositionReport",
-                                                                       "'Account': '{}'".format(self.quod2))
+        internal_report_before = self.fix_manager_pks.send_message_and_receive_response(self.request_for_position_int,
+                                                                                        self.test_id)
         internal_report_before = self.position_verifier.get_amount(internal_report_before, self.base)
         # region Step 1
         self.trade_management_rule.apply_rule(self.rule)
@@ -106,13 +105,13 @@ class QAP_T10794(TestCase):
         self.sleep(2)
         self.request_for_position_int.set_default()
         self.request_for_position_int.change_parameters({"Account": self.quod2})
-        self.fix_manager_pks.send_message_and_receive_response(self.request_for_position_int, self.test_id)
-        internal_report_after = self.fix_manager_pks.get_last_message("PositionReport",
-                                                                      "'Account': '{}'".format(self.quod2))
+        internal_report_after = self.fix_manager_pks.send_message_and_receive_response(self.request_for_position_int,
+                                                                                        self.test_id)
         internal_report_after = self.position_verifier.get_amount(internal_report_after, self.base)
         # endregion
         # region Step 2
-        self.position_verifier.count_position_change(internal_report_before, internal_report_after, -1000000, self.quod2)
+        self.position_verifier.count_position_change(internal_report_before, internal_report_after, -1000000,
+                                                     self.quod2)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
