@@ -44,35 +44,29 @@ class QAP_T9209(TestCase):
         self.main_rule_result = {"alive": "true", "gatingRuleResultAction": "REJ",
                                  "gatingRuleResultIndice": 1, "gatingRuleResultRejectType": "HRD",
                                  "holdOrder": "false", "splitRatio": 1}
-        self.rule = [
-            {
-                "alive": "true",
+        self.rule = {
+            "tradeMgtRuleName": "QAP-T9209_automation", "tradeMgtRuleID": 3000052, "enableSchedule": "false",
+            "alive": "false", "tradeManagementRuleCondition": [{
+                "alive": "false",
                 "tradeManagementRuleResult": [
-                    {
-                        "alive": "true",
-                        "hedgeAccountGroupID": self.quod2,
-                        "tradeMgtRuleResultRank": 1,
-                        "tradeMgtRuleResultAction": "ABO"
-                    }
+                    {"alive": "false", "hedgeAccountGroupID": "QUOD2", "tradeMgtRuleResultRank": 1,
+                     "tradeMgtRuleResultAction": "ABO"}
                 ],
-                "tradeMgtRuleCondExp": "AND(InstrSymbol={},AccountGroupID=Platinum1)".format(self.mxn_jpy),
-                "tradeMgtRuleCondName": self.mxn_jpy,
-                "tradeMgtRuleCondRank": 1
+                "tradeMgtRuleCondExp": "AND(InstrSymbol=MXN/JPY,AccountGroupID=Platinum1)",
+                "tradeMgtRuleCondName": "MXN/JPY", "tradeMgtRuleCondRank": 1
             },
-            {
-                "alive": "true",
-                "tradeManagementRuleResult": [
-                    {
-                        "alive": "true",
-                        "hedgeAccountGroupID": "amtest",
-                        "tradeMgtRuleResultRank": 1,
-                        "tradeMgtRuleResultAction": "ABO"
-                    }
-                ],
-                "tradeMgtRuleCondName": "Default Result",
-                "tradeMgtRuleCondRank": 2
-            }
-        ]
+                {
+                    "alive": "false",
+                    "tradeManagementRuleResult": [{
+                            "alive": "false",
+                            "hedgeAccountGroupID": "amtest",
+                            "tradeMgtRuleResultRank": 1,
+                            "tradeMgtRuleResultAction": "ABO"
+                        }],
+                    "tradeMgtRuleCondName": "Default Result", "tradeMgtRuleCondRank": 2
+                }
+            ]
+        }
         self.instrument = {
             "InstrSymbol": self.mxn_jpy,
             "InstrType": self.data_set.get_fx_instr_type_ja("fx_spot"),
@@ -85,9 +79,9 @@ class QAP_T9209(TestCase):
         # region find out position of QUOD2
         self.request_for_position_int.set_default()
         self.request_for_position_int.change_parameters({"Account": self.quod2})
-        self.fix_manager_pks.send_message_and_receive_response(self.request_for_position_int, self.test_id)
-        internal_report_before = self.fix_manager_pks.get_last_message("PositionReport",
-                                                                       "'Account': '{}'".format(self.quod2))
+        self.request_for_position_int.update_fields_in_component("Instrument", {"Symbol": self.mxn_jpy})
+        internal_report_before = self.fix_manager_pks.send_message_and_receive_response(self.request_for_position_int,
+                                                                                        self.test_id)
         internal_report_before = self.position_verifier.get_amount(internal_report_before, self.base)
         # region Step 1
         self.trade_management_rule.apply_rule(self.rule)
@@ -102,13 +96,14 @@ class QAP_T9209(TestCase):
         self.sleep(2)
         self.request_for_position_int.set_default()
         self.request_for_position_int.change_parameters({"Account": self.quod2})
+        self.request_for_position_int.update_fields_in_component("Instrument", {"Symbol": self.mxn_jpy})
         self.fix_manager_pks.send_message_and_receive_response(self.request_for_position_int, self.test_id)
-        internal_report_after = self.fix_manager_pks.get_last_message("PositionReport",
-                                                                      "'Account': '{}'".format(self.quod2))
+        internal_report_after = self.fix_manager_pks.send_message_and_receive_response(self.request_for_position_int,
+                                                                                        self.test_id)
         internal_report_after = self.position_verifier.get_amount(internal_report_after, self.base)
         # endregion
         # region Step 2
-        self.position_verifier.count_position_change(internal_report_before, internal_report_after, 1000000, self.quod2)
+        self.position_verifier.count_position_change(internal_report_before, internal_report_after, -1000000, self.quod2)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
