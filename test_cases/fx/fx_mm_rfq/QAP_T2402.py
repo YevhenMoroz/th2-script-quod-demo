@@ -2,20 +2,12 @@ import time
 from datetime import datetime, timedelta
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from stubs import Stubs
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.environments.full_environment import FullEnvironment
-from test_framework.fix_wrappers.DataSet import DirectionEnum
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
-from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
-from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
-    FixMessageMarketDataSnapshotFullRefreshBuyFX
-from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
-    FixMessageMarketDataSnapshotFullRefreshSellFX
-from test_framework.fix_wrappers.forex.FixMessageQuoteCancel import FixMessageQuoteCancelFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteFX import FixMessageQuoteFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteRequestRejectFX import FixMessageQuoteRequestRejectFX
@@ -38,7 +30,6 @@ class QAP_T2402(TestCase):
         self.quote_request = FixMessageQuoteRequestFX(data_set=self.data_set)
         self.quote_reject = FixMessageQuoteRequestRejectFX()
         self.quote = FixMessageQuoteFX()
-        self.quote_cancel = FixMessageQuoteCancelFX()
         self.fix_manager = FixManager(self.ss_rfq_connectivity, self.test_id)
         self.fix_verifier = FixVerifier(self.ss_rfq_connectivity, self.test_id)
         self.client = self.data_set.get_client_by_name("client_mm_3")
@@ -59,16 +50,14 @@ class QAP_T2402(TestCase):
             "SecurityType": self.security_type
         }
         self.expected_error_id = "11900"
-        self.bands_gbp_usd = ["1000000"]
         self.time_client_1 = (datetime.now() - timedelta(hours=4))
         self.time_client_2 = (datetime.now() + timedelta(hours=4))
         self.timestamp_client_1 = self.time_client_1.isoformat().rsplit("T")[1].rsplit(".")[0]
         self.timestamp_client_2 = self.time_client_2.isoformat().rsplit("T")[1].rsplit(".")[0]
-        self.time_instr_1 = (datetime.now() - timedelta(hours=2))
-        self.time_instr_2 = (datetime.now() - timedelta(hours=1))
+        self.time_instr_1 = (datetime.now() - timedelta(hours=4))
+        self.time_instr_2 = (datetime.now() - timedelta(hours=3))
         self.timestamp_instr_1 = self.time_instr_1.isoformat().rsplit("T")[1].rsplit(".")[0]
         self.timestamp_instr_2 = self.time_instr_2.isoformat().rsplit("T")[1].rsplit(".")[0]
-
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
