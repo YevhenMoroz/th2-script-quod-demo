@@ -141,10 +141,6 @@ class PositionVerifier:
             pos_amount_date = report[1].get_parameters()
         except IndexError:
             raise NotFoundException("Report not found")
-        if isinstance(report, list):
-            pos_amount_date = report[1].get_parameters()
-        else:
-            pos_amount_date = report.get_parameters()
         for item in pos_amount_date["PositionAmountData"]:
             if item.get("PosAmtType") == position_type.value:
                 pos_amt = item.get("PosAmt")
