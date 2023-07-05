@@ -70,7 +70,7 @@ class QAP_T7148(TestCase):
                              'BodyLength', 'ApplVerID', 'SendingTime',
                              'SettlDate', 'TimeInForce', 'Currency',
                              'HandlInst', 'OrderCapacity', 'QtyType', 'OrigClOrdID', 'GatingRuleCondName',
-                             'GatingRuleName' 'CxlQty']
+                             'GatingRuleName','CxlQty']
         self.execution_report_fix.set_default_new(self.new_order)
         self.execution_report_fix.change_parameters({'header': {
             JavaApiFields.SenderSubID.value: 'TARGET_SUB_ID',
