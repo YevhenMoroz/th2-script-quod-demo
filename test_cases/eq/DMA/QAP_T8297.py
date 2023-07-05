@@ -24,7 +24,7 @@ class QAP_T8297(TestCase):
         self.fix_env = self.environment.get_list_fix_environment()[0]
         self.rule_manager = RuleManager(sim=Simulators.equity)
         self.venue_client_name = self.data_set.get_venue_client_names_by_name('client_1_venue_1')
-        self.mic = self.data_set.get_mic_by_name('mic_1')  # XPAR
+        self.mic = self.data_set.get_mic_by_name('mic_1')
         self.bs_connectivity = self.fix_env.buy_side
         self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
         self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
