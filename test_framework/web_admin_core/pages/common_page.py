@@ -1,5 +1,6 @@
 import os
 import time
+import pyautogui
 
 import pyperclip
 from selenium.webdriver import ActionChains
@@ -197,6 +198,14 @@ class CommonPage:
 
         delete_all_files_with_extension(download_directory, ".pdf")
         delete_all_files_with_extension(download_directory, ".csv")
+        delete_all_files_with_extension(download_directory, ".txt")
+
+    def get_txt_context(self):
+        path_to_txt = self.__get_downloaded_file(".txt")
+
+        with open(path_to_txt, "r") as file:
+            file_context = file.readlines()
+            return file_context
 
     def get_csv_context(self):
         path_to_csv = self.__get_downloaded_file(".csv")
@@ -329,3 +338,11 @@ class CommonPage:
         checkboxes = self.find_elements_by_xpath(xpath)
         statuses = [_.is_selected() for _ in checkboxes]
         return statuses
+
+    def set_upload_file_path_and_confirm(self, path_to_file):
+        """
+        The method is implemented to add the file to the context window that appears,
+        which expects the user to path to the file and press the "Enter" button to confirm sending
+        """
+        pyautogui.write(path_to_file)
+        pyautogui.press('enter')

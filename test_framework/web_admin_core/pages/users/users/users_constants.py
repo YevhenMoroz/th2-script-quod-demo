@@ -72,6 +72,7 @@ class UsersConstants:
     REVERT_CHANGES_BUTTON = '//button[normalize-space()="Revert Changes"]'
     ERROR_MESSAGE_IN_FOOTER = "//*[@outline='danger']"
     CONFIRM_POP_UP = '(//nb-card)[2]'
+    CLOSE_WIZARD_BUTTON = '//nb-card-header//button[@nbtooltip="Close"]'
 
     # Values sub wizard
 
@@ -183,3 +184,24 @@ class UsersConstants:
     ROUTE_FILTER_AT_ROUTES_SUB_WIZARD = '(//*[normalize-space()="Routes"]//..//*[@placeholder="Filter"])[1]'
     ROUTE_USER_NAME_FILTER_AT_ROUTES_SUB_WIZARD = '(//*[normalize-space()="Routes"]//..//*[@placeholder="Filter"])[2]'
     ROUTE_IN_ROUTE_TABLE_SUB_WIZARD = '//*[normalize-space()="Routes"]//..//p-table//tbody//td[2]//span'
+
+    # Interface Preferences
+    PLUS_BUTTON_IN_USER_INTERFACE_PREFERENCE_TABLE = '//*[normalize-space()="User Interface Preferences"]//following-sibling::app-inline-table[1]//button[@nbtooltip="Add"]'
+    CHECKMARK_BUTTON_IN_USER_INTERFACE_PREFERENCE_TABLE = '//*[normalize-space()="User Interface Preferences"]//following-sibling::app-inline-table[1]//*[@data-name="checkmark"]'
+    CANCEL_BUTTON_IN_USER_INTERFACE_PREFERENCE_TABLE = '//*[normalize-space()="User Interface Preferences"]//following-sibling::app-inline-table[1]//*[@data-name="close"]'
+    EDIT_BUTTON_IN_USER_INTERFACE_PREFERENCE_TABLE = '//*[normalize-space()="User Interface Preferences"]//following-sibling::app-inline-table[1]//*[@data-name="edit"]'
+    DELETE_BUTTON_IN_USER_INTERFACE_PREFERENCE_TABLE = '//*[normalize-space()="User Interface Preferences"]//following-sibling::app-inline-table[1]//*[@data-name="trash-2"]'
+    INTERFACE_ID_IN_USER_INTERFACE_PREFERENCE_TABLE = '//*[normalize-space()="User Interface Preferences"]//following-sibling::app-inline-table[1]//*[@placeholder="Interface ID *"]'
+    DOWNLOAD_PREFERENCES_IN_USER_INTERFACE_PREFERENCE_TABLE = '//*[normalize-space()="User Interface Preferences"]//following-sibling::app-inline-table[1]//*[@class="table-link"]'
+    INTERFACE_ID_FILTER_IN_USER_INTERFACE_PREFERENCE_TABLE = '(//*[normalize-space()="User Interface Preferences"]//following-sibling::app-inline-table[1]//*[@placeholder="Filter"])[1]'
+    UPDATE_BUTTON_IN_USER_INTERFACE_PREFERENCE_TABLE = '//*[normalize-space()="User Interface Preferences"]//following-sibling::app-inline-table[1]//a[normalize-space()="Update"]'
+
+    PLUS_BUTTON_IN_DEFAULT_INTERFACE_PREFERENCE_TABLE = '//*[normalize-space()="Default Interface Preferences"]//following-sibling::app-inline-table[1]//button[@nbtooltip="Add"]'
+    CHECKMARK_BUTTON_IN_DEFAULT_INTERFACE_PREFERENCE_TABLE = '//*[normalize-space()="Default Interface Preferences"]//following-sibling::app-inline-table[1]//*[@data-name="checkmark"]'
+    CANCEL_BUTTON_IN_DEFAULT_INTERFACE_PREFERENCE_TABLE = '//*[normalize-space()="Default Interface Preferences"]//following-sibling::app-inline-table[1]//*[@data-name="close"]'
+    EDIT_BUTTON_IN_DEFAULT_INTERFACE_PREFERENCE_TABLE = '//*[normalize-space()="Default Interface Preferences"]//following-sibling::app-inline-table[1]//*[@data-name="edit"]'
+    DELETE_BUTTON_IN_DEFAULT_INTERFACE_PREFERENCE_TABLE = '//*[normalize-space()="Default Interface Preferences"]//following-sibling::app-inline-table[1]//*[@data-name="trash-2"]'
+    INTERFACE_ID_IN_DEFAULT_INTERFACE_PREFERENCE_TABLE = '//*[normalize-space()="Default Interface Preferences"]//following-sibling::app-inline-table[1]//*[@placeholder="Interface ID *"]'
+    NAME_IN_DEFAULT_INTERFACE_PREFERENCE_TABLE = '//*[normalize-space()="Default Interface Preferences"]//following-sibling::app-inline-table[1]//*[@placeholder="Name *"]'
+    DOWNLOAD_PREFERENCES_IN_DEFAULT_INTERFACE_PREFERENCE_TABLE = '//*[normalize-space()="Default Interface Preferences"]//following-sibling::app-inline-table[1]//*[@class="table-link"]'
+    INTERFACE_ID_FILTER_IN_DEFAULT_INTERFACE_PREFERENCE_TABLE = '(//*[normalize-space()="Default Interface Preferences"]//following-sibling::app-inline-table[1]//*[@placeholder="Filter"])[1]'

@@ -25,7 +25,7 @@ class QAP_T3565(CommonTestCase):
         self.new_password = 'Qwe!'.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.current_password = ""
         self.email = '2@2'
-        self.path_to_file = f'{ROOT_DIR}\\test_framework\\web_admin_core\\resourses\\password_for_QAP_T3565.txt'
+        self.path_to_file = f'{ROOT_DIR}\\test_framework\\web_admin_core\\resources\\password_for_QAP_T3565.txt'
 
     def read_password_from_file(self):
         try:

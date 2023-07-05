@@ -53,6 +53,11 @@ from test_cases.web_admin.web_admin_test_cases.users.QAP_T8890 import QAP_T8890
 from test_cases.web_admin.web_admin_test_cases.users.QAP_T8891 import QAP_T8891
 from test_cases.web_admin.web_admin_test_cases.users.QAP_T10304 import QAP_T10304
 from test_cases.web_admin.web_admin_test_cases.users.QAP_T10305 import QAP_T10305
+from test_cases.web_admin.web_admin_test_cases.users.QAP_T10316 import QAP_T10316
+from test_cases.web_admin.web_admin_test_cases.users.QAP_T10317 import QAP_T10317
+from test_cases.web_admin.web_admin_test_cases.users.QAP_T10318 import QAP_T10318
+from test_cases.web_admin.web_admin_test_cases.users.QAP_T10320 import QAP_T10320
+from test_cases.web_admin.web_admin_test_cases.users.QAP_T10321 import QAP_T10321
 #from test_cases.web_admin.web_admin_test_cases.users.QAP_T10306 import QAP_T10306
 from test_cases.web_admin.web_admin_test_cases.users.QAP_T10834 import QAP_T10834
 from test_cases.web_admin.web_admin_test_cases.users.QAP_T11142 import QAP_T11142
@@ -171,6 +176,16 @@ class RunUsers:
             QAP_T10304(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                        environment=configuration.environment).run()
             QAP_T10305(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                       environment=configuration.environment).run()
+            QAP_T10316(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                       environment=configuration.environment).run()
+            QAP_T10317(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                       environment=configuration.environment).run()
+            QAP_T10318(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                       environment=configuration.environment).run()
+            QAP_T10320(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                       environment=configuration.environment).run()
+            QAP_T10321(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                        environment=configuration.environment).run()
             # QAP_T10306(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
             #            environment=configuration.environment).run()
