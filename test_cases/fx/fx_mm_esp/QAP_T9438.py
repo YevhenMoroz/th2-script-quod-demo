@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from custom.verifier import VerificationMethod, Verifier
+from custom.verifier import Verifier
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
