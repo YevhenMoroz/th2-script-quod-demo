@@ -1,5 +1,10 @@
 from pathlib import Path
+
+from paramiko.client import SSHClient
+
 from custom import basic_custom_actions as bca
+from custom.verifier import Verifier
+from test_cases.fx.fx_wrapper.common_tools import check_value_in_db
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
@@ -8,6 +13,7 @@ from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.forex.FixMessageQuoteRequestFX import FixMessageQuoteRequestFX
 from test_framework.fix_wrappers.forex.FixMessageQuoteRequestRejectFX import FixMessageQuoteRequestRejectFX
+from test_framework.ssh_wrappers.ssh_client import SshClient
 
 
 class QAP_T2834(TestCase):
@@ -25,10 +31,15 @@ class QAP_T2834(TestCase):
         self.sec_type_spot = self.data_set.get_security_type_by_name('fx_spot')
         self.spo_ndf_date = self.data_set.get_settle_date_by_name('spo_ndf')
         self.client_iridium = self.data_set.get_client_by_name("client_mm_3")
-
         self.instrument = {
             "Symbol": self.eur_rub,
             "SecurityType": self.sec_type_spot}
+        self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
+        self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
+                                    self.ssh_client_env.password, self.ssh_client_env.su_user,
+                                    self.ssh_client_env.su_password)
+        self.verifier = Verifier(self.test_id)
+        self.result = None
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -37,8 +48,16 @@ class QAP_T2834(TestCase):
                                                                             Account=self.client_iridium,
                                                                             Instrument=self.instrument,
                                                                             SettlDate=self.spo_ndf_date)
-        self.fix_manager.send_message_and_receive_response(self.quote_request, self.test_id)
-        self.rfq_reject.set_quote_reject_params(self.quote_request, text="no available depth on EUR/RUB SPO")
-        self.rfq_reject.remove_fields_in_repeating_group("NoRelatedSymbols", ["Account", "OrderQty"])
-        self.fix_verifier.check_fix_message(fix_message=self.rfq_reject)
+        cl_quote_request_id = str(self.quote_request.get_parameter("QuoteReqID"))
+        self.fix_manager.send_message(self.quote_request)
+        quote_request_id = str(
+            check_value_in_db(cl_quote_request_id, key_parameter="clientquotereqid", table="quoterequest",
+                              extracting_value="quoterequestid"))
+        self.result = self.ssh_client.find_regex_pattern("/Logs/quod314/QUOD.QS_RFQ_FIX_TH2.log",
+                                           rf"^.*QuoteRequestReject.*{quote_request_id}.*FreeNotes=\"no available depth on EUR/RUB SPO - manual intervention required\".*$")
+        if self.result:
+            self.result = "true"
+            print("QuoteRequestReject is found")
+        self.verifier.set_event_name("Check rule - Check QuoteRequest Reject")
+        self.verifier.compare_values("Send QuoteRequest Reject", self.result, "true")
         # endregion
