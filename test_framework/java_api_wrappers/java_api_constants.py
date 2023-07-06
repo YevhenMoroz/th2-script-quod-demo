@@ -85,6 +85,7 @@ class SubmitRequestConst(Enum):
     Side_Buy = 'Buy'
     Side_B_aka_Buy = 'B'
     Side_Sell = 'Sell'
+    PositionEffect_R = 'R'
 
 
 class AllocationReportConst(Enum):
