@@ -63,7 +63,7 @@ class CTMRuleManager:
         return Stubs.simulator_http.createHttpAnswerRule(
             request=TemplateHttpAnswerRule(
                 connection_id=ConnectionID(session_alias=self.session_alias),
-                instructingPartyValue="QUODTESTGW3",
+                instructingPartyValue="QUODTESTBRK",
                 settlementInstructions={"ID1": "BT01C", "SubAccountNo": "21435", "PaymentCurrency": "EUR",
                                         "SubAgentBIC": "AUTOIM01XXX",
                                         "SubAgentName1": "RBC INVESTOR SERVICES TRUST, UK BRA", "SubAgentName2": "NCH",
@@ -74,7 +74,7 @@ class CTMRuleManager:
                 account2ID=account_2,
                 partySettlement1=PartySettlement1(SettlementInstructionsSourceIndicator="ALRT",
                                                   AlertCountryCode="GBR",
-                                                  AlertMethodType="CREST",
+                                                  AlertMethodType="EURO_CLEAR",
                                                   AlertSecurityType="EQU",
                                                   AlertSettlementModelName="INTMODEL",
                                                   settlementInstructions=SettlementInstructions1(ID1="BT01C",
@@ -113,6 +113,11 @@ class CTMRuleManager:
 
 if __name__ == '__main__':
     rule_manager = CTMRuleManager()
-    rule_manager.print_active_rules()
+    # rule_manager.add_login_rule()
+    # rule_manager.add_delete_rule()
+    # rule_manager.add_autoresponder_with_2_acc("MOClient_SA1", "MOClient_SA2")
+    # rule_manager.add_autoresponder_with_2_acc("MOClient9_SA1", "MOClient9_SA2")
     # rule_manager.remove_all_rules()
+    rule_manager.print_active_rules()
+
     Stubs.factory.close()
