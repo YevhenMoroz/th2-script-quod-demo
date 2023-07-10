@@ -58,7 +58,7 @@ class QAP_T10321(CommonTestCase):
 
                 interface_preferences_tab.user_interface_preference_table.click_on_plus_button()
                 interface_preferences_tab.user_interface_preference_table.set_interface_id(self.interface_pref_id)
-                interface_preferences_tab.user_interface_preference_table.click_on_update_button_and_app_file(self.path_to_file)
+                interface_preferences_tab.user_interface_preference_table.click_on_update_button_and_attach_file(self.path_to_file)
                 interface_preferences_tab.user_interface_preference_table.click_on_checkmark_button()
                 wizard.click_on_save_changes()
                 time.sleep(2)
@@ -82,7 +82,7 @@ class QAP_T10321(CommonTestCase):
         time.sleep(1)
         interface_preferences_tab.user_interface_preference_table.click_on_edit_button()
         time.sleep(1)
-        interface_preferences_tab.user_interface_preference_table.click_on_update_button_and_app_file(self.path_to_file)
+        interface_preferences_tab.user_interface_preference_table.click_on_update_button_and_attach_file(self.path_to_file)
         interface_preferences_tab.user_interface_preference_table.click_on_checkmark_button()
         time.sleep(1)
         preference_file = interface_preferences_tab.user_interface_preference_table.click_on_download_button_and_get_content()

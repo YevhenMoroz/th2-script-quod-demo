@@ -195,6 +195,7 @@ class UsersConstants:
     DOWNLOAD_PREFERENCES_IN_USER_INTERFACE_PREFERENCE_TABLE = '//*[normalize-space()="User Interface Preferences"]//following-sibling::app-inline-table[1]//*[@class="table-link"]'
     INTERFACE_ID_FILTER_IN_USER_INTERFACE_PREFERENCE_TABLE = '(//*[normalize-space()="User Interface Preferences"]//following-sibling::app-inline-table[1]//*[@placeholder="Filter"])[1]'
     UPDATE_BUTTON_IN_USER_INTERFACE_PREFERENCE_TABLE = '//*[normalize-space()="User Interface Preferences"]//following-sibling::app-inline-table[1]//a[normalize-space()="Update"]'
+    INTERFACE_IDS_FROM_INTERFACE_PREFERENCE_TABLE = '//*[normalize-space()="User Interface Preferences"]//following-sibling::app-inline-table[1]//p-table//td[2]//span[@class="ng-star-inserted"]'
 
     PLUS_BUTTON_IN_DEFAULT_INTERFACE_PREFERENCE_TABLE = '//*[normalize-space()="Default Interface Preferences"]//following-sibling::app-inline-table[1]//button[@nbtooltip="Add"]'
     CHECKMARK_BUTTON_IN_DEFAULT_INTERFACE_PREFERENCE_TABLE = '//*[normalize-space()="Default Interface Preferences"]//following-sibling::app-inline-table[1]//*[@data-name="checkmark"]'

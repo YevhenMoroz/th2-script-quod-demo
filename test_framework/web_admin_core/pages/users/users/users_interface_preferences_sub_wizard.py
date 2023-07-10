@@ -60,10 +60,19 @@ class UsersInterfacePreferencesSubWizard(CommonPage):
         def set_interface_id_filter(self, value):
             self.set_text_by_xpath(UsersConstants.INTERFACE_ID_FILTER_IN_USER_INTERFACE_PREFERENCE_TABLE, value)
 
-        def click_on_update_button_and_app_file(self, path_to_file):
+        def click_on_update_button_and_attach_file(self, path_to_file):
             self.find_by_xpath(UsersConstants.UPDATE_BUTTON_IN_USER_INTERFACE_PREFERENCE_TABLE).click()
             time.sleep(1)
             self.set_upload_file_path_and_confirm(path_to_file)
+
+        def get_all_interface_id_from_table(self) -> list:
+            return self.get_all_items_from_table_column(UsersConstants.INTERFACE_IDS_FROM_INTERFACE_PREFERENCE_TABLE)
+
+        def get_interface_id_in_editor(self):
+            return self.get_text_by_xpath(UsersConstants.INTERFACE_ID_IN_USER_INTERFACE_PREFERENCE_TABLE)
+
+        def is_sub_wizard_open(self):
+            return self.is_element_present(UsersConstants.INTERFACE_ID_IN_USER_INTERFACE_PREFERENCE_TABLE)
 
     class _DefaultInterfacePreferences(CommonPage):
         def __init__(self, web_driver_container: WebDriverContainer):

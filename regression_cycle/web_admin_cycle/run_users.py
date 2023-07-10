@@ -53,6 +53,10 @@ from test_cases.web_admin.web_admin_test_cases.users.QAP_T8890 import QAP_T8890
 from test_cases.web_admin.web_admin_test_cases.users.QAP_T8891 import QAP_T8891
 from test_cases.web_admin.web_admin_test_cases.users.QAP_T10304 import QAP_T10304
 from test_cases.web_admin.web_admin_test_cases.users.QAP_T10305 import QAP_T10305
+from test_cases.web_admin.web_admin_test_cases.users.QAP_T10309 import QAP_T10309
+from test_cases.web_admin.web_admin_test_cases.users.QAP_T10310 import QAP_T10310
+from test_cases.web_admin.web_admin_test_cases.users.QAP_T10311 import QAP_T10311
+from test_cases.web_admin.web_admin_test_cases.users.QAP_T10312 import QAP_T10312
 from test_cases.web_admin.web_admin_test_cases.users.QAP_T10316 import QAP_T10316
 from test_cases.web_admin.web_admin_test_cases.users.QAP_T10317 import QAP_T10317
 from test_cases.web_admin.web_admin_test_cases.users.QAP_T10318 import QAP_T10318
@@ -176,6 +180,14 @@ class RunUsers:
             QAP_T10304(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                        environment=configuration.environment).run()
             QAP_T10305(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                       environment=configuration.environment).run()
+            QAP_T10309(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                       environment=configuration.environment).run()
+            QAP_T10310(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                       environment=configuration.environment).run()
+            QAP_T10311(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
+                       environment=configuration.environment).run()
+            QAP_T10312(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                        environment=configuration.environment).run()
             QAP_T10316(self.web_driver_container, self.second_lvl_id, data_set=configuration.data_set,
                        environment=configuration.environment).run()

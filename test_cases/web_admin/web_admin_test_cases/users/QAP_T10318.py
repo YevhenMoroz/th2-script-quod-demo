@@ -46,7 +46,7 @@ class QAP_T10318(CommonTestCase):
 
         interface_preferences_tab.user_interface_preference_table.click_on_plus_button()
         interface_preferences_tab.user_interface_preference_table.set_interface_id(self.interface_pref_id)
-        interface_preferences_tab.user_interface_preference_table.click_on_update_button_and_app_file(self.path_to_file)
+        interface_preferences_tab.user_interface_preference_table.click_on_update_button_and_attach_file(self.path_to_file)
         interface_preferences_tab.user_interface_preference_table.click_on_cancel_button()
         time.sleep(1)
         interface_preferences_tab.user_interface_preference_table.click_on_plus_button()
