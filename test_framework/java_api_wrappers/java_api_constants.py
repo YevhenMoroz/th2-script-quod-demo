@@ -65,6 +65,7 @@ class OrderReplyConst(Enum):
     ExecType_PMO = 'PMO'
     ExecType_CXL = 'CXL'
     ExecType_COR = 'COR'
+    CustOrderHandlingInst_LOC = 'LOC'
 
 
 class ExecutionPolicyConst(Enum):
@@ -470,6 +471,7 @@ class JavaApiFields(Enum):
     SubCounterpartList = "SubCounterpartList"
     OrdIDList = "OrdIDList"
     OrdIDBlock = "OrdIDBlock"
+    CustOrderHandlingInst = "CustOrderHandlingInst"
 
     # fields of Bag
     OrderBagStatus = 'OrderBagStatus'
