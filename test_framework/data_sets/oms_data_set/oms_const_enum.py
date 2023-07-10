@@ -738,6 +738,7 @@ class OMSCashAccountIDs(Enum):
 
 class OMSFixLegInstruments(Enum):
     instrument_multileg_paris_leg_1 = dict(
+        LegSide='1',
         LegSymbol="VRNL",
         LegSecurityID="FR0000062465",
         LegSecurityIDSource='4',
@@ -745,6 +746,7 @@ class OMSFixLegInstruments(Enum):
         LegSecurityType='CS'
     )
     instrument_multileg_paris_leg_2 = dict(
+        LegSide='2',
         LegSymbol="PUB",
         LegSecurityID="FR0000130577",
         LegSecurityIDSource='4',
