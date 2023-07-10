@@ -31,6 +31,7 @@ class FIXMessageType(Enum):
     AllocationACK = "AllocationACK"
     SecurityStatusRequest = "SecurityStatusRequest"
     SecurityStatus = "SecurityStatus"
+    MultilegOrderCancelReplace = 'MultilegOrderCancelReplace'
 
 
 class ORSMessageType(Enum):
@@ -93,6 +94,7 @@ class ORSMessageType(Enum):
     ComputeBookingFeesCommissionsReply = 'Order_ComputeBookingFeesCommissionsReply'
     QuoteRequestActionRequest = "Order_QuoteRequestActionRequest"
     QuoteRequest = "Fix_QuoteRequest"
+    OrderQuoteRequest = "Order_QuoteRequest"
     QuoteCancel = "Fix_QuoteCancel"
     QuoteRequestNotif = "Order_QuoteRequestNotif"
     QuoteRequestActionReply = "Order_QuoteRequestActionReply"
@@ -155,6 +157,7 @@ class ORSMessageType(Enum):
     BenchmarkNotification = 'Order_BenchmarkNotification'
     CrossAnnouncementReply = 'Order_CrossAnnouncementReply'
     CrossAnnouncement = 'Order_CrossAnnouncement'
+    MultiLegOrderModificationRequest = 'Order_MultiLegOrderModificationRequest'
 
 
 class TradingRestApiMessageType(Enum):
@@ -192,6 +195,7 @@ class ESMessageType(Enum):
     NewOrderReply = 'Gateway_NewOrderReply'
     OrderCancelReply = 'Gateway_OrderCancelReply'
     OrderModificationReply = "Gateway_OrderModificationReply"
+    QuoteStatusReport = 'Gateway_QuoteStatusReport'
 
 
 class ResAPIMessageType(Enum):

@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.rest_api_wrappers.RestApiMessages import RestApiMessages
 
@@ -42,11 +44,11 @@ class RestApiManageSecurityBlock(RestApiMessages):
                                 "alive": "true"}
 
     def set_default_param(self):
-        self.set_params(self.base_parameters)
+        self.set_params(deepcopy(self.base_parameters))
         return self
 
     def set_fee_exemption(self, stamp=False, levy=False, per_transac=False):
-        self.set_params(self.base_parameters)
+        self.set_params(deepcopy(self.base_parameters))
         if stamp: self.change_params({"stampFeeExemption": "true"})
         if levy: self.change_params({"levyFeeExemption": "true"})
         if per_transac: self.change_params({"perTransacFeeExemption": "true"})

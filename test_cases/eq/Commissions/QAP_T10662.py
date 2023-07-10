@@ -173,7 +173,7 @@ class QAP_T10662(TestCase):
         # region step 4 - Allocate order
         expected_result_fee = {
             JavaApiFields.MiscFeeBasis.value: 'B',
-            JavaApiFields.MiscFeeAmt.value: '0.02',
+            JavaApiFields.MiscFeeAmt.value: '0.2',
             JavaApiFields.MiscFeeRate.value: '1.0',
             JavaApiFields.MiscFeeType.value: 'EXC',
             JavaApiFields.MiscFeeCurr.value: self.comm_cur
@@ -184,6 +184,7 @@ class QAP_T10662(TestCase):
         self.confirm.update_fields_in_component("ConfirmationBlock", {"AllocAccountID": self.client_acc,
                                                                       "InstrID": self.data_set.get_instrument_id_by_name(
                                                                           "instrument_3"), "AllocQty": self.qty,
+                                                                      JavaApiFields.Currency.value: self.comm_cur,
                                                                       "AvgPx": new_avg_px})
         self.java_api_manager.send_message_and_receive_response(self.confirm)
         confirm_report = \
@@ -202,3 +203,4 @@ class QAP_T10662(TestCase):
         self.ssh_client.send_command("qrestart ORS CS")
         time.sleep(60)
         os.remove("temp.xml")
+        self.ssh_client.close()

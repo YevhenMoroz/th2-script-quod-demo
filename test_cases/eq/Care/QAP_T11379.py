@@ -8,11 +8,10 @@ from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.db_wrapper.db_manager import DBManager
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.java_api_constants import JavaApiFields, SubmitRequestConst, \
-    SubscriptionRequestTypes, PosReqTypes, OrderReplyConst
+    OrderReplyConst
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
 from test_framework.java_api_wrappers.ors_messages.CrossAnnouncement import CrossAnnouncement
 from test_framework.java_api_wrappers.ors_messages.HeldOrderAckRequest import HeldOrderAckRequest
-from test_framework.java_api_wrappers.pks_messages.RequestForPositions import RequestForPositions
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -68,13 +67,13 @@ class QAP_T11379(TestCase):
         # region step 3: Reject CO order
         self.reject_request.set_default(child_order_id_first, client, ack_type='R')
         self.ja_manager.send_message_and_receive_response(self.reject_request)
-        order_notif = self.ja_manager.get_last_message(ORSMessageType.OrdNotification.value, child_order_id_first).get_parameters()[JavaApiFields.OrdNotificationBlock.value]
+        order_notif = self.ja_manager.get_last_message(ORSMessageType.HeldOrderAckReply.value, child_order_id_first).get_parameters()[JavaApiFields.HeldOrderAckReplyBlock.value]
         self.ja_manager.compare_values({JavaApiFields.OrdStatus.value: OrderReplyConst.OrdStatus_REJ.value},
                                        order_notif, "Verifying that order is rejected (step 3)")
         # endregion
 
     def _create_co_orders(self):
-        self.ja_manager.send_message_and_receive_response(self.order_submit, response_filter_dict={"Order_OrdNotification": "OrdNotificationBlock/OrdID"})
+        self.ja_manager.send_message_and_receive_response(self.order_submit)
         order_reply = self.ja_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
             JavaApiFields.OrdReplyBlock.value]
         return order_reply[JavaApiFields.OrdID.value]

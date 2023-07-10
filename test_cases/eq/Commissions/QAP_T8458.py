@@ -35,13 +35,6 @@ logger.setLevel(logging.INFO)
 seconds, nanos = timestamps()
 
 
-def print_message(message, responses):
-    logger.info(message)
-    for i in responses:
-        logger.info(i)
-        logger.info(i.get_parameters())
-
-
 class QAP_T8458(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def __init__(self, report_id, session_id, data_set, environment):
@@ -121,8 +114,7 @@ class QAP_T8458(TestCase):
                                                         }
                                                        )
         self.submit_request.remove_fields_from_component('NewOrderSingleBlock', ['SettlCurrency'])
-        responses = self.java_api_manager.send_message_and_receive_response(self.submit_request)
-        print_message("Creating CO order (Step 1)", responses)
+        self.java_api_manager.send_message_and_receive_response(self.submit_request)
         order_reply_message = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
             JavaApiFields.OrdReplyBlock.value]
         order_id = order_reply_message[JavaApiFields.OrdID.value]
@@ -137,8 +129,7 @@ class QAP_T8458(TestCase):
         self.trade_entry.set_default_trade(order_id, self.price, self.qty)
         self.trade_entry.update_fields_in_component('TradeEntryRequestBlock',
                                                     {'CounterpartList': {'CounterpartBlock': [contra_firm]}})
-        responses = self.java_api_manager.send_message_and_receive_response(self.trade_entry)
-        print_message('Trade CO order (Step 2)', responses)
+        self.java_api_manager.send_message_and_receive_response(self.trade_entry)
         execution_report = \
             self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
                 JavaApiFields.ExecutionReportBlock.value]
@@ -152,8 +143,7 @@ class QAP_T8458(TestCase):
 
         # region complete CO order (step 3)
         self.complete_request.set_default_complete(order_id)
-        responses = self.java_api_manager.send_message_and_receive_response(self.complete_request)
-        print_message('Completing CO order', responses)
+        self.java_api_manager.send_message_and_receive_response(self.complete_request)
         execution_report = \
             self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
                 JavaApiFields.ExecutionReportBlock.value]
@@ -195,8 +185,7 @@ class QAP_T8458(TestCase):
         self.compute_booking_fee_commission_request.set_list_of_order_alloc_block(cl_ord_id, order_id,
                                                                                   actually_post_trade_status)
         self.compute_booking_fee_commission_request.set_default_compute_booking_request(self.qty, avg_px)
-        responses = self.java_api_manager.send_message_and_receive_response(self.compute_booking_fee_commission_request)
-        print_message("send ComputeBookingCommissionFeesRequest (part of step 5)", responses)
+        self.java_api_manager.send_message_and_receive_response(self.compute_booking_fee_commission_request)
         compute_booking_misc_fee_response = self.java_api_manager.get_last_message(
             ORSMessageType.ComputeBookingFeesCommissionsReply.value).get_parameters()[
             JavaApiFields.ComputeBookingFeesCommissionsReplyBlock.value]
@@ -220,8 +209,7 @@ class QAP_T8458(TestCase):
                                                                                            'ExecID': exec_id,
                                                                                            'ExecPrice': self.price}]},
                                                                })
-        responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
-        print_message("Allocation Instruction", responses)
+        self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
         allocation_report = \
             self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
                                                    JavaApiFields.BookingAllocInstructionID.value).get_parameters()[
@@ -238,8 +226,7 @@ class QAP_T8458(TestCase):
 
         # approve block (part of step 6)
         self.approve_block.set_default_approve(alloc_id=alloc_id)
-        responses = self.java_api_manager.send_message_and_receive_response(self.approve_block)
-        print_message('Approve block (part of step 6)', responses)
+        self.java_api_manager.send_message_and_receive_response(self.approve_block)
         # the end
 
         # allocate block (part of step 6)
@@ -249,21 +236,18 @@ class QAP_T8458(TestCase):
             "InstrID": instrument_id,
             "AllocQty": self.qty,
             "AvgPx": avg_px})
-        responses = self.java_api_manager.send_message_and_receive_response(self.confirmation_request)
-        print_message(f' Allocate block step 6', responses)
+        self.java_api_manager.send_message_and_receive_response(self.confirmation_request)
         confirmation_report = \
             self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[
                 JavaApiFields.ConfirmationReportBlock.value]
         self.java_api_manager.key_is_absent(JavaApiFields.MiscFeesList.value, confirmation_report,
                                             'Check that Agent Fees is absent for allocation')
         # the end
-
         # endregion
 
         # region unallocate block (step 7)
         self.unallocate_message.set_default(alloc_instruction_id)
-        responses = self.java_api_manager.send_message_and_receive_response(self.unallocate_message)
-        print_message("Unallocate block ", responses)
+        self.java_api_manager.send_message_and_receive_response(self.unallocate_message)
         allocation_report = \
             self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
                 JavaApiFields.AllocationReportBlock.value]
@@ -283,13 +267,13 @@ class QAP_T8458(TestCase):
         # endregion
 
         # region step 8
-        # check that execution report doesn`t have Agent fee(part of step 8)
+        # check that execution report  has Agent fee(part of step 8)
         params_of_execution_report_message = {
             "ExecType": "B",
             "OrdStatus": "B",
             "ClOrdID": cl_ord_id,
             'NoMiscFees': [
-                {'MiscFeeAmt': str(round(misc_fee_amount, 4)),
+                {'MiscFeeAmt': str(float(misc_fee_amount)),
                  'MiscFeeCurr': self.currency_post_trade,
                  'MiscFeeType': '12'}]
         }

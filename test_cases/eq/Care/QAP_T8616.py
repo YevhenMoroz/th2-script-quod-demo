@@ -59,23 +59,23 @@ class QAP_T8616(TestCase):
 
         # region  precondition : create CO order via FIX (step 1)
         self.new_order.set_default_care_limit(account="client_pt_1")
-        response1 = self.fix_manager.send_message_and_receive_response(self.new_order)
+        response1 = self.fix_manager.send_message_and_receive_response_fix_standard(self.new_order)
         new_execution_report = response1[0].get_parameters()
         self.java_api_manager.compare_values({'OrdStatus': '0'}, new_execution_report, 'Check order after creation')
         # endregion
 
         # region send OrderCancelReplaceRequest (step 2)
         self.order_modification_request.set_default(self.new_order, price=self.new_price)
-        response2 = self.fix_manager.send_message_and_receive_response(self.order_modification_request)
-        replace_exec_report = response2[1].get_parameters()
+        self.fix_manager.send_message_and_receive_response_fix_standard(self.order_modification_request)
+        replace_exec_report = self.fix_manager.get_last_message('ExecutionReport', "'ExecType': '5'").get_parameters()
         self.java_api_manager.compare_values({'OrdStatus': '5', 'Price': self.new_price}, replace_exec_report,
                                              'Check values after CancelReplaceRequest')
         # endregion
 
         # region send OrderCancelRequest (step 3)
         self.order_cancel_request.set_default(self.new_order)
-        response3 = self.fix_manager.send_message_and_receive_response(self.order_cancel_request)
-        cancel_response = response3[1].get_parameters()
+        self.fix_manager.send_message_and_receive_response_fix_standard(self.order_cancel_request)
+        cancel_response = self.fix_manager.get_last_message('ExecutionReport', "'ExecType': '4'").get_parameters()
         self.java_api_manager.compare_values({'OrdStatus': '4'}, cancel_response,
                                              'Check values after CancelReplaceRequest')
         # endregion

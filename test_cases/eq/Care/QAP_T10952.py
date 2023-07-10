@@ -40,37 +40,45 @@ class QAP_T10952(TestCase):
                                                  role=SubmitRequestConst.USER_ROLE_1.value)
         order_id_first = self._create_co_dma_order({
             JavaApiFields.SettlType.value: 'TP2',
-            JavaApiFields.SettlDate.value: settl_date_first.strftime('%Y-%m-%d')}, 'step 1 part 1')
+            JavaApiFields.SettlDate.value: settl_date_first.strftime('%Y-%m-%dT%H:%M:%S')}, 'step 1 part 1',
+            expected_settl_date=settl_date_first.strftime('%Y-%m-%d'))
         # endregion
 
         # region step 1 part 2: Create CO order with SettlDate = T + 4
         settl_date_second = (datetime.datetime.today() + datetime.timedelta(days=4))
         self.order_submit.remove_fields_from_component(JavaApiFields.NewOrderSingleBlock.value,
                                                        [JavaApiFields.SettlType.value])
-        order_id_second = self._create_co_dma_order({JavaApiFields.SettlDate.value: settl_date_second.strftime('%Y-%m-%d'),
-                                                 JavaApiFields.ClOrdID.value: bca.client_orderid(9)}, 'step 1 part 2')
+        order_id_second = self._create_co_dma_order(
+            {JavaApiFields.SettlDate.value: settl_date_second.strftime('%Y-%m-%dT%H:%M:%S'),
+             JavaApiFields.ClOrdID.value: bca.client_orderid(9)}, 'step 1 part 2',
+            expected_settl_date=settl_date_second.strftime('%Y-%m-%d'))
         # endregion
 
         # region step 2 part 1: Create DMA child order via Direct for first CO order
         self.order_submit.set_default_child_dma(order_id_first)
-        settl_date_expected = (datetime.datetime.now() + datetime.timedelta(days=1)).strftime('%Y-%m-%d')
-        self._create_co_dma_order({JavaApiFields.SettlDate.value: settl_date_expected}, step='step 2 part 1', is_dma=True)
+        settl_date_expected = (datetime.datetime.now() + datetime.timedelta(days=2))
+        self._create_co_dma_order({JavaApiFields.SettlDate.value: settl_date_expected.strftime('%Y-%m-%dT%H:%M:%S')},
+                                  step='step 2 part 1', is_dma=True,
+                                  expected_settl_date=settl_date_expected.strftime('%Y-%m-%d'))
         # endregion
 
         # region step 2 part 2: Create DMA child order via Direct for second CO order
         self.order_submit.set_default_child_dma(order_id_second)
         self._create_co_dma_order({JavaApiFields.SettlDate.value: settl_date_expected}, step='step 2 part 2',
-                                  is_dma=True)
+                                  is_dma=True, expected_settl_date=settl_date_expected.strftime('%Y-%m-%d'))
         # endregion
 
-    def _create_co_dma_order(self, parameter_dict: dict, step, is_dma=False):
+    def _create_co_dma_order(self, parameter_dict: dict, step, is_dma=False, expected_settl_date=None):
         if not is_dma:
             self.order_submit.update_fields_in_component(JavaApiFields.NewOrderSingleBlock.value, parameter_dict)
+            trans_status_expected = OrderReplyConst.TransStatus_OPN.value
+        else:
+            trans_status_expected = OrderReplyConst.TransStatus_SEN.value
         self.ja_manager.send_message_and_receive_response(self.order_submit)
         ord_rep = self.ja_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
             JavaApiFields.OrdReplyBlock.value]
         order_id = ord_rep[JavaApiFields.OrdID.value]
-        expected_result = {JavaApiFields.TransStatus.value: OrderReplyConst.TransStatus_OPN.value,
-                           JavaApiFields.SettlDate.value: parameter_dict[JavaApiFields.SettlDate.value] + 'T12:00'}
+        expected_result = {JavaApiFields.TransStatus.value: trans_status_expected,
+                           JavaApiFields.SettlDate.value: expected_settl_date + 'T12:00'}
         self.ja_manager.compare_values(expected_result, ord_rep, f'Verify that Order created ({step})')
         return order_id

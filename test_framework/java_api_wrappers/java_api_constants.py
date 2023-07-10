@@ -19,7 +19,10 @@ class ExecutionReportConst(Enum):
     LastCapacity_Principal = 'P'
     LastCapacity_Principal_FULL_VALUE = 'Principal'
     LastCapacity_Agency_FULL_VALUE = 'Agency'
+    LastCapacity_Mixed_FULL_VALUE = 'Mixed'
+    LastCapacity_CrossAsMixed_FULL_VALUE = 'CrossAsMixed'
     LastCapacity_Agency = 'A'
+
     ExecOrigin_M = 'M'
     ExecOrigin_E = 'E'
     ExecType_Trade = 'Trade'
@@ -65,6 +68,9 @@ class OrderReplyConst(Enum):
     ExecType_PMO = 'PMO'
     ExecType_CXL = 'CXL'
     ExecType_COR = 'COR'
+    ExecType_PDO = 'PDO'
+    ExecType_OPN = 'OPN'
+    ExecType_RES = 'RES'
     CustOrderHandlingInst_LOC = 'LOC'
 
 
@@ -80,6 +86,7 @@ class SubmitRequestConst(Enum):
     Side_Buy = 'Buy'
     Side_B_aka_Buy = 'B'
     Side_Sell = 'Sell'
+    PositionEffect_R = 'R'
 
 
 class AllocationReportConst(Enum):
@@ -166,10 +173,23 @@ class JavaApiFields(Enum):
     ExecCommission = 'ExecCommission'
     SettlDate = 'SettlDate'
     ClearingTradePrice = 'ClearingTradePrice'
+    HeldOrderAckReplyBlock = 'HeldOrderAckReplyBlock'
     AllocationInstructionBlock = 'AllocationInstructionBlock'
     RequestForOverdueRetailPositionsAckBlock = 'RequestForOverdueRetailPositionsAckBlock'
     TransExecStatus = 'TransExecStatus'
     BookingType = 'BookingType'
+    OrdReportBlock = 'OrdReportBlock'
+    LegOrderElements = 'LegOrderElements'
+    Reason = 'Reason'
+    LegOrderBlock = 'LegOrderBlock'
+    LegNumber = 'LegNumber'
+    LegInstrID = 'LegInstrID'
+    OrdRejectedNotifBlock = 'OrdRejectedNotifBlock'
+    LegPrice = 'LegPrice'
+    MaxPriceLevels = 'MaxPriceLevels'
+    MultiLegOrderModificationRequestBlock = 'MultiLegOrderModificationRequestBlock'
+    PositionEffect = 'PositionEffect'
+    NewOrderMultiLegBlock = 'NewOrderMultiLegBlock'
     BenchmarkList = 'BenchmarkList'
     BenchmarkBlock = 'BenchmarkBlock'
     StartBenchmarkTimestamp = 'StartBenchmarkTimestamp'
@@ -183,6 +203,7 @@ class JavaApiFields(Enum):
     ModifyChildren = 'ModifyChildren'
     CancelChildren = ' CancelChildren'
     PositionType = 'PositionType'
+    StopPx = 'StopPx'
     TransactTime = 'TransactTime'
     ErrorMsg = "ErrorMsg"
     OrdModify = 'OrdModify'
@@ -399,6 +420,7 @@ class JavaApiFields(Enum):
     LastPx = 'LastPx'
     LastTradedQty = 'LastTradedQty'
     SingleAllocClientAccountID = 'SingleAllocClientAccountID'
+    AllocClientAccountID = 'AllocClientAccountID'
     ComputeBookingFeesCommissionsReplyBlock = 'ComputeBookingFeesCommissionsReplyBlock'
     RootMiscFeeBasis = 'RootMiscFeeBasis'
     RootMiscFeeRate = 'RootMiscFeeRate'
@@ -442,6 +464,7 @@ class JavaApiFields(Enum):
     BookingQty = 'BookingQty'
     WashBookAccountID = 'WashBookAccountID'
     SettlType = 'SettlType'
+    PriceDelta = 'PriceDelta'
     SettlCurrency = 'SettlCurrency'
     SettlCurrAmt = 'SettlCurrAmt'
     SettlCurrFxRate = 'SettlCurrFxRate'
@@ -457,6 +480,7 @@ class JavaApiFields(Enum):
     CDOrdFreeNotes = 'CDOrdFreeNotes'
     VenueClientActGrpName = 'VenueClientActGrpName'
     IsLocked = 'IsLocked'
+    SourceAccountID = 'SourceAccountID'
     Currency = "Currency"
     FreeNotes = 'FreeNotes'
     Price = 'Price'
@@ -505,6 +529,10 @@ class TimeInForces(Enum):
 class OrdTypes(Enum):
     Limit = 'LMT'
     Market = 'MKT'
+    StopLimit = 'STL'
+    StopLimit_FULL = 'StopLimit'
+    Limit_FULL = 'Limit'
+    Funari = 'FUN'
 
 
 class PegScopes(Enum):

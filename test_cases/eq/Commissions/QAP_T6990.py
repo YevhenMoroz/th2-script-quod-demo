@@ -1,6 +1,6 @@
 import logging
-import time
 from pathlib import Path
+
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
 from rule_management import RuleManager, Simulators
@@ -19,19 +19,11 @@ from test_framework.java_api_wrappers.oms.ors_messges.DFDManagementBatchOMS impo
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
 from test_framework.java_api_wrappers.oms.ors_messges.TradeEntryOMS import TradeEntryOMS
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
-from test_framework.ssh_wrappers.ssh_client import SshClient
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 seconds, nanos = timestamps()
-
-
-def print_message(message, responses):
-    logger.info(message)
-    for i in responses:
-        logger.info(i)
-        logger.info(i.get_parameters())
 
 
 class QAP_T6990(TestCase):
@@ -88,8 +80,7 @@ class QAP_T6990(TestCase):
             'OrdQty': self.qty,
             'Price': self.price,
         })
-        responses = self.java_api_manager.send_message_and_receive_response(self.order_submit)
-        print_message('Create CO order', responses)
+        self.java_api_manager.send_message_and_receive_response(self.order_submit)
         order_id = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
             JavaApiFields.OrdReplyBlock.value][JavaApiFields.OrdID.value]
         cl_ord_id = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
@@ -100,8 +91,7 @@ class QAP_T6990(TestCase):
         half_qty = int(int(self.qty) / 2)
         self.trade_entry.set_default_trade(order_id, self.price, half_qty)
         self.trade_entry.update_fields_in_component('TradeEntryRequestBlock', {'LastMkt': self.venue_mic})
-        responses = self.java_api_manager.send_message_and_receive_response(self.trade_entry)
-        print_message('Trade CO  order (Partially filled)', responses)
+        self.java_api_manager.send_message_and_receive_response(self.trade_entry)
         actually_result = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
             JavaApiFields.ExecutionReportBlock.value]
         self.java_api_manager.compare_values(
@@ -110,8 +100,7 @@ class QAP_T6990(TestCase):
         # endregion
 
         # region step 2
-        responses = self.java_api_manager.send_message_and_receive_response(self.trade_entry)
-        print_message('Trade CO  order (Fully Filled)', responses)
+        self.java_api_manager.send_message_and_receive_response(self.trade_entry)
         actually_result = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
             JavaApiFields.ExecutionReportBlock.value]
         self.java_api_manager.compare_values(
@@ -121,8 +110,7 @@ class QAP_T6990(TestCase):
 
         # region complete CO order (step 3)
         self.complete_request.set_default_complete(order_id)
-        responses = self.java_api_manager.send_message_and_receive_response(self.complete_request)
-        print_message("Complete CO order", responses)
+        self.java_api_manager.send_message_and_receive_response(self.complete_request)
         actually_result = dict()
         actually_result.update({JavaApiFields.PostTradeStatus.value: self.java_api_manager.get_last_message(
             ORSMessageType.OrdReply.value).get_parameters()[
@@ -168,8 +156,8 @@ class QAP_T6990(TestCase):
 
         # verify that confirmation report doesn`t have Total Fee
         fee_is_absent = not JavaApiFields.MiscFeesList.value in self.java_api_manager.get_last_message(
-                                                ORSMessageType.ConfirmationReport.value).get_parameters()[
-                                                JavaApiFields.ConfirmationReportBlock.value]
+            ORSMessageType.ConfirmationReport.value).get_parameters()[
+            JavaApiFields.ConfirmationReportBlock.value]
         self.java_api_manager.compare_values({"AgentFeesIsAbsent": True},
                                              {"AgentFeesIsAbsent": fee_is_absent},
                                              f'Check that Agent fee does not apply to {ORSMessageType.ConfirmationReport.value}')
@@ -193,7 +181,7 @@ class QAP_T6990(TestCase):
 
         # region check 35=8 message step 5
         list_of_ignored_fields = ['Account', 'ExecID', 'OrderQtyData', 'LastQty', 'TransactTime', 'GrossTradeAmt',
-                                  'ExDestination','ExecAllocGrp',
+                                  'ExDestination', 'ExecAllocGrp',
                                   'Side', 'AvgPx', 'SettlCurrency', 'SettlDate', 'TimeInForce',
                                   'PositionEffect', 'HandlInst', 'LeavesQty', 'CumQty',
                                   'LastPx', 'OrdType', 'SecondaryOrderID', 'OrderCapacity', 'QtyType',

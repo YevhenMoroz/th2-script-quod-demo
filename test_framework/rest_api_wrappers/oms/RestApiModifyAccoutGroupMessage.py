@@ -25,12 +25,18 @@ class RestApiModifyAccountGroupMessage(RestApiMessages):
                                 "confirmationService": "MAN",
                                 "blockApproval": "AUT",
                                 "pxPrecision": '3',
+                                "alive": "true",
                                 "roundingDirection": "RDO",
                                 "giveUpMatchingID": "CLIENT_REST_API",
                                 "orderAckPreference": "AUT",
                                 "venueAccountGroup": [{"venueClientActGrpName": "CLIENT_REST_API", "venueID": "EUREX",
                                                        "venueActGrpName": "CLIENT_REST_API", "stampFeeExemption": 'false',
-                                                       "levyFeeExemption": 'false', "perTransacFeeExemption": 'false'}],
+                                                       "levyFeeExemption": 'false', "perTransacFeeExemption": 'false'},
+                                                      {"venueClientActGrpName": "CLIENT_REST_API", "venueID": "PARIS",
+                                                       "venueActGrpName": "CLIENT_REST_API",
+                                                       "stampFeeExemption": 'false',
+                                                       "levyFeeExemption": 'false', "perTransacFeeExemption": 'false'}
+                                                      ],
                                 "routeAccountGroup": [
                                     {"routeID": self.data_set.get_route_id_by_name('route_1'), "routeActGrpName": "CLIENT_REST_API", "agentFeeExemption": 'true'}],
                                 "managerDesk": [{"deskID": enviroment.get_list_fe_environment()[0].desk_ids[1]}]}

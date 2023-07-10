@@ -56,8 +56,8 @@ class QAP_T9036(TestCase):
         tree.write("temp.xml")
         self.ssh_client.send_command("~/quod/script/site_scripts/change_permission_script")
         self.ssh_client.put_file(self.remote_path, "temp.xml")
-        self.ssh_client.send_command("qrestart ORS CS")
-        time.sleep(60)
+        self.ssh_client.send_command("qrestart QUOD.CS")
+        time.sleep(40)
 
         # region set client_commission precondition
         self.rest_commission_sender.clear_commissions()
@@ -99,6 +99,6 @@ class QAP_T9036(TestCase):
     def run_post_conditions(self):
         self.rest_commission_sender.clear_fees()
         self.ssh_client.put_file(self.remote_path, self.local_path)
-        self.ssh_client.send_command("qrestart ORS CS")
-        time.sleep(60)
+        self.ssh_client.send_command("qrestart  CS")
+        time.sleep(40)
         os.remove("temp.xml")

@@ -77,7 +77,7 @@ class QAP_T9249(TestCase):
         tree.write("temp.xml")
         self.ssh_client.send_command("~/quod/script/site_scripts/change_permission_script")
         self.ssh_client.put_file(self.remote_path, "temp.xml")
-        self.ssh_client.send_command("qrestart ORS")
+        self.ssh_client.send_command("qrestart QUOD.ORS QUOD.ESBUYTH2TEST")
         time.sleep(60)
         # endregion
 
@@ -157,6 +157,6 @@ class QAP_T9249(TestCase):
     def run_post_conditions(self):
         self.rest_commission_sender.clear_fees()
         self.ssh_client.put_file(self.remote_path, self.local_path)
-        self.ssh_client.send_command("qrestart ORS")
+        self.ssh_client.send_command("qrestart QUOD.ORS QUOD.ESBUYTH2TEST")
         time.sleep(60)
         os.remove("temp.xml")

@@ -35,6 +35,7 @@ class QAP_T7376(TestCase):
         self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
         self.trade_request = TradeEntryOMS(self.data_set)
         self.submit_request = OrderSubmitOMS(self.data_set)
+        self.mic = self.data_set.get_mic_by_name('mic_2')
         self.perc_amt = self.data_set.get_comm_profile_by_name("perc_amt")
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -87,13 +88,13 @@ class QAP_T7376(TestCase):
         # region Step 2 - Execute CO
         self.trade_request.set_default_trade(order_id)
         self.trade_request.update_fields_in_component(
-            "TradeEntryRequestBlock",
+            JavaApiFields.TradeEntryRequestBlock.value,
             {
-                "CounterpartList": {
-                    "CounterpartBlock": [self.data_set.get_counterpart_id_java_api("counterpart_contra_firm")]
-                }
-            },
-        )
+                JavaApiFields.CounterpartList.value: {
+                    JavaApiFields.CounterpartBlock.value: [self.data_set.get_counterpart_id_java_api("counterpart_contra_firm")]
+                },
+                JavaApiFields.LastMkt.value: self.mic
+            })
         self.java_api_manager.send_message_and_receive_response(self.trade_request)
         exec_reply = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
             JavaApiFields.ExecutionReportBlock.value

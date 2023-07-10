@@ -33,13 +33,6 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-def print_message(message, responses):
-    logger.info(message)
-    for i in responses:
-        logger.info(i)
-        logger.info(i.get_parameters())
-
-
 class QAP_T6981(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -115,8 +108,7 @@ class QAP_T6981(TestCase):
             'OrdQty': self.qty,
             'Price': self.price,
         })
-        responses = self.java_api_manager.send_message_and_receive_response(self.submit_request)
-        print_message("Create CO order", responses)
+        self.java_api_manager.send_message_and_receive_response(self.submit_request)
         order_id = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameter(
             JavaApiFields.OrderNotificationBlock.value)["OrdID"]
         cl_order_id = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameter(
@@ -130,8 +122,7 @@ class QAP_T6981(TestCase):
 
         # region step 2
         self.trade_request.set_default_trade(order_id, self.price, self.qty)
-        responses = self.java_api_manager.send_message_and_receive_response(self.trade_request)
-        print_message('Execute CO order', responses)
+        self.java_api_manager.send_message_and_receive_response(self.trade_request)
         execution_report = \
             self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
                 JavaApiFields.ExecutionReportBlock.value]
@@ -160,8 +151,7 @@ class QAP_T6981(TestCase):
 
         # subregion complete CO order step 2
         self.complete_message.set_default_complete(order_id)
-        responses = self.java_api_manager.send_message_and_receive_response(self.complete_message)
-        print_message('Complete CO order', responses)
+        self.java_api_manager.send_message_and_receive_response(self.complete_message)
         # end subregion
         # endregion
 
@@ -171,8 +161,7 @@ class QAP_T6981(TestCase):
         self.compute_request.set_list_of_order_alloc_block(cl_order_id, order_id, post_trd_sts)
         self.compute_request.set_list_of_exec_alloc_block(self.qty, exec_id, self.price, post_trd_sts)
         self.compute_request.set_default_compute_booking_request(self.qty, new_avg_px, self.client)
-        responses = self.java_api_manager.send_message_and_receive_response(self.compute_request)
-        print_message("ComputeRequest", responses)
+        self.java_api_manager.send_message_and_receive_response(self.compute_request)
         compute_reply = self.java_api_manager.get_last_message(
             ORSMessageType.ComputeBookingFeesCommissionsReply.value).get_parameters()[
             "ComputeBookingFeesCommissionsReplyBlock"]
@@ -216,6 +205,7 @@ class QAP_T6981(TestCase):
                                                  alloc_report["RootMiscFeesList"]["RootMiscFeesBlock"])},
                                              "Check Per Transac", VerificationMethod.CONTAINS)
         alloc_id = alloc_report["AllocInstructionID"]
+        booking_alloc_id = alloc_report[JavaApiFields.BookingAllocInstructionID.value]
         order_update = self.java_api_manager.get_last_message(ORSMessageType.OrdUpdate.value).get_parameters()[
             JavaApiFields.OrdUpdateBlock.value]
         expected_result = {
@@ -237,8 +227,7 @@ class QAP_T6981(TestCase):
 
         # region step 5
         self.force_alloc.set_default_approve(alloc_id)
-        responses = self.java_api_manager.send_message_and_receive_response(self.force_alloc)
-        print_message('Approve Block', responses)
+        self.java_api_manager.send_message_and_receive_response(self.force_alloc)
         alloc_report = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
                                                               JavaApiFields.BookingAllocInstructionID.value).get_parameter(
             JavaApiFields.AllocationReportBlock.value)
@@ -259,8 +248,7 @@ class QAP_T6981(TestCase):
                                                                       'AvgPx': new_avg_px,
                                                                       "InstrID": self.data_set.get_instrument_id_by_name(
                                                                           "instrument_3")})
-        responses = self.java_api_manager.send_message_and_receive_response(self.confirm)
-        print_message('Confirmation', responses)
+        self.java_api_manager.send_message_and_receive_response(self.confirm)
         confirm_report = \
             self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[
                 JavaApiFields.ConfirmationReportBlock.value]
@@ -298,14 +286,15 @@ class QAP_T6981(TestCase):
 
         # end region
         # pre step check 35=J message (626 = 5)
-        list_of_ignored_fields.extend(['RootCommTypeClCommBasis', 'AllocID',
+        list_of_ignored_fields.extend(['RootCommTypeClCommBasis',
                                        'NetMoney', 'BookingType', 'AllocInstructionMiscBlock1',
                                        'Quantity', 'RootOrClientCommission', 'AllocTransType',
                                        'ReportedPx', 'ConfirmStatus', 'MatchStatus', 'ConfirmID',
                                        'RootOrClientCommissionCurrency',
                                        'RootSettlCurrAmt'])
         self.allocation_instruction_fix.change_parameters(
-            {'NoOrders': [{'ClOrdID': cl_order_id, 'OrderID': order_id}], "AllocType": '5',
+            {'AllocID': booking_alloc_id,
+             'NoOrders': [{'ClOrdID': cl_order_id, 'OrderID': order_id}], "AllocType": '5',
              'NoRootMiscFeesList': [{
                  'RootMiscFeeBasis': '2',
                  'RootMiscFeeCurr': self.currency,
@@ -314,18 +303,21 @@ class QAP_T6981(TestCase):
                  'RootMiscFeeAmt': fee_amount_fix
              }]})
         self.fix_verifier.check_fix_message_fix_standard(self.allocation_instruction_fix,
+                                                         ['AllocType', 'NoOrders', 'AllocID'],
                                                          ignored_fields=list_of_ignored_fields)
         # end region
         # pre step check 35=J message (626 = 2)
         list_of_ignored_fields.extend(['IndividualAllocID', 'AllocNetPrice', 'AllocQty', 'AllocPrice'])
         self.allocation_instruction_fix.remove_parameter('NoRootMiscFeesList')
-        self.allocation_instruction_fix.change_parameters({'NoAllocs': [{
-            'NoMiscFees': no_misc_fee,
-            'AllocAccount': self.client_acc
-        }]})
+        self.allocation_instruction_fix.change_parameters({'AllocID': alloc_id,
+                                                           'NoAllocs': [{
+                                                               'NoMiscFees': no_misc_fee,
+                                                               'AllocAccount': self.client_acc
+                                                           }]})
         self.allocation_instruction_fix.change_parameters(
             {'NoOrders': [{'ClOrdID': cl_order_id, 'OrderID': order_id}], "AllocType": '2'})
         self.fix_verifier.check_fix_message_fix_standard(self.allocation_instruction_fix,
+                                                         ['AllocType', 'NoOrders', 'AllocID'],
                                                          ignored_fields=list_of_ignored_fields)
         # end region
         # pre step check 35=AK message
@@ -333,8 +325,10 @@ class QAP_T6981(TestCase):
         self.confirmation_report.change_parameters(
             {'NoOrders': [{'ClOrdID': cl_order_id, 'OrderID': order_id}],
              'ConfirmTransType': "0",
-             'NoMiscFees': no_misc_fee})
+             'NoMiscFees': no_misc_fee,
+             'AllocID': alloc_id})
         self.fix_verifier.check_fix_message_fix_standard(self.confirmation_report,
+                                                         ['ConfirmTransType', 'NoOrders', 'AllocID'],
                                                          ignored_fields=list_of_ignored_fields)
         # end region
 

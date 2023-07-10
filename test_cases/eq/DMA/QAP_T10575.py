@@ -4,7 +4,9 @@ import time
 from pathlib import Path
 
 from pkg_resources import resource_filename
+from datetime import datetime
 
+from pandas import Timestamp as tm
 from custom import basic_custom_actions as bca
 from custom.basic_custom_actions import timestamps
 from test_framework.core.test_case import TestCase
@@ -13,6 +15,7 @@ from test_framework.data_sets.message_types import ORSMessageType
 from test_framework.db_wrapper.db_manager import DBManager
 from test_framework.fix_wrappers.FixDontKnowTrade import FixDontKnowTrade
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
+import datetime
 import xml.etree.ElementTree as ET
 from test_framework.fix_wrappers.oms.FixMessageExecutionReportOMS import FixMessageExecutionReportOMS
 from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
@@ -61,6 +64,7 @@ class QAP_T10575(TestCase):
         tree = ET.parse(self.local_path)
         quod = tree.getroot()
         quod.find("es/execution/duplicates").text = 'true'
+        quod.find("es/execution/supportDontKnowTrade").text ='true'
         tree.write("temp.xml")
         self.ssh_client.send_command("~/quod/script/site_scripts/change_permission_script")
         self.ssh_client.put_file(self.remote_path, "temp.xml")
@@ -103,6 +107,8 @@ class QAP_T10575(TestCase):
             JavaApiFields.LastVenueOrdID.value: ord_venue_id,
             JavaApiFields.LastTradedQty.value: half_qty,
             JavaApiFields.LeavesQty.value: half_qty,
+            JavaApiFields.TransactTime.value: (datetime.datetime.now()).strftime('%Y-%m-%dT%H:%M:%S'),
+            JavaApiFields.UnsolicitedOrder.value: "Yes",
             JavaApiFields.CumQty.value: half_qty})
         filter_dict = {order_id: order_id}
         self.java_api_manager.send_message_and_receive_response(self.exec_rep, filter_dict)
@@ -117,10 +123,15 @@ class QAP_T10575(TestCase):
         # endregion
 
         # region step 4: Resent the same execution report:
+        self.exec_rep.update_fields_in_component(JavaApiFields.ExecutionReportBlock.value,
+                                                 {
+                                                     JavaApiFields.TransactTime.value: (
+                                                                 datetime.datetime.now()).strftime('%Y-%m-%dT%H:%M:%S')
+                                                 })
         self.java_api_manager.send_message(self.exec_rep)
         dont_know_trade = FixDontKnowTrade(data_set=self.data_set)
         list_ignored_fields = ['Side', 'LastPx',
-                                       'LastQty', 'Instrument', 'OrderQtyData']
+                               'LastQty', 'Instrument', 'OrderQtyData']
         dont_know_trade.set_default(ord_venue_id)
         dont_know_trade.change_parameters({'DKReason': 'Z'})
         self.fix_verifier_bs.check_fix_message_fix_standard(dont_know_trade, ignored_fields=list_ignored_fields)

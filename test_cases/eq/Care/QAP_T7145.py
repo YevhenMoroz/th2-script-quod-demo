@@ -75,9 +75,10 @@ class QAP_T7145(TestCase):
         # endergion
 
         # region  step 1: create CO order via FIX
-        desk = self.environment.get_list_fe_environment()[0].desk_ids[0]
+        desk = self.environment.get_list_fe_environment()[0].desk_ids[1]
         self.new_order.set_default_care_limit(account='client_2')
         price = self.new_order.get_parameters()[JavaApiFields.Price.value]
+        cl_ord_id = self.new_order.get_parameters()[JavaApiFields.ClOrdID.value]
         self.new_order.add_tag({'header': {
             JavaApiFields.SenderSubID.value: 'SENDER_SUB_ID',
             JavaApiFields.TargetSubID.value: 'TARGET_SUB_ID',
@@ -86,13 +87,13 @@ class QAP_T7145(TestCase):
             JavaApiFields.OnBehalfOfCompID.value: 'ON_BEHALF_OF_COMP_ID',
             JavaApiFields.OnBehalfOfSubID.value: 'ON_BEHALF_OF_SUB_ID'
         }})
-        self.fix_manager.send_message_and_receive_response_fix_standard(self.new_order)
-        execution_report_last = self.fix_manager.get_last_message('ExecutionReport').get_parameters()
-        parent_order_id = execution_report_last['OrderID']
+        self.fix_manager.send_message_fix_standard(self.new_order)
+        time.sleep(2)
+        order_id = self.db_manager.execute_query(f"SELECT ordid FROM ordr WHERE clordid='{cl_ord_id}'")[0][0]
         cd_ord_notif_id = str(int(
-            self.db_manager.execute_query(f"SELECT cdordnotifid FROM cdordnotif WHERE transid = '{parent_order_id}'")[
+            self.db_manager.execute_query(f"SELECT cdordnotifid FROM cdordnotif WHERE transid = '{order_id}'")[
                 0][0]))
-        self.accept_request.set_default(parent_order_id, cd_ord_notif_id, desk)
+        self.accept_request.set_default(order_id, cd_ord_notif_id, desk)
         self.java_api_manager.send_message_and_receive_response(self.accept_request)
         order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
             JavaApiFields.OrdReplyBlock.value]
@@ -110,9 +111,9 @@ class QAP_T7145(TestCase):
         # region reject modify request:step 2-3
         cd_ord_notif_id = str(int(
             self.db_manager.execute_query(
-                f"SELECT cdordnotifid FROM cdordnotif WHERE transid = '{parent_order_id}' AND cdrequesttype='MOD'")[
+                f"SELECT cdordnotifid FROM cdordnotif WHERE transid = '{order_id}' AND cdrequesttype='MOD'")[
                 0][0]))
-        self.accept_request.set_default(parent_order_id, cd_ord_notif_id, desk, 'M', set_reject=True)
+        self.accept_request.set_default(order_id, cd_ord_notif_id, desk, 'M', set_reject=True)
         self.java_api_manager.send_message_and_receive_response(self.accept_request)
         order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
             JavaApiFields.OrdReplyBlock.value]

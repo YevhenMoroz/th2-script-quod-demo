@@ -1,10 +1,7 @@
 import logging
-import os
 import time
 from pathlib import Path
 
-from pkg_resources import resource_filename
-import xml.etree.ElementTree as ET
 from custom import basic_custom_actions as bca
 from rule_management import Simulators, RuleManager
 from test_framework.core.test_case import TestCase
@@ -27,7 +24,6 @@ from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import Orde
 from test_framework.java_api_wrappers.oms.ors_messges.TradeEntryOMS import TradeEntryOMS
 from test_framework.java_api_wrappers.ors_messages.OrderActionRequest import OrderActionRequest
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
-from test_framework.ssh_wrappers.ssh_client import SshClient
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -72,11 +68,6 @@ class QAP_T7164(TestCase):
         self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
         self.fix_verifier = FixVerifier(self.dc_connectivity, self.test_id)
         self.execution_report = FixMessageExecutionReportOMS(self.data_set)
-        self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
-                                    self.ssh_client_env.password, self.ssh_client_env.su_user,
-                                    self.ssh_client_env.su_password)
-        self.local_path = resource_filename("test_resources.be_configs.oms_be_configs", "client_backend.xml")
-        self.remote_path = f"/home/{self.ssh_client_env.su_user}/quod/cfg/client_backend.xml"
         self.trade_entry_request = TradeEntryOMS(self.data_set)
         self.dfd_manage_batch = DFDManagementBatchOMS(self.data_set)
         self.compute_request = ComputeBookingFeesCommissionsRequestOMS(self.data_set)
@@ -86,16 +77,6 @@ class QAP_T7164(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region set configuration on backend (precondition)
-        tree = ET.parse(self.local_path)
-        tree.getroot().find("automaticCalculatedReportEnabled").text = 'true'
-        tree.write("temp.xml")
-        self.ssh_client.send_command("~/quod/script/site_scripts/change_permission_script")
-        self.ssh_client.put_file(self.remote_path, "temp.xml")
-        self.ssh_client.send_command("qrestart ORS")
-        time.sleep(60)
-        # endregion
-
         # region send fee and clcommission
         self.rest_commission_sender.clear_commissions()
         self.rest_commission_sender.clear_fees()
@@ -156,20 +137,27 @@ class QAP_T7164(TestCase):
         ord_id_dma = ord_notif_dma[JavaApiFields.OrdID.value]
 
         comm_list = {
-            JavaApiFields.CommissionBasis.value: 'BPS',
-            JavaApiFields.CommissionAmount.value: '0.002',
+            JavaApiFields.CommissionBasis.value: 'ABS',
+            JavaApiFields.CommissionAmount.value: '0.01',
             JavaApiFields.CommissionRate.value: '1.0',
             JavaApiFields.CommissionAmountType.value: 'BRK',
+            JavaApiFields.CommissionAmountSubType.value: 'OTH',
             JavaApiFields.CommissionCurrency.value: self.com_cur
         }
 
-        misc_list = {
-            JavaApiFields.MiscFeeBasis.value: 'BPS',
-            JavaApiFields.MiscFeeAmt.value: '0.002',
-            JavaApiFields.MiscFeeRate.value: '1.0',
-            JavaApiFields.MiscFeeType.value: 'BRK',
+        misc_list = [{
+            JavaApiFields.MiscFeeBasis.value: 'P',
+            JavaApiFields.MiscFeeAmt.value: '1.0',
+            JavaApiFields.MiscFeeRate.value: '5.0',
+            JavaApiFields.MiscFeeType.value: 'STA',
             JavaApiFields.MiscFeeCurr.value: self.com_cur
-        }
+        }, {
+            JavaApiFields.RootMiscFeeBasis.value: 'P',
+            JavaApiFields.RootMiscFeeAmt.value: '1.0',
+            JavaApiFields.RootMiscFeeRate.value: '5.0',
+            JavaApiFields.RootMiscFeeType.value: 'STA',
+            JavaApiFields.RootMiscFeeCurr.value: self.com_cur
+        }]
 
         # check fee and commission of parent order
         exec_report_parent = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value,
@@ -177,24 +165,21 @@ class QAP_T7164(TestCase):
             JavaApiFields.ExecutionReportBlock.value)
         parent_exec_id = exec_report_parent[JavaApiFields.ExecID.value]
         self.java_api_manager.compare_values(
-            {JavaApiFields.ClientCommissionList.value:
-                 {JavaApiFields.ClientCommissionBlock.value: [comm_list], JavaApiFields.MiscFeesList.value:
-                     {JavaApiFields.MiscFeesBlock.value: [misc_list]}}},
-            exec_report_parent,
-            "Check fee and clcommission in the parent order")
+            comm_list,
+            exec_report_parent[JavaApiFields.ClientCommissionList.value][JavaApiFields.ClientCommissionBlock.value][0],
+            "Check  clcommission in the parent order")
+        self.java_api_manager.compare_values(misc_list[0], exec_report_parent[JavaApiFields.MiscFeesList.value][
+            JavaApiFields.MiscFeesBlock.value][0], 'Verify that parent execution (trade) has fees')
         # endregion
 
-        # check fee and commission of parent order
-        exec_report_child = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value,
-                                                                   [ord_id_dma,
-                                                                    ExecutionReportConst.ExecType_TRD.value]).get_parameter(
+        # check fee and commission of child order
+        exec_report_child = self.java_api_manager.get_last_message_by_multiple_filter(
+            ORSMessageType.ExecutionReport.value,
+            [ord_id_dma,
+             ExecutionReportConst.ExecType_TRD.value]).get_parameter(
             JavaApiFields.ExecutionReportBlock.value)
-        self.java_api_manager.compare_values(
-            {JavaApiFields.ClientCommissionList.value:
-                 {JavaApiFields.ClientCommissionBlock.value: [comm_list], JavaApiFields.MiscFeesList.value:
-                     {JavaApiFields.MiscFeesBlock.value: [misc_list]}}},
-            exec_report_child,
-            "Check fee and clcommission in the child order")
+        self.java_api_manager.compare_values(misc_list[0], exec_report_child[JavaApiFields.MiscFeesList.value] \
+            [JavaApiFields.MiscFeesBlock.value][0], 'Verify that child execution (trade) has fees')
         # endregion
 
         # region Exec Summary
@@ -229,20 +214,14 @@ class QAP_T7164(TestCase):
             JavaApiFields.ComputeBookingFeesCommissionsReplyBlock.value)[JavaApiFields.ClientCommissionList.value][
             JavaApiFields.ClientCommissionBlock.value][0]
 
-        misc_list = {
-            JavaApiFields.RootMiscFeeBasis.value: 'BPS',
-            JavaApiFields.RootMiscFeeAmt.value: '0.002',
-            JavaApiFields.RootMiscFeeRate.value: '1.0',
-            JavaApiFields.RootMiscFeeType.value: 'BRK',
-            JavaApiFields.RootMiscFeeCurr.value: self.com_cur
-        }
-
-        self.java_api_manager.compare_values(misc_list,
+        comm_list.pop(JavaApiFields.CommissionAmountSubType.value)
+        comm_list[0][JavaApiFields.CommissionAmount.value] = '1.0'
+        self.java_api_manager.compare_values(misc_list[1],
                                              root_misc,
                                              "Check Fee in the Booking Ticket")
         self.java_api_manager.compare_values(comm_list,
                                              cl_comm,
-                                             "Check Fee in the Booking Ticket")
+                                             "Check Сommission in the Booking Ticket")
         # endregion
 
         # region step 3 - Book order
@@ -266,7 +245,7 @@ class QAP_T7164(TestCase):
             JavaApiFields.AllocationReportBlock.value)
         alloc_report_fee = alloc_report[JavaApiFields.RootMiscFeesList.value][
             JavaApiFields.RootMiscFeesBlock.value][0]
-        self.java_api_manager.compare_values(misc_list,
+        self.java_api_manager.compare_values(misc_list[1],
                                              alloc_report_fee,
                                              "Check Fee after booking")
         alloc_id = alloc_report["AllocInstructionID"]
@@ -284,7 +263,7 @@ class QAP_T7164(TestCase):
         confirm_report = \
             self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[
                 JavaApiFields.ConfirmationReportBlock.value]
-        self.java_api_manager.compare_values(misc_list,
+        self.java_api_manager.compare_values(misc_list[0],
                                              confirm_report[JavaApiFields.MiscFeesList.value][
                                                  JavaApiFields.MiscFeesBlock.value][0],
                                              "Check Fee after allocation")
@@ -293,7 +272,4 @@ class QAP_T7164(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.rest_commission_sender.clear_fees()
-        self.ssh_client.put_file(self.remote_path, self.local_path)
-        self.ssh_client.send_command("qrestart ORS")
-        time.sleep(60)
-        os.remove("temp.xml")
+        self.rest_commission_sender.clear_commissions()

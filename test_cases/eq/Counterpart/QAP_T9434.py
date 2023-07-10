@@ -68,8 +68,9 @@ class QAP_T9434(TestCase):
                                                               JavaApiFields.CounterpartID.value], self.user_1)
         self._set_new_counterparts_for_account_and_client(counter_part_for_user_2[
                                                               JavaApiFields.CounterpartID.value], self.user_2)
-        self.ssh_client.send_command("qrestart all")
-        time.sleep(200)
+        self.ssh_client.send_command("qrestart QUOD.ORS QUOD.AQS QUOD.RDS QUOD.ESBUYTH2TEST QUOD.CS")
+        time.sleep(120)
+
         # endregion
 
         # region step 1: create CO order:
@@ -92,7 +93,7 @@ class QAP_T9434(TestCase):
 
         # region step 2: Trade CO order
         self.trade_entry.set_default_trade(order_id)
-        self.java_api_manager.send_message_and_receive_response(self.trade_entry, response_time=15000)
+        self.java_api_manager.send_message_and_receive_response(self.trade_entry)
         execution_report = \
         self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
             JavaApiFields.ExecutionReportBlock.value]
@@ -127,5 +128,5 @@ class QAP_T9434(TestCase):
             JavaApiFields.CounterpartID.value]
         self._set_new_counterparts_for_account_and_client(counter_part_for_user_1, self.user_1)
         self._set_new_counterparts_for_account_and_client(counter_part_for_user_2, self.user_2)
-        self.ssh_client.send_command("qrestart all")
-        time.sleep(140)
+        self.ssh_client.send_command("qrestart QUOD.ORS QUOD.AQS QUOD.RDS QUOD.ESBUYTH2TEST QUOD.CS")
+        time.sleep(120)

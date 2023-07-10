@@ -12,6 +12,8 @@ from stubs import Stubs
 from test_framework.data_sets.message_types import ORSMessageType, CSMessageType, ESMessageType, PKSMessageType, \
     MDAMessageType, AQSMessageType, QSMessageType
 from test_framework.java_api_wrappers.JavaApiMessage import JavaApiMessage
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 class JavaApiManager:
@@ -150,7 +152,7 @@ class JavaApiManager:
                 request=ActJavaSubmitMessageRequest(
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
-                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict, response_time=response_time))
         elif message.get_message_type() == ORSMessageType.OrderBagCreationRequest.value:
             response = self.act.submitOrderBagCreationRequest(
                 request=ActJavaSubmitMessageRequest(
@@ -301,7 +303,8 @@ class JavaApiManager:
                 request=ActJavaSubmitMessageRequest(
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
-                    parent_event_id=self.get_case_id(), response_time=response_time, responseFilter=response_filter_dict))
+                    parent_event_id=self.get_case_id(), response_time=response_time,
+                    responseFilter=response_filter_dict))
         elif message.get_message_type() == ORSMessageType.MarkOrderRequest.value:
             response = self.act.submitMarkOrderRequest(
                 request=ActJavaSubmitMessageRequest(
@@ -513,6 +516,20 @@ class JavaApiManager:
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id(), filterFields=filter_dict, response_time=response_time,
                     responseFilter=response_filter_dict))
+        elif message.get_message_type() == ORSMessageType.OrderQuoteRequest.value:
+            response = self.act.submitOrderQuoteRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(),
+                                                             self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict, response_time=response_time))
+        elif message.get_message_type() == ORSMessageType.MultiLegOrderModificationRequest.value:
+            response = self.act.submitMultiLegOrderModificationRequest(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict, response_time=response_time,
+                    responseFilter=response_filter_dict))
         else:
             response = None
         return self.parse_response(response)
@@ -601,6 +618,8 @@ class JavaApiManager:
     def key_is_absent(self, key: str, actual_values: dict, event_name: str):
         if key not in actual_values:
             self.verifier.success = True
+        else:
+            self.verifier.success = False
 
         self.verifier.fields.update(
             {"Is absent:": {"expected": key, "key": False, "type": "field",
