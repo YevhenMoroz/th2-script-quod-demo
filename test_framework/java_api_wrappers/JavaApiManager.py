@@ -573,6 +573,11 @@ class JavaApiManager:
                     class_ = getattr(importlib.import_module(f"{module_path}qs_messages.{qs_message_type.name}"),
                                      qs_message_type.name)
                     response_fix_message = class_()
+            for mda_message_type in MDAMessageType:
+                if message_type == mda_message_type.value:
+                    class_ = getattr(importlib.import_module(f"{module_path}mda_messages.{mda_message_type.name}"),
+                                     mda_message_type.name)
+                    response_fix_message = class_()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)
         self.response = response_messages

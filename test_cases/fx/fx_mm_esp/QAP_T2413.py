@@ -40,11 +40,11 @@ class QAP_T2413(TestCase):
                 "SecurityType": self.security_type,
                 "Product": "4", },
             "SettlType": self.settle_type, }]
-        self.bands_gbp_usd = ["1000000"]
+        self.bands_gbp_usd = ["1000000", "5000000"]
         self.minus_2 = (datetime.now() - timedelta(hours=2))
         self.minus_1 = (datetime.now() - timedelta(hours=1))
-        self.timestamp_2 = str(datetime.timestamp(self.minus_2)).replace(".", "")[:13]
-        self.timestamp_1 = str(datetime.timestamp(self.minus_1)).replace(".", "")[:13]
+        self.timestamp_2 = self.minus_2.isoformat().rsplit("T")[1].rsplit(".")[0]
+        self.timestamp_1 = self.minus_1.isoformat().rsplit("T")[1].rsplit(".")[0]
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -64,9 +64,9 @@ class QAP_T2413(TestCase):
         response = self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
         # endregion
         # region Step 3
-        self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands_gbp_usd, published=False, response=response[0])
+        self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands_gbp_usd, published=False,
+                                                        response=response[0])
         self.fix_verifier.check_fix_message(self.fix_md_snapshot)
-
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

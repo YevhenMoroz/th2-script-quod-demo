@@ -269,6 +269,7 @@ class CSMessageType(Enum):
 
 class MDAMessageType(Enum):
     MarketDataRequest = "Market_MarketDataRequest"
+    FixMarketDataRequest = "Fix_MarketDataRequest"
     MarketDataSnapshotFullRefresh = "Market_MarketDataSnapshotFullRefresh"
 
 

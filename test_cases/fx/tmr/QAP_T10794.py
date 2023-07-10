@@ -49,36 +49,30 @@ class QAP_T10794(TestCase):
                                  "gatingRuleResultIndice": 1, "gatingRuleResultRejectType": "HRD",
                                  "holdOrder": "false", "splitRatio": 1}
         self.rule = {
-            "tradeMgtRuleName": "QAP-T10794_automation", "tradeMgtRuleID": 3000054, "enableSchedule": "false",
-            "alive": "false", "tradeManagementRuleCondition": [
-                {
-                    "tradeMgtRuleCondName": "ordr_exec_miscs", "tradeMgtRuleCondRank": 1,
-                    "tradeMgtRuleCondExp": f"AND(OrdrMisc0=OrdrMisc0,OrdrMisc1=OrdrMisc1,OrdrMisc2=OrdrMisc2,"
-                                           f"OrdrMisc3=OrdrMisc3,OrdrMisc4=OrdrMisc4,OrdrMisc5=OrdrMisc5,"
-                                           f"OrdrMisc6=OrdrMisc6,OrdrMisc7=OrdrMisc7,OrdrMisc8=OrdrMisc8,"
-                                           f"OrdrMisc9=OrdrMisc9,ExecMisc0=ExecMisc0,ExecMisc1=ExecMisc1,"
-                                           f"ExecMisc2=ExecMisc2,ExecMisc3=ExecMisc3,ExecMisc4=ExecMisc4,"
-                                           f"ExecMisc5=ExecMisc5,ExecMisc6=ExecMisc6,ExecMisc7=ExecMisc7,"
-                                           f"ExecMisc8=ExecMisc8,ExecMisc9=ExecMisc9,AccountGroupID=Platinum1)",
-                    "alive": "false",
-                    "tradeManagementRuleResult": [
-                        {
-                            "tradeMgtRuleResultRank": 1, "tradeMgtRuleResultAction": "ABO",
-                            "hedgeAccountGroupID": self.quod2, "alive": "false"
-                        }
-                    ]
-                },
-                {
-                    "tradeMgtRuleCondName": "Default Result", "tradeMgtRuleCondRank": 2, "alive": "false",
-                    "tradeManagementRuleResult": [
-                        {
-                            "tradeMgtRuleResultRank": 1, "tradeMgtRuleResultAction": "ABO",
-                            "hedgeAccountGroupID": "amtest", "alive": "false"
-                        }
-                    ]
-                }
-            ]
-        }
+            "tradeMgtRuleName": "QAP-T10794_automation", "tradeMgtRuleID": 3400054, "enableSchedule": "false",
+            "alive": "false",
+            "tradeManagementRuleCondition": [{"alive": "false", "tradeManagementRuleResult": [
+                {"alive": "false", "hedgeAccountGroupID": "QUOD2", "tradeMgtRuleResultRank": 1,
+                 "tradeMgtRuleResultAction": "ABO"}],
+                                              "tradeMgtRuleCondExp": f"AND(OrdrMisc0=OrdrMisc0,OrdrMisc1=OrdrMisc1,"
+                                                                     f"OrdrMisc2=OrdrMisc2, OrdrMisc3=OrdrMisc3,"
+                                                                     f"OrdrMisc4=OrdrMisc4,OrdrMisc5=OrdrMisc5,"
+                                                                     f"OrdrMisc6=OrdrMisc6,OrdrMisc7=OrdrMisc7,"
+                                                                     f"OrdrMisc8=OrdrMisc8, OrdrMisc9=OrdrMisc9,"
+                                                                     f"ExecMisc0=ExecMisc0,ExecMisc1=ExecMisc1,"
+                                                                     f"ExecMisc2=ExecMisc2,ExecMisc3=ExecMisc3,"
+                                                                     f"ExecMisc4=ExecMisc4, ExecMisc5=ExecMisc5,"
+                                                                     f"ExecMisc6=ExecMisc6,ExecMisc7=ExecMisc7,"
+                                                                     f"ExecMisc8=ExecMisc8,ExecMisc9=ExecMisc9,"
+                                                                     f"AccountGroupID=Platinum1)",
+                                              "tradeMgtRuleCondName": "ordr_exec_miscs", "tradeMgtRuleCondRank": 1},
+                                             {"alive": "false",
+                                              "tradeManagementRuleResult": [
+                                                  {"alive": "false", "hedgeAccountGroupID": "amtest",
+                                                   "tradeMgtRuleResultRank": 1,
+                                                   "tradeMgtRuleResultAction": "ABO"}
+                                              ],
+                                              "tradeMgtRuleCondName": "Default Result", "tradeMgtRuleCondRank": 2}]}
         self.exec_misc = {
             "ExecMisc0": "ExecMisc0", "ExecMisc1": "ExecMisc1", "ExecMisc2": "ExecMisc2", "ExecMisc3": "ExecMisc3",
             "ExecMisc4": "ExecMisc4", "ExecMisc5": "ExecMisc5", "ExecMisc6": "ExecMisc6", "ExecMisc7": "ExecMisc7",
@@ -95,9 +89,8 @@ class QAP_T10794(TestCase):
         # region find out position of QUOD2
         self.request_for_position_int.set_default()
         self.request_for_position_int.change_parameters({"Account": self.quod2})
-        self.fix_manager_pks.send_message_and_receive_response(self.request_for_position_int, self.test_id)
-        internal_report_before = self.fix_manager_pks.get_last_message("PositionReport",
-                                                                       "'Account': '{}'".format(self.quod2))
+        internal_report_before = self.fix_manager_pks.send_message_and_receive_response(self.request_for_position_int,
+                                                                                        self.test_id)
         internal_report_before = self.position_verifier.get_amount(internal_report_before, self.base)
         # region Step 1
         self.trade_management_rule.apply_rule(self.rule)
@@ -112,13 +105,13 @@ class QAP_T10794(TestCase):
         self.sleep(2)
         self.request_for_position_int.set_default()
         self.request_for_position_int.change_parameters({"Account": self.quod2})
-        self.fix_manager_pks.send_message_and_receive_response(self.request_for_position_int, self.test_id)
-        internal_report_after = self.fix_manager_pks.get_last_message("PositionReport",
-                                                                      "'Account': '{}'".format(self.quod2))
+        internal_report_after = self.fix_manager_pks.send_message_and_receive_response(self.request_for_position_int,
+                                                                                        self.test_id)
         internal_report_after = self.position_verifier.get_amount(internal_report_after, self.base)
         # endregion
         # region Step 2
-        self.position_verifier.count_position_change(internal_report_before, internal_report_after, 1000000, self.quod2)
+        self.position_verifier.count_position_change(internal_report_before, internal_report_after, -1000000,
+                                                     self.quod2)
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
