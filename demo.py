@@ -6,6 +6,7 @@ from custom import basic_custom_actions as bca
 from rule_management import RuleManager
 
 from stubs import Stubs
+from test_cases.fx.fx_mm_autohedging.QAP_T2440 import QAP_T2440
 from test_cases.fx.fx_mm_autohedging.QAP_T2468 import QAP_T2468
 from test_cases.fx.fx_mm_positions.QAP_T2809 import QAP_T2809
 
@@ -35,7 +36,7 @@ def test_run():
         # QAP_MD(report_id, data_set=configuration.data_set).execute()
         # QAP_T2496.execute(report_id, session_id=None, data_set=configuration.data_set)
 
-        QAP_T8020(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
+        QAP_T2440(report_id, data_set=configuration.data_set, environment=configuration.environment).execute()
 
         # rule_manager = RuleManager()
         # rule_manager.remove_rule_by_id(2)
