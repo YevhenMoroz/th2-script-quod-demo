@@ -31,7 +31,7 @@ seconds, nanos = timestamps()
 
 class QAP_T7108(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
-    def __init__(self, report_id, session_id, data_set, environment):
+    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
         super().__init__(report_id, session_id, data_set, environment)
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
         self.fix_env = self.environment.get_list_fix_environment()[0]
@@ -152,6 +152,7 @@ class QAP_T7108(TestCase):
         allocation_report = \
             self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
                 JavaApiFields.AllocationReportBlock.value]
+        alloc_report_id = allocation_report[JavaApiFields.AllocReportID.value]
         self.java_api_manager.compare_values(
             {JavaApiFields.AllocStatus.value: AllocationReportConst.AllocStatus_ACK.value,
              JavaApiFields.MatchStatus.value: AllocationReportConst.MatchStatus_MAT.value,
@@ -173,13 +174,13 @@ class QAP_T7108(TestCase):
                                   'TransactTime', 'Side', 'IndividualAllocID',
                                   'BookID', 'SettlDate', 'AllocID',
                                   'Currency', 'NetMoney', 'NoParty', 'ReportedPx',
-                                  'Instrument', 'GrossTradeAmt', 'AllocInstructionMiscBloc',
+                                  'Instrument', 'GrossTradeAmt', 'AllocInstructionMiscBloc', 'AllocInstructionMiscBlock1',
                                   'AllocInstructionMiscBlock2', 'tag5120', 'tag11245', 'QuodTradeQualifier'
                                   ]
         confirmation_report.change_parameters({'NoOrders': [{
             'ClOrdID': cl_ord_id,
             'OrderID': order_id,
-        }], 'TradeDate': str(trade_date_new[:10]).replace('-', '')})
-        self.fix_verifier.check_fix_message_fix_standard(confirmation_report, ['ClOrdID', 'AllocAccount'],
+        }], 'TradeDate': str(trade_date_new[:10]).replace('-', ''), 'AllocID': alloc_report_id})
+        self.fix_verifier.check_fix_message_fix_standard(confirmation_report, ['AllocID', 'ClOrdID', 'AllocAccount'],
                                                          ignored_fields=list_of_ignored_fields)
         # endregion

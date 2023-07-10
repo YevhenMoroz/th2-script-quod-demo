@@ -23,6 +23,7 @@ from test_cases.eq.GatingRules.QAP_T4931 import QAP_T4931
 from test_cases.eq.Positions.QAP_T7598 import QAP_T7598
 from test_cases.eq.Positions.QAP_T7606 import QAP_T7606
 from test_cases.eq.PostTrade.QAP_T7517 import QAP_T7517
+from test_cases.eq.PostTrade.QAP_T7550 import QAP_T7550
 from test_cases.eq.PostTrade.QAP_T7552 import QAP_T7552
 from test_framework.configurations.component_configuration import ComponentConfiguration
 
@@ -34,7 +35,7 @@ channels = dict()
 
 
 def test_run(parent_id=None, version=None):
-    report_id = bca.create_event(f"PEQ Acceptance v.190" if version is None else f"PEQ Acceptance v.190 | {version}", parent_id)
+    report_id = bca.create_event(f"PEQ Acceptance v.194" if version is None else f"PEQ Acceptance v.194 | {version}", parent_id)
     seconds, nanos = timestamps()  # Store case start time
     configuration = ComponentConfiguration("AcceptanceList")
     data_set = configuration.data_set
@@ -72,8 +73,8 @@ def test_run(parent_id=None, version=None):
         #     .execute()
         QAP_T7552(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
             .execute()
-        # QAP_T7550(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
-        #     .execute()
+        QAP_T7550(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
+            .execute()
         # QAP_T7549(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
         #     .execute()
         # QAP_T7541(report_id=report_id, session_id=session_id, data_set=data_set, environment=configuration.environment) \
@@ -110,5 +111,5 @@ def test_run(parent_id=None, version=None):
 
 
 if __name__ == '__main__':
-    test_run(version="5.1.177.190")
+    test_run(version="5.1.181.194")
     Stubs.factory.close()
