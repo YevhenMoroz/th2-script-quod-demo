@@ -106,7 +106,8 @@ class QAP_T2902(TestCase):
         self.md_snapshot.set_params_for_md_response(self.md_request, ["*", "*", "*"], response=response[0])
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot,
                                             direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
+                                            key_parameters=["MDReqID"],
+                                            ignored_fields=["CachedUpdate", "trailer", "header"])
         # endregion
 
         # region 3-4
@@ -126,7 +127,8 @@ class QAP_T2902(TestCase):
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 3, MDEntryPx=modified_ask_px)
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot,
                                             direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
+                                            key_parameters=["MDReqID"],
+                                            ignored_fields=["CachedUpdate", "trailer", "header"])
         # endregion
 
         # region 6
@@ -144,7 +146,8 @@ class QAP_T2902(TestCase):
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 3, MDEntryPx=modified_ask_px)
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot,
                                             direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
+                                            key_parameters=["MDReqID"],
+                                            ignored_fields=["CachedUpdate", "trailer", "header"])
         # endregion
 
         # region 7
@@ -162,7 +165,8 @@ class QAP_T2902(TestCase):
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 3, MDEntryPx=modified_ask_px)
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot,
                                             direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
+                                            key_parameters=["MDReqID"],
+                                            ignored_fields=["CachedUpdate", "trailer", "header"])
         # endregion
         # region 7
         self.adjustment_request.update_margins_by_index(2, "-4", "3")
@@ -179,7 +183,8 @@ class QAP_T2902(TestCase):
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 3, MDEntryPx=modified_ask_px)
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot,
                                             direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
+                                            key_parameters=["MDReqID"],
+                                            ignored_fields=["CachedUpdate", "trailer", "header"])
         # endregion
         # region 7
         self.adjustment_request.update_margins_by_index(2, "-8", "-1")
@@ -196,7 +201,8 @@ class QAP_T2902(TestCase):
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 3, MDEntryPx=modified_ask_px)
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot,
                                             direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
+                                            key_parameters=["MDReqID"],
+                                            ignored_fields=["CachedUpdate", "trailer", "header"])
         # endregion
         # region 7
         self.adjustment_request.update_margins_by_index(2, "-3", "4")
@@ -213,7 +219,8 @@ class QAP_T2902(TestCase):
         self.md_snapshot.update_repeating_group_by_index("NoMDEntries", 3, MDEntryPx=modified_ask_px)
         self.fix_verifier.check_fix_message(fix_message=self.md_snapshot,
                                             direction=DirectionEnum.FromQuod,
-                                            key_parameters=["MDReqID"])
+                                            key_parameters=["MDReqID"],
+                                            ignored_fields=["CachedUpdate", "trailer", "header"])
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

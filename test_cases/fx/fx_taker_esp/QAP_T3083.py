@@ -1,229 +1,63 @@
-import logging
 from pathlib import Path
-
-from th2_grpc_act_gui_quod.common_pb2 import BaseTileData
-
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
-from stubs import Stubs
-from win_gui_modules.aggregated_rates_wrappers import ModifyRatesTileRequest, PlaceESPOrder, ESPTileOrderSide
-from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, OrderInfo, ExtractionAction, \
-    ModifyFXOrderDetails, CancelFXOrderDetails
-from win_gui_modules.order_ticket import FXOrderDetails, ExtractFxOrderTicketValuesRequest
-from win_gui_modules.order_ticket_wrappers import NewFxOrderDetails
-from win_gui_modules.utils import call, get_base_request
-from win_gui_modules.wrappers import set_base
+from test_cases.fx.fx_wrapper.common_tools import check_value_in_db
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleTaker import FixMessageNewOrderSingleTaker
+from test_framework.fix_wrappers.forex.FixMessageOrderCancelRequestFX import FixMessageOrderCancelRequestFX
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.fx.FixNewOrderSingleFX import FixNewOrderSingleFX
+from test_framework.java_api_wrappers.fx.FixOrderCancelRequestFX import FixOrderCancelRequestFX
+from test_framework.java_api_wrappers.fx.FixOrderModificationRequestFX import FixOrderModificationRequestFX
+from test_framework.java_api_wrappers.fx.OrderSubmitFX import OrderSubmitFX
 
 
-def create_or_get_rates_tile(base_request, service):
-    call(service.createRatesTile, base_request.build())
+class QAP_T3083(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.env = self.environment.get_list_fix_environment()[0]
+        self.fix_env = self.env.buy_side_esp
+        self.fix_manager_taker = FixManager(self.fix_env, self.test_id)
+        self.new_order_single = OrderSubmitFX(data_set=self.data_set)
+        self.order_modify = FixOrderModificationRequestFX(data_set=self.data_set)
+        self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
+        self.verifier = Verifier(self.test_id)
+        self.order_cancel = FixOrderCancelRequestFX(data_set=self.data_set)
+        self.fix_order_cancel = FixMessageOrderCancelRequestFX()
+        self.client = self.data_set.get_client_by_name("client_5")
+        self.account = self.data_set.get_account_by_name("account_5")
+        self.order_qty = "10000000"
+        self.cl_ord_id = str()
 
-
-def click_on_bid_btn(base_request, service):
-    esp_request = PlaceESPOrder(details=base_request)
-    esp_request.set_action(ESPTileOrderSide.BUY)
-    call(service.placeESPOrder, esp_request.build())
-
-
-def modify_order_ticket(base_request, service, type, qty, price, tif, client):
-    order_ticket = FXOrderDetails()
-    order_ticket.set_qty(qty)
-    order_ticket.set_price_large(price)
-    order_ticket.set_tif(tif)
-    order_ticket.set_order_type(type)
-    order_ticket.set_client(client)
-    new_order_details = NewFxOrderDetails(base_request, order_ticket)
-    call(service.placeFxOrder, new_order_details.build())
-
-
-def extract_price_from_order_ticket(tile_date, service):
-    extract_request = ExtractFxOrderTicketValuesRequest(tile_date)
-    extract_request.get_price_large("priceLarge")
-    extract_request.get_price_pips("pricePips")
-    response = call(service.extractFxOrderTicketValues, extract_request.build())
-    price = response["priceLarge"] + response["pricePips"]
-    print(price)
-    return price
-
-
-def place_order(base_request, service):
-    order_ticket = FXOrderDetails()
-    order_ticket.set_place()
-    new_order_details = NewFxOrderDetails(base_request, order_ticket)
-    call(service.placeFxOrder, new_order_details.build())
-
-
-def modify_rates_tile(base_request, service, from_c, to_c, tenor):
-    modify_request = ModifyRatesTileRequest(details=base_request)
-    modify_request.set_instrument(from_c, to_c, tenor)
-    call(service.modifyRatesTile, modify_request.build())
-
-
-def amend_order(ob_act, base_request, qty):
-    order_details = FXOrderDetails()
-    order_details.set_qty(qty)
-    modify_ot_order_request = ModifyFXOrderDetails(base_request)
-    modify_ot_order_request.set_order_details(order_details)
-
-    call(ob_act.amendOrder, modify_ot_order_request.build())
-
-
-def cancel_order(base_request, ob_act):
-    cancel_order_request = CancelFXOrderDetails(base_request)
-    call(ob_act.cancelOrder, cancel_order_request.build())
-
-
-def check_order_book(base_request, act_ob, case_id, owner, qty, sts, price):
-    ob = OrdersDetails()
-    execution_id = bca.client_orderid(4)
-    ob.set_default_params(base_request)
-    ob.set_extraction_id(execution_id)
-    ob.set_filter(["Owner", owner, "Qty", qty])
-
-    child_ord_id = ExtractionDetail("orderBook.childId", "Order ID")
-    child_sts = ExtractionDetail("orderBook.childSts", "Sts")
-    child_lmt_price = ExtractionDetail("orderBook.childLmtPrice", "Limit Price")
-    child_qty = ExtractionDetail("orderBook.childQty", "Qty")
-
-    child_info = OrderInfo.create(action=ExtractionAction.create_extraction_action(extraction_details=[child_ord_id,
-                                                                                                       child_sts,
-                                                                                                       child_lmt_price,
-                                                                                                       child_qty]))
-    child_details = OrdersDetails.create(info=child_info)
-
-    ob_ord_id = ExtractionDetail("OrderBook.ordId", "Order ID")
-    ob_sts = ExtractionDetail("orderBook.sts", "Sts")
-    ob_lmt_price = ExtractionDetail("orderBook.lmtPrice", "Limit Price")
-    ob_qty = ExtractionDetail("orderBook.qty", "Qty")
-    ob.add_single_order_info(
-        OrderInfo.create(
-            action=ExtractionAction.create_extraction_action(
-                extraction_details=[ob_sts, ob_lmt_price, ob_qty, ob_ord_id]),
-            sub_order_details=child_details))
-    response = call(act_ob.getOrdersDetails, ob.request())
-
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check Order book")
-    verifier.compare_values("Sts", sts, response[ob_sts.name])
-    verifier.compare_values("Limit Price", price, response[ob_lmt_price.name])
-    verifier.compare_values("Child status", sts, response[child_sts.name])
-    verifier.verify()
-    main_order_id = response[ob_ord_id.name]
-    child_order_id = response[child_ord_id.name]
-
-    return [main_order_id, child_order_id]
-
-
-def check_order_after_amend(base_request, act_ob, case_id, order_id, qty, sts):
-    ob = OrdersDetails()
-    execution_id = bca.client_orderid(4)
-    ob.set_default_params(base_request)
-    ob.set_extraction_id(execution_id)
-    ob.set_filter(["Order ID", order_id])
-
-    child_ord_id = ExtractionDetail("orderBook.childId", "Order ID")
-    child_sts = ExtractionDetail("orderBook.childSts", "Sts")
-    child_qty = ExtractionDetail("orderBook.childQty", "Qty")
-
-    child_info = OrderInfo.create(action=ExtractionAction.create_extraction_action(extraction_details=[child_ord_id,
-                                                                                                       child_sts,
-                                                                                                       child_qty]))
-    child_details = OrdersDetails.create(info=child_info)
-
-    ob_ord_id = ExtractionDetail("OrderBook.ordId", "Order ID")
-    ob_sts = ExtractionDetail("orderBook.sts", "Sts")
-    ob_qty = ExtractionDetail("orderBook.qty", "Qty")
-    ob.add_single_order_info(
-        OrderInfo.create(
-            action=ExtractionAction.create_extraction_action(
-                extraction_details=[ob_sts, ob_qty, ob_ord_id]),
-            sub_order_details=child_details))
-    response = call(act_ob.getOrdersDetails, ob.request())
-
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check Order book after Amend")
-    verifier.compare_values("Sts", sts, response[ob_sts.name])
-    verifier.compare_values("Qty", qty, response[ob_qty.name].replace(",", ""))
-    verifier.compare_values("Child status", sts, response[child_sts.name])
-    verifier.compare_values("Child Qty", qty, response[child_qty.name].replace(",", ""))
-    verifier.verify()
-    child_order_id = response[child_ord_id.name]
-
-    return child_order_id
-
-
-def check_child_book(base_request, act_ob, case_id, order_id):
-    ob = OrdersDetails()
-    execution_id = bca.client_orderid(4)
-    ob.set_default_params(base_request)
-    ob.set_extraction_id(execution_id)
-    ob.set_filter(["Order ID", order_id])
-    ob_sts = ExtractionDetail("orderBook.sts", "Sts")
-    ob.add_single_order_info(
-        OrderInfo.create(
-            action=ExtractionAction.create_extraction_action(
-                extraction_detail=ob_sts)))
-    response = call(act_ob.getChildOrdersDetails, ob.request())
-
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check that child is canceled")
-    verifier.compare_values("Child status", "Cancelled", response[ob_sts.name])
-    verifier.verify()
-
-
-def execute(report_id, session_id):
-    case_name = Path(__file__).name[:-3]
-    order_ticket_service = Stubs.win_act_order_ticket_fx
-    ob_fx_service = Stubs.win_act_order_book_fx
-    ob_service = Stubs.win_act_order_book
-    # Create sub-report for case
-    case_id = bca.create_event(case_name, report_id)
-
-    set_base(session_id, case_id)
-    ar_service = Stubs.win_act_aggregated_rates_service
-
-    case_base_request = get_base_request(session_id, case_id)
-    base_esp_details = BaseTileDetails(base=case_base_request)
-    base_tile_details = BaseTileData(base=case_base_request)
-
-    from_curr = "EUR"
-    to_curr = "USD"
-    tenor = "Spot"
-    qty = "10000000"
-    amend_qty = "8000000"
-    price = "1.17"
-    tif = "GoodTillCancel"
-    order_type = "Limit"
-    client = "ASPECT_CITI"
-    owner = Stubs.custom_config['qf_trading_fe_user']
-
-    try:
-        # Step 1
-        create_or_get_rates_tile(base_esp_details, ar_service)
-        modify_rates_tile(base_esp_details, ar_service, from_curr, to_curr, tenor)
-        click_on_bid_btn(base_esp_details, ar_service)
-        modify_order_ticket(case_base_request, order_ticket_service, order_type, qty, price, tif, client)
-        price_extracted = extract_price_from_order_ticket(base_tile_details, order_ticket_service)
-        place_order(case_base_request, order_ticket_service)
-        # Step 2-3
-        order_info = check_order_book(case_base_request, ob_service, case_id, owner, qty, "Open", price_extracted)
-        # Step 4
-        amend_order(ob_fx_service, case_base_request, amend_qty)
-        check_child_book(case_base_request, ob_service, case_id, order_info[1])
-        check_order_after_amend(case_base_request, ob_service, case_id, order_info[0], amend_qty,
-                                "Open")
-        # Step 5
-        cancel_order(case_base_request, ob_service)
-        check_order_after_amend(case_base_request, ob_service, case_id, order_info[0], amend_qty,
-                                "Cancelled")
-
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    finally:
-        try:
-            # Close tile
-            call(ar_service.closeRatesTile, base_esp_details.build())
-        except Exception:
-            logging.error("Error execution", exc_info=True)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        self.new_order_single.set_passive_algo()
+        self.new_order_single.update_fields_in_component("NewOrderSingleBlock", {"TimeInForce": "GTC"})
+        self.java_api_manager.send_message_and_receive_response(self.new_order_single)
+        initial_qty = self.java_api_manager.get_last_message("Order_OrdReply").get_parameter("OrdReplyBlock")["OrdQty"]
+        initial_qty = str(float(initial_qty))
+        initial_status = self.java_api_manager.get_last_message("Order_OrdReply").get_parameter("OrdReplyBlock")[
+            "TransStatus"]
+        self.cl_ord_id = self.new_order_single.get_parameter("NewOrderSingleBlock")["ClOrdID"]
+        self.order_modify.set_modify_order_limit(self.cl_ord_id, qty="50000000")
+        self.java_api_manager.send_message_and_receive_response(self.order_modify)
+        self.java_api_manager.get_last_message("Order_OrdReply")
+        modified_qty = self.java_api_manager.get_last_message("Order_OrdReply").get_parameter("OrdReplyBlock")["OrdQty"]
+        modified_qty = str(float(modified_qty))
+        self.order_cancel.set_default_cancel(self.cl_ord_id)
+        self.java_api_manager.send_message_and_receive_response(self.order_cancel)
+        modified_status = self.java_api_manager.get_last_message("Order_OrdReply").get_parameter("OrdReplyBlock")[
+            "TransStatus"]
+        self.verifier.set_event_name("Check Order qty after modify and Order status after cancel")
+        self.verifier.compare_values("Order qty before modification", "90000000.0", initial_qty)
+        self.verifier.compare_values("Order qty after modification", "50000000.0", modified_qty)
+        self.verifier.compare_values("Order status before cancel", "OPN", initial_status)
+        self.verifier.compare_values("Order status after cancel", "CXL", modified_status)
+        self.verifier.verify()

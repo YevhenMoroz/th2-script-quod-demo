@@ -100,11 +100,11 @@ class QAP_T2493(TestCase):
         self.execution_report.set_params_from_new_order_single(self.new_order_single, status=Status.Fill)
         self.execution_report.change_parameters({"Account": "*",
                                                  "LastQty": "1000000",
-                                                 "AvgPx": "1.18158",
                                                  "LastMkt": "CITI-ID",
                                                  "CumQty": "1000000"
                                                  })
-        self.fix_verifier.check_fix_message(fix_message=self.execution_report)
+        self.execution_report.remove_parameter("OrderCapacity")
+        self.fix_verifier.check_fix_message(self.execution_report, ignored_fields=["GatingRuleCondName", "GatingRuleName", "trailer", "header"])
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

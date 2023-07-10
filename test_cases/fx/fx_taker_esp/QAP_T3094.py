@@ -1,109 +1,66 @@
-import logging
 from pathlib import Path
-
 from custom import basic_custom_actions as bca
 from custom.verifier import Verifier
-from stubs import Stubs
-from win_gui_modules.aggregated_rates_wrappers import ModifyRatesTileRequest, ContextActionRatesTile, ActionsRatesTile
-from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.order_book_wrappers import OrdersDetails, ExtractionDetail, OrderInfo, ExtractionAction
-from win_gui_modules.order_ticket import FXOrderDetails
-from win_gui_modules.order_ticket_wrappers import NewFxOrderDetails
-from win_gui_modules.utils import call, get_base_request
-from win_gui_modules.wrappers import set_base
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.environments.full_environment import FullEnvironment
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.forex.FixMessageOrderCancelRequestFX import FixMessageOrderCancelRequestFX
+from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
+from test_framework.java_api_wrappers.fx.FixOrderCancelRequestFX import FixOrderCancelRequestFX
+from test_framework.java_api_wrappers.fx.FixOrderModificationRequestFX import FixOrderModificationRequestFX
+from test_framework.java_api_wrappers.fx.OrderModificationRequestFX import OrderModificationRequestFX
+from test_framework.java_api_wrappers.fx.OrderSubmitFX import OrderSubmitFX
+from test_framework.java_api_wrappers.fx.OrderValidateFX import OrderValidateFX
 
 
-def create_or_get_rates_tile(base_request, service):
-    call(service.createRatesTile, base_request.build())
+class QAP_T3094(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.env = self.environment.get_list_fix_environment()[0]
+        self.fix_env = self.env.buy_side_esp
+        self.fix_manager_taker = FixManager(self.fix_env, self.test_id)
+        self.new_order_single = OrderSubmitFX(data_set=self.data_set)
+        self.fix_order_modify = FixOrderModificationRequestFX(data_set=self.data_set)
+        self.order_modify = OrderModificationRequestFX(data_set=self.data_set)
+        self.java_api_connectivity = self.environment.get_list_java_api_environment()[0].java_api_conn
+        self.java_api_manager = JavaApiManager(self.java_api_connectivity, self.test_id)
+        self.verifier = Verifier(self.test_id)
+        self.order_cancel = FixOrderCancelRequestFX(data_set=self.data_set)
+        self.fix_order_cancel = FixMessageOrderCancelRequestFX()
+        self.client = self.data_set.get_client_by_name("client_5")
+        self.account = self.data_set.get_account_by_name("account_5")
+        self.order_qty = "10000000"
+        self.cl_ord_id = str()
+        self.listing_citi = {'ListingBlock': [
+            {"ListingID": "100000249"}]}
 
-
-def modify_order_ticket(base_request, service, tif):
-    order_ticket = FXOrderDetails()
-    order_ticket.set_tif(tif)
-    order_ticket.set_place()
-    new_order_details = NewFxOrderDetails(base_request, order_ticket)
-    call(service.placeFxOrder, new_order_details.build())
-
-
-def modify_rates_tile(base_request, service, from_c, to_c, tenor):
-    modify_request = ModifyRatesTileRequest(details=base_request)
-    modify_request.set_instrument(from_c, to_c, tenor)
-    call(service.modifyRatesTile, modify_request.build())
-
-
-def open_direct_venue(base_request, service, venue):
-    modify_request = ModifyRatesTileRequest(details=base_request)
-    venue_filter = ContextActionRatesTile.create_venue_filter(venue)
-    add_dve_action = ContextActionRatesTile.open_direct_venue_panel()
-    modify_request.add_context_actions([venue_filter, add_dve_action])
-    call(service.modifyRatesTile, modify_request.build())
-
-
-def click_on_venue(base_request, service, venue):
-    modify_request = ModifyRatesTileRequest(details=base_request)
-    click_to_venue = ActionsRatesTile.click_to_ask_esp_order(venue)
-    modify_request.add_action(click_to_venue)
-    call(service.modifyRatesTile, modify_request.build())
-
-
-def check_order_book(base_request, act_ob, case_id, tif, owner):
-    ob = OrdersDetails()
-    execution_id = bca.client_orderid(4)
-    ob.set_default_params(base_request)
-    ob.set_extraction_id(execution_id)
-    ob.set_filter(["Owner", owner])
-    ob_tif = ExtractionDetail("orderBook.tif", "TIF")
-    ob.add_single_order_info(
-        OrderInfo.create(
-            action=ExtractionAction.create_extraction_action(extraction_details=[ob_tif])))
-    response = call(act_ob.getOrdersDetails, ob.request())
-
-    verifier = Verifier(case_id)
-    verifier.set_event_name("Check Order book")
-    verifier.compare_values("TIF", tif, response[ob_tif.name])
-
-    verifier.verify()
-
-
-def execute(report_id, session_id):
-    case_name = Path(__file__).name[:-3]
-
-    order_ticket_service = Stubs.win_act_order_ticket_fx
-    ob_act = Stubs.win_act_order_book
-
-    # Create sub-report for case
-    case_id = bca.create_event(case_name, report_id)
-
-    set_base(session_id, case_id)
-    ar_service = Stubs.win_act_aggregated_rates_service
-
-    case_base_request = get_base_request(session_id, case_id)
-    base_esp_details = BaseTileDetails(base=case_base_request)
-
-    owner = Stubs.custom_config['qf_trading_fe_user']
-    from_curr = "EUR"
-    to_curr = "USD"
-    tenor = "Spot"
-    venue = "CIT"
-    tif = "FillOrKill"
-    try:
-        # Step 1
-        create_or_get_rates_tile(base_esp_details, ar_service)
-        modify_rates_tile(base_esp_details, ar_service, from_curr, to_curr, tenor)
-        open_direct_venue(base_esp_details, ar_service, venue)
-        click_on_venue(base_esp_details, ar_service, venue)
-        # Step 2
-        modify_order_ticket(case_base_request, order_ticket_service, tif)
-        # Step 3
-        check_order_book(case_base_request, ob_act, case_id, tif, owner)
-
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    finally:
-        try:
-            # Close tile
-            call(ar_service.closeRatesTile, base_esp_details.build())
-
-        except Exception:
-            logging.error("Error execution", exc_info=True)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        self.new_order_single.set_default_dma_limit()
+        self.new_order_single.update_fields_in_component("NewOrderSingleBlock",
+                                                         {"Price": "1.17164",
+                                                          "ListingList": self.listing_citi,
+                                                          "TimeInForce": "IOC", "AccountGroupID": "ASPECT_CITI"})
+        self.java_api_manager.send_message_and_receive_response(self.new_order_single)
+        ord_notification = self.java_api_manager.get_last_message("Order_OrdReply")
+        self.ord_id = ord_notification.get_parameter("OrdReplyBlock")["OrdID"]
+        initial_tif = ord_notification.get_parameter("OrdReplyBlock")["TimeInForce"]
+        self.cl_ord_id = ord_notification.get_parameter("OrdReplyBlock")["ClOrdID"]
+        # self.order_modify.set_modify_order_limit(self.ord_id, qty="1000000", price="1.18164")
+        # self.order_modify.update_fields_in_component("OrderModificationRequestBlock", {"TimeInForce": "GTC"})
+        # self.java_api_manager.send_message_and_receive_response(self.order_modify)
+        # ord_notification = self.java_api_manager.get_last_message("Order_OrdReply")
+        # modified_tif = ord_notification.get_parameter("OrdReplyBlock")["TimeInForce"]
+        self.fix_order_modify.set_modify_order_limit(self.cl_ord_id, qty="1000000", price="1.18164")
+        self.fix_order_modify.update_fields_in_component("OrderModificationRequestBlock", {"TimeInForce": "GTC"})
+        self.java_api_manager.send_message_and_receive_response(self.fix_order_modify)
+        ord_notification = self.java_api_manager.get_last_message("Order_OrdReply")
+        modified_tif = ord_notification.get_parameter("OrdReplyBlock")["TimeInForce"]
+        self.verifier.set_event_name("Check Order qty and Order status after Order Release")
+        self.verifier.compare_values("Order tif before modification", "IOC", initial_tif)
+        self.verifier.compare_values("Order tif after modification", "DAY", modified_tif)
+        self.verifier.verify()

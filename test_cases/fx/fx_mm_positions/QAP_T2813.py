@@ -39,7 +39,7 @@ class QAP_T2813(TestCase):
             "SecurityType": self.sec_type_spo,
             "Symbol": self.usd_cad
         }
-        self.qty_1 = "6000000"
+        self.qty_1 = "8000000"
         self.qty_2 = "8000000"
         self.qty_3 = "3000000"
 
@@ -50,7 +50,7 @@ class QAP_T2813(TestCase):
         self.java_api_manager.send_message(self.cancel_request)
         self.sleep(5)
         # endregion
-        # region Step 1 Send buy order on 6M
+        # region Step 1 Send buy order on 8M
         self.trade_request.set_default_params()
         self.trade_request.update_fields_in_component("TradeEntryRequestBlock",
                                                       {"ClientAccountGroupID": self.client,
@@ -61,15 +61,15 @@ class QAP_T2813(TestCase):
 
         # endregion
 
-        # region Step 2 Check System MTM PnL
-        # self.request_for_position.set_default()
-        # self.request_for_position.change_parameter("Account", self.client)
-        # self.request_for_position.change_parameter("Instrument", self.instrument)
-        # position_report: list = self.fix_manager.send_message_and_receive_response(self.request_for_position)
-        # self.position_verifier.check_system_mtm_pnl_position(position_report, self.trade_request)
-        # self.sleep(1)
-        # self.request_for_position.set_unsubscribe()
-        # self.fix_manager.send_message(self.request_for_position)
+        # region Step 2 Check Daily MTM PnL
+        self.request_for_position.set_default()
+        self.request_for_position.change_parameter("Account", self.client)
+        self.request_for_position.change_parameter("Instrument", self.instrument)
+        position_report: list = self.fix_manager.send_message_and_receive_response(self.request_for_position)
+        self.position_verifier.check_daily_mtm_pnl_position(position_report, self.trade_request)
+        self.sleep(1)
+        self.request_for_position.set_unsubscribe()
+        self.fix_manager.send_message(self.request_for_position)
         # endregion
         # region Step 3 Send sell order on 8M and check System MTM PnL
         self.trade_request.set_default_params()
@@ -81,17 +81,17 @@ class QAP_T2813(TestCase):
         self.trade_request.change_instrument(self.usd_cad, self.instr_type_spo)
         self.java_api_manager.send_message_and_receive_response(self.trade_request)
         # endregion
-        # region Step 4 Check System Pnl
-        # self.request_for_position.set_default()
-        # self.request_for_position.change_parameter("Account", self.client)
-        # self.request_for_position.change_parameter("Instrument", self.instrument)
-        # position_report: list = self.fix_manager.send_message_and_receive_response(self.request_for_position)
-        # self.position_verifier.check_system_mtm_pnl_position(position_report, self.trade_request)
-        # self.sleep(1)
-        # self.request_for_position.set_unsubscribe()
-        # self.fix_manager.send_message(self.request_for_position)
+        # region Step 4 Check Daily MTM Pnl
+        self.request_for_position.set_default()
+        self.request_for_position.change_parameter("Account", self.client)
+        self.request_for_position.change_parameter("Instrument", self.instrument)
+        position_report: list = self.fix_manager.send_message_and_receive_response(self.request_for_position)
+        self.position_verifier.check_daily_mtm_pnl_position(position_report, self.trade_request)
+        self.sleep(1)
+        self.request_for_position.set_unsubscribe()
+        self.fix_manager.send_message(self.request_for_position)
         # endregion
-        # region Step 5 Send sell order on 3M and check System MTM PnL
+        # region Step 5 Send sell order on 3M and check Daily MTM PnL
         self.trade_request.set_default_params()
         self.trade_request.update_fields_in_component("TradeEntryRequestBlock",
                                                       {"ClientAccountGroupID": self.client,
@@ -100,11 +100,11 @@ class QAP_T2813(TestCase):
                                                        "Currency": self.currency})
         self.trade_request.change_instrument(self.usd_cad, self.instr_type_spo)
         self.java_api_manager.send_message_and_receive_response(self.trade_request)
-        # self.request_for_position.set_default()
-        # self.request_for_position.change_parameter("Account", self.client)
-        # self.request_for_position.change_parameter("Instrument", self.instrument)
-        # position_report: list = self.fix_manager.send_message_and_receive_response(self.request_for_position)
-        # self.position_verifier.check_system_mtm_pnl_position(position_report, self.trade_request)
-        # self.sleep(1)
-        # self.request_for_position.set_unsubscribe()
-        # self.fix_manager.send_message(self.request_for_position)
+        self.request_for_position.set_default()
+        self.request_for_position.change_parameter("Account", self.client)
+        self.request_for_position.change_parameter("Instrument", self.instrument)
+        position_report: list = self.fix_manager.send_message_and_receive_response(self.request_for_position)
+        self.position_verifier.check_daily_mtm_pnl_position(position_report, self.trade_request)
+        self.sleep(1)
+        self.request_for_position.set_unsubscribe()
+        self.fix_manager.send_message(self.request_for_position)

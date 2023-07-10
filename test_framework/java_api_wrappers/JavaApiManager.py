@@ -71,7 +71,6 @@ class JavaApiManager:
                     message=bca.message_to_grpc_fix_standard(message.get_message_type(),
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id(), filterFields=filter_dict))
-
         elif message.get_message_type() == ORSMessageType.OrderCancelRequest.value:
             response = self.act.submitOrderCancelRequest(
                 request=ActJavaSubmitMessageRequest(
@@ -513,6 +512,12 @@ class JavaApiManager:
                                                              message.get_parameters(), self.get_session_alias()),
                     parent_event_id=self.get_case_id(), filterFields=filter_dict, response_time=response_time,
                     responseFilter=response_filter_dict))
+        elif message.get_message_type() == ORSMessageType.OrderValidate.value:
+            response = self.act.submitOrderValidate(
+                request=ActJavaSubmitMessageRequest(
+                    message=bca.message_to_grpc_fix_standard(message.get_message_type(),
+                                                             message.get_parameters(), self.get_session_alias()),
+                    parent_event_id=self.get_case_id(), filterFields=filter_dict))
         else:
             response = None
         return self.parse_response(response)
@@ -567,6 +572,11 @@ class JavaApiManager:
                 if message_type == qs_message_type.value:
                     class_ = getattr(importlib.import_module(f"{module_path}qs_messages.{qs_message_type.name}"),
                                      qs_message_type.name)
+                    response_fix_message = class_()
+            for mda_message_type in MDAMessageType:
+                if message_type == mda_message_type.value:
+                    class_ = getattr(importlib.import_module(f"{module_path}mda_messages.{mda_message_type.name}"),
+                                     mda_message_type.name)
                     response_fix_message = class_()
             response_fix_message.change_parameters(fields)
             response_messages.append(response_fix_message)

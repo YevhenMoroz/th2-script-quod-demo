@@ -2,6 +2,7 @@ import time
 from datetime import datetime, timedelta
 from pathlib import Path
 from custom import basic_custom_actions as bca
+from custom.verifier import Verifier
 from stubs import Stubs
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
@@ -48,13 +49,14 @@ class QAP_T2404(TestCase):
         self.current_time = datetime.now().strftime("%H:%M:%S.%f")
         self.time_client_1 = (datetime.now() - timedelta(hours=4))
         self.time_client_2 = (datetime.now() + timedelta(hours=4))
-        self.timestamp_client_1 = str(datetime.timestamp(self.time_client_1)).replace(".", "")[:13]
-        self.timestamp_client_2 = str(datetime.timestamp(self.time_client_2)).replace(".", "")[:13]
-        self.time_instr_1 = (datetime.now() - timedelta(hours=2))
-        self.time_instr_2 = (datetime.now() - timedelta(hours=1))
-        self.timestamp_instr_1 = str(datetime.timestamp(self.time_instr_1)).replace(".", "")[:13]
-        self.timestamp_instr_2 = str(datetime.timestamp(self.time_instr_2)).replace(".", "")[:13]
-        # self.text = f"11900 Validation failed: current time ({self.current_time}) > end time ({self.time_instr_2})"
+        self.timestamp_client_1 = self.time_client_1.isoformat().rsplit("T")[1].rsplit(".")[0]
+        self.timestamp_client_2 = self.time_client_2.isoformat().rsplit("T")[1].rsplit(".")[0]
+        self.time_instr_1 = (datetime.now() - timedelta(hours=6))
+        self.time_instr_2 = (datetime.now() - timedelta(hours=5))
+        self.timestamp_instr_1 = self.time_instr_1.isoformat().rsplit("T")[1].rsplit(".")[0]
+        self.timestamp_instr_2 = self.time_instr_2.isoformat().rsplit("T")[1].rsplit(".")[0]
+        self.verifier = Verifier(self.test_id)
+        self.verifier_text = "Check error ID"
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -84,10 +86,13 @@ class QAP_T2404(TestCase):
                                                            Currency="GBP", Instrument=self.instrument,
                                                            OrderQty=self.qty, SettlDate=self.settle_date_today,
                                                            SettlType=self.settle_type_today)
-        self.fix_manager_sel.send_message_and_receive_response(self.quote_request, self.test_id)
+        response = self.fix_manager_sel.send_message_and_receive_response(self.quote_request, self.test_id)[-1]
+        error_id = response.get_parameter("Text").rsplit(" ")[0]
+        self.verifier.set_event_name(self.verifier_text)
+        self.verifier.compare_values(self.verifier_text, error_id, "11900")
+        self.verifier.verify()
         # endregion
         # region Step 4
-        # self.quote_reject.set_quote_reject_params(self.quote_request, text=self.text)
         self.quote_reject.set_quote_reject_params(self.quote_request)
         self.quote_reject.remove_fields_in_repeating_group("NoRelatedSymbols", ["Account", "OrderQty"])
         self.fix_verifier.check_fix_message(fix_message=self.quote_reject, key_parameters=["QuoteReqID"])
@@ -100,4 +105,3 @@ class QAP_T2404(TestCase):
         self.modify_instrument.remove_parameters(["TODStartTime", "TODEndTime"])
         self.rest_manager.send_post_request(self.modify_instrument)
         self.sleep(2)
-

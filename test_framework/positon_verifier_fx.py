@@ -83,6 +83,41 @@ class PositionVerifier:
         self.verifier.verify()
         self.verifier = Verifier(self.test_id)
 
+    def check_daily_mtm_pnl_position(self, report, trade):
+        qty = trade.get_exec_qty()
+        price = trade.get_exec_price()
+        symbol = trade.get_symbol()
+        side = trade.get_side()
+        expected_value = self.pos_calc.calculate_daily_mtm_pnl(qty, price, symbol, side)
+        amount = self.get_amount(report, PosAmtType.DailyMTMPnl)
+        self.verifier.set_event_name("Check Daily MTM Pnl Position")
+        self.verifier.compare_values("Compare Daily MTM Pnl Position", expected_value, amount)
+        self.verifier.verify()
+        self.verifier = Verifier(self.test_id)
+
+    def check_daily_system_mtm_pnl_position(self, report, trade):
+        qty = trade.get_exec_qty()
+        price = trade.get_exec_price()
+        symbol = trade.get_symbol()
+        side = trade.get_side()
+        expected_value = self.pos_calc.calculate_sys_daily_mtm_pnl(qty, price, symbol, side)
+        amount = self.get_amount(report, PosAmtType.SysDailyMTMPnl)
+        self.verifier.set_event_name("Check Daily System MTM Pnl Position")
+        self.verifier.compare_values("Compare Daily System MTM Pnl Position", expected_value, amount)
+        self.verifier.verify()
+        self.verifier = Verifier(self.test_id)
+
+    def check_daily_avg_px(self, report, trade):
+        qty = trade.get_exec_qty()
+        price = trade.get_exec_price()
+        side = trade.get_side()
+        expected_value = self.pos_calc.calculate_daily_avg_px(qty, price, side)
+        amount = self.get_amount(report, PosAmtType.DailyAvgPX)
+        self.verifier.set_event_name("Check Daily Avg PX")
+        self.verifier.compare_values("Compare Daily Avg PX", expected_value, amount)
+        self.verifier.verify()
+        self.verifier = Verifier(self.test_id)
+
     def check_transact_time(self, report, expected_value):
         transact_time = report[1].get_parameters()["TransactTime"]
         transact_time = transact_time[0:19]
@@ -117,3 +152,9 @@ class PositionVerifier:
                     else:
                         return pos_amt
 
+    def count_position_change(self, old_position, new_position, expected_change, account):
+        actual_change = int(new_position) - int(old_position)
+        self.verifier.set_event_name("Check Position Change of {}".format(account))
+        self.verifier.compare_values("Compare Base", str(expected_change), str(actual_change))
+        self.verifier.verify()
+        self.verifier = Verifier(self.test_id)

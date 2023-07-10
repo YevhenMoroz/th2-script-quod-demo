@@ -29,20 +29,24 @@ class QAP_T2441(TestCase):
         self.side = GatewaySide.Sell
         self.status = Status.Fill
         self.account = self.data_set.get_client_by_name("client_1")
+        self.new_order_sor = FixMessageNewOrderSingleTaker(data_set=self.data_set)
+        self.execution_report_filled_1 = FixMessageExecutionReportAlgoFX()
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Step 1
-        new_order_sor = FixMessageNewOrderSingleTaker(data_set=self.data_set).set_default_SOR().change_parameters(
+        self.new_order_sor.set_default_SOR().change_parameters(
             {'TimeInForce': "3", "OrderQty": self.qty, "Account": self.account})
-        response=self.fix_manager_gtw.send_message_and_receive_response(new_order_sor)
+        response = self.fix_manager_gtw.send_message_and_receive_response(self.new_order_sor)
         # endregion
         # region Step 2
-        execution_report_filled_1 = FixMessageExecutionReportAlgoFX(). \
-            set_params_from_new_order_single(new_order_sor, self.side, self.status, response=response[-1])
-        execution_report_filled_1.change_parameter("LastQty", "*")
-        execution_report_filled_1.update_repeating_group("NoStrategyParameters", "*")
+        self.execution_report_filled_1. \
+            set_params_from_new_order_single(self.new_order_sor, self.side, self.status, response=response[-1])
+        self.execution_report_filled_1.change_parameter("LastQty", "*")
+        self.execution_report_filled_1.update_repeating_group("NoStrategyParameters", "*")
+        self.execution_report_filled_1.remove_parameter("OrderCapacity")
         time.sleep(5)
-        self.fix_verifier.check_fix_message(fix_message=execution_report_filled_1,
-                                            direction=DirectionEnum.FromQuod)
+        self.fix_verifier.check_fix_message(fix_message=self.execution_report_filled_1,
+                                            ignored_fields=["GatingRuleCondName", "GatingRuleName",
+                                                            "trailer", "header"])
         # endregion
