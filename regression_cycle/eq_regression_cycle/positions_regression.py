@@ -21,7 +21,7 @@ def check_ssh(file):
 
 
 def test_run(parent_id=None, version=None, skip_ssh=False, only_ssh=False):
-    report_id = bca.create_event(f"Positions" if version is None else f"Positions Analysis | {version}",
+    report_id = bca.create_event(f"Positions" if version is None else f"Position Analysis | {version}",
                                  parent_id)
     seconds, nanos = timestamps()  # Store case start time
     configuration = ComponentConfiguration("Gating_Rules")
@@ -42,5 +42,5 @@ def test_run(parent_id=None, version=None, skip_ssh=False, only_ssh=False):
 
 
 if __name__ == '__main__':
-    test_run(version="5.1.180.193", skip_ssh=True)
+    test_run(version="5.1.182.195", skip_ssh=True)
     Stubs.factory.close()
