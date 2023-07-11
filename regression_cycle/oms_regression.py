@@ -15,7 +15,7 @@ def test_run(parent_id=None):
 
         tree = ElementTree.parse(f"{ROOT_DIR}/regression_run_config.xml")
         root = tree.getroot()
-        version = root.find(".//version").text
+        version = '5.1.182.195'
 
         if eval(root.find(".//component[@name='DMA']").attrib["run"]):
             dma_regression.test_run(report_id, version, skip_ssh=True)
