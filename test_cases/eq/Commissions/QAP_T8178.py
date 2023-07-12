@@ -227,7 +227,7 @@ class QAP_T8178(TestCase):
                                              'check expected result from step 5')
         # endregion
 
-    # @try_except(test_id=Path(__file__).name[:-3])
-    # def run_post_conditions(self):
-    #     self.rest_commission_sender.clear_commissions()
-    #     time.sleep(10)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rest_commission_sender.clear_commissions()
+        time.sleep(10)
