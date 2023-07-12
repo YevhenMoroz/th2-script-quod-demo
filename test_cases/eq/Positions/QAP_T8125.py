@@ -11,22 +11,16 @@ from test_framework.java_api_wrappers.JavaApiManager import JavaApiManager
 from test_framework.java_api_wrappers.java_api_constants import (
     OrderReplyConst,
     JavaApiFields,
-    SubmitRequestConst, )
+    SubmitRequestConst, PosReqTypes, SubscriptionRequestTypes, )
 from test_framework.java_api_wrappers.oms.ors_messges.OrderSubmitOMS import OrderSubmitOMS
 from test_framework.java_api_wrappers.ors_messages.ManualOrderCrossRequest import ManualOrderCrossRequest
 from test_framework.java_api_wrappers.ors_messages.OrderModificationRequest import OrderModificationRequest
+from test_framework.java_api_wrappers.pks_messages.RequestForPositions import RequestForPositions
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 seconds, nanos = timestamps()  # Test case start time
-
-
-def print_message(message, responses):
-    logger.info(message)
-    for i in responses:
-        logger.info(i)
-        logger.info(i.get_parameters())
 
 
 class QAP_T8125(TestCase):
@@ -46,6 +40,7 @@ class QAP_T8125(TestCase):
         self.washbook1 = self.data_set.get_washbook_account_by_name("washbook_account_2")  # CareWB
         self.washbook2 = self.data_set.get_washbook_account_by_name("washbook_account_1")  # DMAWashBook
         self.manual_cross = ManualOrderCrossRequest()
+        self.request_for_position = RequestForPositions()
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -56,6 +51,8 @@ class QAP_T8125(TestCase):
             desk=self.environment.get_list_fe_environment()[0].desk_ids[0],
             role=SubmitRequestConst.USER_ROLE_1.value,
         )
+        self._subscribe_to_position_washbook(self.washbook1)
+        self._subscribe_to_position_washbook(self.washbook2)
         self.submit_request.update_fields_in_component(
             "NewOrderSingleBlock",
             {
@@ -65,8 +62,7 @@ class QAP_T8125(TestCase):
                 "WashBookAccountID": self.washbook1,
             },
         )
-        responses = self.java_api_manager.send_message_and_receive_response(self.submit_request)
-        print_message("CREATE CO", responses)
+        self.java_api_manager.send_message_and_receive_response(self.submit_request)
 
         order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
             JavaApiFields.OrdReplyBlock.value
@@ -105,8 +101,7 @@ class QAP_T8125(TestCase):
                 "Side": "Sell",
             },
         )
-        responses = self.java_api_manager.send_message_and_receive_response(self.submit_request_2)
-        print_message("CREATE CO", responses)
+        self.java_api_manager.send_message_and_receive_response(self.submit_request_2)
 
         order_reply = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
             JavaApiFields.OrdReplyBlock.value
@@ -131,8 +126,7 @@ class QAP_T8125(TestCase):
 
         # region Step 3 - Manual Cross Care orders
         self.manual_cross.set_default(self.data_set, ord_id_first, ord_id_second, self.price, self.qty)
-        responses = self.java_api_manager.send_message_and_receive_response(self.manual_cross)
-        print_message("Manual Cross", responses)
+        self.java_api_manager.send_message_and_receive_response(self.manual_cross)
         # endregion
 
         # region Step 3 - Checking that the PositQty has increased/decreased
@@ -160,3 +154,9 @@ class QAP_T8125(TestCase):
         # endregion
 
         logger.info(f"Case {self.test_id} was executed in {str(round(datetime.now().timestamp() - seconds))} sec.")
+
+    def _subscribe_to_position_washbook(self, washbook):
+        self.request_for_position.set_default(SubscriptionRequestTypes.SubscriptionRequestType_SUB.value,
+                                              PosReqTypes.PosReqType_POS.value,
+                                              washbook)
+        self.java_api_manager.send_message(self.request_for_position)
