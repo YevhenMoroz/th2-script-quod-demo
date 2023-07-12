@@ -218,7 +218,7 @@ class QAP_T7048(TestCase):
             self.rule_manager.remove_rule(trade_rule)
         return response
 
-    # @try_except(test_id=Path(__file__).name[:-3])
-    # def run_post_conditions(self):
-    #     self.rest_commission_sender.clear_fees()
-    #     self.rest_commission_sender.clear_commissions()
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rest_commission_sender.clear_fees()
+        self.rest_commission_sender.clear_commissions()
