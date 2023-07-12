@@ -105,7 +105,7 @@ class QAP_T7048(TestCase):
         self.comp_comm.set_list_of_exec_alloc_block(self.qty, exec_id, self.price, post_trade_sts)
         self.comp_comm.set_default_compute_booking_request(self.qty, new_avg_px, self.client)
         self.java_api_manager.send_message_and_receive_response(self.comp_comm)
-        fee_list = self.result.get_parameter(JavaApiFields.ComputeBookingFeesCommissionsReplyBlock.value)[
+        fee_list = self.java_api_manager.get_last_message(ORSMessageType.ComputeBookingFeesCommissionsReply.value).get_parameter(JavaApiFields.ComputeBookingFeesCommissionsReplyBlock.value)[
             'RootMiscFeesList']
         # endregion
 
