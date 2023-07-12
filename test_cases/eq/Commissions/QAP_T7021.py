@@ -1,4 +1,5 @@
 import logging
+import time
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
@@ -102,6 +103,7 @@ class QAP_T7021(TestCase):
         self.rest_commission_sender.send_post_request()
         self.manage_security_block.set_fee_exemption(True, True, False)
         self.rest_api_manager.send_post_request(self.manage_security_block)
+        time.sleep(2)
         # endregion
 
         # region step 1
