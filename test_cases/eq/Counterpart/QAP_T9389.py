@@ -153,14 +153,12 @@ class QAP_T9389(TestCase):
         route_counterpart = self.data_set.get_counterpart_id_fix('counterpart_id_market_maker_th2_route')
         regulatory_body = self.data_set.get_counterpart_id_fix('counterpart_id_regulatory_body_venue_paris')
         entering_firm = self.data_set.get_counterpart_id_fix('entering_firm')
-        settlement_location = self.data_set.get_counterpart_id_fix('counterpart_id_settlement_location')
         change_parameters = {
             'AllocType': 5,
             'NoParty': [route_counterpart,
                         last_user_conterpart,
                         regulatory_body,
-                        entering_firm,
-                        settlement_location],
+                        entering_firm],
             'NoOrders': [{
                 'ClOrdID': cl_ord_id,
                 'OrderID': order_id

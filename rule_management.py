@@ -193,7 +193,8 @@ class RuleManager:
                 traded_qty=traded_qty,
                 delay=delay))
 
-    def add_NewOrdSingleExecutionReportPendingAndNew(self, session: str, account: str, venue: str, price: float, delay: int = 0):
+    def add_NewOrdSingleExecutionReportPendingAndNew(self, session: str, account: str, venue: str, price: float,
+                                                     delay: int = 0):
         return self.sim.createNewOrdSingleExecutionReportPendingAndNew(
             request=TemplateNewOrdSingleExecutionReportPendingAndNew(connection_id=ConnectionID(session_alias=session),
                                                                      account=account,
@@ -304,21 +305,21 @@ class RuleManager:
 
     def add_External_Cancel(self, session: str):
         return self.sim.createExternalExecutionReportResponseCancelled(request=
-                                                                       TemplateExternalExecutionReport(connection_id=
-                                                                                                       ConnectionID(
-                                                                                                           session_alias=session)))
+        TemplateExternalExecutionReport(connection_id=
+        ConnectionID(
+            session_alias=session)))
 
     def add_External_Fill(self, session: str):
         return self.sim.createExternalExecutionReportResponseFilled(request=
-                                                                    TemplateExternalExecutionReport(connection_id=
-                                                                                                    ConnectionID(
-                                                                                                        session_alias=session)))
+        TemplateExternalExecutionReport(connection_id=
+        ConnectionID(
+            session_alias=session)))
 
     def add_External_Reject(self, session: str):
         return self.sim.createExternalExecutionReportResponseRejected(request=
-                                                                      TemplateExternalExecutionReport(connection_id=
-                                                                                                      ConnectionID(
-                                                                                                          session_alias=session)))
+        TemplateExternalExecutionReport(connection_id=
+        ConnectionID(
+            session_alias=session)))
 
     def add_SingleExec(self, party_id, cum_qty, md_entry_size, md_entry_px, symbol, session: str,
                        mask_as_connectivity: str):
@@ -449,20 +450,22 @@ class RuleManager:
                                                               price=price
                                                               ))
 
-    def add_NewOrderSingle_ExecutionReport_Reject_FIXStandard(self, session: str, account: str, ex_destination: str, price: float):
+    def add_NewOrderSingle_ExecutionReport_Reject_FIXStandard(self, session: str, account: str, ex_destination: str,
+                                                              price: float):
         return self.sim.createNewOrdSingleExecutionReportRejectFIXStandard(
-            request=TemplateNewOrdSingleExecutionReportRejectFIXStandard(connection_id=ConnectionID(session_alias=session),
-                                                              account=account,
-                                                              exdestination=ex_destination,
-                                                              price=price
-                                                              ))
+            request=TemplateNewOrdSingleExecutionReportRejectFIXStandard(
+                connection_id=ConnectionID(session_alias=session),
+                account=account,
+                exdestination=ex_destination,
+                price=price
+                ))
 
-    def add_NewOrderSingle_ExecutionReport_RejectFX(self, session: str, account: str, ex_destination:str):
+    def add_NewOrderSingle_ExecutionReport_RejectFX(self, session: str, account: str, ex_destination: str):
         return self.sim.createTemplateFXOrderReject(
             request=TemplateFXOrderReject(connection_id=ConnectionID(session_alias=session),
-                                                              account=account,
-                                                              exdestination=ex_destination
-                                                              ))
+                                          account=account,
+                                          exdestination=ex_destination
+                                          ))
 
     def add_NewOrderSingle_ExecutionReport_RejectWithReason(self, session: str, account: str, ex_destination: str,
                                                             price: float, reason: int, text: str = "QATestReject",
@@ -638,81 +641,83 @@ class RuleManager:
                 price=price,
                 CumQtyBeforeReplace=cumQtyBeforeReplace,
                 tradedQty=tradedQty
-                ))
+            ))
 
     def add_NewOrdSingleExecutionReportTradeByOrdQtyRBCustom(self, session: str, account: str, exdestination: str,
                                                              price: float,
                                                              traded_price: float, qty: int, traded_qty: int,
                                                              delay: int):
         return self.sim.createNewOrdSingleExecutionReportTradeByOrdQtyRBCustom(
-            request=TemplateNewOrdSingleExecutionReportTradeByOrdQtyRBCustom(connection_id=ConnectionID(session_alias=session),
-                                                                     account=account,
-                                                                     exdestination=exdestination,
-                                                                     price=price,
-                                                                     traded_price=traded_price,
-                                                                     qty=qty,
-                                                                     traded_qty=traded_qty,
-                                                                     delay=delay))
+            request=TemplateNewOrdSingleExecutionReportTradeByOrdQtyRBCustom(
+                connection_id=ConnectionID(session_alias=session),
+                account=account,
+                exdestination=exdestination,
+                price=price,
+                traded_price=traded_price,
+                qty=qty,
+                traded_qty=traded_qty,
+                delay=delay))
 
-    def add_NewOrdSingle_IOCTradeOnFullQty(self, session: str, account: str, venue: str, trade: bool, price: float, delay: int = 0):
+    def add_NewOrdSingle_IOCTradeOnFullQty(self, session: str, account: str, venue: str, trade: bool, price: float,
+                                           delay: int = 0):
         return self.sim.createNewOrdSingleIOCTradeOnFullQty(
             request=TemplateNewOrdSingleIOCTradeOnFullQty(connection_id=ConnectionID(session_alias=session),
-                                            account=account,
-                                            venue=venue,
-                                            trade=trade,
-                                            price=price,
-                                            delay=delay))
+                                                          account=account,
+                                                          venue=venue,
+                                                          trade=trade,
+                                                          price=price,
+                                                          delay=delay))
 
     def add_NewOrderSingle_ExecutionReport_DoneForDay(self, session: str, account: str, ex_destination: str,
-                                                     price: float, delay: int = 0, text: str = "DoneForDay"):
+                                                      price: float, delay: int = 0, text: str = "DoneForDay"):
         return self.sim.createNewOrdSingleExecutionReportDoneForDay(
             request=TemplateNewOrdSingleExecutionReportDoneForDay(connection_id=ConnectionID(session_alias=session),
-                                             account=account,
-                                             exdestination=ex_destination,
-                                             price=price,
-                                             delay=delay,
-                                             text=text))
+                                                                  account=account,
+                                                                  exdestination=ex_destination,
+                                                                  price=price,
+                                                                  delay=delay,
+                                                                  text=text))
 
-    def add_NewOrdSingle_IOCTradeByOrderQty(self, session: str, account: str, venue: str, trade: bool, price: float, traded_price: float, qty: int, traded_qty: int, delay: int = 0):
+    def add_NewOrdSingle_IOCTradeByOrderQty(self, session: str, account: str, venue: str, trade: bool, price: float,
+                                            traded_price: float, qty: int, traded_qty: int, delay: int = 0):
         return self.sim.createNewOrdSingleIOCTradeByOrderQty(
             request=TemplateNewOrdSingleIOCTradeByOrderQty(connection_id=ConnectionID(session_alias=session),
-                                            account=account,
-                                            venue=venue,
-                                            trade=trade,
-                                            price=price,
-                                            traded_price=traded_price,
-                                            qty=qty,
-                                            traded_qty=traded_qty,
-                                            delay=delay
-                                            ))
+                                                           account=account,
+                                                           venue=venue,
+                                                           trade=trade,
+                                                           price=price,
+                                                           traded_price=traded_price,
+                                                           qty=qty,
+                                                           traded_qty=traded_qty,
+                                                           delay=delay
+                                                           ))
 
     def add_NewOrdSingleExecutionReportTradeOnFullQty(self, session: str, account: str, venue: str, delay: int = 0):
         return self.sim.createNewOrdSingleTradeOnFullQty(
             request=TemplateNewOrdSingleTradeOnFullQty(connection_id=ConnectionID(session_alias=session),
-                                                             account=account,
-                                                             venue=venue,
-                                                             delay=delay))
+                                                       account=account,
+                                                       venue=venue,
+                                                       delay=delay))
 
     def add_NewOrdSingleExecutionReportAll(self, session: str, account: str, venue: str, delay: int = 0):
         return self.sim.createNewOrdSingleExecutionReportAll(
             request=TemplateNewOrdSingleExecutionReportAll(connection_id=ConnectionID(session_alias=session),
-                                                       account=account,
-                                                       venue=venue,
-                                                       delay=delay))
+                                                           account=account,
+                                                           venue=venue,
+                                                           delay=delay))
 
     def add_NewOrdSingleExecutionReportIOCAll(self, session: str, account: str, venue: str, delay: int = 0):
         return self.sim.createNewOrdSingleExecutionReportIOCAll(
             request=TemplateNewOrdSingleExecutionReportIOCAll(connection_id=ConnectionID(session_alias=session),
-                                                       account=account,
-                                                       venue=venue,
-                                                       delay=delay))
+                                                              account=account,
+                                                              venue=venue,
+                                                              delay=delay))
 
     def add_MarketDataRequestWithTimeout(self, session: str, symbols: list):
         return self.sim.createMarketDataRequestWithTimeout(
             request=TemplateMarketDataRequestWithTimeout(connection_id=ConnectionID(session_alias=session),
-                                            symbols=symbols
-                                            ))
-
+                                                         symbols=symbols
+                                                         ))
 
 
 if __name__ == '__main__':
@@ -724,4 +729,3 @@ if __name__ == '__main__':
     rule_manager_eq.remove_all_rules()
     rule_manager_eq.print_active_rules()
     Stubs.factory.close()
-
