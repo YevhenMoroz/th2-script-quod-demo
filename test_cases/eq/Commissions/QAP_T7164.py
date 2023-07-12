@@ -215,6 +215,7 @@ class QAP_T7164(TestCase):
             JavaApiFields.ClientCommissionBlock.value][0]
 
         comm_list.pop(JavaApiFields.CommissionAmountSubType.value)
+        comm_list[0][JavaApiFields.CommissionAmount.value] = '1.0'
         self.java_api_manager.compare_values(misc_list[1],
                                              root_misc,
                                              "Check Fee in the Booking Ticket")

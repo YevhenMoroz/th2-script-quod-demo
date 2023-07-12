@@ -52,6 +52,13 @@ class OmsFixInstruments(Enum):
         SecurityType='CB',
         SecurityDesc='DREAMNEX'
     )
+    instrument_multileg_paris = dict(
+        Symbol="CBSM",
+        SecurityID="FR0006239109",
+        SecurityIDSource='4',
+        SecurityExchange='XPAR',
+        SecurityType='MLEG'
+    )
 
 
 class OmsJavaApiInstruments(Enum):
@@ -104,6 +111,9 @@ class OmsInstrumentId(Enum):
     instrument_9 = 'OqYEQbjef05OTF0ken9_qw'
     instrument_10_collar = 'r957ZBmvcpEi2tGHqJxKgw'
     instrument_11_collar_eurex = 'bFWOnhVL1w0AANsbQuAVXg'  # Equity Instrument for Collar functionality
+    instrument_12_multileg_paris = 'd-aZ-b7ZCxlPea7e8qPqPg'  # MultyLeg on PARIS
+    instrument_12_leg_1_of_multileg_paris = 'Uei8O2K3PXKyaP6jKe-CDA'  # leg 1 for multileg instrument on PARIS
+    instrument_12_leg_2_of_multileg_paris = 'bNNcPIwlrClVbcZGtPJDkw'  # leg 2 for multileg instrument on PARIS
 
 
 class OmsListingId(Enum):
@@ -119,6 +129,7 @@ class OmsListingId(Enum):
     listing_10 = '905'
     listing_10_collar = '10001300000032'
     listing_11_collar_eurex = '10001400000031'
+    listing_12_ml_paris = '1085'  # listing id of multileg instrument
 
 
 class OmsVenues(Enum):
@@ -268,6 +279,7 @@ class OmsAccounts(Enum):
     client_com_2_acc_3 = "CLIENT_COMM_2_SA3"
     client_rest_api_acc_1 = 'CLIENT_REST_API_ACC_1'
     client_rest_api_acc_2 = 'CLIENT_REST_API_SA2'
+    client_rest_api_acc_3 = 'CLIENT_REST_API_SA3'
     client_fees_1_acc_1 = "CLIENT_FEES_1_SA1"
     """Counterparts"""
     client_counterpart_1_acc_1 = "CLIENT_COUNTERPART_SA1"
@@ -722,3 +734,22 @@ class OMSPartyRoles(Enum):
 
 class OMSCashAccountIDs(Enum):
     cash_account_id_client_posit_ret_sa_1 = 200004
+
+
+class OMSFixLegInstruments(Enum):
+    instrument_multileg_paris_leg_1 = dict(
+        LegSide='1',
+        LegSymbol="VRNL",
+        LegSecurityID="FR0000062465",
+        LegSecurityIDSource='4',
+        LegSecurityExchange='XPAR',
+        LegSecurityType='CS'
+    )
+    instrument_multileg_paris_leg_2 = dict(
+        LegSide='2',
+        LegSymbol="PUB",
+        LegSecurityID="FR0000130577",
+        LegSecurityIDSource='4',
+        LegSecurityExchange='XPAR',
+        LegSecurityType='CS'
+    )

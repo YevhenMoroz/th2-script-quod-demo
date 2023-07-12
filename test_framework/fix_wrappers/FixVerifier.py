@@ -556,6 +556,36 @@ class FixVerifier:
                     Direction.Value(direction.value)
                 )
             )
+        elif fix_message.get_message_type() == FIXMessageType.NewOrderMultiLeg.value:
+            if key_parameters is None:
+                key_parameters = ['ClOrdID']
+            self.__verifier.submitCheckRule(
+                basic_custom_actions.create_check_rule(
+                    "Check NewOrderMultiLeg",
+                    basic_custom_actions.filter_to_grpc_fix_standard(FIXMessageType.NewOrderMultiLeg.value,
+                                                                     fix_message.get_parameters(), key_parameters,
+                                                                     ignored_fields),
+                    self.__checkpoint,
+                    self.__session_alias,
+                    self.__case_id,
+                    Direction.Value(direction.value)
+                )
+            )
+        elif fix_message.get_message_type() == FIXMessageType.MultilegOrderCancelReplace.value:
+            if key_parameters is None:
+                key_parameters = ['OrigClOrdID']
+            self.__verifier.submitCheckRule(
+                basic_custom_actions.create_check_rule(
+                    "Check MultilegOrderCancelReplaceRequest",
+                    basic_custom_actions.filter_to_grpc_fix_standard(FIXMessageType.MultilegOrderCancelReplace.value,
+                                                                     fix_message.get_parameters(), key_parameters,
+                                                                     ignored_fields),
+                    self.__checkpoint,
+                    self.__session_alias,
+                    self.__case_id,
+                    Direction.Value(direction.value)
+                )
+            )
         else:
             pass
         # TODO add exeption into else

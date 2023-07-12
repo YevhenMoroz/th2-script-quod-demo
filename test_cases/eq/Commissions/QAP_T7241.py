@@ -21,20 +21,11 @@ from test_framework.java_api_wrappers.oms.ors_messges.TradeEntryOMS import Trade
 from test_framework.rest_api_wrappers.oms.rest_commissions_sender import RestCommissionsSender
 from test_framework.ssh_wrappers.ssh_client import SshClient
 from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns
-from test_framework.win_gui_wrappers.oms.oms_middle_office import OMSMiddleOffice
-from test_framework.win_gui_wrappers.oms.oms_order_book import OMSOrderBook
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 seconds, nanos = timestamps()
-
-
-def print_message(message, responses):
-    logger.info(message)
-    for i in responses:
-        logger.info(i)
-        logger.info(i.get_parameters())
 
 
 class QAP_T7241(TestCase):
@@ -49,8 +40,6 @@ class QAP_T7241(TestCase):
         self.venue = self.data_set.get_mic_by_name('mic_2')
         self.client = self.data_set.get_client('client_com_1')
         self.alloc_account = self.data_set.get_account_by_name('client_com_1_acc_1')
-        self.order_book = OMSOrderBook(self.test_id, self.session_id)
-        self.middle_office = OMSMiddleOffice(self.test_id, self.session_id)
         self.wa_connectivity = self.environment.get_list_web_admin_rest_api_environment()[0].session_alias_wa
         self.rest_commission_sender = RestCommissionsSender(self.wa_connectivity, self.test_id, self.data_set)
         self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
@@ -78,6 +67,7 @@ class QAP_T7241(TestCase):
         instr_type = self.data_set.get_instr_type('equity')
         venue_id = self.data_set.get_venue_id('eurex')
         route_id = self.data_set.get_route_id_by_name('route_1')
+        last_mkt = self.data_set.get_mic_by_name('mic_2')
         comm_order_scope = self.data_set.get_fee_order_scope_by_name('done_for_day')
         self.rest_commission_sender.set_modify_fees_message(comm_profile=commission_profile, fee=fee,
                                                             fee_type=agent_fee_type)
@@ -94,7 +84,7 @@ class QAP_T7241(TestCase):
         # region change value in DB (Precondition)
         self.ssh_client.send_command("~/quod/script/site_scripts/change_book_agent_misk_fee_type_on_Y")
         self.ssh_client.send_command("qrestart QUOD.ORS QUOD.ESBUYTH2TEST QUOD.CS")
-        time.sleep(80)
+        time.sleep(140)
         # endregion
 
         # region create CO order (step 1)
@@ -111,15 +101,14 @@ class QAP_T7241(TestCase):
             'Price': self.price,
             'RouteList': {'RouteBlock': [{'RouteID': route_id}]}
         })
-        responses = self.java_api_manager.send_message_and_receive_response(self.order_submit)
-        print_message('Create CO order', responses)
+        self.java_api_manager.send_message_and_receive_response(self.order_submit)
         order_id = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
             JavaApiFields.OrdReplyBlock.value][JavaApiFields.OrdID.value]
         cl_ord_id = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
             JavaApiFields.OrdReplyBlock.value][JavaApiFields.ClOrdID.value]
         status = self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
             JavaApiFields.OrdReplyBlock.value][JavaApiFields.TransStatus.value]
-        self.order_book.compare_values(
+        self.java_api_manager.compare_values(
             {OrderBookColumns.sts.value: OrderReplyConst.TransStatus_OPN.value},
             {OrderBookColumns.sts.value: status},
             f'Comparing {OrderBookColumns.sts.value}')
@@ -129,9 +118,10 @@ class QAP_T7241(TestCase):
         counter_part = self.data_set.get_counterpart_id_java_api('counterpart_contra_firm')
         self.trade_entry_request.set_default_trade(order_id, exec_price=self.price, exec_qty=self.qty)
         self.trade_entry_request.update_fields_in_component('TradeEntryRequestBlock',
-                                                            {'CounterpartList': {'CounterpartBlock': [counter_part]}})
-        responses = self.java_api_manager.send_message_and_receive_response(self.trade_entry_request)
-        print_message('Trade CO order', responses)
+                                                            {'CounterpartList': {'CounterpartBlock': [counter_part]},
+                                                             'LastMkt': last_mkt
+                                                             })
+        self.java_api_manager.send_message_and_receive_response(self.trade_entry_request)
         misc_fee_type = 'AGE'
         misc_fee_basis = 'P'
         misc_fee_basis_after_compute = 'A'
@@ -156,8 +146,7 @@ class QAP_T7241(TestCase):
 
         # region check miscFee in ComputeBookingMiscFeeCommissionsRequest (step 5)
         self.complete_order_request.set_default_complete(order_id)
-        responses = self.java_api_manager.send_message_and_receive_response(self.complete_order_request)
-        print_message('Complete message', responses)
+        self.java_api_manager.send_message_and_receive_response(self.complete_order_request)
         self.compute_booking_fee_commission_request.set_list_of_order_alloc_block(cl_ord_id, order_id,
                                                                                   OrderReplyConst.PostTradeStatus_RDY.value)
         self.compute_booking_fee_commission_request.set_list_of_exec_alloc_block(self.qty, exec_id, self.price,
@@ -166,8 +155,7 @@ class QAP_T7241(TestCase):
         new_avg_px = str(int(self.price) / 100)
         self.compute_booking_fee_commission_request.update_fields_in_component(
             'ComputeBookingFeesCommissionsRequestBlock', {'AvgPx': new_avg_px, 'AccountGroupID': self.client})
-        responses = self.java_api_manager.send_message_and_receive_response(self.compute_booking_fee_commission_request)
-        print_message('Send ComputeBookingFeesCommissionsRequest', responses)
+        self.java_api_manager.send_message_and_receive_response(self.compute_booking_fee_commission_request)
         misc_fee_amount_compute_reply = str(round(float(misc_fee_amount), 2))
         actual_result = \
             self.java_api_manager.get_last_message(
@@ -214,8 +202,7 @@ class QAP_T7241(TestCase):
                                                                                                    'ExecPrice': new_avg_px}]},
 
                                                                        })
-        responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction_message)
-        print_message('Create Block', responses)
+        self.java_api_manager.send_message_and_receive_response(self.allocation_instruction_message)
         actual_result = self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
                                                                JavaApiFields.BookingAllocInstructionID.value).get_parameters()
         alloc_id = actual_result[JavaApiFields.AllocationReportBlock.value][JavaApiFields.ClientAllocID.value]
@@ -228,8 +215,7 @@ class QAP_T7241(TestCase):
 
         # region allocate block
         self.approve_block.set_default_approve(alloc_id)
-        responses = self.java_api_manager.send_message_and_receive_response(self.approve_block)
-        print_message('Approve Block', responses)
+        self.java_api_manager.send_message_and_receive_response(self.approve_block)
         self.confirmation_request.set_default_allocation(alloc_id)
         self.confirmation_request.update_fields_in_component('ConfirmationBlock', {
             "AllocAccountID": self.alloc_account,
@@ -237,10 +223,10 @@ class QAP_T7241(TestCase):
             'AvgPx': new_avg_px,
             "InstrID": instrument_id
         })
-        responses = self.java_api_manager.send_message_and_receive_response(self.confirmation_request)
+        self.java_api_manager.send_message_and_receive_response(self.confirmation_request)
         actual_result = \
-        self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[
-            JavaApiFields.ConfirmationReportBlock.value]
+            self.java_api_manager.get_last_message(ORSMessageType.ConfirmationReport.value).get_parameters()[
+                JavaApiFields.ConfirmationReportBlock.value]
         misc_fee_block_expected = {'MiscFeeType': misc_fee_type, 'MiscFeeBasis': misc_fee_basis_after_compute,
                                    'MiscFeeAmt': misc_fee_amount_compute_reply,
                                    'MiscFeeRate': misc_fee_amount_compute_reply,
@@ -248,7 +234,6 @@ class QAP_T7241(TestCase):
         self.java_api_manager.compare_values(misc_fee_block_expected, actual_result[JavaApiFields.MiscFeesList.value][
             JavaApiFields.MiscFeesBlock.value][0],
                                              'Comparing Fee after allocate')
-        print_message('Allocate block', responses)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
@@ -256,4 +241,5 @@ class QAP_T7241(TestCase):
         self.rest_commission_sender.clear_fees()
         self.ssh_client.send_command("~/quod/script/site_scripts/change_book_agent_misc_fee_type_on_N")
         self.ssh_client.send_command("qrestart QUOD.ORS QUOD.ESBUYTH2TEST QUOD.CS")
-        time.sleep(80)
+        time.sleep(140)
+        self.ssh_client.close()

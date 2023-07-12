@@ -68,6 +68,10 @@ class OrderReplyConst(Enum):
     ExecType_PMO = 'PMO'
     ExecType_CXL = 'CXL'
     ExecType_COR = 'COR'
+    ExecType_PDO = 'PDO'
+    ExecType_OPN = 'OPN'
+    ExecType_RES = 'RES'
+    CustOrderHandlingInst_LOC = 'LOC'
 
 
 class ExecutionPolicyConst(Enum):
@@ -82,6 +86,7 @@ class SubmitRequestConst(Enum):
     Side_Buy = 'Buy'
     Side_B_aka_Buy = 'B'
     Side_Sell = 'Sell'
+    PositionEffect_R = 'R'
 
 
 class AllocationReportConst(Enum):
@@ -173,6 +178,18 @@ class JavaApiFields(Enum):
     RequestForOverdueRetailPositionsAckBlock = 'RequestForOverdueRetailPositionsAckBlock'
     TransExecStatus = 'TransExecStatus'
     BookingType = 'BookingType'
+    OrdReportBlock = 'OrdReportBlock'
+    LegOrderElements = 'LegOrderElements'
+    Reason = 'Reason'
+    LegOrderBlock = 'LegOrderBlock'
+    LegNumber = 'LegNumber'
+    LegInstrID = 'LegInstrID'
+    OrdRejectedNotifBlock = 'OrdRejectedNotifBlock'
+    LegPrice = 'LegPrice'
+    MaxPriceLevels = 'MaxPriceLevels'
+    MultiLegOrderModificationRequestBlock = 'MultiLegOrderModificationRequestBlock'
+    PositionEffect = 'PositionEffect'
+    NewOrderMultiLegBlock = 'NewOrderMultiLegBlock'
     BenchmarkList = 'BenchmarkList'
     BenchmarkBlock = 'BenchmarkBlock'
     StartBenchmarkTimestamp = 'StartBenchmarkTimestamp'
@@ -186,6 +203,7 @@ class JavaApiFields(Enum):
     ModifyChildren = 'ModifyChildren'
     CancelChildren = ' CancelChildren'
     PositionType = 'PositionType'
+    StopPx = 'StopPx'
     TransactTime = 'TransactTime'
     ErrorMsg = "ErrorMsg"
     OrdModify = 'OrdModify'
@@ -446,6 +464,7 @@ class JavaApiFields(Enum):
     BookingQty = 'BookingQty'
     WashBookAccountID = 'WashBookAccountID'
     SettlType = 'SettlType'
+    PriceDelta = 'PriceDelta'
     SettlCurrency = 'SettlCurrency'
     SettlCurrAmt = 'SettlCurrAmt'
     SettlCurrFxRate = 'SettlCurrFxRate'
@@ -476,6 +495,7 @@ class JavaApiFields(Enum):
     SubCounterpartList = "SubCounterpartList"
     OrdIDList = "OrdIDList"
     OrdIDBlock = "OrdIDBlock"
+    CustOrderHandlingInst = "CustOrderHandlingInst"
 
     # fields of Bag
     OrderBagStatus = 'OrderBagStatus'
@@ -509,6 +529,10 @@ class TimeInForces(Enum):
 class OrdTypes(Enum):
     Limit = 'LMT'
     Market = 'MKT'
+    StopLimit = 'STL'
+    StopLimit_FULL = 'StopLimit'
+    Limit_FULL = 'Limit'
+    Funari = 'FUN'
 
 
 class PegScopes(Enum):
