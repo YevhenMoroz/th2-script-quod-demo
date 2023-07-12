@@ -82,7 +82,7 @@ class QAP_T8123(TestCase):
             self.fix_message.change_parameters(
                 {'Side': '1', 'OrderQtyData': {'OrderQty': self.qty}, 'Account': self.client, 'Price': self.price,
                  'Currency': self.currency, 'ExDestination': 'XEUR'})
-            self.response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
+            self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
         except Exception as E:
             logger.error(f"Error is {E}", exc_info=True)
         finally:
@@ -92,18 +92,22 @@ class QAP_T8123(TestCase):
 
         # region check 35=8 message step 2
         expected_result = {'ExecType': 'F'}
-        last_excution_trade = self.__get_fix_message(expected_result)
+        last_excution_trade = self.fix_manager.get_last_message('ExecutionReport',
+                                                                      "'ExecType': 'F'").get_parameters()
         self.java_api_manager.compare_values(expected_result, last_excution_trade,
                                              'Check that ExecSts = F (part of step 2)', VerificationMethod.CONTAINS)
-        last_execution_calculated = self.__get_fix_message({'OrdStatus': 'B'})
+        last_execution_calculated = self.fix_manager.get_last_message('ExecutionReport',
+                                                                      "'ExecType': 'B'").get_parameters()
         print(last_execution_calculated)
         list_of_ignored_fields = ['SettlType', 'GatingRuleName', 'GatingRuleCondName']
         execution_report = FixMessageExecutionReportOMS(self.data_set)
         execution_report.set_default_calculated(self.fix_message)
         amount = str(round(float(self.qty) * float(self.price) / 10000 * 5.0, 3))
         expected_agent_fees = {'MiscFeeAmt': amount, 'MiscFeeCurr': self.currency_post_trade, 'MiscFeeType': '12'}
-        self.java_api_manager.compare_values(expected_agent_fees, last_execution_calculated['NoMiscFees']['NoMiscFees'][0],
-                                             'Check that Calculated execution has Agent Fees (part of step 2)', VerificationMethod.CONTAINS)
+        self.java_api_manager.compare_values(expected_agent_fees,
+                                             last_execution_calculated['NoMiscFees']['NoMiscFees'][0],
+                                             'Check that Calculated execution has Agent Fees (part of step 2)',
+                                             VerificationMethod.CONTAINS)
         execution_report.remove_parameter('Parties')
         execution_report.add_tag({'SecondaryOrderID': '*'})
         execution_report.remove_parameter('TradeReportingIndicator')
@@ -117,9 +121,3 @@ class QAP_T8123(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.rest_commission_sender.clear_fees()
-
-    def __get_fix_message(self, parameter: dict):
-        for i in range(len(self.response)):
-            for j in parameter.keys():
-                if self.response[i].get_parameters()[j] == parameter[j]:
-                    return self.response[i].get_parameters()
