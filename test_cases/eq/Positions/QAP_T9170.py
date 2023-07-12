@@ -71,7 +71,7 @@ class QAP_T9170(TestCase):
         self.ssh_client.put_file(self.remote_path_2, 'temp_2.xml')
         self.ssh_client.put_file(self.remote_path, "temp.xml")
         self.ssh_client.send_command("qrestart QUOD.ESBUYTH2TEST, QUOD.ORS")
-        time.sleep(100)
+        time.sleep(60)
         # end_of_part
 
         # endregion
@@ -97,7 +97,7 @@ class QAP_T9170(TestCase):
         self.ssh_client.put_file(self.remote_path, self.local_path)
         self.ssh_client.put_file(self.remote_path_2, self.local_path_2)
         self.ssh_client.send_command("qrestart QUOD.ESBUYTH2TEST QUOD.ORS")
-        time.sleep(100)
+        time.sleep(60)
         os.remove("temp.xml")
         os.remove("temp_2.xml")
         self.ssh_client.close()
