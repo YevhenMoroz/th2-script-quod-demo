@@ -43,7 +43,7 @@ class QAP_T7336(TestCase):
         self.fix_manager = FixManager(self.fix_env.sell_side, self.test_id)
         self.new_order = FixMessageNewOrderSingleOMS(self.data_set)
         self.order_modification_request = FixMessageOrderCancelReplaceRequestOMS(self.data_set)
-        self.client = self.data_set.get_client_by_name("client_2_ext_id")
+        self.client = self.data_set.get_client_by_name("client_2")
         self.accept_request = CDOrdAckBatchRequest()
         self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
         self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
@@ -68,7 +68,7 @@ class QAP_T7336(TestCase):
 
         # region precondition: create CO order via FIX
         desk = self.environment.get_list_fe_environment()[0].desk_ids[1]
-        self.new_order.set_default_care_limit(account='client_2_ext_id')
+        self.new_order.set_default_care_limit(account='client_2')
         cl_ord_id = self.new_order.get_parameters()['ClOrdID']
         self.new_order.change_parameters({
             "TimeInForce": '6',
@@ -104,6 +104,7 @@ class QAP_T7336(TestCase):
         # endregion
 
         # region step 2: Accept modification for CO order
+        time.sleep(2)
         cd_ord_notif_id = str(int(
             self.db_manager.execute_query(f"SELECT cdordnotifid FROM cdordnotif WHERE transid = '{order_id}' AND "
                                           f"cdrequesttype = 'MOD'")[0][0]))
