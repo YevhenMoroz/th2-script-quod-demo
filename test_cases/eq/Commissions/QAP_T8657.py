@@ -96,7 +96,7 @@ class QAP_T8657(TestCase):
                                                                                             int(self.qty), 2)
 
             self.java_api_manager.send_message_and_receive_response(self.submit_request)
-            exec_report = self.java_api_manager.get_first_message(ORSMessageType.ExecutionReport.value).get_parameter(
+            exec_report = self.java_api_manager.get_first_message(ORSMessageType.ExecutionReport.value, JavaApiFields.OrdID.value).get_parameter(
                 JavaApiFields.ExecutionReportBlock.value)
             order_id = exec_report[JavaApiFields.OrdID.value]
             cl_order_id = exec_report[JavaApiFields.ClOrdID.value]
