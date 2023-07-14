@@ -72,7 +72,7 @@ class QAP_T7005(TestCase):
         finally:
             time.sleep(2)
             self.rule_manager.remove_rule(nos_rule)
-            # self._remove_holiday()
+            self._remove_holiday()
             self.db_manager.close_connection()
 
     def _set_up_holiday(self, holiday_date):
