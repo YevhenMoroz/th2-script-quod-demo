@@ -355,7 +355,7 @@ Copyright Quod Financial
 			</UnknownInstrument>
 			<orphanTradeUser>JavaApiUser</orphanTradeUser>
 			<orphanTradeRole>TRA</orphanTradeRole>
-			<publishPositiveOrdReply>false</publishPositiveOrdReply>
+			<publishPositiveOrdReply>true</publishPositiveOrdReply>
             <publishPositiveCancelReply>false</publishPositiveCancelReply>
             <publishPositiveModificationReply>false</publishPositiveModificationReply>
             <publishPendingCancelNotif>false</publishPendingCancelNotif>
