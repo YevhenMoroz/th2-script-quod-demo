@@ -36,7 +36,7 @@ def test_run(parent_id=None):
         if eval(root.find(".//component[@name='GatingRules']").attrib["run"]):
             gating_rule_regression.test_run(report_id, version, skip_ssh=False, only_ssh=True)
         if eval(root.find(".//component[@name='Bag']").attrib["run"]):
-            bag_regression.test_run(report_id, version, skip_ssh=False, only_ssh=True)
+            bag_regression.test_run(report_id, version, skip_ssh=True)
         if eval(root.find(".//component[@name='DMA']").attrib["run"]):
             market_making_cash_regression.test_run(report_id, version, skip_ssh=False, only_ssh=True)
 
