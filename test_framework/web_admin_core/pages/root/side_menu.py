@@ -104,8 +104,10 @@ from test_framework.web_admin_core.pages.root.root_constants import RootConstant
 from test_framework.web_admin_core.pages.site.locations.locations_constants import LocationsConstants
 from test_framework.web_admin_core.pages.site.zones.zones_constants import ZonesConstants
 
-from test_framework.web_admin_core.pages.users.user_sessions.user_sessions_constants import UserSessionsConstants
+from test_framework.web_admin_core.pages.users.user_sessions.constants import Constants as UserSessionsConstants
 from test_framework.web_admin_core.pages.users.users.users_constants import UsersConstants
+from test_framework.web_admin_core.pages.users.user_lists.constants import Constants as UserListsConstants
+
 from test_framework.web_admin_core.utils.toggle_state_enum import ToggleStateEnum
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 
@@ -115,7 +117,7 @@ class SideMenu(CommonPage):
     def __init__(self, web_driver_container: WebDriverContainer):
         super().__init__(web_driver_container)
 
-    def toggle_container(self, selector: str, expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+    def toggle_container(self, selector: str, expected_state):
         if expected_state == ToggleStateEnum.CLOSED:
             container = self.find_by_css_selector(selector)
             container.click()
@@ -124,8 +126,9 @@ class SideMenu(CommonPage):
         page_item = self.find_by_xpath(page_item_selector)
         page_item.click()
 
-    def open_page(self, page_item_selector: str, container_selector: str,
-                  expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+    def open_page(self, page_item_selector: str, container_selector: str, expected_state):
+        if "true" in self.find_by_css_selector(container_selector).get_attribute("aria-expanded"):
+            expected_state = ToggleStateEnum.OPENED
         self.toggle_container(container_selector, expected_state)
         self.click_menu_item(page_item_selector)
 
@@ -445,12 +448,20 @@ class SideMenu(CommonPage):
     def open_user_sessions_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.USER_SESSIONS_ITEM_XPATH, RootConstants.USERS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
-        self.check_is_page_opened(UserSessionsConstants.USER_SESSIONS_PAGE_TITLE_XPATH)
+        self.check_is_page_opened(UserSessionsConstants.MainPage.PAGE_TITLE)
 
     def open_users_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.USERS_ITEM_XPATH, RootConstants.USERS_TOGGLE_CSS_SELECTOR,
                        container_expected_state)
         self.check_is_page_opened(UsersConstants.USERS_PAGE_TITLE_XPATH)
+
+    def open_user_lists_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
+        self.open_page(RootConstants.USER_LISTS_ITEM_XPATH, RootConstants.USERS_TOGGLE_CSS_SELECTOR,
+                       container_expected_state)
+        self.check_is_page_opened(UserListsConstants.MainPage.PAGE_TITLE)
+
+    def click_user_lists_tab(self):
+        self.click_menu_item(RootConstants.USER_LISTS_ITEM_XPATH)
 
     def open_order_velocity_page(self, container_expected_state: ToggleStateEnum = ToggleStateEnum.CLOSED):
         self.open_page(RootConstants.ORDER_VELOCITY_LIMIT_ITEM_XPATH, RootConstants.RISK_LIMITS_TOGGLE_CSS_SELECTOR,

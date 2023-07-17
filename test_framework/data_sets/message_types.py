@@ -147,6 +147,7 @@ class ORSMessageType(Enum):
     MatchCptyMOBlocksRequest = 'Order_MatchCptyMOBlocksRequest'
     FixAllocationInstructionAck = 'Fix_AllocationInstructionAck'
     AssignInstrumentRequest = 'Order_AssignInstrumentRequest'
+    FixPositionTransferInstruction = 'Fix_PositionTransferInstruction'
     AssignInstrumentReply = 'Order_AssignInstrumentReply'
     TradeCaptureReportNotif = 'Order_TradeCaptureReportNotif'
     OrderMassCancelRequest = 'Order_OrderMassCancelRequest'
@@ -158,6 +159,8 @@ class ORSMessageType(Enum):
     CrossAnnouncementReply = 'Order_CrossAnnouncementReply'
     CrossAnnouncement = 'Order_CrossAnnouncement'
     MultiLegOrderModificationRequest = 'Order_MultiLegOrderModificationRequest'
+    OrderValidate = 'Order_OrderValidate'
+    OrderValidateReply = 'Order_OrderValidateReply'
 
 
 class TradingRestApiMessageType(Enum):
@@ -215,6 +218,7 @@ class ResAPIMessageType(Enum):
     DeleteOrderCompression = "DeleteOrderCompression"
     FindAllOrderPricing = "FindAllOrderPricing"
     FindAllOrderCompression = "FindAllOrderCompression"
+    ManageListingCounterpart = "ManageListingCounterpart"
 
 
 class PKSMessageType(Enum):
@@ -269,14 +273,21 @@ class CSMessageType(Enum):
 
 class MDAMessageType(Enum):
     MarketDataRequest = "Market_MarketDataRequest"
+    FixMarketDataRequest = "Fix_MarketDataRequest"
     MarketDataSnapshotFullRefresh = "Market_MarketDataSnapshotFullRefresh"
 
 
 class AQSMessageType(Enum):
     FrontendQuery = 'Order_FrontendQuery'
     FrontendQueryReply = 'Order_FrontendQueryReply'
+    AutoHedgerInstrSymbolStatus = "Adminmonitoring_AutoHedgerInstrSymbolStatusManagementRequest"
+    AutoHedgerStatusManagementRequest = "Adminmonitoring_AutoHedgerStatusManagementRequest"
 
 
 class StoredProcedureNamesForAqs(Enum):
     FEExecutionTransferList = 'FE_ExecutionTransfer_List'
     FE_OrdrFromOrdID_List = 'FE_OrdrFromOrdID_List'
+
+
+class MPASMessageType(Enum):
+    AutoHedgerInstrSymbolBatchUpdate = "Order_AutoHedgerInstrSymbolBatchUpdate"

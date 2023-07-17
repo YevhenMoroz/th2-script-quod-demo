@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.listing_groups.listing_groups_description_sub_wizard import \
     ListingGroupsDescriptionSubWizard
@@ -94,32 +91,24 @@ class QAP_T4030(CommonTestCase):
         time.sleep(1)
 
     def test_context(self):
-        try:
-            self.precondition()
-            page = ListingGroupsPage(self.web_driver_container)
-            wizard = ListingGroupsWizard(self.web_driver_container)
-            expected_pdf_values = [self.name,
-                                   self.sub_venue,
-                                   self.ext_id_client,
-                                   self.trading_status,
-                                   self.trading_phase,
-                                   self.price_limit_profile,
-                                   self.tick_size_profile,
-                                   self.trading_phase_profile]
+        self.precondition()
+        page = ListingGroupsPage(self.web_driver_container)
+        wizard = ListingGroupsWizard(self.web_driver_container)
+        expected_pdf_values = [self.name,
+                               self.sub_venue,
+                               self.ext_id_client,
+                               self.trading_status,
+                               self.trading_phase,
+                               self.price_limit_profile,
+                               self.tick_size_profile,
+                               self.trading_phase_profile]
 
-            self.verify("Is pdf contains values", True,
-                        wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_values))
+        self.verify("Is pdf contains values", True,
+                    wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_values))
 
-            time.sleep(2)
-            wizard.click_on_save_changes()
-            time.sleep(2)
-            page.set_name(self.name)
-            time.sleep(2)
-            self.verify("Is entity saved correctly and displayed in main page", self.name, page.get_name())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        time.sleep(2)
+        wizard.click_on_save_changes()
+        time.sleep(2)
+        page.set_name(self.name)
+        time.sleep(2)
+        self.verify("Is entity saved correctly and displayed in main page", self.name, page.get_name())

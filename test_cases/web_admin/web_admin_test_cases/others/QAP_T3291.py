@@ -1,8 +1,10 @@
 import sys
 import time
 import traceback
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.others.counterparts.counterparts_page import CounterpartsPage
 from test_framework.web_admin_core.pages.others.counterparts.couterparts_sub_counterparts_subwizard import \
@@ -31,26 +33,19 @@ class QAP_T3291(CommonTestCase):
         page = CounterpartsPage(self.web_driver_container)
         page.click_on_new()
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
         subcounterparts_tab = CounterpartsSubCounterpartsSubWizard(self.web_driver_container)
         wizard = CounterpartsWizard(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            wizard.click_on_plus_sub_counterparts()
-            time.sleep(1)
-            self.verify("Name field is required", True, subcounterparts_tab.is_name_field_required())
-            self.verify("Party Id field is required", True, subcounterparts_tab.is_party_id_field_required())
-            self.verify("Ext Id Client field is required", True, subcounterparts_tab.is_ext_id_client_field_required())
-            self.verify("Party Sub Id field is required", True, subcounterparts_tab.is_party_sub_id_type_field_required())
-            wizard.click_on_check_mark()
-            time.sleep(1)
-            self.verify("Empty entity not save", True, wizard.is_warning_message_displayed())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        wizard.click_on_plus_sub_counterparts()
+        time.sleep(1)
+        self.verify("Name field is required", True, subcounterparts_tab.is_name_field_required())
+        self.verify("Party Id field is required", True, subcounterparts_tab.is_party_id_field_required())
+        self.verify("Ext Id Client field is required", True, subcounterparts_tab.is_ext_id_client_field_required())
+        self.verify("Party Sub Id field is required", True, subcounterparts_tab.is_party_sub_id_type_field_required())
+        wizard.click_on_check_mark()
+        time.sleep(1)
+        self.verify("Empty entity not save", True, wizard.is_warning_message_displayed())

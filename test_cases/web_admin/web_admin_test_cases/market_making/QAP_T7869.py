@@ -1,7 +1,9 @@
 import sys
 import traceback
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_instruments_page \
     import ClientTierInstrumentsPage
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_instrument_values_sub_wizard import \
@@ -31,29 +33,22 @@ class QAP_T7869(CommonTestCase):
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_client_tier_page()
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
-        try:
-            instrument_page = ClientTierInstrumentsPage(self.web_driver_container)
-            wizard = ClientTierInstrumentWizard(self.web_driver_container)
-            values_tab = ClientTierInstrumentValuesSubWizard(self.web_driver_container)
+        instrument_page = ClientTierInstrumentsPage(self.web_driver_container)
+        wizard = ClientTierInstrumentWizard(self.web_driver_container)
+        values_tab = ClientTierInstrumentValuesSubWizard(self.web_driver_container)
 
-            self.precondition()
+        self.precondition()
 
-            instrument_page.click_on_new()
-            self.verify("'Symbol' field contains '*' symbol", True,
-                        values_tab.is_symbol_filed_contains_asterisk_symbol())
+        instrument_page.click_on_new()
+        self.verify("'Symbol' field contains '*' symbol", True,
+                    values_tab.is_symbol_filed_contains_asterisk_symbol())
 
-            values_tab.set_core_spot_price_strategy(self.core_spot_price_strategy)
-            values_tab.set_tod_end_time(self.tod_end_time)
-            wizard.click_on_save_changes()
+        values_tab.set_core_spot_price_strategy(self.core_spot_price_strategy)
+        values_tab.set_tod_end_time(self.tod_end_time)
+        wizard.click_on_save_changes()
 
-            self.verify("Error message appears in footer", True,
-                        wizard.is_incorrect_or_missing_value_massage_displayed())
+        self.verify("Error message appears in footer", True,
+                    wizard.is_incorrect_or_missing_value_massage_displayed())
 
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)

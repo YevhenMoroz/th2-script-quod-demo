@@ -1,0 +1,39 @@
+<!--
+$HeadURL: http://svnhost:3080/svn/midas/dev/trunk/order/cs/cfg/client_cs.xml $
+$LastChangedDate: 2018-04-12 15:59:18 +0200 (jeu., 12 avr. 2018) $
+$LastChangedRevision: 127162 $
+$LastChangedBy: adib $
+
+Copyright Quod Financial
+-->
+<quod>
+    <includes>
+        <include>${CFG_DIR}/${CFG_PREFIX}backend.xml</include>
+        <include>${CFG_DIR}/${CFG_PREFIX}persistence.xml</include>        
+        <include>${CFG_DEFAULT}/cs.xml</include>
+    </includes>
+        <cs>
+              <timeoutNotif>43200</timeoutNotif> <!-- in seconds. Default 60 -->
+              <timeoutTransfer>180</timeoutTransfer> <!-- in seconds. Default 180  -->
+              <timeoutFixRequest>43200</timeoutFixRequest> <!-- in seconds. Default 360 -->
+              <!-- auto-acknowledge FE cancel and modify requests for care orders. Default false. This token has higher priority than assignFEModifyCancelToDesk -->
+              <autoAcknowledge>true</autoAcknowledge>
+
+
+              <assignFEModifyCancelToDesk>true</assignFEModifyCancelToDesk>
+              <fixAutoAcknowledge>true</fixAutoAcknowledge>
+              <assignFixModifyCancelToDesk>true</assignFixModifyCancelToDesk>
+              <forwardRecipientRejectToHeadDisable>true</forwardRecipientRejectToHeadDisable>
+
+            <cache>
+              <CDOrdAssign>
+                <lifetime>0</lifetime>  <!-- milliseconds.   Si 0 alors la fonctionnalité de purge est désactivée -->
+                <maxSize>200000</maxSize>
+                <publish>true</publish>
+                <listenInsert>false</listenInsert>
+                <listenUpdate>false</listenUpdate>
+              </CDOrdAssign>
+            </cache>
+</cs>
+
+</quod>

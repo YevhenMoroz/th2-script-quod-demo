@@ -1,8 +1,5 @@
 import time
-import traceback
-import sys
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.site.desks.desks_assignments_sub_wizard import DesksAssignmentsSubWizard
@@ -49,23 +46,15 @@ class QAP_T3577(CommonTestCase):
     def test_context(self):
         assignments_sub_wizard = DesksAssignmentsSubWizard(self.web_driver_container)
         wizard = DesksWizard(self.web_driver_container)
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page = DesksPage(self.web_driver_container)
-            main_page.click_on_more_actions()
-            time.sleep(1)
-            main_page.click_on_edit()
-            time.sleep(2)
-            assignments_sub_wizard.clear_location_field()
-            wizard.click_on_save_changes()
-            time.sleep(2)
-            self.verify("Is incorrect or missing values message preloaded without location field(edit)", True,
-                        wizard.is_incorrect_or_missing_value_message_displayed())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        main_page = DesksPage(self.web_driver_container)
+        main_page.click_on_more_actions()
+        time.sleep(1)
+        main_page.click_on_edit()
+        time.sleep(2)
+        assignments_sub_wizard.clear_location_field()
+        wizard.click_on_save_changes()
+        time.sleep(2)
+        self.verify("Is incorrect or missing values message preloaded without location field(edit)", True,
+                    wizard.is_incorrect_or_missing_value_message_displayed())

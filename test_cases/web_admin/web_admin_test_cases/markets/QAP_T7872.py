@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.venues.venues_page import VenuesPage
 from test_framework.web_admin_core.pages.markets.venues.venues_values_sub_wizard import \
@@ -43,25 +40,17 @@ class QAP_T7872(CommonTestCase):
         wizard.click_on_save_changes()
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            page = VenuesPage(self.web_driver_container)
-            page.click_on_new()
-            values_tab = VenuesValuesSubWizard(self.web_driver_container)
-            values_tab.set_name(self.name)
-            values_tab.set_id(self.id)
-            values_tab.set_type(self.type)
-            values_tab.set_client_venue_id(self.client_venue_id)
-            wizard = VenuesWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
-            time.sleep(1)
-            expected_result = "Such a record already exists"
-            self.verify("Venue with the same data not save", expected_result, wizard.get_footer_error_text())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        page = VenuesPage(self.web_driver_container)
+        page.click_on_new()
+        values_tab = VenuesValuesSubWizard(self.web_driver_container)
+        values_tab.set_name(self.name)
+        values_tab.set_id(self.id)
+        values_tab.set_type(self.type)
+        values_tab.set_client_venue_id(self.client_venue_id)
+        wizard = VenuesWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
+        time.sleep(1)
+        expected_result = "Such a record already exists"
+        self.verify("Venue with the same data not save", expected_result, wizard.get_footer_error_text())

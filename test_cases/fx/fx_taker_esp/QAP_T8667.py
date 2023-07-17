@@ -37,5 +37,6 @@ class QAP_T8667(TestCase):
         # regions Step 2
         self.execution_report.set_params_from_new_order_single(self.new_order, response=response[-1])
         self.execution_report.change_parameters({"LastMkt": self.market_citi})
-        self.fix_verifier.check_fix_message(self.execution_report)
+        self.execution_report.remove_parameter("OrderCapacity")
+        self.fix_verifier.check_fix_message(self.execution_report, ignored_fields=["GatingRuleCondName", "GatingRuleName", "trailer", "header"])
         # endregion

@@ -1,10 +1,6 @@
-import sys
 import time
-import traceback
 import random
 import string
-
-from custom import basic_custom_actions
 
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_values_sub_wizard import \
     ClientsValuesSubWizard
@@ -96,20 +92,12 @@ class QAP_T3396(CommonTestCase):
         side_menu = SideMenu(self.web_driver_container)
         cash_positions = SecurityPositionsPage(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            login_page.login_to_web_admin(self.users["inst"]["login"], self.users["inst"]["password"])
-            side_menu.open_security_positions_page()
-            time.sleep(1)
-            actual_result = cash_positions.get_all_accounts_from_drop_down_by_entered_pattern(self.account_id)
-            self.verify("Dropdown contain only Security Accounts according with hierarchy "
-                        f"the administrator(*user_zone*) is assigned to {self.account_id} is in dropdown.",
-                        True, self.account_id in actual_result)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        login_page.login_to_web_admin(self.users["inst"]["login"], self.users["inst"]["password"])
+        side_menu.open_security_positions_page()
+        time.sleep(1)
+        actual_result = cash_positions.get_all_accounts_from_drop_down_by_entered_pattern(self.account_id)
+        self.verify("Dropdown contain only Security Accounts according with hierarchy "
+                    f"the administrator(*user_zone*) is assigned to {self.account_id} is in dropdown.",
+                    True, self.account_id in actual_result)

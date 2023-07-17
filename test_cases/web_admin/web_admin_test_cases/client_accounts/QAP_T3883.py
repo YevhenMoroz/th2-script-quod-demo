@@ -1,10 +1,7 @@
-import sys
 import time
-import traceback
 import string
 import random
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_assignments_sub_wizard \
     import ClientsAssignmentsSubWizard
@@ -60,35 +57,27 @@ class QAP_T3883(CommonTestCase):
 
     def test_context(self):
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            values_tab = ClientsValuesSubWizard(self.web_driver_container)
-            values_tab.set_allocation_preference(self.allocation_preference[1])
-            wizard = ClientsWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
-            main_page = ClientsPage(self.web_driver_container)
-            main_page.set_name(self.name)
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
+        values_tab = ClientsValuesSubWizard(self.web_driver_container)
+        values_tab.set_allocation_preference(self.allocation_preference[1])
+        wizard = ClientsWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
+        main_page = ClientsPage(self.web_driver_container)
+        main_page.set_name(self.name)
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
 
-            self.verify("The required options have been selected", self.allocation_preference[1],
-                        values_tab.get_allocation_preference())
+        self.verify("The required options have been selected", self.allocation_preference[1],
+                    values_tab.get_allocation_preference())
 
-            values_tab.set_allocation_preference(self.allocation_preference[0])
-            wizard.click_on_save_changes()
-            main_page.set_name(self.name)
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
+        values_tab.set_allocation_preference(self.allocation_preference[0])
+        wizard.click_on_save_changes()
+        main_page.set_name(self.name)
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
 
-            self.verify("The required options have been selected", self.allocation_preference[0],
-                        values_tab.get_allocation_preference())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("The required options have been selected", self.allocation_preference[0],
+                    values_tab.get_allocation_preference())

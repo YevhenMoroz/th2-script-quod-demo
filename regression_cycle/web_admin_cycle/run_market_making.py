@@ -2,7 +2,7 @@ import time
 import traceback
 
 from datetime import timedelta
-from test_framework.configurations.component_configuration import ComponentConfiguration
+from test_framework.configurations.component_configuration import WebAdminComponentConfiguration
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
 from custom import basic_custom_actions as bca
 
@@ -66,13 +66,13 @@ from test_cases.web_admin.web_admin_test_cases.market_making.QAP_T10608 import Q
 
 
 class RunMarketMaking:
-    def __init__(self, root_report_id):
-        self.second_lvl_id = bca.create_event("WA_Market_Making", root_report_id)
+    def __init__(self, root_report_id, version=None):
+        self.second_lvl_id = bca.create_event(f"WA_Market_Making | {version}", root_report_id)
         self.web_driver_container = None
 
     def execute(self):
         try:
-            configuration = ComponentConfiguration("WA_Market_Making")
+            configuration = WebAdminComponentConfiguration("WA_Market_Making")
             self.web_driver_container = WebDriverContainer(
                 configuration.environment.get_list_web_admin_environment()[0].web_browser,
                 configuration.environment.get_list_web_admin_environment()[0].site_url)

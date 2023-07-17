@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.venues.venues_values_sub_wizard import \
     VenuesValuesSubWizard
@@ -66,38 +63,28 @@ class QAP_T4034(CommonTestCase):
         description_sub_wizard.set_country(self.new_country)
         time.sleep(1)
 
-
     def test_context(self):
-        try:
-            self.precondition()
-            page = VenuesPage(self.web_driver_container)
-            wizard = VenuesWizard(self.web_driver_container)
-            expected_pdf_content = [self.name,
-                                    self.id,
-                                    self.type,
-                                    self.new_country,
-                                    self.new_mic]
-            self.verify("Is pdf contains correctly values before saving", True,
-                        wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
-            time.sleep(2)
-            wizard.click_on_save_changes()
-            time.sleep(2)
-            page.set_name_filter(self.name)
-            time.sleep(2)
-            expected_values_from_main_page = [self.name,
-                                              self.id,
-                                              self.new_country,
-                                              self.new_mic]
-            actual_values_from_main_page = [page.get_name(), page.get_id(), page.get_country(), page.get_mic()]
+        self.precondition()
+        page = VenuesPage(self.web_driver_container)
+        wizard = VenuesWizard(self.web_driver_container)
+        expected_pdf_content = [self.name,
+                                self.id,
+                                self.type,
+                                self.new_country,
+                                self.new_mic]
+        self.verify("Is pdf contains correctly values before saving", True,
+                    wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
+        time.sleep(2)
+        wizard.click_on_save_changes()
+        time.sleep(2)
+        page.set_name_filter(self.name)
+        time.sleep(2)
+        expected_values_from_main_page = [self.name,
+                                          self.id,
+                                          self.new_country,
+                                          self.new_mic]
+        actual_values_from_main_page = [page.get_name(), page.get_id(), page.get_country(), page.get_mic()]
 
-            self.verify_arrays_of_data_objects("Is main page contains correctly values", ["name", "id"],
-                                               expected_values_from_main_page,
-                                               actual_values_from_main_page)
-
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify_arrays_of_data_objects("Is main page contains correctly values", ["name", "id"],
+                                           expected_values_from_main_page,
+                                           actual_values_from_main_page)

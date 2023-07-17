@@ -21,6 +21,7 @@ class RootConstants:
     USERS_TOGGLE_CSS_SELECTOR = "a[title='Users']"
     USERS_ITEM_XPATH = '//a[@title="Users"][@href!="#"]'
     USER_SESSIONS_ITEM_XPATH = "//a[@title='User Sessions']"
+    USER_LISTS_ITEM_XPATH = '//a[@title="User Lists"]'
 
     MARKETS_TOGGLE_CSS_SELECTOR = "a[title='Markets']"
     VENUES_ITEM_XPATH = "//a[@title='Venues']"

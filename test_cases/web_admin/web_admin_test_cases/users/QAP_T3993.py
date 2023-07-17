@@ -1,8 +1,5 @@
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.users.users.users_page import UsersPage
@@ -31,18 +28,11 @@ class QAP_T3993(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
-        try:
-            self.precondition()
-            users_page = UsersPage(self.web_driver_container)
-            users_page.set_user_id(self.user_id)
-            time.sleep(1)
-            users_page.click_on_enable_disable_button()
-            self.verify("After click on disabled", self.disabled_massage, users_page.get_disabled_massage())
-            time.sleep(2)
-            users_page.click_on_enable_disable_button()
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.precondition()
+        users_page = UsersPage(self.web_driver_container)
+        users_page.set_user_id(self.user_id)
+        time.sleep(1)
+        users_page.click_on_enable_disable_button()
+        self.verify("After click on disabled", self.disabled_massage, users_page.get_disabled_massage())
+        time.sleep(2)
+        users_page.click_on_enable_disable_button()

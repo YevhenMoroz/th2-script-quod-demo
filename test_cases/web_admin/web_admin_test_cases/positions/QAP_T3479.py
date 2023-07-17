@@ -1,10 +1,5 @@
 import random
 import string
-import sys
-import time
-import traceback
-
-from custom import basic_custom_actions
 
 from test_framework.web_admin_core.pages.positions.cash_positions.main_page import *
 from test_framework.web_admin_core.pages.positions.cash_positions.wizards import *
@@ -76,27 +71,19 @@ class QAP_T3479(CommonTestCase):
         cash_positions_page = MainPage(self.web_driver_container)
         positions_tab = PositionsTab(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            cash_positions_page.click_on_more_actions()
-            cash_positions_page.click_on_edit()
-            time.sleep(1)
-            available_balance = self.initialbalance - self.amountbought + self.cashdeposited - self.cashwithdrawn - \
-                                self.bookedamt - self.reservedamt
-            actual_balance = self.initialbalance + self.amountsoldin - self.amountbought + self.cashdeposited - \
-                             self.cashwithdrawn
+        cash_positions_page.click_on_more_actions()
+        cash_positions_page.click_on_edit()
+        time.sleep(1)
+        available_balance = self.initialbalance - self.amountbought + self.cashdeposited - self.cashwithdrawn - \
+                            self.bookedamt - self.reservedamt
+        actual_balance = self.initialbalance + self.amountsoldin - self.amountbought + self.cashdeposited - \
+                         self.cashwithdrawn
 
-            self.verify(f"Available Balance = Initial Balance - Buy Amount + Cash Deposited - "
-                        f"Cash Withdrawn - Booked Amount - Reserved Amount;.",
-                        "{:.2f}".format(available_balance), positions_tab.get_available_balance())
+        self.verify(f"Available Balance = Initial Balance - Buy Amount + Cash Deposited - "
+                    f"Cash Withdrawn - Booked Amount - Reserved Amount;.",
+                    "{:.2f}".format(available_balance), positions_tab.get_available_balance())
 
-            self.verify(f"Actual Balance = Initial Balance + Sell Amount - Buy Amount + Cash Deposited - Cash Withdrawn;",
-                        "{:.2f}".format(actual_balance), positions_tab.get_actual_balance())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify(f"Actual Balance = Initial Balance + Sell Amount - Buy Amount + Cash Deposited - Cash Withdrawn;",
+                    "{:.2f}".format(actual_balance), positions_tab.get_actual_balance())

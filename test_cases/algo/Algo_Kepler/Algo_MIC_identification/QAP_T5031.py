@@ -37,6 +37,7 @@ class QAP_T5031(TestCase):
         self.price_ask = 40
         self.price_bid = 30
         self.qty_bid = self.qty_ask = 1000000
+        self.currency = self.data_set.get_currency_by_name("currency_4")
         # endregion
 
         # region Gateway Side
@@ -89,7 +90,7 @@ class QAP_T5031(TestCase):
 
         self.Iceberg_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_Iceberg_Kepler_params()
         self.Iceberg_order.add_ClordId((os.path.basename(__file__)[:-3]))
-        self.Iceberg_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Instrument=self.instrument, Price=self.price, ExDestination=self.ex_destination_xbru, DisplayInstruction=dict(DisplayQty=self.display_qty)))
+        self.Iceberg_order.change_parameters(dict(Account=self.client, OrderQty=self.qty, Instrument=self.instrument, Price=self.price, ExDestination=self.ex_destination_xbru, Currency=self.currency, DisplayInstruction=dict(DisplayQty=self.display_qty)))
 
         self.fix_manager_sell.send_message_and_receive_response(self.Iceberg_order, case_id_1)
 
@@ -110,7 +111,7 @@ class QAP_T5031(TestCase):
         self.fix_verifier_buy.set_case_id(bca.create_event("Child DMA order", self.test_id))
 
         self.dma_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_child_of_Iceberg_Kepler_params()
-        self.dma_order.change_parameters(dict(Account=self.account_xbru, ExDestination=self.ex_destination_xbru, OrderQty=self.display_qty, Price=self.price, Instrument=self.instrument))
+        self.dma_order.change_parameters(dict(Account=self.account_xbru, ExDestination=self.ex_destination_xbru, OrderQty=self.display_qty, Price=self.price, Instrument=self.instrument, Currency=self.currency))
         self.fix_verifier_buy.check_fix_message_kepler(self.dma_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 1 order')
 
         er_pending_new_dma_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_order, self.gateway_side_buy, self.status_pending)

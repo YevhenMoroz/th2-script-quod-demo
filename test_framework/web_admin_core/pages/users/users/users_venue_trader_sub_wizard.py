@@ -25,6 +25,9 @@ class UsersVenueTraderSubWizard(CommonPage):
     def click_on_manage_trader_groups(self):
         self.find_by_xpath(UsersConstants.MANAGE_TRADER_GROUPS_AT_VENUE_TRADER_SUB_WIZARD).click()
 
+    def is_venue_trader_tab_contains_entries(self):
+        return self.is_element_present(UsersConstants.DELETE_AT_VENUE_TRADER_SUB_WIZARD)
+
     # get and set
 
     def set_venue(self,value):
@@ -44,6 +47,9 @@ class UsersVenueTraderSubWizard(CommonPage):
 
     def get_trader_group(self):
         return self.find_by_xpath(UsersConstants.CREATED_TRADER_GROUP_AT_VENUE_TRADER_TAB).text
+
+    def set_expiry_date(self, value):
+        self.set_text_by_xpath(UsersConstants.EXPIRY_DATE_AT_VENUE_TRADE_TAB, value)
 
     # filters
     def set_venue_filter(self, value):

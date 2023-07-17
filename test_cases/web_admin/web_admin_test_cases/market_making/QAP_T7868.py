@@ -1,8 +1,10 @@
 import sys
 import time
 import traceback
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_instrument_tiered_quantities_sub_wizard \
     import ClientTiersInstrumentTieredQuantitiesSubWizard
@@ -55,54 +57,47 @@ class QAP_T7868(CommonTestCase):
         else:
             client_tiers_frame.select_client_tier_by_name(self.name)
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            client_tier_instrument_frame = ClientTierInstrumentsPage(self.web_driver_container)
-            client_tier_instrument_frame.click_on_new()
-            instrument_sweepable_qty_tab = ClientTiersInstrumentSweepableQuantitiesSubWizard(self.web_driver_container)
-            instrument_sweepable_qty_tab.click_on_plus()
-            instrument_sweepable_qty_tab.set_quantity(self.sweepable_quantity[0])
-            instrument_sweepable_qty_tab.click_on_checkmark()
+        client_tier_instrument_frame = ClientTierInstrumentsPage(self.web_driver_container)
+        client_tier_instrument_frame.click_on_new()
+        instrument_sweepable_qty_tab = ClientTiersInstrumentSweepableQuantitiesSubWizard(self.web_driver_container)
+        instrument_sweepable_qty_tab.click_on_plus()
+        instrument_sweepable_qty_tab.set_quantity(self.sweepable_quantity[0])
+        instrument_sweepable_qty_tab.click_on_checkmark()
 
-            instrument_tiered_qty_tab = ClientTiersInstrumentTieredQuantitiesSubWizard(self.web_driver_container)
-            instrument_tiered_qty_tab.click_on_plus()
-            instrument_tiered_qty_tab.set_quantity(self.tiered_quantity[0])
-            instrument_tiered_qty_tab.click_on_checkmark()
+        instrument_tiered_qty_tab = ClientTiersInstrumentTieredQuantitiesSubWizard(self.web_driver_container)
+        instrument_tiered_qty_tab.click_on_plus()
+        instrument_tiered_qty_tab.set_quantity(self.tiered_quantity[0])
+        instrument_tiered_qty_tab.click_on_checkmark()
 
-            self.verify("Is warning displayed", True, instrument_tiered_qty_tab.is_warning_displayed())
+        self.verify("Is warning displayed", True, instrument_tiered_qty_tab.is_warning_displayed())
 
-            instrument_sweepable_qty_tab.click_on_edit()
-            instrument_sweepable_qty_tab.set_quantity(self.sweepable_quantity[1])
-            instrument_sweepable_qty_tab.click_on_checkmark()
-            instrument_sweepable_qty_tab.click_on_plus()
-            instrument_sweepable_qty_tab.set_quantity(self.sweepable_quantity[2])
-            instrument_sweepable_qty_tab.click_on_checkmark()
+        instrument_sweepable_qty_tab.click_on_edit()
+        instrument_sweepable_qty_tab.set_quantity(self.sweepable_quantity[1])
+        instrument_sweepable_qty_tab.click_on_checkmark()
+        instrument_sweepable_qty_tab.click_on_plus()
+        instrument_sweepable_qty_tab.set_quantity(self.sweepable_quantity[2])
+        instrument_sweepable_qty_tab.click_on_checkmark()
 
-            self.verify("Is warning displayed", False, instrument_tiered_qty_tab.is_warning_displayed())
+        self.verify("Is warning displayed", False, instrument_tiered_qty_tab.is_warning_displayed())
 
-            instrument_tiered_qty_tab.click_on_plus()
-            instrument_tiered_qty_tab.set_quantity(self.tiered_quantity[1])
-            instrument_tiered_qty_tab.click_on_checkmark()
+        instrument_tiered_qty_tab.click_on_plus()
+        instrument_tiered_qty_tab.set_quantity(self.tiered_quantity[1])
+        instrument_tiered_qty_tab.click_on_checkmark()
 
-            self.verify("Is warning displayed", False, instrument_tiered_qty_tab.is_warning_displayed())
+        self.verify("Is warning displayed", False, instrument_tiered_qty_tab.is_warning_displayed())
 
-            instrument_tiered_qty_tab.click_on_plus()
-            instrument_tiered_qty_tab.set_quantity(self.tiered_quantity[2])
-            instrument_tiered_qty_tab.click_on_checkmark()
+        instrument_tiered_qty_tab.click_on_plus()
+        instrument_tiered_qty_tab.set_quantity(self.tiered_quantity[2])
+        instrument_tiered_qty_tab.click_on_checkmark()
 
-            self.verify("Is warning displayed", True, instrument_tiered_qty_tab.is_warning_displayed())
+        self.verify("Is warning displayed", True, instrument_tiered_qty_tab.is_warning_displayed())
 
-            instrument_tiered_qty_tab.click_on_plus()
-            instrument_tiered_qty_tab.set_quantity(self.tiered_quantity[3])
-            instrument_tiered_qty_tab.click_on_checkmark()
+        instrument_tiered_qty_tab.click_on_plus()
+        instrument_tiered_qty_tab.set_quantity(self.tiered_quantity[3])
+        instrument_tiered_qty_tab.click_on_checkmark()
 
-            self.verify("Is warning displayed", True, instrument_tiered_qty_tab.is_warning_displayed())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("Is warning displayed", True, instrument_tiered_qty_tab.is_warning_displayed())

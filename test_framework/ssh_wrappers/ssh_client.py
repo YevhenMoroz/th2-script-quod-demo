@@ -96,6 +96,8 @@ class SshClient:
                 logs.close()
                 os.remove(temp_path)
                 return True
+        logs.close()
+        os.remove(temp_path)
         return False
 
     def get_regex_pattern(self, path_to_log_file: str, pattern: str):

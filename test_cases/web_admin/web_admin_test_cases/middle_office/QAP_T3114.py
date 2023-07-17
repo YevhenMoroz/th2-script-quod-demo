@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.middle_office.allocation_matching_profiles.main_page \
     import MainPage
@@ -35,35 +32,27 @@ class QAP_T3114(CommonTestCase):
 
     def test_context(self):
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            page = MainPage(self.web_driver_container)
-            page.click_on_new()
-            time.sleep(1)
-            wizard = AllocationMatchingProfilesWizard(self.web_driver_container)
-            wizard.set_name(self.name)
-            wizard.set_avg_price_precision(self.avg_price_precision)
-            wizard.set_tolerance_currency(self.tolerance_currency)
-            wizard.set_net_tolerance_currency(self.net_tolerance_currency)
-            wizard.click_on_client_commission_checkbox()
-            wizard.click_on_save_changes()
+        page = MainPage(self.web_driver_container)
+        page.click_on_new()
+        time.sleep(1)
+        wizard = AllocationMatchingProfilesWizard(self.web_driver_container)
+        wizard.set_name(self.name)
+        wizard.set_avg_price_precision(self.avg_price_precision)
+        wizard.set_tolerance_currency(self.tolerance_currency)
+        wizard.set_net_tolerance_currency(self.net_tolerance_currency)
+        wizard.click_on_client_commission_checkbox()
+        wizard.click_on_save_changes()
 
-            page.set_name(self.name)
-            time.sleep(1)
-            page.click_on_more_actions()
-            page.click_on_edit()
+        page.set_name(self.name)
+        time.sleep(1)
+        page.click_on_more_actions()
+        page.click_on_edit()
 
-            expected_data = [self.name, self.avg_price_precision, self.tolerance_currency, self.net_tolerance_currency,
-                             "True"]
-            actual_data = [wizard.get_name(), wizard.get_avg_price_precision(), wizard.get_tolerance_currency(),
-                           wizard.get_net_tolerance_currency(), str(wizard.is_client_commission_checkbox_selected())]
+        expected_data = [self.name, self.avg_price_precision, self.tolerance_currency, self.net_tolerance_currency,
+                         "True"]
+        actual_data = [wizard.get_name(), wizard.get_avg_price_precision(), wizard.get_tolerance_currency(),
+                       wizard.get_net_tolerance_currency(), str(wizard.is_client_commission_checkbox_selected())]
 
-            self.verify("New Allocation matching profile created and contains saved data", expected_data, actual_data)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("New Allocation matching profile created and contains saved data", expected_data, actual_data)

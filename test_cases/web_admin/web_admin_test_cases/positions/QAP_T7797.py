@@ -1,10 +1,6 @@
 import random
 import string
-import sys
-import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_wizard import ClientsWizard
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_values_sub_wizard import ClientsValuesSubWizard
@@ -134,52 +130,44 @@ class QAP_T7797(CommonTestCase):
         values_tab = ValuesTab(self.web_driver_container)
         wizard = MainWizard(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page.set_name(self.test_data['cash_position_1']['name'])
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
-            values_tab.select_default_cash_position_checkbox()
-            wizard.click_on_save_changes()
-            time.sleep(1)
+        main_page.set_name(self.test_data['cash_position_1']['name'])
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
+        values_tab.select_default_cash_position_checkbox()
+        wizard.click_on_save_changes()
+        time.sleep(1)
 
-            main_page.set_name(self.test_data['cash_position_1']['name'])
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
-            time.sleep(1)
-            self.verify(f"Default Cash Position checkbox is selected for {self.test_data['cash_position_1']['name']}",
-                        True, values_tab.is_default_cash_position_checkbox_selected())
-            wizard.click_on_close()
-            time.sleep(1)
-            if wizard.is_confirmation_of_leave_wizard_displayed():
-                wizard.click_on_ok_button()
+        main_page.set_name(self.test_data['cash_position_1']['name'])
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
+        time.sleep(1)
+        self.verify(f"Default Cash Position checkbox is selected for {self.test_data['cash_position_1']['name']}",
+                    True, values_tab.is_default_cash_position_checkbox_selected())
+        wizard.click_on_close()
+        time.sleep(1)
+        if wizard.is_confirmation_of_leave_wizard_displayed():
+            wizard.click_on_ok_button()
 
-            main_page.set_name(self.test_data['cash_position_2']['name'])
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
-            values_tab.select_default_cash_position_checkbox()
-            wizard.click_on_save_changes()
-            time.sleep(1)
+        main_page.set_name(self.test_data['cash_position_2']['name'])
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
+        values_tab.select_default_cash_position_checkbox()
+        wizard.click_on_save_changes()
+        time.sleep(1)
 
-            main_page.set_name(self.test_data['cash_position_2']['name'])
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
-            time.sleep(1)
-            self.verify(f"Default Cash Position checkbox is selected for {self.test_data['cash_position_2']['name']}",
-                        True, values_tab.is_default_cash_position_checkbox_selected())
-            wizard.click_on_close()
-            time.sleep(1)
-            if wizard.is_confirmation_of_leave_wizard_displayed():
-                wizard.click_on_ok_button()
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        main_page.set_name(self.test_data['cash_position_2']['name'])
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
+        time.sleep(1)
+        self.verify(f"Default Cash Position checkbox is selected for {self.test_data['cash_position_2']['name']}",
+                    True, values_tab.is_default_cash_position_checkbox_selected())
+        wizard.click_on_close()
+        time.sleep(1)
+        if wizard.is_confirmation_of_leave_wizard_displayed():
+            wizard.click_on_ok_button()

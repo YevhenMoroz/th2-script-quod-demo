@@ -208,7 +208,7 @@ class QAP_T5047(TestCase):
         
         # region Check that are only one modification request on child
         self.fix_verifier_buy.set_case_id(bca.create_event("Check that are no modification or cancel request on child", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([self.dma_1_order_replace_params], key_parameters_list=[None], direction=self.FromQuod, pre_filter=self.pre_filter)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([self.dma_1_order_replace_params], key_parameters_list=[None], direction=self.FromQuod, pre_filter=self.pre_filter)
         # endregion
 
         time.sleep(10)

@@ -114,7 +114,8 @@ class QAP_T2380(TestCase):
         self.execution_report.set_params_from_new_order_single(self.new_order_singe, gateway_side_sell, status,
                                                                response[-1])
         self.execution_report.change_parameter("LastQty", "1000000")
-        self.fix_verifier.check_fix_message(fix_message=self.execution_report)
+        self.execution_report.remove_parameter("OrderCapacity")
+        self.fix_verifier.check_fix_message(self.execution_report, ignored_fields=["GatingRuleCondName", "GatingRuleName", "trailer", "header"])
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

@@ -1,10 +1,7 @@
-import sys
 import time
-import traceback
 import random
 import string
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.site.institution.institutions_page import InstitutionsPage
@@ -52,32 +49,24 @@ class QAP_T3786(CommonTestCase):
             time.sleep(1)
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page = InstitutionsPage(self.web_driver_container)
-            main_page.click_on_more_actions()
-            time.sleep(1)
-            main_page.click_on_edit()
-            time.sleep(2)
-            value_tab = InstitutionsValuesSubWizard(self.web_driver_container)
-            self.client_time_zone = random.choice(value_tab.get_all_client_time_zone_from_drop_menu())
-            value_tab.set_client_time_zone(self.client_time_zone)
-            wizard = InstitutionsWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
-            time.sleep(2)
-            main_page.set_institution_name(self.institution_name)
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            time.sleep(1)
-            main_page.click_on_edit()
-            time.sleep(2)
+        main_page = InstitutionsPage(self.web_driver_container)
+        main_page.click_on_more_actions()
+        time.sleep(1)
+        main_page.click_on_edit()
+        time.sleep(2)
+        value_tab = InstitutionsValuesSubWizard(self.web_driver_container)
+        self.client_time_zone = random.choice(value_tab.get_all_client_time_zone_from_drop_menu())
+        value_tab.set_client_time_zone(self.client_time_zone)
+        wizard = InstitutionsWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
+        time.sleep(2)
+        main_page.set_institution_name(self.institution_name)
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        time.sleep(1)
+        main_page.click_on_edit()
+        time.sleep(2)
 
-            self.verify("New Client Time Zone is saved correct", self.client_time_zone, value_tab.get_client_time_zone())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("New Client Time Zone is saved correct", self.client_time_zone, value_tab.get_client_time_zone())

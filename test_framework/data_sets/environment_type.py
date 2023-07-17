@@ -45,6 +45,7 @@ class EnvironmentType(Enum):
     quod310_columbia_web_admin_site = "quod310_columbia_web_admin_site"
     quod310_web_admin_columbia_chrome = "quod310_web_admin_columbia_chrome"
     quod324_web_admin_venus_chrome = "quod324_web_admin_venus_chrome"
+    quod325_web_admin_venus_chrome = "quod325_web_admin_venus_chrome"
     quod309_kratos_web_admin = "quod309_kratos_web_admin"
     # endregion
 

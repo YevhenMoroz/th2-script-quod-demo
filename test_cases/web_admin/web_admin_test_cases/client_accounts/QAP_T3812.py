@@ -1,10 +1,7 @@
-import sys
 import time
-import traceback
 import random
 import string
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_page import AccountsPage
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_wizard import AccountsWizard
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
@@ -57,39 +54,31 @@ class QAP_T3812(CommonTestCase):
 
     def test_context(self):
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            account_page = AccountsPage(self.web_driver_container)
-            account_page.click_more_actions_button()
-            time.sleep(1)
-            account_page.click_edit_entity_button()
-            time.sleep(2)
-            wizard = AccountsWizard(self.web_driver_container)
-            wizard.set_bo_field_1(self.bo_fields['1'])
-            wizard.set_bo_field_2(self.bo_fields['2'])
-            wizard.set_bo_field_3(self.bo_fields['3'])
-            wizard.set_bo_field_4(self.bo_fields['4'])
-            wizard.set_bo_field_5(self.bo_fields['5'])
-            wizard.click_save_button()
-            time.sleep(2)
-            account_page.set_id(self.id)
-            time.sleep(1)
-            account_page.click_more_actions_button()
-            time.sleep(1)
-            account_page.click_edit_entity_button()
-            time.sleep(2)
+        account_page = AccountsPage(self.web_driver_container)
+        account_page.click_more_actions_button()
+        time.sleep(1)
+        account_page.click_edit_entity_button()
+        time.sleep(2)
+        wizard = AccountsWizard(self.web_driver_container)
+        wizard.set_bo_field_1(self.bo_fields['1'])
+        wizard.set_bo_field_2(self.bo_fields['2'])
+        wizard.set_bo_field_3(self.bo_fields['3'])
+        wizard.set_bo_field_4(self.bo_fields['4'])
+        wizard.set_bo_field_5(self.bo_fields['5'])
+        wizard.click_save_button()
+        time.sleep(2)
+        account_page.set_id(self.id)
+        time.sleep(1)
+        account_page.click_more_actions_button()
+        time.sleep(1)
+        account_page.click_edit_entity_button()
+        time.sleep(2)
 
-            excepted_result = [self.bo_fields['1'], self.bo_fields['2'], self.bo_fields['3'], self.bo_fields['4'],
-                               self.bo_fields['5']]
-            actual_result = [wizard.get_bo_field_1(), wizard.get_bo_field_2(), wizard.get_bo_field_3(),
-                             wizard.get_bo_field_4(), wizard.get_bo_field_5()]
+        excepted_result = [self.bo_fields['1'], self.bo_fields['2'], self.bo_fields['3'], self.bo_fields['4'],
+                           self.bo_fields['5']]
+        actual_result = [wizard.get_bo_field_1(), wizard.get_bo_field_2(), wizard.get_bo_field_3(),
+                         wizard.get_bo_field_4(), wizard.get_bo_field_5()]
 
-            self.verify("New data for the BO fields saved correct", excepted_result, actual_result)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("New data for the BO fields saved correct", excepted_result, actual_result)

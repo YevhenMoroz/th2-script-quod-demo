@@ -3,8 +3,10 @@ import string
 import sys
 import time
 import traceback
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tiers_page import ClientTiersPage
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tiers_values_sub_wizard import \
     ClientTiersValuesSubWizard
@@ -38,49 +40,43 @@ class QAP_T9435(CommonTestCase):
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_client_tier_page()
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page = ClientTiersPage(self.web_driver_container)
-            main_page.click_on_new()
-            values_tab = ClientTiersValuesSubWizard(self.web_driver_container)
-            values_tab.click_on_manage_button_for_schedules()
-            schedule_wizard = ClientTiersSchedulesSubWizard(self.web_driver_container)
-            schedule_wizard.click_on_plus_button_at_schedule_name()
-            schedule_wizard.set_schedule_name(self.schedule)
-            schedule_wizard.click_on_plus_button_at_schedules()
-            schedule_wizard.set_day(self.day)
-            schedule_wizard.set_from_time(self.from_time)
-            schedule_wizard.set_to_time(self.to_time)
-            schedule_wizard.click_on_checkmark_button_at_schedules()
-            schedule_wizard.click_on_checkmark_button_at_schedule_name()
-            schedule_wizard.set_schedule_name_filter(self.schedule)
-            time.sleep(1)
-            schedule_wizard.click_on_edit_button_at_schedule_name()
-            schedule_wizard.set_schedule_name(self.new_schedule_name)
-            schedule_wizard.click_on_checkmark_button_at_schedule_name()
+        main_page = ClientTiersPage(self.web_driver_container)
+        main_page.click_on_new()
+        values_tab = ClientTiersValuesSubWizard(self.web_driver_container)
+        values_tab.click_on_manage_button_for_schedules()
+        schedule_wizard = ClientTiersSchedulesSubWizard(self.web_driver_container)
+        schedule_wizard.click_on_plus_button_at_schedule_name()
+        schedule_wizard.set_schedule_name(self.schedule)
+        schedule_wizard.click_on_plus_button_at_schedules()
+        schedule_wizard.set_day(self.day)
+        schedule_wizard.set_from_time(self.from_time)
+        schedule_wizard.set_to_time(self.to_time)
+        schedule_wizard.click_on_checkmark_button_at_schedules()
+        schedule_wizard.click_on_checkmark_button_at_schedule_name()
+        schedule_wizard.set_schedule_name_filter(self.schedule)
+        time.sleep(1)
+        schedule_wizard.click_on_edit_button_at_schedule_name()
+        schedule_wizard.set_schedule_name(self.new_schedule_name)
+        schedule_wizard.click_on_checkmark_button_at_schedule_name()
 
-            schedule_wizard.set_schedule_name_filter(self.schedule)
-            time.sleep(1)
-            self.verify("Old name not displayed", False,
-                        schedule_wizard.is_schedule_name_entity_found_by_name(self.schedule))
-            schedule_wizard.set_schedule_name_filter(self.new_schedule_name)
-            time.sleep(1)
-            self.verify("New name displayed", True,
-                        schedule_wizard.is_schedule_name_entity_found_by_name(self.new_schedule_name))
+        schedule_wizard.set_schedule_name_filter(self.schedule)
+        time.sleep(1)
+        self.verify("Old name not displayed", False,
+                    schedule_wizard.is_schedule_name_entity_found_by_name(self.schedule))
+        schedule_wizard.set_schedule_name_filter(self.new_schedule_name)
+        time.sleep(1)
+        self.verify("New name displayed", True,
+                    schedule_wizard.is_schedule_name_entity_found_by_name(self.new_schedule_name))
 
-            common_act = CommonPage(self.web_driver_container)
-            common_act.refresh_page(True)
-            time.sleep(1)
-            schedule_wizard.set_schedule_name_filter(self.new_schedule_name)
-            time.sleep(1)
-            self.verify("New name displayed", True,
-                        schedule_wizard.is_schedule_name_entity_found_by_name(self.new_schedule_name))
+        common_act = CommonPage(self.web_driver_container)
+        common_act.refresh_page(True)
+        time.sleep(1)
+        schedule_wizard.set_schedule_name_filter(self.new_schedule_name)
+        time.sleep(1)
+        self.verify("New name displayed", True,
+                    schedule_wizard.is_schedule_name_entity_found_by_name(self.new_schedule_name))
 
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)

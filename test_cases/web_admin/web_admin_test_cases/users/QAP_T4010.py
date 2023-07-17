@@ -1,9 +1,6 @@
-import sys
 import time
-import traceback
 
 from selenium.common.exceptions import ElementNotInteractableException
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.users.users.users_assignments_sub_wizard import UsersAssignmentsSubWizard
@@ -39,27 +36,19 @@ class QAP_T4010(CommonTestCase):
     def test_context(self):
         assignments_tab = UsersAssignmentsSubWizard(self.web_driver_container)
         users_wizard = UsersWizard(self.web_driver_container)
+        self.precondition()
         try:
-            self.precondition()
-            try:
-                assignments_tab.set_location("test")
-            except ElementNotInteractableException as e:
-                error_name = e.__class__.__name__
-                self.verify("after select desks, location; zone; institution are disabled ",
-                            "ElementNotInteractableException",
-                            error_name)
+            assignments_tab.set_location("test")
+        except ElementNotInteractableException as e:
+            error_name = e.__class__.__name__
+            self.verify("after select desks, location; zone; institution are disabled ",
+                        "ElementNotInteractableException",
+                        error_name)
 
-            try:
-                time.sleep(2)
-                self.verify("after click on download PDF button", True,
-                            users_wizard.click_download_pdf_entity_button_and_check_pdf(self.desks))
-            except IndexError as e:
-                print(e.__class__.__name__)
-                self.verify("Download button is deactivated", True, False)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        try:
+            time.sleep(2)
+            self.verify("after click on download PDF button", True,
+                        users_wizard.click_download_pdf_entity_button_and_check_pdf(self.desks))
+        except IndexError as e:
+            print(e.__class__.__name__)
+            self.verify("Download button is deactivated", True, False)

@@ -1,0 +1,174 @@
+<quod>
+    <includes>
+        <include>${CFG_DIR}/${CFG_PREFIX}backend.xml</include>
+        <include>${CFG_DIR}/${CFG_PREFIX}persistence.xml</include>
+        <include>${CFG_DIR}/${CFG_PREFIX}routing.xml</include>
+        <include>${CFG_DIR}/${CFG_PREFIX}marketdata.xml</include>
+        <include>${CFG_DIR}/${CFG_PREFIX}gateways.xml</include>
+        <include>${CFG_DEFAULT}/ors.xml</include>
+    </includes>
+
+	<ors>
+		<FrontToBack>
+			<quotedRouting>true</quotedRouting>
+            <!--autoFillListing>true</autoFillListing-->
+            <autoFillAlloc>true</autoFillAlloc>
+		<GatingRules>
+			<enabled>true</enabled>
+		</GatingRules>
+
+		<ExternalValidation>
+		           <enabled>true</enabled>
+		           <!-- subject names as found in gateways.xml -->
+		           <request>externalValidationGatewayRequests</request>
+		           <reply>externalValidationGatewayReplies</reply>
+		</ExternalValidation>
+		</FrontToBack>
+
+	    <BackToFront>
+			<mapping>
+				<LastMkt>
+				 ClientVenueID
+				</LastMkt>
+			</mapping>
+		</BackToFront>
+
+	 <FIXNotif>
+	  <gtw>gtwquod8</gtw> <!-- default drop-copy gateway -->
+	              <scope>all</scope> <!-- root or leaf or rootAndLeaf -->
+	              <makingInternal>true</makingInternal> <!-- internal messages for/from SBP venue -->
+				  <makingExternal>true</makingExternal> <!-- external messages for/from SBP venue -->
+				  <taking>true</taking> <!-- non-SBP venue -->
+				  <hedge>true</hedge>
+				  <FIX><!-- for orders coming through FIX -->
+					  <policies>
+					  <!-- list of execution policies to be notified>
+						<policy>C</policy>
+						<policy>S</policy>
+						<policy>D</policy>
+					   <if empty, no filter is applied on execution policy -->
+					  </policies>
+					  <users>
+					  <!-- list of users whose replies are to be notified>
+						<user>gtw01</user>
+						<user>gtw02</user>
+						<if empty, no filter is applied on users -->
+					  </users>
+					  <venues>
+					    <!-- list of venues whose replies are to be notified>
+						<venue></venue>
+					    <if empty, no filter is applied on venues -->
+					  </venues>
+					  <routes>
+					    <!-- list of routes whose trades are to be notified>
+					    <route></route>
+					    <if empty, no filter is applied on routes -->
+					  </routes>
+					  <type><!-- message type (request or ExecType) -->
+						<New>true</New>
+						<Open>true</Open>
+						<Trade>true</Trade>
+						<Cancel>true</Cancel>
+						<Modify>true</Modify>
+						<Cancelled>true</Cancelled>
+						<Replaced>true</Replaced>
+						<Rejected>true</Rejected>
+						<QuoteRequest>true</QuoteRequest>
+						<QuoteRequestReject>true</QuoteRequestReject>
+						<QuoteCancel>true</QuoteCancel>
+					 </type>
+				</FIX>
+				 <nonFIX><!-- for orders with another origin -->
+					 <policies>
+						<!-- list of execution policies to be notified>
+						<policy>C</policy>
+						<policy>S</policy>
+						<policy>D</policy>
+						<if empty, no filter is applied on execution policy -->
+					 </policies>
+					 <users>
+						<!-- list of users whose replies are to be notified>
+						<user>gtw01</user>
+						<user>gtw02</user>
+						<if empty, no filter is applied on users -->
+					 </users>
+					 <venues>
+						<!-- list of venues whose replies are to be notified>
+						<venue></venue>
+						<if empty, no filter is applied on venues -->
+					 </venues>
+					 <routes>
+						<!-- list of routes whose trades are to be notified>
+						<route></route>
+						<if empty, no filter is applied on routes -->
+					 </routes>
+					 <type><!-- message type (request or ExecType) -->
+						<New>true</New>
+						<Cancel>true</Cancel>
+						<Modify>true</Modify>
+						<Open>true</Open>
+						<Trade>true</Trade>
+						<Cancelled>true</Cancelled>
+						<Replaced>true</Replaced>
+                        <Rejected>true</Rejected>
+						<QuoteRequest>true</QuoteRequest>
+						<QuoteRequestReject>true</QuoteRequestReject>
+						<QuoteCancel>true</QuoteCancel>
+					  </type>
+				</nonFIX>
+			</FIXNotif>
+		<AddFIXNotif>
+            <!-- PFX-2263 paste <FIXNotif> sections here for additional drop-copy feeds -->
+            <FIXNotif>
+                <gtw></gtw>
+                <scope>root</scope> <!-- root or leaf -->
+                <client>true</client> <!-- retail/institutional account group -->
+                <internal>true</internal> <!-- firm account group -->
+                <making>true</making> <!-- SBP venue -->
+                <taking>true</taking> <!-- non-SBP venue -->
+                <FIX><!-- for orders coming through FIX -->
+                    <policies>
+                    </policies>
+                    <users>
+                    </users>
+                    <venues>
+                    </venues>
+                    <type><!-- message type (request or ExecType) -->
+                        <Open>true</Open>
+                        <Trade>true</Trade>
+                    </type>
+                </FIX>
+                <nonFIX><!-- for orders with another origin -->
+                    <policies>
+                    </policies>
+                    <users>
+                    </users>
+                    <venues>
+                    </venues>
+                    <type><!-- message type (request or ExecType) -->
+                        <New>true</New>
+                        <Cancel>true</Cancel>
+                        <Modify>true</Modify>
+                        <Open>true</Open>
+                        <Trade>true</Trade>
+                    </type>
+                </nonFIX>
+            </FIXNotif>
+        </AddFIXNotif>
+		<orderVelocityLimitControl>
+		<!-- Possible value-->
+		<!-- Root: Parent orders -->
+		<!-- Leaf: Child orders  -->
+		<!-- disabled otherwise  -->
+		<scope>Root</scope>
+		</orderVelocityLimitControl>
+	<uncomplete>
+        <nonforex>
+		    <scheduled>true</scheduled>
+			<zone>UTC</zone>
+			 <at>08:16</at>
+		 </nonforex>
+	</uncomplete>
+	</ors>
+
+</quod>

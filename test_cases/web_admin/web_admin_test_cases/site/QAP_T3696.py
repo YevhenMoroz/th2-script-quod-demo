@@ -1,7 +1,5 @@
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.site.zones.zones_assignments_sub_wizard import ZonesAssignmentsSubWizard
@@ -47,14 +45,8 @@ class QAP_T3696(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            wizard = ZonesWizard(self.web_driver_container)
-            self.verify("such record already exist message displayed", True,
-                        wizard.is_such_record_exists_massage_displayed())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)
+        wizard = ZonesWizard(self.web_driver_container)
+        self.verify("such record already exist message displayed", True,
+                    wizard.is_such_record_exists_massage_displayed())

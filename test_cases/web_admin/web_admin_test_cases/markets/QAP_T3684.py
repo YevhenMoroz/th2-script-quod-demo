@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.listings.listings_page import ListingsPage
 from test_framework.web_admin_core.pages.markets.listings.listings_values_sub_wizard import \
@@ -51,25 +48,17 @@ class QAP_T3684(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
-        try:
-            self.precondition()
-            values_sub_wizard = ListingsValuesSubWizard(self.web_driver_container)
-            wizard = ListingsWizard(self.web_driver_container)
-            self.verify("Is symbol field saved", self.symbol, values_sub_wizard.get_symbol())
-            self.verify("Is lookup symbol field saved", self.lookup_symbol, values_sub_wizard.get_lookup_symbol())
-            self.verify("Is instr_symbol field saved", self.instr_symbol, values_sub_wizard.get_instr_symbol())
-            time.sleep(2)
-            values_sub_wizard.set_symbol(" ")
-            values_sub_wizard.set_lookup_symbol(" ")
-            values_sub_wizard.set_instr_symbol(" ")
-            time.sleep(2)
-            wizard.click_on_close()
-            time.sleep(2)
-            wizard.click_on_ok_button()
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.precondition()
+        values_sub_wizard = ListingsValuesSubWizard(self.web_driver_container)
+        wizard = ListingsWizard(self.web_driver_container)
+        self.verify("Is symbol field saved", self.symbol, values_sub_wizard.get_symbol())
+        self.verify("Is lookup symbol field saved", self.lookup_symbol, values_sub_wizard.get_lookup_symbol())
+        self.verify("Is instr_symbol field saved", self.instr_symbol, values_sub_wizard.get_instr_symbol())
+        time.sleep(2)
+        values_sub_wizard.set_symbol(" ")
+        values_sub_wizard.set_lookup_symbol(" ")
+        values_sub_wizard.set_instr_symbol(" ")
+        time.sleep(2)
+        wizard.click_on_close()
+        time.sleep(2)
+        wizard.click_on_ok_button()

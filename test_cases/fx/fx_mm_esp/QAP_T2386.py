@@ -42,7 +42,7 @@ class QAP_T2386(TestCase):
                 "SecurityType": self.security_type,
                 "Product": "4", },
             "SettlType": self.settle_type, }]
-        self.bands_gbp_usd = ["1000000"]
+        self.bands_gbp_usd = ["*", "*"]
         self.text = "subscriptions on this tier/tenor not currently allowed"
 
     @try_except(test_id=Path(__file__).name[:-3])

@@ -7,7 +7,7 @@ class AccountsConstants:
     MAIN_PAGE_CLIENT ='//*[@col-id="accountGroup.accountGroupName"]//*[@class="ag-group-value"]'
     ACCOUNT_VALUE_FOR_LOAD = "//*[@id='undefined']"
     LOAD_BUTTON = "//button[text()='Load']"
-    CONFIRM_ACTION_BUTTON_XPATH = "//div[@class='confirmation-dialog']//button[text()='Ok']"
+    CONFIRM_ACTION_BUTTON_XPATH = "//div[@class='confirmation-dialog']//button[normalize-space()='Ok']"
     DISPLAYED_ACCOUNT_XPATH = "//*[text()='{}']"
     REQUEST_FAILED_MESSAGE_XPATH = "//nb-toast[contains(@class, 'danger')]"
     DROP_DOWN_MENU_XPATH = '//*[@class="option-list"]//span'
@@ -41,7 +41,7 @@ class AccountsConstants:
     WIZARD_COMMISSION_EXEMPTION_CHECKBOX_XPATH = '//nb-checkbox[@formcontrolname="brokerCommissionExemption"]//span[contains(@class, "custom-checkbox")]'
     WIZARD_COUNTERPART_COMBOBOX_XPATH = "//input[@id='counterpart']"
     WIZARD_DEFAULT_ROUTE_COMBOBOX_XPATH = "//input[@id='defaultRoute']"
-    WIZARD_SAVE_BUTTON_XPATH = "//button[text()='Save Changes']"
+    WIZARD_SAVE_BUTTON_XPATH = "//button[normalize-space()='Save Changes']"
     INCORRECT_OR_MISSING_VALUES_XPATH = "//*[text()='Incorrect or missing values']"
     WIZARD_DUMMY_CHECKBOX_XPATH = '//*[text()="Dummy"]/preceding-sibling::span'
     WIZARD_TITLE_XPATH = '//*[@class="breadcrumbs entity-title"]//*[text()="Accounts"]'
@@ -88,7 +88,7 @@ class AccountsConstants:
     ROUTES_ROUTE_ACCOUNT_NAME_TABLE_ROW = '//*[normalize-space()="Route Account Name"]//ancestor::p-table//td[2]//span[@class="ng-star-inserted"]'
     ROUTES_ROUTE_TABLE_ROW = '//*[normalize-space()="Route Account Name"]//ancestor::p-table//td[3]//span[@class="ng-star-inserted"]'
 
-    ID_INPUT_GRID_FILTER_XPATH = "//ag-grid-angular/div/div[1]/div/div[1]/div[2]/div/div[2]/div[1]/div[1]/div/input"
+    ID_INPUT_GRID_FILTER_XPATH = '//*[@col-id="accountID"]//following::input[@ref="eFloatingFilterText"][1]'
     ID_VALUE_GRID_XPATH = "//div[contains(@class, 'ag-row-first')]//div[@col-id='accountID']//span[contains(@class, 'ag-group-value')]"
     MORE_ACTIONS_BUTTON_GRID_XPATH = "//nb-icon[@title='More Actions']"
     EDIT_ENTITY_BUTTON_GRID_XPATH = "//nb-icon[@nbtooltip='Edit']"

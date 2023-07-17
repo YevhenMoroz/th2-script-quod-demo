@@ -1,10 +1,7 @@
-import sys
 import time
-import traceback
 import random
 import string
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.client_lists.main_page import ClientListsPage
 from test_framework.web_admin_core.pages.clients_accounts.client_lists.wizard import ClientListsWizard
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_values_sub_wizard import ClientsValuesSubWizard
@@ -48,25 +45,17 @@ class QAP_T3549(CommonTestCase):
 
     def test_context(self):
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            client_list_page = ClientListsPage(self.web_driver_container)
-            client_list_page.click_on_more_actions()
-            client_list_page.click_on_edit()
-            wizard = ClientListsWizard(self.web_driver_container)
-            wizard.set_client_filter(self.client)
-            time.sleep(1)
-            wizard.click_on_edit()
-            wizard.click_at_client_link()
+        client_list_page = ClientListsPage(self.web_driver_container)
+        client_list_page.click_on_more_actions()
+        client_list_page.click_on_edit()
+        wizard = ClientListsWizard(self.web_driver_container)
+        wizard.set_client_filter(self.client)
+        time.sleep(1)
+        wizard.click_on_edit()
+        wizard.click_at_client_link()
 
-            time.sleep(2)
-            client_values_tab = ClientsValuesSubWizard(self.web_driver_container)
-            self.verify("Client page has been open correct", self.client, client_values_tab.get_name())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        time.sleep(2)
+        client_values_tab = ClientsValuesSubWizard(self.web_driver_container)
+        self.verify("Client page has been open correct", self.client, client_values_tab.get_name())

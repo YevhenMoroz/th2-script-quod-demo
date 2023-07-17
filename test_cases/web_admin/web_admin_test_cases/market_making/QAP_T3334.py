@@ -1,8 +1,11 @@
 import sys
 import time
+from custom import basic_custom_actions as bca
 import traceback
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_instrument_values_sub_wizard import \
     ClientTierInstrumentValuesSubWizard
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_instrument_tenors_sub_wizard import \
@@ -74,67 +77,60 @@ class QAP_T3334(CommonTestCase):
             client_tiers_instrument_wizard = ClientTierInstrumentWizard(self.web_driver_container)
             client_tiers_instrument_wizard.click_on_save_changes()
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            client_tiers_frame = ClientTiersPage(self.web_driver_container)
-            client_tiers_frame.set_name(self.name)
-            client_tiers_frame.select_client_tier_by_name(self.name)
-            client_tiers_frame.click_on_more_actions()
-            time.sleep(1)
-            client_tier_instrument_frame = ClientTierInstrumentsPage(self.web_driver_container)
-            client_tier_instrument_frame.click_on_more_actions()
-            client_tier_instrument_frame.click_on_edit()
-            tenors_tab = ClientTiersInstrumentTenorsSubWizard(self.web_driver_container)
-            tenors_tab.set_tenor_filter(self.tenor)
-            tenors_tab.click_on_edit()
-            time.sleep(1)
-            tenors_tab.click_on_edit_at_base_margins_tab_by_values(self.sweepable_qty)
-            time.sleep(1)
-            actual_result = tenors_tab.is_quantity_field_enable_at_base_margin_tab()
-            self.verify("Quantity field disabled", actual_result, False)
+        client_tiers_frame = ClientTiersPage(self.web_driver_container)
+        client_tiers_frame.set_name(self.name)
+        client_tiers_frame.select_client_tier_by_name(self.name)
+        client_tiers_frame.click_on_more_actions()
+        time.sleep(1)
+        client_tier_instrument_frame = ClientTierInstrumentsPage(self.web_driver_container)
+        client_tier_instrument_frame.click_on_more_actions()
+        client_tier_instrument_frame.click_on_edit()
+        tenors_tab = ClientTiersInstrumentTenorsSubWizard(self.web_driver_container)
+        tenors_tab.set_tenor_filter(self.tenor)
+        tenors_tab.click_on_edit()
+        time.sleep(1)
+        tenors_tab.click_on_edit_at_base_margins_tab_by_values(self.sweepable_qty)
+        time.sleep(1)
+        actual_result = tenors_tab.is_quantity_field_enable_at_base_margin_tab()
+        self.verify("Quantity field disabled", actual_result, False)
 
-            tenors_tab.click_on_close_at_base_margins_tab()
-            time.sleep(1)
-            tenors_tab.click_on_plus_button_at_base_margin_tab()
-            tenors_tab.set_quantity_at_base_margin_tab(self.base_margin_qty[0])
-            tenors_tab.click_on_checkmark_at_base_margins_tab()
-            tenors_tab.click_on_plus_button_at_base_margin_tab()
-            tenors_tab.set_quantity_at_base_margin_tab(self.base_margin_qty[1])
-            tenors_tab.click_on_checkmark_at_base_margins_tab()
-            tenors_tab.click_on_checkmark()
+        tenors_tab.click_on_close_at_base_margins_tab()
+        time.sleep(1)
+        tenors_tab.click_on_plus_button_at_base_margin_tab()
+        tenors_tab.set_quantity_at_base_margin_tab(self.base_margin_qty[0])
+        tenors_tab.click_on_checkmark_at_base_margins_tab()
+        tenors_tab.click_on_plus_button_at_base_margin_tab()
+        tenors_tab.set_quantity_at_base_margin_tab(self.base_margin_qty[1])
+        tenors_tab.click_on_checkmark_at_base_margins_tab()
+        tenors_tab.click_on_checkmark()
 
-            tenors_tab.set_tenor_filter(self.tenor)
-            tenors_tab.click_on_edit()
-            tenors_tab.click_on_edit_at_base_margins_tab_by_values(self.base_margin_qty[0])
-            tenors_tab.set_quantity_at_base_margin_tab(self.base_margin_qty[2])
-            tenors_tab.click_on_publish_prices_checkbox_at_base_margins_tab()
-            tenors_tab.click_on_checkmark_at_base_margins_tab()
-            tenors_tab.click_on_checkmark()
+        tenors_tab.set_tenor_filter(self.tenor)
+        tenors_tab.click_on_edit()
+        tenors_tab.click_on_edit_at_base_margins_tab_by_values(self.base_margin_qty[0])
+        tenors_tab.set_quantity_at_base_margin_tab(self.base_margin_qty[2])
+        tenors_tab.click_on_publish_prices_checkbox_at_base_margins_tab()
+        tenors_tab.click_on_checkmark_at_base_margins_tab()
+        tenors_tab.click_on_checkmark()
 
-            tenors_tab.set_tenor_filter(self.tenor)
-            tenors_tab.click_on_edit()
-            tenors_tab.click_on_edit_at_base_margins_tab_by_values(self.base_margin_qty[2])
-            self.verify("Changes values found, and Publish Price checkbox unselected", True,
-                        tenors_tab.is_publish_prices_checkbox_selected_at_base_margins_tab())
-            tenors_tab.click_on_checkmark_at_base_margins_tab()
+        tenors_tab.set_tenor_filter(self.tenor)
+        tenors_tab.click_on_edit()
+        tenors_tab.click_on_edit_at_base_margins_tab_by_values(self.base_margin_qty[2])
+        self.verify("Changes values found, and Publish Price checkbox unselected", True,
+                    tenors_tab.is_publish_prices_checkbox_selected_at_base_margins_tab())
+        tenors_tab.click_on_checkmark_at_base_margins_tab()
 
-            tenors_tab.click_on_delete_at_base_margins_tab_by_values(self.base_margin_qty[1])
-            tenors_tab.click_on_delete_at_base_margins_tab_by_values(self.base_margin_qty[2])
-            tenors_tab.click_on_checkmark()
+        tenors_tab.click_on_delete_at_base_margins_tab_by_values(self.base_margin_qty[1])
+        tenors_tab.click_on_delete_at_base_margins_tab_by_values(self.base_margin_qty[2])
+        tenors_tab.click_on_checkmark()
 
-            tenors_tab.set_tenor_filter(self.tenor)
-            tenors_tab.click_on_edit()
+        tenors_tab.set_tenor_filter(self.tenor)
+        tenors_tab.click_on_edit()
 
-            all_quantity_at_base_margin = tenors_tab.get_all_list_quantity_at_base_margin_tab()
-            actual_result = False if str(self.base_margin_qty) in all_quantity_at_base_margin else True
+        all_quantity_at_base_margin = tenors_tab.get_all_list_quantity_at_base_margin_tab()
+        actual_result = False if str(self.base_margin_qty) in all_quantity_at_base_margin else True
 
-            self.verify("Deleted Quantity is not displayed ", True, actual_result)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("Deleted Quantity is not displayed ", True, actual_result)

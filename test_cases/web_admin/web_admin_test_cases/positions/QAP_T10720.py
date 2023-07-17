@@ -1,10 +1,6 @@
-import sys
 import time
-import traceback
 import random
 import string
-
-from custom import basic_custom_actions
 
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_values_sub_wizard import \
     ClientsValuesSubWizard
@@ -92,70 +88,62 @@ class QAP_T10720(CommonTestCase):
         cash_position_wizard = CashPositionsWizard(self.web_driver_container)
         cash_position_values_tab = CashPositionsValuesTab(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            side_menu.open_cash_positions_page()
-            cash_positions_page.click_on_new()
+        side_menu.open_cash_positions_page()
+        cash_positions_page.click_on_new()
 
-            expected_result = ['Enabled = False', 'Selected = False']
-            actual_result = [f'Enabled = {cash_position_values_tab.is_margin_account_checkbox_enabled()}',
-                             f'Selected = {cash_position_values_tab.is_margin_account_checkbox_selected()}']
-            self.verify("Margin Account checkbox is disabled and FALSE", expected_result, actual_result)
-            self.verify("WARN message displayed", self.warn_message, cash_position_values_tab.get_warning_message())
+        expected_result = ['Enabled = False', 'Selected = False']
+        actual_result = [f'Enabled = {cash_position_values_tab.is_margin_account_checkbox_enabled()}',
+                         f'Selected = {cash_position_values_tab.is_margin_account_checkbox_selected()}']
+        self.verify("Margin Account checkbox is disabled and FALSE", expected_result, actual_result)
+        self.verify("WARN message displayed", self.warn_message, cash_position_values_tab.get_warning_message())
 
-            cash_position_values_tab.set_name(self.cash_position_name)
-            cash_position_values_tab.set_client_cash_account_id(self.client_cash_account_id)
-            cash_position_values_tab.set_venue_cash_account_id(self.venue_cash_account_id)
-            cash_position_values_tab.set_currency(self.currency)
-            self.verify("Security Accounts dropdown is empty", True,
-                        cash_position_values_tab.is_security_account_displayed_by_pattern())
+        cash_position_values_tab.set_name(self.cash_position_name)
+        cash_position_values_tab.set_client_cash_account_id(self.client_cash_account_id)
+        cash_position_values_tab.set_venue_cash_account_id(self.venue_cash_account_id)
+        cash_position_values_tab.set_currency(self.currency)
+        self.verify("Security Accounts dropdown is empty", True,
+                    cash_position_values_tab.is_security_account_displayed_by_pattern())
 
-            cash_position_values_tab.set_client(self.client_name)
-            time.sleep(1)
-            cash_position_values_tab.set_security_accounts(self.account_id)
-            time.sleep(1)
-            expected_result = ['Enabled = True', 'Selected = False']
-            actual_result = [f'Enabled = {cash_position_values_tab.is_margin_account_checkbox_enabled()}',
-                             f'Selected = {cash_position_values_tab.is_margin_account_checkbox_selected()}']
-            self.verify("Margin Account checkbox is enabled and FALSE", expected_result, actual_result)
-            self.verify("WARN message is NOT displayed", False, cash_position_values_tab.is_warning_message_displayed())
+        cash_position_values_tab.set_client(self.client_name)
+        time.sleep(1)
+        cash_position_values_tab.set_security_accounts(self.account_id)
+        time.sleep(1)
+        expected_result = ['Enabled = True', 'Selected = False']
+        actual_result = [f'Enabled = {cash_position_values_tab.is_margin_account_checkbox_enabled()}',
+                         f'Selected = {cash_position_values_tab.is_margin_account_checkbox_selected()}']
+        self.verify("Margin Account checkbox is enabled and FALSE", expected_result, actual_result)
+        self.verify("WARN message is NOT displayed", False, cash_position_values_tab.is_warning_message_displayed())
 
-            cash_position_values_tab.select_margin_account_checkbox()
-            time.sleep(1)
-            expected_result = ['Enabled = True', 'Selected = True']
-            actual_result = [f'Enabled = {cash_position_values_tab.is_margin_account_checkbox_enabled()}',
-                             f'Selected = {cash_position_values_tab.is_margin_account_checkbox_selected()}']
-            self.verify("Margin Account checkbox is enabled and True", expected_result, actual_result)
+        cash_position_values_tab.select_margin_account_checkbox()
+        time.sleep(1)
+        expected_result = ['Enabled = True', 'Selected = True']
+        actual_result = [f'Enabled = {cash_position_values_tab.is_margin_account_checkbox_enabled()}',
+                         f'Selected = {cash_position_values_tab.is_margin_account_checkbox_selected()}']
+        self.verify("Margin Account checkbox is enabled and True", expected_result, actual_result)
 
-            cash_position_values_tab.set_security_accounts(self.account_id)
-            time.sleep(1)
-            expected_result = ['Enabled = False', 'Selected = False']
-            actual_result = [f'Enabled = {cash_position_values_tab.is_margin_account_checkbox_enabled()}',
-                             f'Selected = {cash_position_values_tab.is_margin_account_checkbox_selected()}']
-            self.verify("Margin Account checkbox is disabled and FALSE", expected_result, actual_result)
-            self.verify("WARN message is displayed", True, cash_position_values_tab.is_warning_message_displayed())
+        cash_position_values_tab.set_security_accounts(self.account_id)
+        time.sleep(1)
+        expected_result = ['Enabled = False', 'Selected = False']
+        actual_result = [f'Enabled = {cash_position_values_tab.is_margin_account_checkbox_enabled()}',
+                         f'Selected = {cash_position_values_tab.is_margin_account_checkbox_selected()}']
+        self.verify("Margin Account checkbox is disabled and FALSE", expected_result, actual_result)
+        self.verify("WARN message is displayed", True, cash_position_values_tab.is_warning_message_displayed())
 
-            cash_position_values_tab.set_security_accounts(self.account_id)
-            time.sleep(1)
-            cash_position_values_tab.select_margin_account_checkbox()
-            cash_position_wizard.click_on_save_changes()
-            time.sleep(1)
-            cash_positions_page.set_name(self.cash_position_name)
-            time.sleep(1)
-            cash_positions_page.click_on_more_actions()
-            cash_positions_page.click_on_edit()
-            time.sleep(1)
-            expected_result = ['Enabled = True', 'Selected = True', self.account_id]
-            actual_result = [f'Enabled = {cash_position_values_tab.is_margin_account_checkbox_enabled()}',
-                             f'Selected = {cash_position_values_tab.is_margin_account_checkbox_selected()}',
-                             cash_position_values_tab.get_security_accounts()]
-            self.verify("Security accounts and Margin Accounts are saved correct",
-                        expected_result, actual_result)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        cash_position_values_tab.set_security_accounts(self.account_id)
+        time.sleep(1)
+        cash_position_values_tab.select_margin_account_checkbox()
+        cash_position_wizard.click_on_save_changes()
+        time.sleep(1)
+        cash_positions_page.set_name(self.cash_position_name)
+        time.sleep(1)
+        cash_positions_page.click_on_more_actions()
+        cash_positions_page.click_on_edit()
+        time.sleep(1)
+        expected_result = ['Enabled = True', 'Selected = True', self.account_id]
+        actual_result = [f'Enabled = {cash_position_values_tab.is_margin_account_checkbox_enabled()}',
+                         f'Selected = {cash_position_values_tab.is_margin_account_checkbox_selected()}',
+                         cash_position_values_tab.get_security_accounts()]
+        self.verify("Security accounts and Margin Accounts are saved correct",
+                    expected_result, actual_result)

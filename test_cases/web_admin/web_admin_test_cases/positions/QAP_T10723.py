@@ -1,10 +1,6 @@
-import sys
 import time
-import traceback
 import random
 import string
-
-from custom import basic_custom_actions
 
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_values_sub_wizard import \
     ClientsValuesSubWizard
@@ -116,49 +112,41 @@ class QAP_T10723(CommonTestCase):
         cash_position_wizard = CashPositionsWizard(self.web_driver_container)
         cash_position_values_tab = CashPositionsValuesTab(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            cash_positions_page.set_name(self.cash_position_name)
-            time.sleep(1)
-            cash_positions_page.click_on_more_actions()
-            cash_positions_page.click_on_edit()
-            time.sleep(1)
+        cash_positions_page.set_name(self.cash_position_name)
+        time.sleep(1)
+        cash_positions_page.click_on_more_actions()
+        cash_positions_page.click_on_edit()
+        time.sleep(1)
 
-            expected_result = ['Checkbox selected = True', 'Checkbox enabled = False',
-                               'WARN displayed = True', self.warn_message]
-            actual_result = [f'Checkbox selected = {cash_position_values_tab.is_margin_account_checkbox_selected()}',
-                             f'Checkbox enabled = {cash_position_values_tab.is_margin_account_checkbox_enabled()}',
-                             f'WARN displayed = {cash_position_values_tab.is_warning_message_displayed()}',
-                             cash_position_values_tab.get_warning_message()]
-            self.verify("Margin Accounts disabled and selected, WARN message displayed", expected_result, actual_result)
-            cash_position_wizard.click_on_close()
-            time.sleep(1)
-            if cash_position_wizard.is_confirmation_of_leave_wizard_displayed():
-                cash_position_wizard.click_on_ok_button()
+        expected_result = ['Checkbox selected = True', 'Checkbox enabled = False',
+                           'WARN displayed = True', self.warn_message]
+        actual_result = [f'Checkbox selected = {cash_position_values_tab.is_margin_account_checkbox_selected()}',
+                         f'Checkbox enabled = {cash_position_values_tab.is_margin_account_checkbox_enabled()}',
+                         f'WARN displayed = {cash_position_values_tab.is_warning_message_displayed()}',
+                         cash_position_values_tab.get_warning_message()]
+        self.verify("Margin Accounts disabled and selected, WARN message displayed", expected_result, actual_result)
+        cash_position_wizard.click_on_close()
+        time.sleep(1)
+        if cash_position_wizard.is_confirmation_of_leave_wizard_displayed():
+            cash_position_wizard.click_on_ok_button()
 
-            self.db_manager.my_db.execute(
-                f"UPDATE cashaccount SET bookedcashloan = '20' WHERE cashaccountname = '{self.cash_position_name}'")
+        self.db_manager.my_db.execute(
+            f"UPDATE cashaccount SET bookedcashloan = '20' WHERE cashaccountname = '{self.cash_position_name}'")
 
-            cash_positions_page.set_name(self.cash_position_name)
-            time.sleep(1)
-            cash_positions_page.click_on_more_actions()
-            cash_positions_page.click_on_edit()
-            time.sleep(1)
-            cash_position_values_tab.select_margin_account_checkbox()
-            time.sleep(1)
+        cash_positions_page.set_name(self.cash_position_name)
+        time.sleep(1)
+        cash_positions_page.click_on_more_actions()
+        cash_positions_page.click_on_edit()
+        time.sleep(1)
+        cash_position_values_tab.select_margin_account_checkbox()
+        time.sleep(1)
 
-            expected_result = ['Checkbox selected = True', 'Checkbox enabled = False',
-                               'WARN displayed = True', self.warn_message]
-            actual_result = [f'Checkbox selected = {cash_position_values_tab.is_margin_account_checkbox_selected()}',
-                             f'Checkbox enabled = {cash_position_values_tab.is_margin_account_checkbox_enabled()}',
-                             f'WARN displayed = {cash_position_values_tab.is_warning_message_displayed()}',
-                             cash_position_values_tab.get_warning_message()]
-            self.verify("Margin Accounts disabled and selected, WARN message displayed", expected_result, actual_result)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        expected_result = ['Checkbox selected = True', 'Checkbox enabled = False',
+                           'WARN displayed = True', self.warn_message]
+        actual_result = [f'Checkbox selected = {cash_position_values_tab.is_margin_account_checkbox_selected()}',
+                         f'Checkbox enabled = {cash_position_values_tab.is_margin_account_checkbox_enabled()}',
+                         f'WARN displayed = {cash_position_values_tab.is_warning_message_displayed()}',
+                         cash_position_values_tab.get_warning_message()]
+        self.verify("Margin Accounts disabled and selected, WARN message displayed", expected_result, actual_result)

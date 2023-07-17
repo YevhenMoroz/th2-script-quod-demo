@@ -3,8 +3,10 @@ import time
 import traceback
 import random
 import string
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_instrument_external_clients_sub_wizard\
     import ClientTiersInstrumentExternalClientsSubWizard
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_instrument_forward_venues_sub_wizard\
@@ -78,96 +80,90 @@ class QAP_T3989(CommonTestCase):
         client_tiers_frame.click_on_more_actions()
         client_tiers_frame.click_on_delete_and_confirmation(True)
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            client_tiers_frame = ClientTiersPage(self.web_driver_container)
-            client_tiers_frame.set_name(self.name)
-            time.sleep(1)
-            client_tiers_frame.select_client_tier_by_name(self.name)
+        client_tiers_frame = ClientTiersPage(self.web_driver_container)
+        client_tiers_frame.set_name(self.name)
+        time.sleep(1)
+        client_tiers_frame.select_client_tier_by_name(self.name)
 
-            instrument_frame = ClientTierInstrumentsPage(self.web_driver_container)
-            instrument_frame.click_on_new()
-            instrument_values_tab = ClientTierInstrumentValuesSubWizard(self.web_driver_container)
-            instrument_values_tab.set_symbol(self.symbol)
-            instrument_values_tab.set_tod_end_time(self.tod_end_time)
+        instrument_frame = ClientTierInstrumentsPage(self.web_driver_container)
+        instrument_frame.click_on_new()
+        instrument_values_tab = ClientTierInstrumentValuesSubWizard(self.web_driver_container)
+        instrument_values_tab.set_symbol(self.symbol)
+        instrument_values_tab.set_tod_end_time(self.tod_end_time)
 
-            instrument_spot_venues_tab = ClientTiersInstrumentSpotVenuesSubWizard(self.web_driver_container)
-            instrument_spot_venues_tab.click_on_plus()
-            instrument_spot_venues_tab.set_venue(self.venue_at_spot_venues_tab)
-            instrument_spot_venues_tab.click_on_checkmark()
+        instrument_spot_venues_tab = ClientTiersInstrumentSpotVenuesSubWizard(self.web_driver_container)
+        instrument_spot_venues_tab.click_on_plus()
+        instrument_spot_venues_tab.set_venue(self.venue_at_spot_venues_tab)
+        instrument_spot_venues_tab.click_on_checkmark()
 
-            instrument_forward_venues_tab = ClientTiersInstrumentForwardVenuesSubWizard(self.web_driver_container)
-            instrument_forward_venues_tab.click_on_plus()
-            instrument_forward_venues_tab.set_venue(self.venue_at_forward_venues_tab)
-            instrument_forward_venues_tab.click_on_checkmark()
+        instrument_forward_venues_tab = ClientTiersInstrumentForwardVenuesSubWizard(self.web_driver_container)
+        instrument_forward_venues_tab.click_on_plus()
+        instrument_forward_venues_tab.set_venue(self.venue_at_forward_venues_tab)
+        instrument_forward_venues_tab.click_on_checkmark()
 
-            instrument_external_clients_tab = ClientTiersInstrumentExternalClientsSubWizard(self.web_driver_container)
-            instrument_external_clients_tab.click_on_plus()
-            instrument_external_clients_tab.set_client(self.client_at_external_clients_tab)
-            instrument_external_clients_tab.click_on_checkmark()
+        instrument_external_clients_tab = ClientTiersInstrumentExternalClientsSubWizard(self.web_driver_container)
+        instrument_external_clients_tab.click_on_plus()
+        instrument_external_clients_tab.set_client(self.client_at_external_clients_tab)
+        instrument_external_clients_tab.click_on_checkmark()
 
-            instrument_internal_clients_tab = ClientTiersInstrumentInternalClientsSubWizard(self.web_driver_container)
-            instrument_internal_clients_tab.click_on_plus()
-            instrument_internal_clients_tab.set_client(self.client_at_internal_clients_tab)
-            instrument_internal_clients_tab.click_on_checkmark()
+        instrument_internal_clients_tab = ClientTiersInstrumentInternalClientsSubWizard(self.web_driver_container)
+        instrument_internal_clients_tab.click_on_plus()
+        instrument_internal_clients_tab.set_client(self.client_at_internal_clients_tab)
+        instrument_internal_clients_tab.click_on_checkmark()
 
-            instrument_sweepable_quantities_tab = ClientTiersInstrumentSweepableQuantitiesSubWizard(self.web_driver_container)
-            instrument_sweepable_quantities_tab.click_on_plus()
-            instrument_sweepable_quantities_tab.set_quantity(self.sweepable_quantity)
-            instrument_sweepable_quantities_tab.click_on_checkmark()
+        instrument_sweepable_quantities_tab = ClientTiersInstrumentSweepableQuantitiesSubWizard(self.web_driver_container)
+        instrument_sweepable_quantities_tab.click_on_plus()
+        instrument_sweepable_quantities_tab.set_quantity(self.sweepable_quantity)
+        instrument_sweepable_quantities_tab.click_on_checkmark()
 
-            instrument_tiered_quantity = ClientTiersInstrumentTieredQuantitiesSubWizard(self.web_driver_container)
-            instrument_tiered_quantity.click_on_plus()
-            instrument_tiered_quantity.set_quantity(self.tired_quantity)
-            instrument_tiered_quantity.click_on_checkmark()
+        instrument_tiered_quantity = ClientTiersInstrumentTieredQuantitiesSubWizard(self.web_driver_container)
+        instrument_tiered_quantity.click_on_plus()
+        instrument_tiered_quantity.set_quantity(self.tired_quantity)
+        instrument_tiered_quantity.click_on_checkmark()
 
-            instrument_tenors_sub_wizard = ClientTiersInstrumentTenorsSubWizard(self.web_driver_container)
-            instrument_tenors_sub_wizard.click_on_plus()
-            instrument_tenors_sub_wizard.set_tenor(self.tenor)
-            instrument_tenors_sub_wizard.click_on_checkmark()
+        instrument_tenors_sub_wizard = ClientTiersInstrumentTenorsSubWizard(self.web_driver_container)
+        instrument_tenors_sub_wizard.click_on_plus()
+        instrument_tenors_sub_wizard.set_tenor(self.tenor)
+        instrument_tenors_sub_wizard.click_on_checkmark()
 
-            instrument_wizard = ClientTiersWizard(self.web_driver_container)
-            instrument_wizard.click_on_save_changes()
+        instrument_wizard = ClientTiersWizard(self.web_driver_container)
+        instrument_wizard.click_on_save_changes()
 
-            client_tiers_frame.set_name(self.name)
-            time.sleep(1)
-            client_tiers_frame.select_client_tier_by_name(self.name)
-            instrument_frame.set_symbol(self.symbol)
-            time.sleep(1)
-            instrument_frame.click_on_more_actions()
-            instrument_frame.click_on_edit()
+        client_tiers_frame.set_name(self.name)
+        time.sleep(1)
+        client_tiers_frame.select_client_tier_by_name(self.name)
+        instrument_frame.set_symbol(self.symbol)
+        time.sleep(1)
+        instrument_frame.click_on_more_actions()
+        instrument_frame.click_on_edit()
 
-            actual_result = []
-            instrument_spot_venues_tab.click_on_edit()
-            actual_result.append(instrument_spot_venues_tab.get_venue())
-            instrument_forward_venues_tab.click_on_edit()
-            actual_result.append(instrument_forward_venues_tab.get_venue())
-            instrument_external_clients_tab.click_on_edit()
-            actual_result.append(instrument_external_clients_tab.get_client())
-            instrument_internal_clients_tab.click_on_edit()
-            actual_result.append(instrument_internal_clients_tab.get_client())
-            instrument_sweepable_quantities_tab.click_on_edit()
-            actual_result.append(instrument_sweepable_quantities_tab.get_quantity())
-            instrument_tiered_quantity.click_on_edit()
-            actual_result.append(instrument_tiered_quantity.get_quantity())
-            instrument_tenors_sub_wizard.click_on_edit()
-            actual_result.append(instrument_tenors_sub_wizard.get_tenor())
+        actual_result = []
+        instrument_spot_venues_tab.click_on_edit()
+        actual_result.append(instrument_spot_venues_tab.get_venue())
+        instrument_forward_venues_tab.click_on_edit()
+        actual_result.append(instrument_forward_venues_tab.get_venue())
+        instrument_external_clients_tab.click_on_edit()
+        actual_result.append(instrument_external_clients_tab.get_client())
+        instrument_internal_clients_tab.click_on_edit()
+        actual_result.append(instrument_internal_clients_tab.get_client())
+        instrument_sweepable_quantities_tab.click_on_edit()
+        actual_result.append(instrument_sweepable_quantities_tab.get_quantity())
+        instrument_tiered_quantity.click_on_edit()
+        actual_result.append(instrument_tiered_quantity.get_quantity())
+        instrument_tenors_sub_wizard.click_on_edit()
+        actual_result.append(instrument_tenors_sub_wizard.get_tenor())
 
-            expected_result = [self.venue_at_spot_venues_tab, self.venue_at_forward_venues_tab,
-                               self.client_at_external_clients_tab, self.client_at_internal_clients_tab,
-                               self.sweepable_quantity, self.tired_quantity, self.tenor]
+        expected_result = [self.venue_at_spot_venues_tab, self.venue_at_forward_venues_tab,
+                           self.client_at_external_clients_tab, self.client_at_internal_clients_tab,
+                           self.sweepable_quantity, self.tired_quantity, self.tenor]
 
-            self.verify("New Client Tiers Instrument contains all saved data", expected_result, actual_result)
+        self.verify("New Client Tiers Instrument contains all saved data", expected_result, actual_result)
 
-            instrument_wizard.click_on_save_changes()
+        instrument_wizard.click_on_save_changes()
 
-            self.post_conditions()
+        self.post_conditions()
 
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)

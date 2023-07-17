@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.venues.venues_page import VenuesPage
 from test_framework.web_admin_core.pages.markets.venues.venues_values_sub_wizard import \
@@ -61,28 +58,21 @@ class QAP_T8830(CommonTestCase):
         wizard.click_on_save_changes()
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            page = VenuesPage(self.web_driver_container)
-            page.set_name_filter(self.name)
-            time.sleep(1)
-            page.click_on_more_actions()
-            page.click_on_edit()
-            values_tab = VenuesValuesSubWizard(self.web_driver_container)
-            values_tab.set_short_name(self.short_name)
-            wizard = VenuesWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
+        page = VenuesPage(self.web_driver_container)
+        page.set_name_filter(self.name)
+        time.sleep(1)
+        page.click_on_more_actions()
+        page.click_on_edit()
+        values_tab = VenuesValuesSubWizard(self.web_driver_container)
+        values_tab.set_short_name(self.short_name)
+        wizard = VenuesWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
+        time.sleep(2)
 
-            page.set_name_filter(self.name)
-            time.sleep(1)
-            page.click_on_more_actions()
-            page.click_on_edit()
-            self.verify("Modification is accepted, Venue changed saved", self.short_name, values_tab.get_short_name())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        page.set_name_filter(self.name)
+        time.sleep(1)
+        page.click_on_more_actions()
+        page.click_on_edit()
+        self.verify("Modification is accepted, Venue changed saved", self.short_name, values_tab.get_short_name())

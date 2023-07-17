@@ -1,7 +1,3 @@
-import sys
-import traceback
-
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.venues.nested_wizards.venues_trading_phase_profile_sub_wizard \
     import VenuesTradingPhaseProfileSubWizard
@@ -33,32 +29,24 @@ class QAP_T3237(CommonTestCase):
         side_menu.open_venues_page()
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            page = VenuesPage(self.web_driver_container)
-            page.click_on_new()
+        page = VenuesPage(self.web_driver_container)
+        page.click_on_new()
 
-            profiles = VenuesProfilesSubWizard(self.web_driver_container)
-            profiles.click_on_trading_phase_profile_manage_button()
+        profiles = VenuesProfilesSubWizard(self.web_driver_container)
+        profiles.click_on_trading_phase_profile_manage_button()
 
-            trading_phase_profile_sub_wizard = VenuesTradingPhaseProfileSubWizard(self.web_driver_container)
-            trading_phase_profile_sub_wizard.click_on_plus_button()
-            trading_phase_profile_sub_wizard.click_on_plus_button_at_trading_phase_profile_sequences()
-            trading_phase_profile_sub_wizard.set_trading_phase(self.trading_phase)
-            trading_phase_profile_sub_wizard.set_end_time(self.end_time)
-            trading_phase_profile_sub_wizard.set_begin_time(self.begin_time)
-            trading_phase_profile_sub_wizard.click_on_checkmark_at_trading_phase_profile_sequences()
+        trading_phase_profile_sub_wizard = VenuesTradingPhaseProfileSubWizard(self.web_driver_container)
+        trading_phase_profile_sub_wizard.click_on_plus_button()
+        trading_phase_profile_sub_wizard.click_on_plus_button_at_trading_phase_profile_sequences()
+        trading_phase_profile_sub_wizard.set_trading_phase(self.trading_phase)
+        trading_phase_profile_sub_wizard.set_end_time(self.end_time)
+        trading_phase_profile_sub_wizard.set_begin_time(self.begin_time)
+        trading_phase_profile_sub_wizard.click_on_checkmark_at_trading_phase_profile_sequences()
 
-            wizard = VenuesWizard(self.web_driver_container)
-            expected_result = 'The start time cannot be earlier than end time'
-            actual_result = wizard.get_footer_error_text()
+        wizard = VenuesWizard(self.web_driver_container)
+        expected_result = 'The start time cannot be earlier than end time'
+        actual_result = wizard.get_footer_error_text()
 
-            self.verify("Footer error appears", expected_result, actual_result)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("Footer error appears", expected_result, actual_result)

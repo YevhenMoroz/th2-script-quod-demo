@@ -16,7 +16,7 @@ class FixMessageRequestForPositionsAckFX(FixMessageRequestForPositionsAck):
             "PosReqType": "0",
             "SubscriptionRequestType": "1",
             "TotalNumPosReports": "*",
-            "PosReqResult": "2",
+            "PosReqResult": "0",
             "PosReqStatus": "0",
             "Account": request.get_parameter("Account"),
             "Currency": request.get_parameter("Currency"),
@@ -37,8 +37,4 @@ class FixMessageRequestForPositionsAckFX(FixMessageRequestForPositionsAck):
             "Account": request.get_parameter("Account"),
         }
         super().change_parameters(base_parameters)
-        return self
-
-    def set_unsubscribe(self):
-        self.change_parameter("SubscriptionRequestType", "2")
         return self

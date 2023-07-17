@@ -232,7 +232,7 @@ class QAP_T8836(TestCase):
 
         # region Check there are only two DMA childs with Price=PriceAsk
         self.fix_verifier_buy.set_case_id(bca.create_event("Check there are only two DMA childs with Price=PriceAsk", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([self.dma_qdl1_order, self.dma_qdl2_order], key_parameters_list=[None, None], direction=self.FromQuod, pre_filter=self.pre_filter)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([self.dma_qdl1_order, self.dma_qdl2_order], key_parameters_list=[None, None], direction=self.FromQuod, pre_filter=self.pre_filter)
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])

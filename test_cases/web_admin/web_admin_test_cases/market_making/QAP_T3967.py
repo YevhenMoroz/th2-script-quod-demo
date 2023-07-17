@@ -1,8 +1,10 @@
 import sys
 import time
 import traceback
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
 from test_framework.web_admin_core.pages.market_making.quoting_sessions.quoting_sessions_page import \
     QuotingSessionsPage
@@ -49,36 +51,28 @@ class QAP_T3967(CommonTestCase):
         page.click_on_more_actions()
         time.sleep(2)
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
+        self.precondition()
+        page = QuotingSessionsPage(self.web_driver_container)
         try:
-            self.precondition()
-            page = QuotingSessionsPage(self.web_driver_container)
-            try:
-                page.click_on_delete(True)
-                time.sleep(15)
-                # region relogin web admin
-                common_page = CommonPage(self.web_driver_container)
-                common_page.click_on_user_icon()
-                time.sleep(2)
-                common_page.click_on_logout()
-                time.sleep(2)
-                login_page = LoginPage(self.web_driver_container)
-                login_page.login_to_web_admin(self.login, self.password)
-                side_menu = SideMenu(self.web_driver_container)
-                time.sleep(2)
-                side_menu.open_quoting_sessions_page()
-                # endregion
-                page.set_name_filter(self.name)
-                time.sleep(2)
-                page.click_on_edit()
-                self.verify("Entity not deleted !! ERROR", True, False)
-            except Exception:
-                self.verify("Entity deleted ", True, True)
-
-
+            page.click_on_delete(True)
+            time.sleep(15)
+            # region relogin web admin
+            common_page = CommonPage(self.web_driver_container)
+            common_page.click_on_user_icon()
+            time.sleep(2)
+            common_page.click_on_logout()
+            time.sleep(2)
+            login_page = LoginPage(self.web_driver_container)
+            login_page.login_to_web_admin(self.login, self.password)
+            side_menu = SideMenu(self.web_driver_container)
+            time.sleep(2)
+            side_menu.open_quoting_sessions_page()
+            # endregion
+            page.set_name_filter(self.name)
+            time.sleep(2)
+            page.click_on_edit()
+            self.verify("Entity not deleted !! ERROR", True, False)
         except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+            self.verify("Entity deleted ", True, True)

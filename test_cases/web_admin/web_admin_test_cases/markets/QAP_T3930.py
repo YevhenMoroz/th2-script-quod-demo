@@ -1,9 +1,6 @@
 import random
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.instrument_symbols.main_page import \
     InstrumentSymbolsMainPage
@@ -60,30 +57,22 @@ class QAP_T3930(CommonTestCase):
         page.click_on_delete(True)
 
     def test_context(self):
-        try:
-            self.precondition()
-            page = InstrumentSymbolsMainPage(self.web_driver_container)
-            wizard = InstrumentSymbolsWizard(self.web_driver_container)
-            page.set_instr_symbol(self.instr_symbol)
-            time.sleep(3)
-            page.click_on_more_actions()
-            time.sleep(2)
-            page.click_on_edit()
-            time.sleep(2)
-            wizard.set_md_max_spread(self.md_max_spread)
-            wizard.click_on_save_changes()
-            time.sleep(2)
-            page.set_instr_symbol(self.instr_symbol)
-            time.sleep(3)
-            expected_values = [self.instr_symbol, self.md_max_spread]
-            actual_values = [page.get_instr_symbol(), page.get_md_max_spread()]
-            self.verify("Is entity edited and saved correctly", expected_values, actual_values)
+        self.precondition()
+        page = InstrumentSymbolsMainPage(self.web_driver_container)
+        wizard = InstrumentSymbolsWizard(self.web_driver_container)
+        page.set_instr_symbol(self.instr_symbol)
+        time.sleep(3)
+        page.click_on_more_actions()
+        time.sleep(2)
+        page.click_on_edit()
+        time.sleep(2)
+        wizard.set_md_max_spread(self.md_max_spread)
+        wizard.click_on_save_changes()
+        time.sleep(2)
+        page.set_instr_symbol(self.instr_symbol)
+        time.sleep(3)
+        expected_values = [self.instr_symbol, self.md_max_spread]
+        actual_values = [page.get_instr_symbol(), page.get_md_max_spread()]
+        self.verify("Is entity edited and saved correctly", expected_values, actual_values)
 
-            self.post_condition()
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.post_condition()

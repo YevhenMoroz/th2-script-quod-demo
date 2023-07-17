@@ -9,6 +9,27 @@ class FixMessageNewOrderSingleTakerDC(FixMessageNewOrderSingle):
         super().__init__(data_set=data_set)
         super().change_parameters(parameters)
 
+    def set_default_params(self):
+        base_parameters = {
+            "ClOrdID": "*",
+            "Account": "*",
+            "NoParty": "*",
+            "HandlInst": "2",
+            "Side": "*",
+            "OrderQty": "*",
+            "TimeInForce": "0",
+            "OrdType": "1",
+            "Currency": "*",
+            "SettlCurrency": "*",
+            "Instrument": "*",
+            "StrategyName": "*",
+            "SettlDate": self.get_data_set().get_settle_date_by_name("spot"),
+            "SettlType": self.get_data_set().get_settle_type_by_name("spot"),
+
+        }
+        super().change_parameters(base_parameters)
+        return self
+
     def set_default_sor_from_trade(self, trade_request) -> FixMessageNewOrderSingle:
         request = trade_request.get_parameters()["TradeEntryRequestBlock"]
 
@@ -57,7 +78,6 @@ class FixMessageNewOrderSingleTakerDC(FixMessageNewOrderSingle):
         return self
 
     def set_default_from_request(self, quote_request, side: str = None):
-
         base_parameters = {
             "ClOrdID": "*",
             "Account": "*",

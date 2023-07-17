@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.users.users.users_assignments_sub_wizard import UsersAssignmentsSubWizard
@@ -43,33 +40,27 @@ class QAP_T3777(CommonTestCase):
         users_page.click_on_clone_at_more_actions()
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            user_login_sub_wizard = UsersValuesSubWizard(self.web_driver_container)
-            user_login_sub_wizard.set_user_id(self.user_id)
-            user_login_sub_wizard.set_ext_id_client(self.ext_id_client)
-            user_login_sub_wizard.set_ext_id_venue("")
-            user_login_sub_wizard.set_ping_required_checkbox()
-            user_details_sub_wizard = UsersUserDetailsSubWizard(self.web_driver_container)
-            user_details_sub_wizard.set_mail(self.email)
-            assignments_sub_wizard = UsersAssignmentsSubWizard(self.web_driver_container)
-            assignments_sub_wizard.clear_assignments_tab()
-            time.sleep(1)
-            assignments_sub_wizard.click_on_desks()
-            assignments_sub_wizard.set_desks(self.desks)
-            permissions_sub_wizard = UsersPermissionsSubWizard(self.web_driver_container)
-            permissions_sub_wizard.set_perm_role(self.perm_role)
-            users_wizard = UsersWizard(self.web_driver_container)
-            users_wizard.click_on_save_changes()
-            time.sleep(2)
-            users_page = UsersPage(self.web_driver_container)
-            users_page.set_user_id(self.user_id)
-            time.sleep(1)
-            self.verify("User correctly cloned", self.user_id, users_page.get_user_id())
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        user_login_sub_wizard = UsersValuesSubWizard(self.web_driver_container)
+        user_login_sub_wizard.set_user_id(self.user_id)
+        user_login_sub_wizard.set_ext_id_client(self.ext_id_client)
+        user_login_sub_wizard.set_ext_id_venue("")
+        user_login_sub_wizard.set_ping_required_checkbox()
+        user_details_sub_wizard = UsersUserDetailsSubWizard(self.web_driver_container)
+        user_details_sub_wizard.set_mail(self.email)
+        assignments_sub_wizard = UsersAssignmentsSubWizard(self.web_driver_container)
+        assignments_sub_wizard.clear_assignments_tab()
+        time.sleep(1)
+        assignments_sub_wizard.click_on_desks()
+        assignments_sub_wizard.set_desks(self.desks)
+        permissions_sub_wizard = UsersPermissionsSubWizard(self.web_driver_container)
+        permissions_sub_wizard.set_perm_role(self.perm_role)
+        users_wizard = UsersWizard(self.web_driver_container)
+        users_wizard.click_on_save_changes()
+        time.sleep(2)
+        users_page = UsersPage(self.web_driver_container)
+        users_page.set_user_id(self.user_id)
+        time.sleep(1)
+        self.verify("User correctly cloned", self.user_id, users_page.get_user_id())
+

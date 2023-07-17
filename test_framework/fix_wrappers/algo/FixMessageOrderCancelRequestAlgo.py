@@ -17,6 +17,7 @@ class FixMessageOrderCancelRequestAlgo(FixMessageOrderCancelRequest):
             "Instrument": "*",
             "OrigClOrdID": "*",
             "ExDestination": nos_rfq.get_parameter("ExDestination"),
+            'OrderQty': nos_rfq.get_parameter("OrderQty")
         }
         super().change_parameters(temp)
         return self

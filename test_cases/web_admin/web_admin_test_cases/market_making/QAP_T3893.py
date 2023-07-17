@@ -3,8 +3,10 @@ import string
 import sys
 import time
 import traceback
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_instrument_sweepable_quantities_sub_wizard \
     import ClientTiersInstrumentSweepableQuantitiesSubWizard
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_instrument_tenors_sub_wizard \
@@ -97,61 +99,54 @@ class QAP_T3893(CommonTestCase):
         time.sleep(1)
         client_tier_instrument_main_page.click_on_edit()
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            client_tier_instrument_tenors_sub_wizard = ClientTiersInstrumentTenorsSubWizard(self.web_driver_container)
-            client_tier_instrument_tenors_sub_wizard.click_on_plus()
-            time.sleep(1)
+        client_tier_instrument_tenors_sub_wizard = ClientTiersInstrumentTenorsSubWizard(self.web_driver_container)
+        client_tier_instrument_tenors_sub_wizard.click_on_plus()
+        time.sleep(1)
 
-            self.verify("Client PriceSlippageRange is not active", False,
-                        client_tier_instrument_tenors_sub_wizard.is_client_price_slippage_range_field_enabled())
+        self.verify("Client PriceSlippageRange is not active", False,
+                    client_tier_instrument_tenors_sub_wizard.is_client_price_slippage_range_field_enabled())
 
-            client_tier_instrument_tenors_sub_wizard.click_on_client_price_slippage_range_checkbox()
+        client_tier_instrument_tenors_sub_wizard.click_on_client_price_slippage_range_checkbox()
 
-            self.verify("Client PriceSlippageRange become active", True,
-                        client_tier_instrument_tenors_sub_wizard.is_client_price_slippage_range_field_enabled())
+        self.verify("Client PriceSlippageRange become active", True,
+                    client_tier_instrument_tenors_sub_wizard.is_client_price_slippage_range_field_enabled())
 
-            client_tier_instrument_tenors_sub_wizard.click_on_plus_button_at_base_margin_tab()
-            time.sleep(1)
+        client_tier_instrument_tenors_sub_wizard.click_on_plus_button_at_base_margin_tab()
+        time.sleep(1)
 
-            client_tier_instrument_tenors_sub_wizard.click_on_plus_button_at_base_margin_tab()
-            client_tier_instrument_tenors_sub_wizard.set_tenor(self.tenor_2)
-            client_tier_instrument_tenors_sub_wizard.click_on_plus_button_at_base_margin_tab()
-            client_tier_instrument_tenors_sub_wizard.set_quantity_at_base_margin_tab(self.quantity)
-            client_tier_instrument_tenors_sub_wizard.set_bid_margin_at_base_margins_tab(self.bid_margin)
-            client_tier_instrument_tenors_sub_wizard.set_offer_margin_at_base_margins_tab(self.offer_margin)
-            client_tier_instrument_tenors_sub_wizard.click_on_checkmark_at_base_margins_tab()
+        client_tier_instrument_tenors_sub_wizard.click_on_plus_button_at_base_margin_tab()
+        client_tier_instrument_tenors_sub_wizard.set_tenor(self.tenor_2)
+        client_tier_instrument_tenors_sub_wizard.click_on_plus_button_at_base_margin_tab()
+        client_tier_instrument_tenors_sub_wizard.set_quantity_at_base_margin_tab(self.quantity)
+        client_tier_instrument_tenors_sub_wizard.set_bid_margin_at_base_margins_tab(self.bid_margin)
+        client_tier_instrument_tenors_sub_wizard.set_offer_margin_at_base_margins_tab(self.offer_margin)
+        client_tier_instrument_tenors_sub_wizard.click_on_checkmark_at_base_margins_tab()
 
-            time.sleep(1)
-            client_tier_instrument_tenors_sub_wizard.click_on_plus_button_at_position_levels_tab()
-            client_tier_instrument_tenors_sub_wizard.set_position_at_position_levels_tab(self.position)
-            client_tier_instrument_tenors_sub_wizard.set_bid_margin_at_position_levels_tab(self.position)
-            client_tier_instrument_tenors_sub_wizard.set_offer_margin_at_position_levels_tab(self.offer_margin)
-            client_tier_instrument_tenors_sub_wizard.click_on_checkmark_at_position_levels_tab()
+        time.sleep(1)
+        client_tier_instrument_tenors_sub_wizard.click_on_plus_button_at_position_levels_tab()
+        client_tier_instrument_tenors_sub_wizard.set_position_at_position_levels_tab(self.position)
+        client_tier_instrument_tenors_sub_wizard.set_bid_margin_at_position_levels_tab(self.position)
+        client_tier_instrument_tenors_sub_wizard.set_offer_margin_at_position_levels_tab(self.offer_margin)
+        client_tier_instrument_tenors_sub_wizard.click_on_checkmark_at_position_levels_tab()
 
-            time.sleep(1)
-            client_tier_instrument_tenors_sub_wizard.click_on_checkmark()
+        time.sleep(1)
+        client_tier_instrument_tenors_sub_wizard.click_on_checkmark()
 
-            time.sleep(1)
-            client_tier_instrument_sweepable_quantities = ClientTiersInstrumentSweepableQuantitiesSubWizard(
-                self.web_driver_container)
-            client_tier_instrument_sweepable_quantities.click_on_delete_by_value(self.sweepable_quantities)
+        time.sleep(1)
+        client_tier_instrument_sweepable_quantities = ClientTiersInstrumentSweepableQuantitiesSubWizard(
+            self.web_driver_container)
+        client_tier_instrument_sweepable_quantities.click_on_delete_by_value(self.sweepable_quantities)
 
-            client_tier_instrument_tenors_sub_wizard.click_on_edit()
-            time.sleep(2)
-            all_quantity_at_base_margin = client_tier_instrument_tenors_sub_wizard.\
-                get_all_list_quantity_at_base_margin_tab()
+        client_tier_instrument_tenors_sub_wizard.click_on_edit()
+        time.sleep(2)
+        all_quantity_at_base_margin = client_tier_instrument_tenors_sub_wizard.\
+            get_all_list_quantity_at_base_margin_tab()
 
-            actual_result = False if str(self.sweepable_quantities) in all_quantity_at_base_margin else True
+        actual_result = False if str(self.sweepable_quantities) in all_quantity_at_base_margin else True
 
-            self.verify("Deleted Quantity is not displayed ", True, actual_result)
+        self.verify("Deleted Quantity is not displayed ", True, actual_result)
 
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)

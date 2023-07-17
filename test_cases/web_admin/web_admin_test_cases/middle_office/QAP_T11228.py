@@ -1,10 +1,6 @@
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
-
 from test_framework.web_admin_core.pages.middle_office.allocation_matching_profiles.main_page import MainPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -29,20 +25,12 @@ class QAP_T11228(CommonTestCase):
         side_menu = SideMenu(self.web_driver_container)
         main_page = MainPage(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            side_menu.open_allocation_matching_profiles_page()
-            time.sleep(1)
-            expected_result = [False for _ in range(len(self.main_page_filters))]
-            actual_result = [main_page.is_instrument_column_displayed(), main_page.is_client_column_displayed(),
-                             main_page.is_quantity_column_displayed(), main_page.is_avg_price_column_displayed(),
-                             main_page.is_currency_column_displayed(), main_page.is_side_column_displayed()]
-            self.verify("Required fields are not displayed", expected_result, actual_result)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        side_menu.open_allocation_matching_profiles_page()
+        time.sleep(1)
+        expected_result = [False for _ in range(len(self.main_page_filters))]
+        actual_result = [main_page.is_instrument_column_displayed(), main_page.is_client_column_displayed(),
+                         main_page.is_quantity_column_displayed(), main_page.is_avg_price_column_displayed(),
+                         main_page.is_currency_column_displayed(), main_page.is_side_column_displayed()]
+        self.verify("Required fields are not displayed", expected_result, actual_result)

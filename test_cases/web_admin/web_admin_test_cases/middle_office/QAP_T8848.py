@@ -1,12 +1,8 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
-from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
 from test_framework.web_admin_core.pages.middle_office.fees.fees_page import FeesPage
 from test_framework.web_admin_core.pages.middle_office.fees.fees_wizard import FeesWizard
 from test_framework.web_admin_core.pages.middle_office.fees.fees_values_sub_wizard import FeesValuesSubWizard
@@ -45,40 +41,31 @@ class QAP_T8848(CommonTestCase):
         values_tab.click_on_manage_exec_fee_profile()
 
     def test_context(self):
-        common_act = CommonPage(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            exec_fee_profile = FeesExecFeeProfileSubWizard(self.web_driver_container)
-            exec_fee_profile.click_on_plus()
-            exec_fee_profile.set_commission_profile_name(self.commission_profile_name)
-            exec_fee_profile.set_comm_xunit(self.comm_xunit)
-            comm_type = random.choice(self.wrong_comm_type)
-            exec_fee_profile.set_comm_type(comm_type)
-            exec_fee_profile.set_comm_algorithm(self.comm_algorithm)
-            commission_profile_points = FeesCommissionProfilePointsSubWizard(self.web_driver_container)
-            commission_profile_points.click_on_plus()
-            commission_profile_points.set_base_value(self.base_values)
-            commission_profile_points.click_on_checkmark()
-            exec_fee_profile.click_on_checkmark()
-            wizard = FeesWizard(self.web_driver_container)
-            self.verify(f"Commission Profiles not save with Comm Type = {comm_type}", True,
-                        wizard.is_footer_error_warning_displayed())
+        exec_fee_profile = FeesExecFeeProfileSubWizard(self.web_driver_container)
+        exec_fee_profile.click_on_plus()
+        exec_fee_profile.set_commission_profile_name(self.commission_profile_name)
+        exec_fee_profile.set_comm_xunit(self.comm_xunit)
+        comm_type = random.choice(self.wrong_comm_type)
+        exec_fee_profile.set_comm_type(comm_type)
+        exec_fee_profile.set_comm_algorithm(self.comm_algorithm)
+        commission_profile_points = FeesCommissionProfilePointsSubWizard(self.web_driver_container)
+        commission_profile_points.click_on_plus()
+        commission_profile_points.set_base_value(self.base_values)
+        commission_profile_points.click_on_checkmark()
+        exec_fee_profile.click_on_checkmark()
+        wizard = FeesWizard(self.web_driver_container)
+        self.verify(f"Commission Profiles not save with Comm Type = {comm_type}", True,
+                    wizard.is_footer_error_warning_displayed())
 
-            exec_fee_profile.set_comm_type(self.comm_type)
-            time.sleep(0.5)
+        exec_fee_profile.set_comm_type(self.comm_type)
+        time.sleep(0.5)
 
-            self.verify("Comm XUnit become disabled", False, exec_fee_profile.is_comm_xunit_enabled())
-            exec_fee_profile.click_on_checkmark()
-            exec_fee_profile.set_commission_profile_name_filter(self.commission_profile_name)
-            time.sleep(1)
-            self.verify("Commission Profile save", True,
-                        exec_fee_profile.is_searched_commission_profile_found(self.commission_profile_name))
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("Comm XUnit become disabled", False, exec_fee_profile.is_comm_xunit_enabled())
+        exec_fee_profile.click_on_checkmark()
+        exec_fee_profile.set_commission_profile_name_filter(self.commission_profile_name)
+        time.sleep(1)
+        self.verify("Commission Profile save", True,
+                    exec_fee_profile.is_searched_commission_profile_found(self.commission_profile_name))

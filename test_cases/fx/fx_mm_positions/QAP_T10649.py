@@ -58,7 +58,10 @@ class QAP_T10649(TestCase):
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
-        # region Send Trade to have position
+        # region Clear positions and Send Trade to have position
+        self.cancel_request.set_params(self.account)
+        self.java_api_manager.send_message(self.cancel_request)
+        self.sleep(5)
         self.trade_request_1.set_default_params()
         self.trade_request_1.update_fields_in_component("TradeEntryRequestBlock", {"ClientAccountGroupID": self.client})
         self.trade_request_1.change_instrument(self.gbp_cad, self.instr_type_spo)

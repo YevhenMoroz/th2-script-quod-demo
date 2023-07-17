@@ -1,8 +1,5 @@
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.users.users.users_client_sub_wizard import \
@@ -41,49 +38,41 @@ class QAP_T4009(CommonTestCase):
 
     def test_context(self):
         client_sub_wizard = UsersClientSubWizard(self.web_driver_container)
+        self.precondition()
+        client_sub_wizard.click_on_plus_button()
+        time.sleep(1)
+        client_sub_wizard.click_on_checkmark_button()
+        time.sleep(1)
         try:
-            self.precondition()
-            client_sub_wizard.click_on_plus_button()
-            time.sleep(1)
-            client_sub_wizard.click_on_checkmark_button()
-            time.sleep(1)
-            try:
-                self.verify("Client was not add with empty data. Error message displayed",
-                            self.empty_data_error_message, client_sub_wizard.get_error_message())
-            except Exception as e:
-                self.verify("Error message for empty data is not displayed", True, e.__class__.__name__)
-            time.sleep(1)
-            client_sub_wizard.set_non_existing_client(self.non_existing_client)
-            time.sleep(1)
-            client_sub_wizard.set_type(self.type)
-            time.sleep(1)
-            client_sub_wizard.click_on_checkmark_button()
-            time.sleep(1)
-            try:
-                self.verify("Non existing client is not add",
-                            self.empty_data_error_message, client_sub_wizard.get_error_message())
-            except Exception as e:
-                self.verify("Non existing client add", True, e.__class__.__name__)
-            client_sub_wizard.set_client(self.client)
-            time.sleep(1)
-            client_sub_wizard.click_on_checkmark_button()
-            time.sleep(1)
-            users_login_sub_wizard = UsersValuesSubWizard(self.web_driver_container)
-            users_login_sub_wizard.set_ext_id_client("")
-            time.sleep(2)
-            client_sub_wizard.click_on_plus_button()
-            time.sleep(2)
-            client_sub_wizard.add_new_client(self.client, self.type)
-            time.sleep(2)
-            try:
-                self.verify("Is 'Such record already exist' exception displayed",
-                            self.duplicate_error_message, client_sub_wizard.get_error_message())
-            except Exception as e:
-                self.verify("Error message for duplicate user is not displayed", True, e.__class__.__name__)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+            self.verify("Client was not add with empty data. Error message displayed",
+                        self.empty_data_error_message, client_sub_wizard.get_error_message())
+        except Exception as e:
+            self.verify("Error message for empty data is not displayed", True, e.__class__.__name__)
+        time.sleep(1)
+        client_sub_wizard.set_non_existing_client(self.non_existing_client)
+        time.sleep(1)
+        client_sub_wizard.set_type(self.type)
+        time.sleep(1)
+        client_sub_wizard.click_on_checkmark_button()
+        time.sleep(1)
+        try:
+            self.verify("Non existing client is not add",
+                        self.empty_data_error_message, client_sub_wizard.get_error_message())
+        except Exception as e:
+            self.verify("Non existing client add", True, e.__class__.__name__)
+        client_sub_wizard.set_client(self.client)
+        time.sleep(1)
+        client_sub_wizard.click_on_checkmark_button()
+        time.sleep(1)
+        users_login_sub_wizard = UsersValuesSubWizard(self.web_driver_container)
+        users_login_sub_wizard.set_ext_id_client("")
+        time.sleep(2)
+        client_sub_wizard.click_on_plus_button()
+        time.sleep(2)
+        client_sub_wizard.add_new_client(self.client, self.type)
+        time.sleep(2)
+        try:
+            self.verify("Is 'Such record already exist' exception displayed",
+                        self.duplicate_error_message, client_sub_wizard.get_error_message())
+        except Exception as e:
+            self.verify("Error message for duplicate user is not displayed", True, e.__class__.__name__)

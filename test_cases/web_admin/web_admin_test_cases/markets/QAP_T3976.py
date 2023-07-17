@@ -1,9 +1,6 @@
 import random
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.instrument_symbols.main_page import \
     InstrumentSymbolsMainPage
@@ -53,31 +50,23 @@ class QAP_T3976(CommonTestCase):
                 time.sleep(2)
 
     def test_context(self):
+        self.precondition()
+        page = InstrumentSymbolsMainPage(self.web_driver_container)
         try:
-            self.precondition()
-            page = InstrumentSymbolsMainPage(self.web_driver_container)
-            try:
-                page.set_instr_symbol(self.instr_symbol)
-                time.sleep(3)
-                page.click_on_more_actions()
-                time.sleep(2)
-                page.click_on_delete(True)
-                self.verify("Delete button working", True, True)
-            except Exception as e:
-                self.verify("Delete button does not works", True, e.__class__.__name__)
+            page.set_instr_symbol(self.instr_symbol)
+            time.sleep(3)
+            page.click_on_more_actions()
+            time.sleep(2)
+            page.click_on_delete(True)
+            self.verify("Delete button working", True, True)
+        except Exception as e:
+            self.verify("Delete button does not works", True, e.__class__.__name__)
 
-            try:
-                time.sleep(2)
-                page.set_instr_symbol(self.instr_symbol)
+        try:
+            time.sleep(2)
+            page.set_instr_symbol(self.instr_symbol)
 
-                time.sleep(2)
-                self.verify("Entity is not displayed after delete", False, page.is_instr_symbol_present())
-            except Exception as e:
-                self.verify("Entity stayed after delete", True, e.__class__.__name__)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+            time.sleep(2)
+            self.verify("Entity is not displayed after delete", False, page.is_instr_symbol_present())
+        except Exception as e:
+            self.verify("Entity stayed after delete", True, e.__class__.__name__)

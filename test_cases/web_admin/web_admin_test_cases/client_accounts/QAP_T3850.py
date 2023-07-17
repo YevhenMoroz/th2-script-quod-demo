@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_page import AccountsPage
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_wizard import AccountsWizard
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
@@ -46,23 +43,15 @@ class QAP_T3850(CommonTestCase):
         time.sleep(1)
 
     def test_context(self):
+        self.precondition()
+        accounts_wizard = AccountsWizard(self.web_driver_container)
+        accounts_page = AccountsPage(self.web_driver_container)
         try:
-            self.precondition()
-            accounts_wizard = AccountsWizard(self.web_driver_container)
-            accounts_page = AccountsPage(self.web_driver_container)
-            try:
-                accounts_wizard.click_save_button()
-                time.sleep(2)
-                accounts_page.set_id(self.id)
-                time.sleep(2)
-                accounts_page.click_more_actions_button()
-                self.verify("Account created correctly", True, True)
-            except Exception as e:
-                self.verify("Account not created", True, e.__class__.__name__)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+            accounts_wizard.click_save_button()
+            time.sleep(2)
+            accounts_page.set_id(self.id)
+            time.sleep(2)
+            accounts_page.click_more_actions_button()
+            self.verify("Account created correctly", True, True)
+        except Exception as e:
+            self.verify("Account not created", True, e.__class__.__name__)

@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.middle_office.commissions.commissions_page import CommissionsPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
@@ -42,29 +39,22 @@ class QAP_T3586(CommonTestCase):
 
     def test_context(self):
 
-        try:
-            self.precondition()
-            main_page = CommissionsPage(self.web_driver_container)
-            #try:
-            main_page.set_name(self.name)
-            main_page.set_description(self.description)
-            main_page.set_commission_amount_type(self.commission_amount_type)
-            main_page.set_commission_profile(self.commission_profile)
-            main_page.set_instr_type(self.instr_type)
-            main_page.set_venue(self.venue)
-            main_page.set_side(self.side)
-            main_page.set_execution_policy(self.execution_policy)
-            main_page.set_virtual_account(self.virtual_account)
-            main_page.set_client(self.client)
-            main_page.set_client_group(self.client_group)
-            main_page.set_client_list(self.client_list)
-            main_page.click_on_re_calculate_for_allocations()
-            self.verify("All columns preloaded", True, True)
-            #except Exception as e:
-            #    self.verify("Some headers in main page work incorrectly", True, e.__class__.__name__)
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.precondition()
+        main_page = CommissionsPage(self.web_driver_container)
+        #try:
+        main_page.set_name(self.name)
+        main_page.set_description(self.description)
+        main_page.set_commission_amount_type(self.commission_amount_type)
+        main_page.set_commission_profile(self.commission_profile)
+        main_page.set_instr_type(self.instr_type)
+        main_page.set_venue(self.venue)
+        main_page.set_side(self.side)
+        main_page.set_execution_policy(self.execution_policy)
+        main_page.set_virtual_account(self.virtual_account)
+        main_page.set_client(self.client)
+        main_page.set_client_group(self.client_group)
+        main_page.set_client_list(self.client_list)
+        main_page.click_on_re_calculate_for_allocations()
+        self.verify("All columns preloaded", True, True)
+        #except Exception as e:
+        #    self.verify("Some headers in main page work incorrectly", True, e.__class__.__name__)

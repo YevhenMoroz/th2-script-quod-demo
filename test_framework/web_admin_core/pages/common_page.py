@@ -1,5 +1,6 @@
 import os
 import time
+import pyautogui
 
 import pyperclip
 from selenium.webdriver import ActionChains
@@ -56,16 +57,32 @@ class CommonPage:
 
     @waiting_until_page_requests_to_be_load
     def find_by(self, location_strategy: By, locator: str):
-        return self.web_driver_wait.until(
-            expected_conditions.visibility_of_element_located((location_strategy, locator)))
+        element = None
+        try:
+            element = self.web_driver_wait.until(
+                expected_conditions.visibility_of_element_located((location_strategy, locator)))
+        except Exception:
+            pass
+        if element is None:
+            raise NoSuchElementException(f"Element by given path {locator} not found")
+        else:
+            return element
 
     def find_elements_by_xpath(self, xpath: str):
         return self.find_elements_by(By.XPATH, xpath)
 
     @waiting_until_page_requests_to_be_load
     def find_elements_by(self, location_strategy: By, locator: str):
-        return self.web_driver_wait.until(
-            expected_conditions.visibility_of_any_elements_located((location_strategy, locator)))
+        elements = None
+        try:
+            elements = self.web_driver_wait.until(
+                expected_conditions.visibility_of_any_elements_located((location_strategy, locator)))
+        except Exception:
+            pass
+        if elements is None:
+            raise NoSuchElementException(f"Elements by given path {locator} not found")
+        else:
+            return elements
 
     def get_text_by_xpath(self, xpath: str):
         if "button" in xpath:
@@ -142,7 +159,8 @@ class CommonPage:
             self.set_text_by_xpath(CommonConstants.MULTISELECT_FORM_LOOK_UP, i)
             time.sleep(0.2)
             self.find_by_xpath(CommonConstants.MULTISELECT_ITEM_XPATH.format(i)).click()
-        self.find_by_xpath(field_xpath).click()
+            time.sleep(1)
+        self.find_by_xpath(CommonConstants.MULTISELECT_DROP_DOWN_CLOSE_BUTTON).click()
         time.sleep(1)
 
     def select_value_from_dropdown_list(self, xpath: str, value: str):
@@ -180,6 +198,14 @@ class CommonPage:
 
         delete_all_files_with_extension(download_directory, ".pdf")
         delete_all_files_with_extension(download_directory, ".csv")
+        delete_all_files_with_extension(download_directory, ".txt")
+
+    def get_txt_context(self):
+        path_to_txt = self.__get_downloaded_file(".txt")
+
+        with open(path_to_txt, "r") as file:
+            file_context = file.readlines()
+            return file_context
 
     def get_csv_context(self):
         path_to_csv = self.__get_downloaded_file(".csv")
@@ -268,7 +294,8 @@ class CommonPage:
                 action = ActionChains(self.web_driver)
                 action.move_to_element_with_offset(scr_elem, c, 5).click().perform()
                 c += 100
-                e = self.web_driver.find_element(By.XPATH, CommonConstants.HORIZONTAL_SCROLL_WHEEL).get_attribute('style')
+                e = self.web_driver.find_element(By.XPATH, CommonConstants.HORIZONTAL_SCROLL_WHEEL).get_attribute(
+                    'style')
                 if self.is_element_present(search_element) and 'transform' in e and '(0px)' not in e:
                     break
 
@@ -311,3 +338,11 @@ class CommonPage:
         checkboxes = self.find_elements_by_xpath(xpath)
         statuses = [_.is_selected() for _ in checkboxes]
         return statuses
+
+    def set_upload_file_path_and_confirm(self, path_to_file):
+        """
+        The method is implemented to add the file to the context window that appears,
+        which expects the user to path to the file and press the "Enter" button to confirm sending
+        """
+        pyautogui.write(path_to_file)
+        pyautogui.press('enter')

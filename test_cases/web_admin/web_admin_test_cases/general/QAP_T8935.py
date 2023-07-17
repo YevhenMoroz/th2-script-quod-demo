@@ -1,8 +1,5 @@
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
 from test_framework.web_admin_core.pages.users.users.users_page import UsersPage
 from test_framework.web_admin_core.pages.users.users.users_wizard import UsersWizard
@@ -32,46 +29,38 @@ class QAP_T8935(CommonTestCase):
         clients_wizard = ClientsWizard(self.web_driver_container)
         common_act = CommonPage(self.web_driver_container)
 
-        try:
-            login_page.login_to_web_admin(self.login, self.password)
-            side_menu.open_users_page()
+        login_page.login_to_web_admin(self.login, self.password)
+        side_menu.open_users_page()
 
-            users_page.click_on_new_button()
-            time.sleep(1)
-            common_act.click_on_user_icon()
-            common_act.click_on_logout()
-            time.sleep(2)
-            login_page.login_to_web_admin(self.login, self.password)
-            time.sleep(1)
+        users_page.click_on_new_button()
+        time.sleep(1)
+        common_act.click_on_user_icon()
+        common_act.click_on_logout()
+        time.sleep(2)
+        login_page.login_to_web_admin(self.login, self.password)
+        time.sleep(1)
 
-            self.verify("User create wizard opened after re-login", True, users_wizard.is_wizard_open())
+        self.verify("User create wizard opened after re-login", True, users_wizard.is_wizard_open())
 
-            side_menu.open_clients_page()
-            time.sleep(1)
-            self.verify("Confirmation pop-up not appears", False, common_act.is_confirmation_pop_displayed())
+        side_menu.open_clients_page()
+        time.sleep(1)
+        self.verify("Confirmation pop-up not appears", False, common_act.is_confirmation_pop_displayed())
 
-            clients_page.click_on_more_actions()
-            clients_page.click_on_edit()
-            time.sleep(1)
-            common_act.click_on_user_icon()
-            common_act.click_on_logout()
-            time.sleep(2)
-            login_page.login_to_web_admin(self.login, self.password)
-            time.sleep(1)
+        clients_page.click_on_more_actions()
+        clients_page.click_on_edit()
+        time.sleep(1)
+        common_act.click_on_user_icon()
+        common_act.click_on_logout()
+        time.sleep(2)
+        login_page.login_to_web_admin(self.login, self.password)
+        time.sleep(1)
 
-            self.verify("Clients edit wizard opened after re-login", True, clients_wizard.is_wizard_open())
+        self.verify("Clients edit wizard opened after re-login", True, clients_wizard.is_wizard_open())
 
-            side_menu.open_clients_page()
-            time.sleep(1)
-            self.verify("Confirmation pop-up not appears", False, common_act.is_confirmation_pop_displayed())
+        side_menu.open_clients_page()
+        time.sleep(1)
+        self.verify("Confirmation pop-up not appears", False, common_act.is_confirmation_pop_displayed())
 
-            side_menu.open_users_page()
-            time.sleep(1)
-            self.verify("Confirmation pop-up not appears", False, common_act.is_confirmation_pop_displayed())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        side_menu.open_users_page()
+        time.sleep(1)
+        self.verify("Confirmation pop-up not appears", False, common_act.is_confirmation_pop_displayed())

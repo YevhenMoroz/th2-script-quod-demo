@@ -1,8 +1,5 @@
-import sys
-import traceback
 import time
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -25,19 +22,13 @@ class QAP_T4018(CommonTestCase):
         login_page.check_is_login_successful()
 
     def test_context(self):
-        try:
-            self.precondition()
-            self.verify("Login successful", True, True)
-            time.sleep(2)
-            common_page = CommonPage(self.web_driver_container)
-            common_page.click_on_user_icon()
-            time.sleep(2)
-            common_page.click_on_logout()
-            self.verify("Logout successful", True, True)
 
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.precondition()
+        self.verify("Login successful", True, True)
+        time.sleep(2)
+        common_page = CommonPage(self.web_driver_container)
+        common_page.click_on_user_icon()
+        time.sleep(2)
+        common_page.click_on_logout()
+        self.verify("Logout successful", True, True)
+

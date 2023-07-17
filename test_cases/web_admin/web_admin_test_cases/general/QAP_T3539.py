@@ -1,8 +1,5 @@
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.general.entitlements.dimensions_sub_wizard import \
     EntitlementsDimensionsSubWizard
 from test_framework.web_admin_core.pages.general.entitlements.main_page import EntitlementsPage
@@ -40,27 +37,20 @@ class QAP_T3539(CommonTestCase):
         wizard.click_on_save_changes()
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            page = EntitlementsPage(self.web_driver_container)
-            dimensions_sub_wizard = EntitlementsDimensionsSubWizard(self.web_driver_container)
-            wizard = EntitlementsWizard(self.web_driver_container)
+        page = EntitlementsPage(self.web_driver_container)
+        dimensions_sub_wizard = EntitlementsDimensionsSubWizard(self.web_driver_container)
+        wizard = EntitlementsWizard(self.web_driver_container)
 
-            self.verify("Both Desk and Location can not be filled message displayed", True,
-                        wizard.is_both_desk_and_location_can_be_filled_message_displayed())
-            dimensions_sub_wizard.clear_location_field()
-            wizard.click_on_save_changes()
-            page.set_user(self.user)
-            time.sleep(1)
-            page.click_on_more_actions()
-            expected_pdf_result = [self.user,
-                                   self.desk]
-            self.verify("Is pdf contains correctly values", True,
-                        page.click_download_pdf_entity_button_and_check_pdf(expected_pdf_result))
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("Both Desk and Location can not be filled message displayed", True,
+                    wizard.is_both_desk_and_location_can_be_filled_message_displayed())
+        dimensions_sub_wizard.clear_location_field()
+        wizard.click_on_save_changes()
+        page.set_user(self.user)
+        time.sleep(1)
+        page.click_on_more_actions()
+        expected_pdf_result = [self.user,
+                               self.desk]
+        self.verify("Is pdf contains correctly values", True,
+                    page.click_download_pdf_entity_button_and_check_pdf(expected_pdf_result))

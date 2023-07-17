@@ -11,6 +11,8 @@ from test_framework.fix_wrappers.DataSet import DirectionEnum
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.SessionAlias import SessionAliasFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataIncrementalRefreshBuyFX import \
+    FixMessageMarketDataIncrementalRefreshBuyFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
     FixMessageMarketDataSnapshotFullRefreshBuyFX
@@ -28,6 +30,7 @@ class QAP_MD(TestCase):
         # self.fx_fh_connectivity = "fix-fh-309-kratos"
         self.fix_subscribe = FixMessageMarketDataRequestFX(data_set=self.data_set)
         self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
+        self.incremental_md = FixMessageMarketDataIncrementalRefreshBuyFX()
         self.fix_md_snapshot = FixMessageMarketDataSnapshotFullRefreshSellFX()
         self.fix_manager_fh_314 = FixManager(self.fx_fh_connectivity, self.test_id)
         self.fix_manager_gtw = FixManager(self.ss_connectivity, self.test_id)
@@ -43,7 +46,6 @@ class QAP_MD(TestCase):
                 'Product': '4', },
             'SettlType': '0', }]
         self.bands_eur_usd = ["2000000", '6000000', '12000000']
-
 
         self.no_md_entries_spot = [{
             "MDEntryType": "0",
@@ -72,7 +74,7 @@ class QAP_MD(TestCase):
             "MDEntryPositionNo": 1,
             "SettlDate": self.settle_date_spot,
             "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
-                "MDEntryTime": "14:53:13"
+            "MDEntryTime": "14:53:13"
         },
             {
                 "MDEntryType": "1",
@@ -92,7 +94,7 @@ class QAP_MD(TestCase):
             "MDEntryPositionNo": 1,
             "SettlDate": self.settle_date_spot,
             "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
-                "MDEntryTime": "14:53:13"
+            "MDEntryTime": "14:53:13"
         },
             {
                 "MDEntryType": "1",
@@ -112,7 +114,7 @@ class QAP_MD(TestCase):
             "MDEntryPositionNo": 1,
             "SettlDate": self.settle_date_spot,
             "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
-                "MDEntryTime": "14:53:13"
+            "MDEntryTime": "14:53:13"
         },
             {
                 "MDEntryType": "1",
@@ -132,7 +134,7 @@ class QAP_MD(TestCase):
             "MDEntryPositionNo": 1,
             "SettlDate": self.settle_date_spot,
             "MDEntryDate": datetime.utcnow().strftime('%Y%m%d'),
-                "MDEntryTime": "14:57:13"
+            "MDEntryTime": "14:57:13"
         },
             {
                 "MDEntryType": "1",
@@ -145,38 +147,14 @@ class QAP_MD(TestCase):
                 "MDEntryTime": "14:57:13"
             }]
 
-        self.md_req_id = "EUR/USD:FXF:WK2:HSBC"
-        # self.md_req_id = "EUR/USD:SPO:REG:HSBC"
+        # self.md_req_id = "EUR/DKK:SPO:REG:BARX_1378"
+        self.md_req_id = "GBP/DKK:SPO:REG:CITI_186"
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Step 1-3
-        self.fix_md.set_market_data_fwd()
-        # # self.fix_md.change_parameter("MDReqID", self.md_req_id)
-        # # self.fix_md.set_market_data_fwd()
-        self.fix_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
-        self.fix_manager_fh_314.send_message(self.fix_md)
-        # self.sleep(1)
-        # self.fix_md.update_repeating_group("NoMDEntries", self.no_md_entries_spot)
-        # self.fix_manager_fh_314.send_message(self.fix_md)
-        # self.sleep(1)
-        # self.fix_md.update_repeating_group("NoMDEntries", self.no_md_entries_spot_1)
-        # self.fix_manager_fh_314.send_message(self.fix_md)
-        # self.sleep(1)
-        # self.fix_md.update_repeating_group("NoMDEntries", self.no_md_entries_spot_2)
-        # self.fix_manager_fh_314.send_message(self.fix_md)
-        # self.sleep(1)
-        # self.fix_md.update_repeating_group("NoMDEntries", self.no_md_entries_spot_3)
-        # self.fix_manager_fh_314.send_message(self.fix_md)
-        # self.sleep(1)
-        # self.fix_md.update_repeating_group("NoMDEntries", self.no_md_entries_spot)
-        # self.fix_manager_fh_314.send_message(self.fix_md)
-        # self.sleep(1)
-        # self.fix_md.update_repeating_group("NoMDEntries", self.no_md_entries_spot_1)
-        # self.fix_manager_fh_314.send_message(self.fix_md)
-        # self.sleep(1)
-        # self.fix_md.update_repeating_group("NoMDEntries", self.no_md_entries_spot_2)
-        # self.fix_manager_fh_314.send_message(self.fix_md)
-        # self.sleep(1)
-        # self.fix_md.update_repeating_group("NoMDEntries", self.no_md_entries_spot_3)
-        # self.fix_manager_fh_314.send_message(self.fix_md)
+        self.incremental_md.set_market_data()
+        self.incremental_md.change_parameter("MDReqID", self.md_req_id)
+        # self.fix_md.set_market_data_fwd()
+        # self.incremental_md.update_MDReqID(self.md_req_id, self.fx_fh_connectivity, "FX")
+        self.fix_manager_fh_314.send_message(self.incremental_md)

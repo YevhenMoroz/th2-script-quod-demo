@@ -3,8 +3,10 @@ import string
 import sys
 import time
 import traceback
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tiers_page import ClientTiersPage
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tiers_values_sub_wizard import \
     ClientTiersValuesSubWizard
@@ -44,21 +46,14 @@ class QAP_T3963(CommonTestCase):
         client_tiers_wizard.click_on_save_changes()
         time.sleep(2)
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
-        try:
-            self.precondition()
-            client_tiers_main_page = ClientTiersPage(self.web_driver_container)
-            client_tiers_main_page.set_name(self.name)
-            time.sleep(2)
-            client_tiers_main_page.click_on_more_actions()
-            time.sleep(2)
-            expected_pdf_content = [self.name, self.core_spot_price_strategy]
-            self.verify("Is pdf contains correctly values", True,
-                        client_tiers_main_page.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.precondition()
+        client_tiers_main_page = ClientTiersPage(self.web_driver_container)
+        client_tiers_main_page.set_name(self.name)
+        time.sleep(2)
+        client_tiers_main_page.click_on_more_actions()
+        time.sleep(2)
+        expected_pdf_content = [self.name, self.core_spot_price_strategy]
+        self.verify("Is pdf contains correctly values", True,
+                    client_tiers_main_page.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))

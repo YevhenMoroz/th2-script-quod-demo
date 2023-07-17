@@ -18,7 +18,7 @@ class QAP_T8840(CommonTestCase):
                          environment=environment)
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
-        self.path_to_file = f'{ROOT_DIR}\\test_framework\\web_admin_core\\resourses\\password_for_QAP_T3565.txt'
+        self.path_to_file = f'{ROOT_DIR}\\test_framework\\web_admin_core\\resources\\password_for_QAP_T3565.txt'
         self.interface_id = '123'
         self.name = '321'
 

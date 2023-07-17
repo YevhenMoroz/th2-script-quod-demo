@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.market_data_sources.main_page import \
     MarketDataSourcesPage
@@ -44,17 +41,9 @@ class QAP_T4036(CommonTestCase):
         time.sleep(1)
 
     def test_context(self):
-        try:
-            self.precondition()
-            wizard = MarketDataSourcesWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
-            time.sleep(1)
-            self.verify("Incorrect or missing values message displayed", True,
-                        wizard.is_incorrect_or_missing_value_message_displayed())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.precondition()
+        wizard = MarketDataSourcesWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
+        time.sleep(1)
+        self.verify("Incorrect or missing values message displayed", True,
+                    wizard.is_incorrect_or_missing_value_message_displayed())

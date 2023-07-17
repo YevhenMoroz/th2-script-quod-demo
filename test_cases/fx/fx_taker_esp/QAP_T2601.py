@@ -1,149 +1,138 @@
-import logging
+import os
+from datetime import datetime
 from pathlib import Path
-from custom import basic_custom_actions as bca
+
+from pkg_resources import resource_filename
+
+from custom.verifier import Verifier
+from test_framework.data_sets.constants import GatewaySide, Status
 from custom.tenor_settlement_date import spo
-from test_cases.fx.fx_wrapper.common_tools import random_qty
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns
-from test_framework.win_gui_wrappers.forex.fx_order_book import FXOrderBook
-from stubs import Stubs
-from win_gui_modules.aggregated_rates_wrappers import ModifyRatesTileRequest, PlaceESPOrder, ESPTileOrderSide
-from win_gui_modules.common_wrappers import BaseTileDetails
-from win_gui_modules.order_ticket import FXOrderDetails
-from win_gui_modules.order_ticket_wrappers import NewFxOrderDetails
-from win_gui_modules.utils import call, get_base_request
-from win_gui_modules.wrappers import set_base
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.environments.full_environment import FullEnvironment
+from custom import basic_custom_actions as bca
+from test_framework.fix_wrappers.FixManager import FixManager
+from test_framework.fix_wrappers.FixVerifier import FixVerifier
+from test_framework.fix_wrappers.forex.FixMessageExecutionReportAlgoFX import FixMessageExecutionReportAlgoFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
+    FixMessageMarketDataSnapshotFullRefreshBuyFX
+from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleTaker import FixMessageNewOrderSingleTaker
+from test_framework.ssh_wrappers.ssh_client import SshClient
 
 
-def create_or_get_rates_tile(base_request, service):
-    call(service.createRatesTile, base_request.build())
-
-
-def modify_order_ticket(base_request, service, qty):
-    order_ticket = FXOrderDetails()
-    order_ticket.set_qty(qty)
-    order_ticket.set_place()
-    order_ticket.set_tif('GoodTillCancel')
-    new_order_details = NewFxOrderDetails(base_request, order_ticket)
-    call(service.placeFxOrder, new_order_details.build())
-
-
-def modify_rates_tile(base_request, service, from_c, to_c, tenor):
-    modify_request = ModifyRatesTileRequest(details=base_request)
-    modify_request.set_instrument(from_c, to_c, tenor)
-    call(service.modifyRatesTile, modify_request.build())
-
-
-def click_on_bid_btn(base_request, service):
-    esp_request = PlaceESPOrder(details=base_request)
-    esp_request.top_of_book()
-    esp_request.set_action(ESPTileOrderSide.BUY)
-    call(service.placeESPOrder, esp_request.build())
-
-
-def execute(report_id, session_id):
-    case_name = Path(__file__).name[:-3]
-
-    order_ticket_service = Stubs.win_act_order_ticket_fx
-
-    connectivity_drop_copy = "fix-sell-m-314luna-drop"
-    verifier = Stubs.verifier
-    # Create sub-report for case
-    case_id = bca.create_event(case_name, report_id)
-
-    set_base(session_id, case_id)
-    ar_service = Stubs.win_act_aggregated_rates_service
-
-    case_base_request = get_base_request(session_id, case_id)
-    base_esp_details = BaseTileDetails(base=case_base_request)
-
-    from_curr = "EUR"
-    to_curr = "USD"
-    tenor = "Spot"
-    qty = random_qty(1, 3, 7)
-    strategy = "1555"
-
-    try:
-        # Step 1
-        create_or_get_rates_tile(base_esp_details, ar_service)
-        modify_rates_tile(base_esp_details, ar_service, from_curr, to_curr, tenor)
-        click_on_bid_btn(base_esp_details, ar_service)
-        checkpoint_response1 = Stubs.verifier.createCheckpoint(bca.create_checkpoint_request(case_id))
-        checkpoint_id1 = checkpoint_response1.checkpoint
-
-        modify_order_ticket(case_base_request, order_ticket_service, qty)
-        FXOrderBook(case_id, session_id).set_filter([OrderBookColumns.qty.value, qty]).check_order_fields_list(
-            {OrderBookColumns.exec_sts.value: "Filled"})
-        order_book = FXOrderBook(case_id, session_id)
-        order_id = order_book.set_filter([OrderBookColumns.qty.value, qty]).extract_field(
-            OrderBookColumns.order_id.value)
-
-        order_params = {
-            'ExecID': '*',
-            'OrderQty': qty,
-            'LastQty': "*",
-            'LastSpotRate': '*',
-            'OrderID': order_id,
-            'TransactTime': '*',
-            'Side': '*',
-            'AvgPx': '*',
-            'OrdStatus': '2',
-            'LastExecutionPolicy': '*',
-            'TradeReportingIndicator': '*',
-            'ReplyReceivedTime': '*',
-            'SettlCurrency': "USD",
-            'SettlDate': spo(),
-            'Currency': "EUR",
-            'TimeInForce': '3',
-            'TradeDate': '*',
-            'Price': '*',
-            'ExecType': 'F',
-            'HandlInst': '2',
-            'LeavesQty': '0',
-            'NoParty': [{
-                'PartyID': '*',
-                'PartyIDSource': 'D',
-                'PartyRole': '36'
-            }],
-            'CumQty': qty,
-            'LastPx': '*',
-            'SpotSettlDate': spo(),
-            'OrdType': "2",
-            'Text': "*",
-            'ClOrdID': order_id,
-            'SecondaryOrderID': '*',
-            'QtyType': '*',
-            'StrategyName': strategy,
-            'TargetStrategy': '*',
-            'SettlType': '*',
-            'Instrument': {
-                'SecurityType': 'FXSPOT',
-                'Symbol': "EUR/USD",
-                'SecurityID': "EUR/USD",
-                'Product': '4',
-                'SecurityIDSource': '8',
-                'SecurityExchange': '*'
+class QAP_T2601(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.esp_t_connectivity = self.environment.get_list_fix_environment()[0].buy_side_esp
+        self.fx_fh_connectivity = self.environment.get_list_fix_environment()[0].feed_handler
+        self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
+        self.fix_manager = FixManager(self.esp_t_connectivity, self.test_id)
+        self.fix_manager_fh_314 = FixManager(self.fx_fh_connectivity, self.test_id)
+        self.fix_verifier = FixVerifier(self.esp_t_connectivity, self.test_id)
+        self.new_order_single = FixMessageNewOrderSingleTaker(data_set=self.data_set)
+        self.execution_report = FixMessageExecutionReportAlgoFX()
+        self.execution_report = FixMessageExecutionReportAlgoFX()
+        self.config_file = "client_qf_kharkiv_quod7_th2.xml"
+        self.ssh_client_env = self.environment.get_list_ssh_client_environment()[0]
+        self.ssh_client = SshClient(self.ssh_client_env.host, self.ssh_client_env.port, self.ssh_client_env.user,
+                                    self.ssh_client_env.password, self.ssh_client_env.su_user,
+                                    self.ssh_client_env.su_password)
+        self.local_path = resource_filename("test_resources.be_configs.fx_be_configs", self.config_file)
+        self.remote_path = f"/home/{self.ssh_client_env.su_user}/quod/cfg/{self.config_file}"
+        self.temp_path = os.path.join(os.path.expanduser('~'), 'PycharmProjects', 'th2-script-quod-demo', 'temp')
+        self.md_req_id = "EUR/USD:SPO:REG:BNP"
+        self.no_md_entries_spot = [{
+            "MDEntryType": "0",
+            "MDEntryPx": 1.1815,
+            "MDEntrySize": 1000000,
+            "MDQuoteType": 1,
+            "MDEntryPositionNo": 1,
+            "SettlDate": spo(),
+            "MDEntryDate": datetime.utcnow().strftime("%Y%m%d"),
+            "MDEntryTime": datetime.utcnow().strftime("%H:%M:%S")
+        },
+            {
+                "MDEntryType": "1",
+                "MDEntryPx": 1.18151,
+                "MDEntrySize": 1000000,
+                "MDQuoteType": 1,
+                "MDEntryPositionNo": 1,
+                "SettlDate": spo(),
+                "MDEntryDate": datetime.utcnow().strftime("%Y%m%d"),
+                "MDEntryTime": datetime.utcnow().strftime("%H:%M:%S")
             },
-            'SecondaryExecID': '*',
-            'ExDestination': '*',
-            'GrossTradeAmt': '*',
-        }
+            {
+                "MDEntryType": "0",
+                "MDEntryPx": 1.1813,
+                "MDEntrySize": 2000000,
+                "MDQuoteType": 1,
+                "MDEntryPositionNo": 2,
+                "SettlDate": spo(),
+                "MDEntryDate": datetime.utcnow().strftime("%Y%m%d"),
+                "MDEntryTime": datetime.utcnow().strftime("%H:%M:%S")
+            },
+            {
+                "MDEntryType": "1",
+                "MDEntryPx": 1.18165,
+                "MDEntrySize": 2000000,
+                "MDQuoteType": 1,
+                "MDEntryPositionNo": 2,
+                "SettlDate": spo(),
+                "MDEntryDate": datetime.utcnow().strftime("%Y%m%d"),
+                "MDEntryTime": datetime.utcnow().strftime("%H:%M:%S")
+            },
+            {
+                "MDEntryType": "0",
+                "MDEntryPx": 1.181,
+                "MDEntrySize": 7000000,
+                "MDQuoteType": 1,
+                "MDEntryPositionNo": 3,
+                "SettlDate": spo(),
+                "MDEntryDate": datetime.utcnow().strftime("%Y%m%d"),
+                "MDEntryTime": datetime.utcnow().strftime("%H:%M:%S")
+            },
+            {
+                "MDEntryType": "1",
+                "MDEntryPx": 1.18186,
+                "MDEntrySize": 7000000,
+                "MDQuoteType": 1,
+                "MDEntryPositionNo": 3,
+                "SettlDate": spo(),
+                "MDEntryDate": datetime.utcnow().strftime("%Y%m%d"),
+                "MDEntryTime": datetime.utcnow().strftime("%H:%M:%S")
+            }
+        ]
+        self.passed = 0
+        self.verifier = Verifier()
 
-        verifier.submitCheckRule(
-            bca.create_check_rule("Check Drop Copy Execution Report",
-                                  bca.filter_to_grpc('ExecutionReport', order_params,
-                                                     ["OrderID", "ExecType", "LeavesQty"]),
-                                  checkpoint_id1,
-                                  connectivity_drop_copy,
-                                  case_id)
-        )
-
-    except Exception:
-        logging.error("Error execution", exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
-    finally:
-        try:
-            # Close tile
-            call(ar_service.closeRatesTile, base_esp_details.build())
-
-        except Exception:
-            logging.error("Error execution", exc_info=True)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region 2
+        self.new_order_single.set_default_SOR()
+        response = self.fix_manager.send_message_and_receive_response(self.new_order_single)
+        order_id = response[-1].get_parameters()['OrderID']
+        # endregion
+        # region 3
+        gateway_side_sell = GatewaySide.Sell
+        status = Status.Fill
+        self.execution_report.set_params_from_new_order_single(self.new_order_single, gateway_side_sell, status,
+                                                               response[-1])
+        self.fix_verifier.check_fix_message(self.execution_report,
+                                            ignored_fields=["GatingRuleCondName", "GatingRuleName", "trailer",
+                                                            "header"])
+        # endregion
+        result = self.ssh_client.find_regex_pattern("/Logs/quod314/QUOD.FIXSELLQUODTH2.log", rf"^.*ClientScenarioID=.*{order_id}.*$")
+        if result:
+            self.passed += 1
+        result = self.ssh_client.find_regex_pattern("/Logs/quod314/QUOD.FIXSELLQUODTH2.log", rf"^.*{order_id}.*10014=.*$")
+        if result:
+            self.passed += 1
+        if self.passed == 2:
+            result = "ok"
+        self.verifier.set_parent_id(self.test_id)
+        self.verifier.set_event_name("Check \"ClientScenarioID\" tag")
+        self.verifier.compare_values("status", "ok", result)
+        self.verifier.verify()

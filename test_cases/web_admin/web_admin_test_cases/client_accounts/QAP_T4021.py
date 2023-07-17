@@ -1,10 +1,7 @@
-import sys
 import time
-import traceback
 import string
 import random
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.client_groups.client_groups_page \
     import ClientGroupsPage
 from test_framework.web_admin_core.pages.clients_accounts.client_groups.client_groups_wizard import ClientGroupsWizard
@@ -46,24 +43,16 @@ class QAP_T4021(CommonTestCase):
         main_page = ClientGroupsPage(self.web_driver_container)
         common_act = CommonPage(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page.set_name(self.name)
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            main_page.click_on_delete(True)
-            time.sleep(1)
-            common_act.refresh_page(True)
-            time.sleep(1)
-            main_page.set_name(self.name)
-            time.sleep(1)
-            self.verify("Client Group deleted and not displayed", False,
-                        main_page.is_searched_client_group_found_by_name(self.name))
-            
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        main_page.set_name(self.name)
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        main_page.click_on_delete(True)
+        time.sleep(1)
+        common_act.refresh_page(True)
+        time.sleep(1)
+        main_page.set_name(self.name)
+        time.sleep(1)
+        self.verify("Client Group deleted and not displayed", False,
+                    main_page.is_searched_client_group_found_by_name(self.name))

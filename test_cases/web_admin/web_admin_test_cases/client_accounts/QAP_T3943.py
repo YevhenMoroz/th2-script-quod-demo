@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_page import AccountsPage
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_wizard import AccountsWizard
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
@@ -49,23 +46,16 @@ class QAP_T3943(CommonTestCase):
     def test_context(self):
         accounts_wizard = AccountsWizard(self.web_driver_container)
         accounts_main_page = AccountsPage(self.web_driver_container)
-        try:
-            self.precondition()
-            try:
 
-                accounts_wizard.click_save_button()
-                time.sleep(2)
-                accounts_main_page.set_id(self.id)
-                time.sleep(2)
-                expected_saved_data = [self.client, "Institutional"]
-                actual_saved_data = [accounts_main_page.get_client(), accounts_main_page.get_clearing_account_type()]
-                self.verify("Values displayed correctly", expected_saved_data, actual_saved_data)
-            except Exception as e:
-                self.verify("Problem in or after Save Changes", True, e.__class__.__name__)
-                time.sleep(5)
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.precondition()
+        try:
+
+            accounts_wizard.click_save_button()
+            time.sleep(2)
+            accounts_main_page.set_id(self.id)
+            time.sleep(2)
+            expected_saved_data = [self.client, "Institutional"]
+            actual_saved_data = [accounts_main_page.get_client(), accounts_main_page.get_clearing_account_type()]
+            self.verify("Values displayed correctly", expected_saved_data, actual_saved_data)
+        except Exception as e:
+            self.verify("Problem in or after Save Changes", True, e.__class__.__name__)

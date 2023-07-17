@@ -29,6 +29,7 @@ class QAP_T2458(TestCase):
             'Symbol': self.usd_php,
             'SecurityType': self.sec_type_ndf,
             'Product': '4', }
+        self.verify_instrument = {"Symbol": self.usd_php, "MaturityDate": "*"}
         self.no_related_symbols = [{
             "Instrument": self.instrument,
             "SettlType": self.settle_type_1w
@@ -41,6 +42,7 @@ class QAP_T2458(TestCase):
         self.md_request.update_repeating_group('NoRelatedSymbols', self.no_related_symbols)
         response = self.fix_manager_gtw.send_message_and_receive_response(self.md_request, self.test_id)
         self.md_snapshot.set_params_for_md_response(self.md_request, response=response[0])
+        self.md_snapshot.change_parameter("Instrument", self.verify_instrument)
         # endregion
 
         # region Step 2

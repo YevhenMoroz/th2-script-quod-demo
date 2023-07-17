@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
 from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
@@ -53,39 +50,32 @@ class QAP_T3915(CommonTestCase):
         wizard.click_on_save_changes()
 
     def test_context(self):
-        try:
-            self.precondition()
 
-            client_page = ClientsPage(self.web_driver_container)
-            client_page.set_name(self.name)
-            time.sleep(1)
-            client_page.click_on_enable_disable()
-            time.sleep(1)
+        self.precondition()
 
-            self.verify("Client disabled", False, client_page.is_client_enable())
+        client_page = ClientsPage(self.web_driver_container)
+        client_page.set_name(self.name)
+        time.sleep(1)
+        client_page.click_on_enable_disable()
+        time.sleep(1)
 
-            common_act = CommonPage(self.web_driver_container)
-            common_act.click_on_info_error_message_pop_up()
-            common_act.click_on_user_icon()
-            common_act.click_on_logout()
-            common_act.refresh_page(True)
+        self.verify("Client disabled", False, client_page.is_client_enable())
 
-            login_page = LoginPage(self.web_driver_container)
-            login_page.login_to_web_admin(self.login, self.password)
-            side_menu = SideMenu(self.web_driver_container)
-            side_menu.open_clients_page()
+        common_act = CommonPage(self.web_driver_container)
+        common_act.click_on_info_error_message_pop_up()
+        common_act.click_on_user_icon()
+        common_act.click_on_logout()
+        common_act.refresh_page(True)
 
-            client_page.set_name(self.name)
-            time.sleep(1)
-            self.verify("Client disabled", False, client_page.is_client_enable())
-            client_page.click_on_enable_disable()
-            time.sleep(1)
+        login_page = LoginPage(self.web_driver_container)
+        login_page.login_to_web_admin(self.login, self.password)
+        side_menu = SideMenu(self.web_driver_container)
+        side_menu.open_clients_page()
 
-            self.verify("Client enabled", True, client_page.is_client_enable())
+        client_page.set_name(self.name)
+        time.sleep(1)
+        self.verify("Client disabled", False, client_page.is_client_enable())
+        client_page.click_on_enable_disable()
+        time.sleep(1)
 
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("Client enabled", True, client_page.is_client_enable())

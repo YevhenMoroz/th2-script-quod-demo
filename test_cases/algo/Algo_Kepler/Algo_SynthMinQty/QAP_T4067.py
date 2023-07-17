@@ -177,7 +177,7 @@ class QAP_T4067(TestCase):
         
         # region Check that algo doesn`t create passive childs in Phase 1
         self.fix_verifier_buy.set_case_id(bca.create_event("Check that algo doesn`t create passive childs in Phase 1", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([self.dma_qdl1_order], key_parameters_list=[None], direction=self.FromQuod, pre_filter=self.pre_filter)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([self.dma_qdl1_order], key_parameters_list=[None], direction=self.FromQuod, pre_filter=self.pre_filter)
         # endregion
 
         time.sleep(10)

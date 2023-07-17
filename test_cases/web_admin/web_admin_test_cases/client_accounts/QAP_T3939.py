@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_assignments_sub_wizard import \
     ClientsAssignmentsSubWizard
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
@@ -69,32 +66,24 @@ class QAP_T3939(CommonTestCase):
         venues_sub_wizard.click_on_checkmark()
 
     def test_context(self):
+        self.precondition()
+        wizard = ClientsWizard(self.web_driver_container)
+        main_page = ClientsPage(self.web_driver_container)
+        expected_pdf_content = [self.name,
+                                self.disclose_exec,
+                                self.venue,
+                                self.venue_client_name,
+                                self.venue_client_account_group_name]
+
+        self.verify("Is PDF contains correctly value", True,
+                    wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
+        wizard.click_on_save_changes()
+        time.sleep(2)
+        main_page.set_name(self.name)
+        time.sleep(2)
         try:
-            self.precondition()
-            wizard = ClientsWizard(self.web_driver_container)
-            main_page = ClientsPage(self.web_driver_container)
-            expected_pdf_content = [self.name,
-                                    self.disclose_exec,
-                                    self.venue,
-                                    self.venue_client_name,
-                                    self.venue_client_account_group_name]
+            main_page.click_on_more_actions()
+            self.verify("Entity created correctly", True, True)
 
-            self.verify("Is PDF contains correctly value", True,
-                        wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
-            wizard.click_on_save_changes()
-            time.sleep(2)
-            main_page.set_name(self.name)
-            time.sleep(2)
-            try:
-                main_page.click_on_more_actions()
-                self.verify("Entity created correctly", True, True)
-
-            except Exception as e:
-                self.verify("Entity not created!!!ERROR!!!", True, e.__class__.__name__)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        except Exception as e:
+            self.verify("Entity not created!!!ERROR!!!", True, e.__class__.__name__)

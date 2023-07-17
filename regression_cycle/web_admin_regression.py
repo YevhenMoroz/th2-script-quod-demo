@@ -52,9 +52,9 @@ def test_run(parent_id=None):
             RunSite(report_id).execute()
         # PFX
         if eval(root.find(".//component[@name='WA_Market_Making']").attrib["run"]):
-            RunMarketMaking(report_id).execute()
+            RunMarketMaking(report_id, version).execute()
         if eval(root.find(".//component[@name='WA_Price_Cleansing']").attrib["run"]):
-            RunPriceCleansing(report_id).execute()
+            RunPriceCleansing(report_id, version).execute()
         if eval(root.find(".//component[@name='WA_Others']").attrib["run"]):
             RunOthers(report_id).execute()
         # ALGO

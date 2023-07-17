@@ -3,8 +3,10 @@ import string
 import sys
 import time
 import traceback
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tiers_page import ClientTiersPage
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tiers_wizard import ClientTiersWizard
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tiers_schedules_sub_wizard import \
@@ -36,17 +38,18 @@ class QAP_T10608(CommonTestCase):
         self.login = self.data_set.get_user("user_1")
         self.password = self.data_set.get_password("password_1")
 
-        self.client_tiers = {"entity_1": {"name": ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))},
-                             "entity_2": {"name": ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))},
-                             "core_spot_price_strategy": "Direct",
-                             "instrument": "EUR/USD",
-                             "tod_end_time": "01:00:00",
-                             "schedule_name_1": 'Mon_'+''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6)),
-                             "schedule_name_2": 'Sun_'+''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6)),
-                             "schedule_day_1": "Monday",
-                             "schedule_day_2": "Sunday",
-                             "schedule_from_time_1": "23:50:00",
-                             "schedule_to_time_1": "23:55:00"}
+        self.client_tiers = {
+            "entity_1": {"name": ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))},
+            "entity_2": {"name": ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))},
+            "core_spot_price_strategy": "Direct",
+            "instrument": "EUR/USD",
+            "tod_end_time": "01:00:00",
+            "schedule_name_1": 'Mon_' + ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6)),
+            "schedule_name_2": 'Sun_' + ''.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6)),
+            "schedule_day_1": "Monday",
+            "schedule_day_2": "Sunday",
+            "schedule_from_time_1": "23:50:00",
+            "schedule_to_time_1": "23:55:00"}
 
         self.client_tiers_instrument = {"symbol": "EUR/USD",
                                         "tod_end_time": "01:00:00",
@@ -131,85 +134,78 @@ class QAP_T10608(CommonTestCase):
         client_tiers_page.click_on_more_actions()
         client_tiers_page.click_on_delete_and_confirmation(True)
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            client_tiers_page = ClientTiersPage(self.web_driver_container)
-            client_tiers_page.set_name(self.client_tiers["entity_1"]["name"])
-            time.sleep(1)
-            client_tiers_page.select_client_tier_by_name(self.client_tiers["entity_1"]["name"])
-            instrument_page = ClientTierInstrumentsPage(self.web_driver_container)
-            instrument_page.click_on_new()
+        client_tiers_page = ClientTiersPage(self.web_driver_container)
+        client_tiers_page.set_name(self.client_tiers["entity_1"]["name"])
+        time.sleep(1)
+        client_tiers_page.select_client_tier_by_name(self.client_tiers["entity_1"]["name"])
+        instrument_page = ClientTierInstrumentsPage(self.web_driver_container)
+        instrument_page.click_on_new()
 
-            instrument_values_tab = ClientTierInstrumentValuesSubWizard(self.web_driver_container)
-            instrument_values_tab.set_symbol(self.client_tiers_instrument["symbol"])
-            instrument_values_tab.set_tod_end_time(self.client_tiers_instrument["tod_end_time"])
-            instrument_external_client = ClientTiersInstrumentExternalClientsSubWizard(self.web_driver_container)
-            instrument_external_client.click_on_plus()
-            instrument_external_client.set_client(self.client_tiers_instrument["external_client"])
-            instrument_external_client.click_on_checkmark()
-            instrument_internal_client = ClientTiersInstrumentInternalClientsSubWizard(self.web_driver_container)
-            instrument_internal_client.click_on_plus()
-            instrument_internal_client.set_client(self.client_tiers_instrument["internal_client"])
-            instrument_internal_client.click_on_checkmark()
+        instrument_values_tab = ClientTierInstrumentValuesSubWizard(self.web_driver_container)
+        instrument_values_tab.set_symbol(self.client_tiers_instrument["symbol"])
+        instrument_values_tab.set_tod_end_time(self.client_tiers_instrument["tod_end_time"])
+        instrument_external_client = ClientTiersInstrumentExternalClientsSubWizard(self.web_driver_container)
+        instrument_external_client.click_on_plus()
+        instrument_external_client.set_client(self.client_tiers_instrument["external_client"])
+        instrument_external_client.click_on_checkmark()
+        instrument_internal_client = ClientTiersInstrumentInternalClientsSubWizard(self.web_driver_container)
+        instrument_internal_client.click_on_plus()
+        instrument_internal_client.set_client(self.client_tiers_instrument["internal_client"])
+        instrument_internal_client.click_on_checkmark()
 
-            instrument_wizard = ClientTierInstrumentWizard(self.web_driver_container)
-            instrument_wizard.click_on_save_changes()
+        instrument_wizard = ClientTierInstrumentWizard(self.web_driver_container)
+        instrument_wizard.click_on_save_changes()
 
-            client_tiers_page.set_name(self.client_tiers["entity_2"]["name"])
-            time.sleep(1)
-            client_tiers_page.select_client_tier_by_name(self.client_tiers["entity_2"]["name"])
-            instrument_page.click_on_new()
-            instrument_values_tab.set_symbol(self.client_tiers_instrument["symbol"])
-            instrument_values_tab.set_tod_end_time(self.client_tiers_instrument["tod_end_time"])
-            instrument_external_client.click_on_plus()
-            instrument_external_client.set_client(self.client_tiers_instrument["external_client"])
-            instrument_external_client.click_on_checkmark()
+        client_tiers_page.set_name(self.client_tiers["entity_2"]["name"])
+        time.sleep(1)
+        client_tiers_page.select_client_tier_by_name(self.client_tiers["entity_2"]["name"])
+        instrument_page.click_on_new()
+        instrument_values_tab.set_symbol(self.client_tiers_instrument["symbol"])
+        instrument_values_tab.set_tod_end_time(self.client_tiers_instrument["tod_end_time"])
+        instrument_external_client.click_on_plus()
+        instrument_external_client.set_client(self.client_tiers_instrument["external_client"])
+        instrument_external_client.click_on_checkmark()
 
-            self.verify("Warning for external client appears", False,
-                        instrument_external_client.is_warning_icon_displayed())
+        self.verify("Warning for external client appears", False,
+                    instrument_external_client.is_warning_icon_displayed())
 
-            instrument_internal_client.click_on_plus()
-            instrument_internal_client.set_client(self.client_tiers_instrument["internal_client"])
-            instrument_internal_client.click_on_checkmark()
+        instrument_internal_client.click_on_plus()
+        instrument_internal_client.set_client(self.client_tiers_instrument["internal_client"])
+        instrument_internal_client.click_on_checkmark()
 
-            self.verify("Warning for internal client appears", False,
-                        instrument_internal_client.is_warning_icon_displayed())
-            instrument_wizard.click_on_save_changes()
+        self.verify("Warning for internal client appears", False,
+                    instrument_internal_client.is_warning_icon_displayed())
+        instrument_wizard.click_on_save_changes()
 
-            client_tiers_page.set_name(self.client_tiers["entity_2"]["name"])
-            time.sleep(1)
-            client_tiers_page.select_client_tier_by_name(self.client_tiers["entity_2"]["name"])
-            client_tiers_page.click_on_more_actions()
-            client_tiers_page.click_on_edit()
+        client_tiers_page.set_name(self.client_tiers["entity_2"]["name"])
+        time.sleep(1)
+        client_tiers_page.select_client_tier_by_name(self.client_tiers["entity_2"]["name"])
+        client_tiers_page.click_on_more_actions()
+        client_tiers_page.click_on_edit()
 
-            client_tiers_values_tab = ClientTiersValuesSubWizard(self.web_driver_container)
-            client_tiers_values_tab.select_schedule_checkbox()
-            client_tiers_values_tab.set_schedule(self.client_tiers["schedule_name_2"])
-            wizard = ClientTiersWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
+        client_tiers_values_tab = ClientTiersValuesSubWizard(self.web_driver_container)
+        client_tiers_values_tab.select_schedule_checkbox()
+        client_tiers_values_tab.set_schedule(self.client_tiers["schedule_name_2"])
+        wizard = ClientTiersWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
 
-            client_tiers_page.set_name(self.client_tiers["entity_2"]["name"])
-            time.sleep(1)
-            client_tiers_page.select_client_tier_by_name(self.client_tiers["entity_2"]["name"])
-            instrument_page.set_symbol(self.client_tiers_instrument["symbol"])
-            time.sleep(1)
-            instrument_page.click_on_more_actions()
-            instrument_page.click_on_edit()
+        client_tiers_page.set_name(self.client_tiers["entity_2"]["name"])
+        time.sleep(1)
+        client_tiers_page.select_client_tier_by_name(self.client_tiers["entity_2"]["name"])
+        instrument_page.set_symbol(self.client_tiers_instrument["symbol"])
+        time.sleep(1)
+        instrument_page.click_on_more_actions()
+        instrument_page.click_on_edit()
 
-            self.verify("Warning for external client not appears", False,
-                        instrument_external_client.is_warning_icon_displayed())
+        self.verify("Warning for external client not appears", False,
+                    instrument_external_client.is_warning_icon_displayed())
 
-            self.verify("Warning for internal client not appears", False,
-                        instrument_internal_client.is_warning_icon_displayed())
-            instrument_wizard.click_on_save_changes()
+        self.verify("Warning for internal client not appears", False,
+                    instrument_internal_client.is_warning_icon_displayed())
+        instrument_wizard.click_on_save_changes()
 
-            self.post_conditions()
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.post_conditions()
