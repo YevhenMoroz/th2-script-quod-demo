@@ -71,6 +71,7 @@ class OrderReplyConst(Enum):
     ExecType_PDO = 'PDO'
     ExecType_OPN = 'OPN'
     ExecType_RES = 'RES'
+    CustOrderHandlingInst_LOC = 'LOC'
 
 
 class ExecutionPolicyConst(Enum):
@@ -494,6 +495,7 @@ class JavaApiFields(Enum):
     SubCounterpartList = "SubCounterpartList"
     OrdIDList = "OrdIDList"
     OrdIDBlock = "OrdIDBlock"
+    CustOrderHandlingInst = "CustOrderHandlingInst"
 
     # fields of Bag
     OrderBagStatus = 'OrderBagStatus'

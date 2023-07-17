@@ -33,7 +33,7 @@ seconds, nanos = timestamps()
 
 class QAP_T7249(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
-    def __init__(self, report_id, session_id, data_set, environment):
+    def __init__(self, report_id, session_id=None, data_set=None, environment=None):
         super().__init__(report_id, session_id, data_set, environment)
         # region Declarations
         self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
@@ -111,7 +111,8 @@ class QAP_T7249(TestCase):
                                                    "InstrID": self.data_set.get_instrument_id_by_name("instrument_2")})
         self.java_api_manager.send_message_and_receive_response(self.all_instr)
         allocation_report = \
-            self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+            self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value,
+                                                   JavaApiFields.BookingAllocInstructionID.value).get_parameters()[
                 JavaApiFields.AllocationReportBlock.value]
         alloc_id = allocation_report[JavaApiFields.ClientAllocID.value]
 
