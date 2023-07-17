@@ -74,7 +74,7 @@ class QAP_T7327(TestCase):
         # region  precondition : create CO order via FIX
         qty = '3000'
         desk = self.environment.get_list_fe_environment()[0].desk_ids[1]
-        self.new_order.set_default_care_limit(account='client_2_ext_id')
+        self.new_order.set_default_care_limit(account='client_2')
         price = self.new_order.get_parameters()['Price']
         self.new_order.change_parameters({
             'OrderQtyData': {'OrderQty': qty},

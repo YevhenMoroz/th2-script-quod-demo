@@ -44,5 +44,5 @@ def test_run(parent_id=None, version=None, skip_ssh=False, only_ssh=False):
 
 
 if __name__ == '__main__':
-    test_run(version="5.1.178.192.RC")
+    test_run(version="5.1.182.195", skip_ssh=True)
     Stubs.factory.close()

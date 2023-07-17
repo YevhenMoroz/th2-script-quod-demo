@@ -54,7 +54,6 @@ class QAP_T7471(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region create Care order
-        class_name = QAP_T7471
         response = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
         order_id = response[0].get_parameters()['OrderID']
         instr_id = self.data_set.get_instrument_id_by_name("instrument_2")
@@ -82,13 +81,11 @@ class QAP_T7471(TestCase):
                                                              [self.data_set.get_counterpart_id_java_api(
                                                                  'counterpart_contra_firm')]
                                                          }})
-        responses = self.java_api_manager.send_message_and_receive_response(self.manual_execution)
-        class_name.__print_message('Manual Execute First Order', responses)
+        self.java_api_manager.send_message_and_receive_response(self.manual_execution)
         exec_id = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
             JavaApiFields.ExecutionReportBlock.value][JavaApiFields.ExecID.value]
-        responses = self.java_api_manager.send_message_and_receive_response(
+        self.java_api_manager.send_message_and_receive_response(
             self.complete_order.set_default_complete(order_id))
-        class_name.__print_message('Complete First Order', responses)
         # endregion
         # region Check ExecutionReports
         list_of_ignored_fields = ['SecurityDesc', 'CommissionData', 'RootSettlCurrAmt', 'AllocInstructionMiscBlock1',
@@ -118,8 +115,7 @@ class QAP_T7471(TestCase):
                                                                 "listing_3")}]}})
 
         self.submit_request.remove_fields_from_component('NewOrderSingleBlock', ['SettlCurrency'])
-        responses = self.java_api_manager.send_message_and_receive_response(self.submit_request)
-        class_name.__print_message('New Second Order ', responses)
+        self.java_api_manager.send_message_and_receive_response(self.submit_request)
         order_id_second = self.java_api_manager.get_last_message(ORSMessageType.OrdNotification.value).get_parameters()[
             JavaApiFields.OrderNotificationBlock.value][JavaApiFields.OrdID.value]
         # endregion
@@ -130,13 +126,11 @@ class QAP_T7471(TestCase):
                                                              [self.data_set.get_counterpart_id_java_api(
                                                                  'counterpart_contra_firm_2')]
                                                          }})
-        responses = self.java_api_manager.send_message_and_receive_response(self.manual_execution)
+        self.java_api_manager.send_message_and_receive_response(self.manual_execution)
         exec_id_second = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value).get_parameters()[
             JavaApiFields.ExecutionReportBlock.value][JavaApiFields.ExecID.value]
-        class_name.__print_message('Manual Execute Second Order', responses)
-        responses = self.java_api_manager.send_message_and_receive_response(
+        self.java_api_manager.send_message_and_receive_response(
             self.complete_order.set_default_complete(order_id_second))
-        class_name.__print_message('Complete Second Order', responses)
         # endregion
         # region Book orders
         self.allocation_instruction.set_default_book(order_id)
@@ -184,9 +178,3 @@ class QAP_T7471(TestCase):
                                                             ignored_fields=list_of_ignored_fields)
         # endregion
 
-    @staticmethod
-    def __print_message(message, responses):
-        logger.info(message)
-        for i in responses:
-            logger.info(i)
-            logger.info(i.get_parameters())

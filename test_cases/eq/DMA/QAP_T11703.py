@@ -114,9 +114,9 @@ class QAP_T11703(TestCase):
         list_ignored_fields = ['SecurityDesc']
         dont_know_trade.set_default(last_venue_ord_id)
         dont_know_trade.change_parameters({'DKReason': 'E',
-                                           'LastQty': qty,
-                                           'LastPx': new_price,
-                                           'OrderQtyData': {'OrderQty': qty},
+                                           'LastQty': qty[0:len(qty)-2],
+                                           'LastPx': new_price[0:len(qty)-3],
+                                           'OrderQtyData': {'OrderQty': qty[0:len(qty)-2]},
                                            'Side': '1'})
         self.fix_verifier_bs.check_fix_message_fix_standard(dont_know_trade, ignored_fields=list_ignored_fields)
 

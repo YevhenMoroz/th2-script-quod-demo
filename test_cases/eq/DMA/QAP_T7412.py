@@ -53,7 +53,7 @@ class QAP_T7412(TestCase):
         tree.write("temp.xml")
         self.ssh_client.put_file(self.remote_path, "temp.xml")
         self.ssh_client.send_command("qrestart ORS")
-        time.sleep(90)
+        time.sleep(40)
         # endregion
         # region create Held order
         self.order_submit.set_default_dma_limit()
@@ -95,4 +95,5 @@ class QAP_T7412(TestCase):
     def run_post_conditions(self):
         self.ssh_client.put_file(self.remote_path, self.local_path)
         self.ssh_client.send_command("qrestart ORS")
+        time.sleep(40)
         os.remove("temp.xml")

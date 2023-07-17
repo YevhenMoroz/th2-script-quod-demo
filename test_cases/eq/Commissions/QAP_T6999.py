@@ -28,11 +28,6 @@ logger.setLevel(logging.INFO)
 seconds, nanos = timestamps()
 
 
-def print_message(message, responses):
-    logger.info(message)
-    for i in responses:
-        logger.info(i)
-        logger.info(i.get_parameters())
 
 
 class QAP_T6999(TestCase):
@@ -86,8 +81,7 @@ class QAP_T6999(TestCase):
                 'Price': self.price,
                 "ClOrdID": bca.client_orderid(9) + Path(__file__).name[:-3]
             })
-            responses = self.java_api_manager.send_message_and_receive_response(self.order_submit)
-            print_message('Create DMA  order', responses)
+            self.java_api_manager.send_message_and_receive_response(self.order_submit)
             list_of_order_ids.append(
                 self.java_api_manager.get_last_message(ORSMessageType.OrdReply.value).get_parameters()[
                     JavaApiFields.OrdReplyBlock.value][JavaApiFields.OrdID.value])
@@ -131,8 +125,7 @@ class QAP_T6999(TestCase):
                                                                  "LastMkt": self.venue_mic,
                                                                  "OrdQty": self.qty
                                                              })
-            responses = self.java_api_manager.send_message_and_receive_response(self.execution_report)
-            print_message(f'Trade DMA  order {order_id}', responses)
+            self.java_api_manager.send_message_and_receive_response(self.execution_report)
             actually_result = \
                 self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value,
                                                        ExecutionReportConst.ExecType_TRD.value).get_parameters()[
@@ -165,8 +158,7 @@ class QAP_T6999(TestCase):
         self.compute_booking_fee_commission_request.set_default_compute_booking_request(str(int(self.qty) * 3),
                                                                                         new_avg_px,
                                                                                         self.client)
-        responses = self.java_api_manager.send_message_and_receive_response(self.compute_booking_fee_commission_request)
-        print_message('ComputeBookingFeesCommissionsRequest', responses)
+        self.java_api_manager.send_message_and_receive_response(self.compute_booking_fee_commission_request)
         compute_reply = self.java_api_manager.get_last_message(ORSMessageType.ComputeBookingFeesCommissionsReply.value). \
             get_parameters()[JavaApiFields.ComputeBookingFeesCommissionsReplyBlock.value]
         commission_amount_expected = str(float(commission_amount) * 3)[0:4]
@@ -199,10 +191,9 @@ class QAP_T6999(TestCase):
                                                                    'ExecAllocList': {
                                                                        'ExecAllocBlock': exec_alloc_list}
                                                                })
-        responses = self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
-        print_message("Book orders", responses)
+        self.java_api_manager.send_message_and_receive_response(self.allocation_instruction)
         allocation_report = \
-            self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value).get_parameters()[
+            self.java_api_manager.get_last_message(ORSMessageType.AllocationReport.value, JavaApiFields.BookingAllocInstructionID.value).get_parameters()[
                 JavaApiFields.AllocationReportBlock.value]
         commission_actually = \
             allocation_report[JavaApiFields.ClientCommissionList.value][JavaApiFields.ClientCommissionBlock.value][0]

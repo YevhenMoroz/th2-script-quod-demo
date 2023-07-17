@@ -60,7 +60,7 @@ class QAP_T7322(TestCase):
         self.fee_type = self.data_set.get_misc_fee_type_by_name('agent')
         self.ord_scope = self.data_set.get_fee_order_scope_by_name('done_for_day')
         self.exec_scope = self.data_set.get_fee_exec_scope_by_name('all_exec')
-        self.client_for_rule = self.data_set.get_venue_client_names_by_name("client_counterpart_1_venue_2")
+        self.client_for_rule = self.data_set.get_venue_client_names_by_name("client_counterpart_1_venue_1")
         self.route_id = self.data_set.get_route_id_by_name('route_1')
         self.order_submit = OrderSubmitOMS(self.data_set)
         self.trade_entry_request = TradeEntryOMS(self.data_set)

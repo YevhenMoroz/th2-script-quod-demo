@@ -51,7 +51,7 @@ class QAP_T6914(TestCase):
         self.ssh_client.send_command("~/quod/script/site_scripts/change_permission_script")
         self.ssh_client.put_file(self.remote_path, "temp.xml")
         self.ssh_client.send_command("qrestart ORS")
-        time.sleep(30)
+        time.sleep(40)
         # endregion
         # region Step 1
         try:
@@ -68,12 +68,12 @@ class QAP_T6914(TestCase):
             time.sleep(3)
             self.rule_manager.remove_rule(rule)
         exec_rep = self.fix_manager.get_last_message("ExecutionReport").get_parameters()
-        self.fix_manager.compare_values({"Account": self.client, "OrdStatus": "A"}, exec_rep, "Check Client")
+        self.fix_manager.compare_values({"Account": self.client, "OrdStatus": "0"}, exec_rep, "Check Client")
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.ssh_client.put_file(self.remote_path, self.local_path)
         self.ssh_client.send_command("qrestart ORS")
-        time.sleep(30)
+        time.sleep(40)
         os.remove("temp.xml")

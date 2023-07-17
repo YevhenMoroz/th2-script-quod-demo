@@ -108,10 +108,9 @@ class QAP_T8909(TestCase):
         delay_DAY = tree.getroot().find("ors/delayDayOrders")
         delay_DAY.text = 'true'
         tree.write("temp.xml")
-        self.ssh_client.send_command('~/quod/script/site_scripts/change_permission_script')
         self.ssh_client.put_file(self.remote_path, "temp.xml")
         self.ssh_client.send_command("qrestart all")
-        time.sleep(210)
+        time.sleep(140)
 
     def _remove_holiday(self):
         self.db_manager.execute_query(f"DELETE FROM holidaycalendar WHERE holidayid = '3'")
@@ -120,7 +119,7 @@ class QAP_T8909(TestCase):
         self.ssh_client.put_file(self.remote_path, self.local_path)
         os.remove("temp.xml")
         self.ssh_client.send_command("qrestart all")
-        time.sleep(210)
+        time.sleep(140)
         self.ssh_client.close()
 
     def _get_effective_date(self, cl_ord_id):
