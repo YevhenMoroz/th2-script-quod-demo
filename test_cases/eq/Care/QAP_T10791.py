@@ -94,5 +94,6 @@ class QAP_T10791(TestCase):
         execution_report.set_default_filled(self.new_ord_single)
         execution_report.change_parameters({'AvgPx': str((float(self.price) / 100)),
                                             'Currency': self.currency})
+        
         self.fix_verifier.check_fix_message_fix_standard(execution_report, ignored_fields=list_of_ignore_fields)
         # endregion
