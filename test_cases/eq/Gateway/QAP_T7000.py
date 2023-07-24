@@ -81,10 +81,10 @@ class QAP_T7000(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region precondition: Set needed values via WebAdmin
-        # self.rest_institution_message.modify_enable_unknown_accounts(True)
-        # self.rest_api_manager.send_post_request(self.rest_institution_message)
-        # self.ssh_client.send_command("qrestart ORS")
-        # time.sleep(45)
+        self.rest_institution_message.modify_enable_unknown_accounts(True)
+        self.rest_api_manager.send_post_request(self.rest_institution_message)
+        self.ssh_client.send_command("qrestart ORS")
+        time.sleep(45)
         # endregion
 
         # region step 1: create DMA  order
@@ -298,9 +298,9 @@ class QAP_T7000(TestCase):
         # end_of_part
         # endregion
 
-    # @try_except(test_id=Path(__file__).name[:-3])
-    # def run_post_conditions(self):
-    #     self.rest_institution_message.modify_enable_unknown_accounts(False)
-    #     self.rest_api_manager.send_post_request(self.rest_institution_message)
-    #     self.ssh_client.send_command("qrestart ORS")
-    #     time.sleep(45)
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.rest_institution_message.modify_enable_unknown_accounts(False)
+        self.rest_api_manager.send_post_request(self.rest_institution_message)
+        self.ssh_client.send_command("qrestart ORS")
+        time.sleep(45)

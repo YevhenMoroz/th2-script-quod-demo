@@ -44,7 +44,7 @@ class AllocationInstructionOMS(AllocationInstruction):
     def set_default_book(self, ord_id):
         self.change_parameters(self.base_parameters)
         self.update_fields_in_component('AllocationInstructionBlock',
-                                        {"OrdAllocList": {"OrdAllocBlock": [{"OrdID": ord_id}]}})
+                                        {"OrdAllocList": {"OrdAllocBlock": [{"OrdID": ord_id, "OrdQty": "100"}]}})
         return self
 
     def set_book_by_ord_list(self, ord_id_list):
@@ -59,7 +59,7 @@ class AllocationInstructionOMS(AllocationInstruction):
                            settl_curr_fx_rate_calc="M"):
         self.change_parameters(self.base_parameters)
         self.update_fields_in_component('AllocationInstructionBlock',
-                                        {"OrdAllocList": {"OrdAllocBlock": [{"OrdID": ord_id}]},
+                                        {"OrdAllocList": {"OrdAllocBlock": [{"OrdID": ord_id, "OrdQty": "100"}]},
                                          "BookingType": settl_type,
                                          "SettlCurrFxRate": settl_curr_fx_rate,
                                          "SettlCurrFxRateCalc": settl_curr_fx_rate_calc,
@@ -110,7 +110,7 @@ class AllocationInstructionOMS(AllocationInstruction):
     def set_split_book(self, ord_id, first_booking_qty="50", second_booking_qty="50", avg_px="10"):
         self.change_parameters(self.base_parameters)
         self.update_fields_in_component('AllocationInstructionBlock',
-                                        {"OrdAllocList": {"OrdAllocBlock": [{"OrdID": ord_id}]},
+                                        {"OrdAllocList": {"OrdAllocBlock": [{"OrdID": ord_id, "OrdQty": "100"}]},
                                          'AllocationInstructionQtyList': {'AllocationInstructionQtyBlock': [{
                                              'BookingQty': first_booking_qty,
                                              'NetGrossInd': 'G',

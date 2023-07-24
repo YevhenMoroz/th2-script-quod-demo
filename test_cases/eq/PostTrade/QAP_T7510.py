@@ -49,7 +49,7 @@ class QAP_T7510(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region Declaration
-        qty = '300'
+        qty = '100'
         price = '10'
         client = self.data_set.get_client("client_pt_2")  # MOClient2
         alloc_account = self.data_set.get_account_by_name('client_pt_2_acc_1')
