@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.middle_office.fees.fees_page import FeesPage
 from test_framework.web_admin_core.pages.middle_office.fees.fees_wizard import FeesWizard
@@ -36,32 +33,24 @@ class QAP_T3448(CommonTestCase):
 
     def test_context(self):
 
-        try:
-            self.precondition()
-            fees_page = FeesPage(self.web_driver_container)
-            fees_page.click_on_new()
-            time.sleep(2)
-            value_tab = FeesValuesSubWizard(self.web_driver_container)
-            value_tab.set_description(self.description)
-            value_tab.set_misc_fee_type(self.misc_fee_type)
-            dimensions_tab = FeesDimensionsSubWizard(self.web_driver_container)
-            self.venue_list = random.choice(dimensions_tab.get_all_venue_list_from_drop_menu())
-            dimensions_tab.set_venue_list(self.venue_list)
-            wizard = FeesWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
-            time.sleep(2)
-            fees_page.set_description(self.description)
-            time.sleep(1)
-            fees_page.click_on_more_actions()
-            time.sleep(1)
+        self.precondition()
+        fees_page = FeesPage(self.web_driver_container)
+        fees_page.click_on_new()
+        time.sleep(2)
+        value_tab = FeesValuesSubWizard(self.web_driver_container)
+        value_tab.set_description(self.description)
+        value_tab.set_misc_fee_type(self.misc_fee_type)
+        dimensions_tab = FeesDimensionsSubWizard(self.web_driver_container)
+        self.venue_list = random.choice(dimensions_tab.get_all_venue_list_from_drop_menu())
+        dimensions_tab.set_venue_list(self.venue_list)
+        wizard = FeesWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
+        time.sleep(2)
+        fees_page.set_description(self.description)
+        time.sleep(1)
+        fees_page.click_on_more_actions()
+        time.sleep(1)
 
-            excepted_result = [self.description, self.misc_fee_type, self.venue_list]
-            self.verify("PDF contains all data", True,
-                        fees_page.click_download_pdf_entity_button_and_check_pdf(excepted_result))
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        excepted_result = [self.description, self.misc_fee_type, self.venue_list]
+        self.verify("PDF contains all data", True,
+                    fees_page.click_download_pdf_entity_button_and_check_pdf(excepted_result))

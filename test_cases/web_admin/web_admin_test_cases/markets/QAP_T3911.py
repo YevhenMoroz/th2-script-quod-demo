@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.listings.listings_attachment_sub_wizard import \
     ListingsAttachmentSubWizard
@@ -71,45 +68,36 @@ class QAP_T3911(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
-        try:
-            self.precondition()
-            page = ListingsPage(self.web_driver_container)
-            wizard = ListingsWizard(self.web_driver_container)
-            attachment_sub_wizard = ListingsAttachmentSubWizard(self.web_driver_container)
-            expected_pdf_values_after_saved = [self.lookup_symbol,
-                                               self.instr_symbol,
-                                               self.venue,
-                                               self.preferred_venue]
+        self.precondition()
+        page = ListingsPage(self.web_driver_container)
+        wizard = ListingsWizard(self.web_driver_container)
+        attachment_sub_wizard = ListingsAttachmentSubWizard(self.web_driver_container)
+        expected_pdf_values_after_saved = [self.lookup_symbol,
+                                           self.instr_symbol,
+                                           self.venue,
+                                           self.preferred_venue]
 
-            self.verify("Listing saved with correctly values", True,
-                        page.click_download_pdf_entity_button_and_check_pdf(expected_pdf_values_after_saved))
-            #########
-            time.sleep(3)
-            page.click_on_more_actions()
-            time.sleep(2)
-            page.click_on_edit()
-            time.sleep(2)
-            attachment_sub_wizard.set_preferred_venue(self.new_preferred_venue)
-            time.sleep(2)
-            wizard.click_on_save_changes()
-            time.sleep(2)
-            page.set_listing_in_global_filter(self.lookup_symbol)
-            time.sleep(1)
-            page.click_on_load_button()
-            time.sleep(2)
-            page.click_on_more_actions()
-            time.sleep(2)
-            expected_pdf_values_after_edited = [self.lookup_symbol,
-                                                self.instr_symbol,
-                                                self.venue,
-                                                self.new_preferred_venue]
-            self.verify("Listing edited with correctly values", True,
-                        page.click_download_pdf_entity_button_and_check_pdf(expected_pdf_values_after_edited))
-
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("Listing saved with correctly values", True,
+                    page.click_download_pdf_entity_button_and_check_pdf(expected_pdf_values_after_saved))
+        #########
+        time.sleep(3)
+        page.click_on_more_actions()
+        time.sleep(2)
+        page.click_on_edit()
+        time.sleep(2)
+        attachment_sub_wizard.set_preferred_venue(self.new_preferred_venue)
+        time.sleep(2)
+        wizard.click_on_save_changes()
+        time.sleep(2)
+        page.set_listing_in_global_filter(self.lookup_symbol)
+        time.sleep(1)
+        page.click_on_load_button()
+        time.sleep(2)
+        page.click_on_more_actions()
+        time.sleep(2)
+        expected_pdf_values_after_edited = [self.lookup_symbol,
+                                            self.instr_symbol,
+                                            self.venue,
+                                            self.new_preferred_venue]
+        self.verify("Listing edited with correctly values", True,
+                    page.click_download_pdf_entity_button_and_check_pdf(expected_pdf_values_after_edited))

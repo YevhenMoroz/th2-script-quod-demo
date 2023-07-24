@@ -1,10 +1,7 @@
-import sys
 import time
-import traceback
 import random
 import string
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_values_sub_wizard import \
     ClientsValuesSubWizard
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
@@ -59,22 +56,14 @@ class QAP_T4025(CommonTestCase):
         page.click_on_edit()
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            values_tab = ClientsValuesSubWizard(self.web_driver_container)
-            values_tab.set_description(self.new_description)
-            wizard = ClientsWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
+        values_tab = ClientsValuesSubWizard(self.web_driver_container)
+        values_tab.set_description(self.new_description)
+        wizard = ClientsWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
 
-            page = ClientsPage(self.web_driver_container)
-            page.set_name(self.name)
-            time.sleep(1)
-            self.verify("Client has been changed", True, page.is_searched_client_found(self.name))
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        page = ClientsPage(self.web_driver_container)
+        page.set_name(self.name)
+        time.sleep(1)
+        self.verify("Client has been changed", True, page.is_searched_client_found(self.name))

@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_page import AccountsPage
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_routes_subwizard import \
     AccountsRoutesSubWizard
@@ -63,27 +60,19 @@ class QAP_T3971(CommonTestCase):
         accounts_main_page = AccountsPage(self.web_driver_container)
         routes_tab = AccountsRoutesSubWizard(self.web_driver_container)
 
+        self.precondition()
         try:
-            self.precondition()
-            try:
-                routes_tab.click_on_plus_button()
-                routes_tab.set_route_account_name(self.route_account_name)
-                time.sleep(1)
-                routes_tab.set_route(self.route)
-                time.sleep(1)
-                routes_tab.click_on_checkmark_button()
-                time.sleep(2)
-                accounts_wizard.click_save_button()
+            routes_tab.click_on_plus_button()
+            routes_tab.set_route_account_name(self.route_account_name)
+            time.sleep(1)
+            routes_tab.set_route(self.route)
+            time.sleep(1)
+            routes_tab.click_on_checkmark_button()
+            time.sleep(2)
+            accounts_wizard.click_save_button()
 
-                self.verify("Account edit correctly", True, True)
-                time.sleep(1)
-                self.verify("Pop-up text is present", "Account changes saved", accounts_main_page.get_popup_text())
-            except Exception as e:
-                self.verify("Problem in Save Changes button", True, e.__class__.__name__)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+            self.verify("Account edit correctly", True, True)
+            time.sleep(1)
+            self.verify("Pop-up text is present", "Account changes saved", accounts_main_page.get_popup_text())
+        except Exception as e:
+            self.verify("Problem in Save Changes button", True, e.__class__.__name__)

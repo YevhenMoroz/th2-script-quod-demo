@@ -1,11 +1,8 @@
 import time
-import traceback
 import random
 import string
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_page import AccountsPage
-from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_wizard import AccountsWizard
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
@@ -38,23 +35,17 @@ class QAP_T3724(CommonTestCase):
         values_sub_wizard = AccountsWizard(self.web_driver_container)
         wizard = AccountsWizard(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page.click_new_button()
-            values_sub_wizard.set_id(self.id)
-            values_sub_wizard.set_ext_id_client(self.ext_id_client)
-            values_sub_wizard.set_client(self.client)
-            values_sub_wizard.set_client_id_source(self.client_id_source)
-            wizard.click_save_button()
-            time.sleep(1)
-            main_page.set_id(self.id)
-            time.sleep(1)
-            
-            self.verify("Account with the same Ext Id Client created",
-                        True, main_page.is_searched_account_found(self.id))
+        main_page.click_new_button()
+        values_sub_wizard.set_id(self.id)
+        values_sub_wizard.set_ext_id_client(self.ext_id_client)
+        values_sub_wizard.set_client(self.client)
+        values_sub_wizard.set_client_id_source(self.client_id_source)
+        wizard.click_save_button()
+        time.sleep(1)
+        main_page.set_id(self.id)
+        time.sleep(1)
 
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)
+        self.verify("Account with the same Ext Id Client created",
+                    True, main_page.is_searched_account_found(self.id))

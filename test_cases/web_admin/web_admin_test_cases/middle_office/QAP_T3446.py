@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.middle_office.commissions.commissions_page import CommissionsPage
 from test_framework.web_admin_core.pages.middle_office.commissions.commissions_wizard import CommissionsWizard
@@ -39,33 +36,25 @@ class QAP_T3446(CommonTestCase):
 
     def test_context(self):
 
-        try:
-            self.precondition()
-            commission_page = CommissionsPage(self.web_driver_container)
-            commission_page.click_on_new()
-            time.sleep(2)
-            value_tab = CommissionsValuesSubWizard(self.web_driver_container)
-            value_tab.set_name(self.name)
-            value_tab.set_description(self.description)
-            value_tab.set_commission_amount_type(self.commission_amount_type)
-            dimensions_tab = CommissionsDimensionsSubWizard(self.web_driver_container)
-            self.venue_list = random.choice(dimensions_tab.get_all_venue_list_from_drop_menu())
-            dimensions_tab.set_venue_list(self.venue_list)
-            wizard = CommissionsWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
-            time.sleep(2)
-            commission_page.set_name(self.name)
-            time.sleep(1)
-            commission_page.click_on_more_actions()
-            time.sleep(1)
+        self.precondition()
+        commission_page = CommissionsPage(self.web_driver_container)
+        commission_page.click_on_new()
+        time.sleep(2)
+        value_tab = CommissionsValuesSubWizard(self.web_driver_container)
+        value_tab.set_name(self.name)
+        value_tab.set_description(self.description)
+        value_tab.set_commission_amount_type(self.commission_amount_type)
+        dimensions_tab = CommissionsDimensionsSubWizard(self.web_driver_container)
+        self.venue_list = random.choice(dimensions_tab.get_all_venue_list_from_drop_menu())
+        dimensions_tab.set_venue_list(self.venue_list)
+        wizard = CommissionsWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
+        time.sleep(2)
+        commission_page.set_name(self.name)
+        time.sleep(1)
+        commission_page.click_on_more_actions()
+        time.sleep(1)
 
-            excepted_result = [self.name, self.description, self.venue_list, self.commission_amount_type]
-            self.verify("PDF contains all data", True,
-                        commission_page.click_download_pdf_entity_button_and_check_pdf(excepted_result))
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        excepted_result = [self.name, self.description, self.venue_list, self.commission_amount_type]
+        self.verify("PDF contains all data", True,
+                    commission_page.click_download_pdf_entity_button_and_check_pdf(excepted_result))

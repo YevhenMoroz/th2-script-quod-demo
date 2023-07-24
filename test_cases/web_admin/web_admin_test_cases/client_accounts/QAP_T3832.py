@@ -1,8 +1,5 @@
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_external_sources_sub_wizard import \
     ClientsExternalSourcesSubWizard
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
@@ -47,16 +44,7 @@ class QAP_T3832(CommonTestCase):
         page.click_on_edit()
 
     def test_context(self):
-        try:
-            self.precondition()
-            external_sources_sub_wizard = ClientsExternalSourcesSubWizard(self.web_driver_container)
-            self.verify("Is bic venue act group name saved correctly", self.venue_act_group_name_bic,
-                        external_sources_sub_wizard.get_bic_venue_act_grp_name())
-
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.precondition()
+        external_sources_sub_wizard = ClientsExternalSourcesSubWizard(self.web_driver_container)
+        self.verify("Is bic venue act group name saved correctly", self.venue_act_group_name_bic,
+                    external_sources_sub_wizard.get_bic_venue_act_grp_name())

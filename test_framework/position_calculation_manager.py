@@ -1,4 +1,133 @@
+import copy
+
+from test_cases.fx.fx_wrapper.common_tools import get_cross_rate
+
+
 class PositionCalculationManager:
+    def __init__(self):
+        self.cumulative_quote_pos = 0
+        self.cumulative_base_pos = 0
+        self.cumulative_daily_quote_pos = 0
+        self.call_count = 0
+
+    def get_cumulative_quote_pos(self):
+        return self.cumulative_quote_pos
+
+    def update_cumulative_quote_pos(self, quote_pos):
+        self.cumulative_quote_pos = quote_pos
+
+    def get_cumulative_base_pos(self):
+        return self.cumulative_base_pos
+
+    def update_cumulative_base_pos(self, base_pos):
+        self.cumulative_base_pos = base_pos
+
+    def get_cumulative_daily_quote_pos(self):
+        return self.cumulative_daily_quote_pos
+
+    def update_cumulative_daily_quote_pos(self, daily_quote_pos):
+        self.cumulative_daily_quote_pos = daily_quote_pos
+
+    def calculate_base_position(self, qty, side):
+        base_pos = copy.deepcopy(self.get_cumulative_base_pos())
+        if side == "B":
+            base_pos += float(qty)
+        else:
+            base_pos += -float(qty)
+        self.update_cumulative_base_pos(base_pos)
+        return str(base_pos)
+
+    def calculate_quote_position(self, qty, price, side):
+        quote_pos = copy.deepcopy(self.get_cumulative_quote_pos())  # Get the cumulative quote position for the symbol
+
+        if side == "B":
+            quote_pos += -float(qty) * float(price)
+        else:
+            quote_pos += float(qty) * float(price)
+
+        self.update_cumulative_quote_pos(quote_pos)
+
+        if str(quote_pos).endswith(".0"):
+            return str(quote_pos)[:-2]
+        else:
+            return str(round(quote_pos, 3))
+
+    def calculate_sys_quote_position(self, qty, price, symbol, side):
+        cross_rate = get_cross_rate(symbol)
+        quote_pos = copy.deepcopy(self.get_cumulative_quote_pos())  # Get the cumulative quote position for the symbol
+
+        if side == "B":
+            quote_pos += -float(qty) * float(price)
+        else:
+            quote_pos += float(qty) * float(price)
+
+        system_quote_pos = quote_pos / float(cross_rate)
+        self.update_cumulative_quote_pos(quote_pos)
+
+        if str(system_quote_pos).endswith(".0"):
+            return str(system_quote_pos)[:-2]
+        else:
+            return str(round(system_quote_pos, 8))
+
+    def calculate_mtm_pnl(self, qty, price, symbol, side):
+        cross_rate = get_cross_rate(symbol)
+        quote_pos = self.calculate_quote_position(qty, price, side)
+        base_position = self.calculate_base_position(qty, side)
+        pnl = float(base_position) * float(cross_rate) + float(quote_pos)
+        if str(pnl).endswith(".0"):
+            return str(pnl)[:-2]
+        else:
+            return str(round(pnl, 9))
+
+    def calculate_daily_mtm_quote_position(self, qty, price, side):
+        daily_quote_pos = copy.deepcopy(self.get_cumulative_daily_quote_pos())
+        self.call_count += 1
+        if self.call_count == 1:
+            return 0
+        if side == "B":
+            daily_quote_pos += -float(qty) * float(price)
+        else:
+            daily_quote_pos += float(qty) * float(price)
+        self.update_cumulative_daily_quote_pos(daily_quote_pos)
+        return daily_quote_pos
+
+    def calculate_daily_mtm_pnl(self, qty, price, symbol, side):
+        position = self.calculate_base_position(qty, side)
+        cross_rate = get_cross_rate(symbol)
+        daily_pnl = float(position) * float(cross_rate) + self.calculate_daily_mtm_quote_position(qty, price, side)
+        suffixes = (".0", ".000000001")
+        if any(str(daily_pnl).endswith(suffix) for suffix in suffixes):
+            return str(daily_pnl).split(".")[0]  # remove the .0 or .000000001
+        else:
+            return str(round(daily_pnl, 9))
+
+    def calculate_sys_daily_mtm_pnl(self, qty, price, symbol, side):
+        position = self.calculate_base_position(qty, side)
+        cross_rate = get_cross_rate(symbol)
+        daily_pnl = (float(position) * float(cross_rate) +
+                     self.calculate_daily_mtm_quote_position(qty, price, side)) / float(cross_rate)
+        suffixes = (".0", ".000000001")
+        if any(str(daily_pnl).endswith(suffix) for suffix in suffixes):
+            return str(daily_pnl).split(".")[0]  # remove the .0 or .000000001
+        else:
+            return str(round(daily_pnl, 8))
+
+    def calculate_system_mtm_pnl(self, qty, price, symbol, side):
+        cross_rate = get_cross_rate(symbol)
+        base_position = self.calculate_base_position(qty, side)
+        quote_pos = self.calculate_quote_position(qty, price, side)
+        pnl = (float(base_position) * float(cross_rate) + float(quote_pos)) / float(cross_rate)
+        if str(pnl).endswith(".0"):
+            return str(pnl)[:-2]
+        else:
+            return str(round(pnl, 9))
+
+    def calculate_daily_avg_px(self, qty, price, side):
+        daily_quote_pos = self.calculate_daily_mtm_quote_position(qty, price, side)
+        base_pos = self.calculate_base_position(qty, side)
+        daily_avg_px = float(daily_quote_pos) / float(base_pos)
+        return str(round(daily_avg_px, 2))
+
     @staticmethod
     def calculate_position_buy(position_before: str, order_qty: str) -> str:
         expected_pos = int(position_before.replace(",", "")) + int(order_qty)
@@ -122,7 +251,7 @@ class PositionCalculationManager:
                 return str(sell_avg_px)
             if float(exec_qty) > float(posit_qty):
                 sell_avg_px = (float(exec_qty) * float(exec_price) * float(cross_rate) - (
-                            float(fees) + float(client_commission)) * float(cross_rate)) / float(exec_qty)
+                        float(fees) + float(client_commission)) * float(cross_rate)) / float(exec_qty)
                 return str(sell_avg_px)
             if float(exec_qty) == -float(posit_qty):
                 return '0.0'

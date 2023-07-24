@@ -2,11 +2,11 @@ class SettlementModelsConstants:
     SETTLEMENT_MODELS_PAGE_TITLE_XPATH = "//span[@class='entity-title left'][normalize-space()='Settlement Models']"
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
     DOWNLOAD_PDF_BUTTON_XPATH = "//*[@nbtooltip = 'Download PDF']//*[@data-name='download']"
-    SAVE_CHANGES_BUTTON_XPATH = "//*[text()='Save Changes']"
-    CLEAR_CHANGES_BUTTON_XPATH = "//*[text()='Clear Changes']"
+    SAVE_CHANGES_BUTTON_XPATH = "//*[normalize-space()='Save Changes']"
+    CLEAR_CHANGES_BUTTON_XPATH = "//*[normalize-space()='Clear Changes']"
     CLOSE_WIZARD_XPATH = "//*[@data-name='close']"
-    OK_BUTTON_XPATH = '//*[text()="Ok"]'
-    CANCEL_BUTTON_XPATH = '//*[text()="Cancel"]'
+    OK_BUTTON_XPATH = '//*[normalize-space()="Ok"]'
+    CANCEL_BUTTON_XPATH = '//*[normalize-space()="Cancel"]'
     REVERT_CHANGES_XPATH = "//*[text()='Revert Changes']"
     MORE_ACTIONS_XPATH = "//*[@data-name = 'more-vertical']"
     EDIT_XPATH = "//*[@data-name = 'edit']"
@@ -23,7 +23,7 @@ class SettlementModelsConstants:
     # Main page
     MAIN_PAGE_DESCRIPTION_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[1]//input'
     MAIN_PAGE_DESCRIPTION_XPATH = '//*[@col-id="settlementModelDescription"]//span//span[4]'
-    MAIN_PAGE_NAME_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[2]//input'
+    MAIN_PAGE_NAME_FILTER_XPATH = '//*[@col-id="settlementModelName"]//following::input[@ref="eFloatingFilterText"][2]'
     MAIN_PAGE_NAME_XPATH = '//*[@col-id="settlementModelName"]//span//span[4]'
     MAIN_PAGE_COUNTRY_CODE_FILTER_XPATH = '//*[@class="ag-header-container"]/div[2]/div[3]//input'
     MAIN_PAGE_COUNTRY_CODE_XPATH = '//*[@col-id="countryCode"]//span//span[4]'
@@ -39,7 +39,7 @@ class SettlementModelsConstants:
     VALUES_TAB_SETTL_LOCATION_BIC_XPATH = '//*[@formcontrolname="settlLocationBIC"]'
     VALUES_TAB_INSTR_TYPE_XPATH = '//*[@id="instrType"]'
     VALUES_TAB_COUNTRY_CODE_XPATH = '//*[@id="countryCodeEnumTable"]'
-    VALUES_TAB_SETTL_LOCATION_MANAGE_BUTTON_XPATH = '//*[text()="Manage"]'
+    VALUES_TAB_SETTL_LOCATION_MANAGE_BUTTON_XPATH = '//button[normalize-space()="Manage"]'
 
     # Dimensions tab
     DIMENSIONS_TAB_CLIENT_GROUP_XPATH = '//*[@id="clientGroup"]'

@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.venues.venues_page import VenuesPage
 from test_framework.web_admin_core.pages.markets.venues.venues_wizard import VenuesWizard
@@ -64,32 +61,24 @@ class QAP_T3485(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            page = VenuesPage(self.web_driver_container)
-            page.set_name_filter(self.name)
-            time.sleep(1)
-            page.click_on_more_actions()
-            time.sleep(1)
-            page.click_on_edit()
-            time.sleep(2)
-            venues_wizard_dark = VenuesDarkAlgoCommissionSubWizard(self.web_driver_container)
-            expected_values_after_saved = [str(self.cost_per_trade), str(self.per_unit_comm_amt),
-                                           str(self.comm_basis_point), str(self.spread_discount_proportion)]
-            actual_result = [venues_wizard_dark.get_cost_per_trade(), venues_wizard_dark.get_per_unit_comm_amt(),
-                             venues_wizard_dark.get_comm_basis_point(),
-                             venues_wizard_dark.get_spread_discount_proportion()]
+        page = VenuesPage(self.web_driver_container)
+        page.set_name_filter(self.name)
+        time.sleep(1)
+        page.click_on_more_actions()
+        time.sleep(1)
+        page.click_on_edit()
+        time.sleep(2)
+        venues_wizard_dark = VenuesDarkAlgoCommissionSubWizard(self.web_driver_container)
+        expected_values_after_saved = [str(self.cost_per_trade), str(self.per_unit_comm_amt),
+                                       str(self.comm_basis_point), str(self.spread_discount_proportion)]
+        actual_result = [venues_wizard_dark.get_cost_per_trade(), venues_wizard_dark.get_per_unit_comm_amt(),
+                         venues_wizard_dark.get_comm_basis_point(),
+                         venues_wizard_dark.get_spread_discount_proportion()]
 
-            self.verify("Values saved correctly", expected_values_after_saved, actual_result)
+        self.verify("Values saved correctly", expected_values_after_saved, actual_result)
 
-            time.sleep(2)
-            self.verify("Check-box \"Is Comm Per Unit\" is enable", True,
-                        venues_wizard_dark.is_comm_per_unit_checkbox_selected())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        time.sleep(2)
+        self.verify("Check-box \"Is Comm Per Unit\" is enable", True,
+                    venues_wizard_dark.is_comm_per_unit_checkbox_selected())

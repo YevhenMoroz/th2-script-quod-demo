@@ -1,8 +1,10 @@
 import sys
 import time
 import traceback
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tiers_page import ClientTiersPage
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tiers_wizard import ClientTiersWizard
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tiers_values_sub_wizard \
@@ -36,15 +38,9 @@ class QAP_T3965(CommonTestCase):
         client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
         client_tiers_wizard.click_on_save_changes()
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
-        try:
-            self.precondition()
-            client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
-            self.verify("Message appears: The name is required.", True,
-                        client_tiers_wizard.is_incorrect_or_missing_value_massage_displayed())
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.precondition()
+        client_tiers_wizard = ClientTiersWizard(self.web_driver_container)
+        self.verify("Message appears: The name is required.", True,
+                    client_tiers_wizard.is_incorrect_or_missing_value_massage_displayed())

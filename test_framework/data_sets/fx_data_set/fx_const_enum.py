@@ -35,11 +35,12 @@ class FxVenues(Enum):
 
 
 class FxMarketIDs(Enum):
-    market_1 = "CITI-SW"
+    market_1 = "CITI-SW"  # do not use
     market_2 = "HSBC-SW"
-    market_3 = "MS-SW"
+    market_3 = "MS-SW"  # do not use
     market_4 = "JPM-SW"
     market_5 = "DB-SW"
+    market_8 = "GS-SW"
     market_9 = "D3"
     market_10 = "BNP-SW"
 
@@ -51,6 +52,7 @@ class FxClients(Enum):
     client_3 = "ASPECT_BREAK"
     client_4 = "AH_TEST_CLIENT"
     client_5 = "TH2_Taker"
+    client_6 = "BUY_POC_Automation"
 
     """Dummy client"""
     client_dummy = "DUMMY"
@@ -268,6 +270,7 @@ class FxSymbols(Enum):
     symbol_25 = "GBP/DKK"
     symbol_26 = "AUD/GBP"
     symbol_27 = "USD/DKK"
+    unsupported_symbol = "USS/MYR"
 
     symbol_ndf_1 = "USD/PHP"
     symbol_ndf_2 = "EUR/PHP"
@@ -282,6 +285,7 @@ class FxSymbols(Enum):
     symbol_synth_4 = "GBP/NOK"  # cross thought USD
     symbol_synth_5 = "GBP/CAD"  # cross thought USD
     symbol_synth_6 = "USD/CHF"  # mystery symbol
+    symbol_synth_7 = "AUD/GBP"  # cross through EUR
 
     symbol_ndf_synth_1 = "SGD/RUB"  # cross thought USD
 
@@ -379,3 +383,5 @@ class InstrIDs(Enum):
     usd_jpy_spot = "Jbuei4sRIyA1Ttsa8mXiKg"
     gbp_myr_spot = "r6Rri_3WSHRtiA3JVZV4yg"
     eur_jpy_spot = "Twk5nricBHx4gkZ0Jm0wOg"
+    eur_usd_spot = "KExUjnMCR-wK6DgQBZpg8g"
+    eur_usd_1w = "us5tb5Ml30c-YAQOXVpmvA"

@@ -118,6 +118,39 @@ def update_quod_settings(setting_value: str):
             print("PostgreSQL connection is closed")
 
 
+def check_ah_decision(order_id):
+    """
+       Get QuoteRequestId from DB using quote_req_id from fix request
+       """
+    connection = None
+    cursor = None
+    try:
+        connection = psycopg2.connect(user="quod314prd",
+                                      password="quod314prd",
+                                      host="10.0.22.69",
+                                      port="5432",
+                                      database="quoddb")
+        # Create a cursor to perform database operations
+        cursor = connection.cursor()
+        # Print PostgreSQL details
+        query = f"SELECT freenotes  FROM autohedgerdecision WHERE hedgeordid ='{order_id}'"
+        cursor.execute(query)
+        response = cursor.fetchone()[0]
+        if response is None:
+            raise Exception("Record not found")
+        else:
+            return response
+        print(f"Extraction is successful! Notes is {response}.")
+        return response
+    except (Exception, Error) as error:
+        print("Error while connecting to PostgreSQL", error)
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+            print("PostgreSQL connection is closed")
+
+
 def check_quote_request_id(quote_request):
     """
     Get QuoteRequestId from DB using quote_req_id from fix request
@@ -148,7 +181,8 @@ def check_quote_request_id(quote_request):
             print("PostgreSQL connection is closed")
 
 
-def check_value_in_db(id_reference=None, key_parameter="clientquoteid", extracting_value="quotestatus", table="quote", query=None):
+def check_value_in_db(id_reference=None, key_parameter="clientquoteid", extracting_value="quotestatus", table="quote",
+                      query=None):
     """
     Get value from DB using quote_id from fix request
     """
@@ -265,8 +299,6 @@ def execute_db_command(*args):
             cursor.close()
             connection.close()
             print("PostgreSQL connection is closed.")
-
-
 
 
 def generate_schedule(hours_from_time=None, hours_to_time=None, minutes_from_time=None,
@@ -398,6 +430,7 @@ def restart_mpas():
     """
     login_and_execute("qrestart QUOD.MPAS")
 
+
 def stop_fxfh():
     """
     Stop FXFH component on quod314 backend
@@ -439,6 +472,39 @@ def add_band_tenor_lvl(tenors, tenor_name='SPO', qty='1.5E7'):
             tenor['clientTierInstrSymbolTenorQty'].append(new_qty)
             break
     return tenors
+
+
+def get_cross_rate(symbol):
+    """
+    Get cross rate for give symbol
+    """
+    connection = None
+    cursor = None
+    try:
+        connection = psycopg2.connect(user="quod314prd",
+                                      password="quod314prd",
+                                      host="10.0.22.69",
+                                      port="5432",
+                                      database="quoddb")
+        # Create a cursor to perform database operations
+        cursor = connection.cursor()
+        # Print PostgreSQL details
+
+        query = f"SELECT fixedrate from crossrate where basecurrency = '{symbol.split('/')[0]}' and crosscurrency = '{symbol.split('/')[1]}'"
+        cursor.execute(query)
+        response = cursor.fetchone()[0]
+        print(f"Extraction is successful! Rates is {response}.")
+        if response is None:
+            raise ValueError("CrossRate not found")
+        else:
+            return response
+    except (Exception, Error) as error:
+        print("Error while connecting to PostgreSQL", error)
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+            print("PostgreSQL connection is closed")
 
 
 hash_green = 'iVBORw0KGgoAAAANSUhEUgAAAG4AAAAXCAIAAABlFO2lAAACK0lEQVR4Xu2X3UoCQRSAfa0Kooh+vSjUvOnPi5LoRiyJ3KKMAmm7iOyiH9QMsqtojVLb7nwEH2HfoDeos+N6GmdGC5rZCubjCMuZOQt+nJmdCbxrJBGAX0nzY7RKaWiVvcjdXqYezMVqJmrvRG0jVs1sWGbu7oqdR9AqxRRvrlOWGbLT4VeDiYhtrFfMwk2RKdEqBYDH1adDXiId8ecDxqZWKQD6kXfHR9I6oqu0ShbYH4XrGiN4tja8Eg3V0xF7+7R8gYXqVDacd+St+ciPOg0m59It7x/wneH10R77h8f7Bscmj+PhzsZUqrJt0LX6y4K+D3yvPXG2MXOfEnoc3VxsZRaqe1joi0qv19yM47yRNDNKcG1jnjw0vRGqq73JZIxvdgnM2jstjyOJuYHJ4HQ52c0jiW0s9EPlYxP10Y3qPXa2LK2ynadm4LD7TjUq4fwIjkK19NBSBMS1bHbxaMCuioVKVSKohO5Eqvs+jQjzvZOSibUXeKi25dmcmBJ6hJiv72KhUpXMXxWK+HMqN6iTENoUeoRIVnz+7Agy+Nxe/eycryY3qN1CKqflywhZ47RNoUeIk/I5Fv66ytYzbgO9VXp7JJnscO+XBtwLO5S9iI+ZiUqWrlKnUi1MM8sFboRwL+Td0bH8tJ8v/eeLIzalotWNgE04fsN9hpcYJv2YLxWYkn+m0mfgXghC4RwO50c498D3OmFl6f2RRquUhlYpDa1SGp5KjRQ+AOYYurVt0An0AAAAAElFTkSuQmCC'

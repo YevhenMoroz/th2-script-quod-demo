@@ -1,10 +1,7 @@
-import sys
 import time
-import traceback
 import random
 import string
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.client_lists.main_page import ClientListsPage
 from test_framework.web_admin_core.pages.clients_accounts.client_lists.wizard import ClientListsWizard
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
@@ -63,34 +60,25 @@ class QAP_T3554(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
+        self.precondition()
 
-        try:
-            self.precondition()
+        client_list_page = ClientListsPage(self.web_driver_container)
+        client_list_page.click_on_more_actions()
+        time.sleep(1)
+        client_list_page.click_on_edit()
+        time.sleep(2)
+        wizard = ClientListsWizard(self.web_driver_container)
+        wizard.set_client_list_name(self.new_client_list_name)
+        wizard.set_client_list_description(self.client_list_description)
+        wizard.click_on_save_changes()
+        time.sleep(2)
+        client_list_page.set_name(self.client_list_name)
+        time.sleep(1)
+        self.verify("Old Client List is not displayed at main page", False,
+                    client_list_page.is_client_list_found(self.client_list_name))
+        client_list_page.set_name(self.new_client_list_name)
+        time.sleep(1)
+        self.verify("Client List is edited and displayed at main page", True,
+                    client_list_page.is_client_list_found(self.new_client_list_name))
 
-            client_list_page = ClientListsPage(self.web_driver_container)
-            client_list_page.click_on_more_actions()
-            time.sleep(1)
-            client_list_page.click_on_edit()
-            time.sleep(2)
-            wizard = ClientListsWizard(self.web_driver_container)
-            wizard.set_client_list_name(self.new_client_list_name)
-            wizard.set_client_list_description(self.client_list_description)
-            wizard.click_on_save_changes()
-            time.sleep(2)
-            client_list_page.set_name(self.client_list_name)
-            time.sleep(1)
-            self.verify("Old Client List is not displayed at main page", False,
-                        client_list_page.is_client_list_found(self.client_list_name))
-            client_list_page.set_name(self.new_client_list_name)
-            time.sleep(1)
-            self.verify("Client List is edited and displayed at main page", True,
-                        client_list_page.is_client_list_found(self.new_client_list_name))
-
-            self.post_conditions()
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.post_conditions()

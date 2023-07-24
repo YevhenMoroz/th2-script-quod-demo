@@ -3,8 +3,10 @@ import string
 import sys
 import time
 import traceback
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tiers_wizard import ClientTiersWizard
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
@@ -82,54 +84,48 @@ class QAP_T8823(CommonTestCase):
         client_tiers_main_page.click_on_more_actions()
         client_tiers_main_page.click_on_delete_and_confirmation(True)
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            client_tiers_main_page = ClientTiersPage(self.web_driver_container)
-            client_tiers_main_page.set_name(self.name)
-            time.sleep(1)
-            client_tiers_main_page.select_client_tier_by_name(self.name)
-            instrument_main_page = ClientTierInstrumentsPage(self.web_driver_container)
-            instrument_main_page.set_symbol(self.symbol)
-            time.sleep(1)
-            instrument_main_page.click_on_more_actions()
-            instrument_main_page.click_on_edit()
-            instrument_client_tiers_tab = ClientTiersInstrumentClientTierSubWizard(self.web_driver_container)
-            instrument_client_tiers_tab.set_client_tiers_filter(self.instrument_client_tier)
-            instrument_client_tiers_tab.click_on_edit()
-            self.new_instrument_client_tier = random.choice(instrument_client_tiers_tab.get_all_client_tiers_from_drop_menu())
-            instrument_client_tiers_tab.set_client_tiers(self.new_instrument_client_tier)
-            instrument_client_tiers_tab.select_critical_checkbox()
-            instrument_client_tiers_tab.set_default_weight(self.new_default_weight)
-            instrument_client_tiers_tab.click_on_checkmark()
+        client_tiers_main_page = ClientTiersPage(self.web_driver_container)
+        client_tiers_main_page.set_name(self.name)
+        time.sleep(1)
+        client_tiers_main_page.select_client_tier_by_name(self.name)
+        instrument_main_page = ClientTierInstrumentsPage(self.web_driver_container)
+        instrument_main_page.set_symbol(self.symbol)
+        time.sleep(1)
+        instrument_main_page.click_on_more_actions()
+        instrument_main_page.click_on_edit()
+        instrument_client_tiers_tab = ClientTiersInstrumentClientTierSubWizard(self.web_driver_container)
+        instrument_client_tiers_tab.set_client_tiers_filter(self.instrument_client_tier)
+        instrument_client_tiers_tab.click_on_edit()
+        self.new_instrument_client_tier = random.choice(instrument_client_tiers_tab.get_all_client_tiers_from_drop_menu())
+        instrument_client_tiers_tab.set_client_tiers(self.new_instrument_client_tier)
+        instrument_client_tiers_tab.select_critical_checkbox()
+        instrument_client_tiers_tab.set_default_weight(self.new_default_weight)
+        instrument_client_tiers_tab.click_on_checkmark()
 
-            instrument_wizard = ClientTierInstrumentWizard(self.web_driver_container)
-            instrument_wizard.click_on_save_changes()
+        instrument_wizard = ClientTierInstrumentWizard(self.web_driver_container)
+        instrument_wizard.click_on_save_changes()
 
-            client_tiers_main_page.set_name(self.name)
-            time.sleep(1)
-            client_tiers_main_page.select_client_tier_by_name(self.name)
-            instrument_main_page.set_symbol(self.symbol)
-            time.sleep(1)
-            instrument_main_page.click_on_more_actions()
-            instrument_main_page.click_on_edit()
-            instrument_client_tiers_tab.set_client_tiers_filter(self.new_instrument_client_tier)
-            instrument_client_tiers_tab.click_on_edit()
-            time.sleep(1)
+        client_tiers_main_page.set_name(self.name)
+        time.sleep(1)
+        client_tiers_main_page.select_client_tier_by_name(self.name)
+        instrument_main_page.set_symbol(self.symbol)
+        time.sleep(1)
+        instrument_main_page.click_on_more_actions()
+        instrument_main_page.click_on_edit()
+        instrument_client_tiers_tab.set_client_tiers_filter(self.new_instrument_client_tier)
+        instrument_client_tiers_tab.click_on_edit()
+        time.sleep(1)
 
-            expected_result = [self.new_instrument_client_tier, False, self.new_default_weight]
-            actual_result = [instrument_client_tiers_tab.get_client_tiers(),
-                             instrument_client_tiers_tab.is_critical_checkbox_selected(),
-                             instrument_client_tiers_tab.get_default_weight()]
+        expected_result = [self.new_instrument_client_tier, False, self.new_default_weight]
+        actual_result = [instrument_client_tiers_tab.get_client_tiers(),
+                         instrument_client_tiers_tab.is_critical_checkbox_selected(),
+                         instrument_client_tiers_tab.get_default_weight()]
 
-            self.verify("Instrument Client Tiers entity has been changed", expected_result, actual_result)
+        self.verify("Instrument Client Tiers entity has been changed", expected_result, actual_result)
 
-            self.postcondition()
+        self.postcondition()
 
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)

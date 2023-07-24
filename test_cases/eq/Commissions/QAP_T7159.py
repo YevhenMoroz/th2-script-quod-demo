@@ -84,7 +84,7 @@ class QAP_T7159(TestCase):
             self.fix_message.change_parameters(
                 {'Side': '1', 'OrderQtyData': {'OrderQty': self.qty}, 'Account': self.client, 'Price': self.price,
                  'Currency': self.currency, 'ExDestination': 'XEUR'})
-            self.responses = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
+            self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message)
         except Exception as E:
             logger.error(f"Error is {E}", exc_info=True)
         finally:
@@ -103,7 +103,7 @@ class QAP_T7159(TestCase):
             cancel_rule = self.rule_manager.add_OrderCancelRequest(self.bs_connectivity, self.venue_client_names,
                                                                    self.venue, True)
             self.fix_message_cancel.set_default(self.fix_message)
-            self.responses = self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message_cancel)
+            self.fix_manager.send_message_and_receive_response_fix_standard(self.fix_message_cancel)
         except Exception as E:
             logger.error(f"Error is {E}", exc_info=True)
         finally:
@@ -139,7 +139,7 @@ class QAP_T7159(TestCase):
         self.rest_commission_sender.clear_fees()
 
     def __compare_ord_status(self, expected_result):
-        ord_status = self.responses[len(self.responses) - 1].get_parameters()['OrdStatus']
+        ord_status = self.fix_manager.get_last_message('ExecutionReport', f"'ExecType': '{expected_result}'").get_parameters()['OrdStatus']
         key = "OrderStatus"
         self.java_api_manager.compare_values({key: expected_result}, {key: ord_status},
                                              f"Comparing values for step of OrdStatus for {expected_result}")

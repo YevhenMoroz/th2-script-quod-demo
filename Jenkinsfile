@@ -1254,6 +1254,7 @@ pipeline {
         parameterizedCron(
         '''
         45 08 * * 1-5 %RunTestScript=true;TestScriptPath=regression_cycle/algo_regression_cycle/redburn_morning_tests.py
+        0 22 * * 1-5 %RunTestScript=true;TestScriptPath=regression_cycle/fx_regression_cycle/esp_mm_regression.py
         ''')
     }
 

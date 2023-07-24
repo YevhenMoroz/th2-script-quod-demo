@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.listing_groups.listing_groups_description_sub_wizard import \
     ListingGroupsDescriptionSubWizard
@@ -82,24 +79,16 @@ class QAP_T3873(CommonTestCase):
 
     def test_context(self):
         listing_groups_page = ListingGroupsPage(self.web_driver_container)
+        self.precondition()
+        time.sleep(2)
         try:
-            self.precondition()
-            time.sleep(2)
-            try:
-                self.verify("Feed Source contains value", self.feed_source,
-                            listing_groups_page.get_feed_source())
-            except Exception as e:
-                self.verify("Feed Source not contains value", True, e.__class__.__name__)
-            time.sleep(2)
-            try:
-                self.verify("Feed Source field is not editable", False,
-                            listing_groups_page.is_feed_source_field_editable())
-            except Exception as e:
-                self.verify("Feed Source field can be changed", True, e.__class__.__name__)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+            self.verify("Feed Source contains value", self.feed_source,
+                        listing_groups_page.get_feed_source())
+        except Exception as e:
+            self.verify("Feed Source not contains value", True, e.__class__.__name__)
+        time.sleep(2)
+        try:
+            self.verify("Feed Source field is not editable", False,
+                        listing_groups_page.is_feed_source_field_editable())
+        except Exception as e:
+            self.verify("Feed Source field can be changed", True, e.__class__.__name__)

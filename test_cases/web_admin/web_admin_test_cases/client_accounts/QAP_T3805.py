@@ -1,10 +1,7 @@
-import sys
 import time
-import traceback
 import random
 import string
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_page import AccountsPage
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_wizard import AccountsWizard
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
@@ -35,38 +32,30 @@ class QAP_T3805(CommonTestCase):
 
     def test_context(self):
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            account_page = AccountsPage(self.web_driver_container)
-            account_page.click_new_button()
-            time.sleep(2)
-            wizard = AccountsWizard(self.web_driver_container)
-            wizard.set_id(self.id)
-            wizard.set_ext_id_client(self.ext_id_client)
-            wizard.click_save_button()
-            time.sleep(2)
-            self.verify("Account not save w/o Client Id Source field", True,
-                        wizard.is_incorrect_or_missing_value_message_displayed())
+        account_page = AccountsPage(self.web_driver_container)
+        account_page.click_new_button()
+        time.sleep(2)
+        wizard = AccountsWizard(self.web_driver_container)
+        wizard.set_id(self.id)
+        wizard.set_ext_id_client(self.ext_id_client)
+        wizard.click_save_button()
+        time.sleep(2)
+        self.verify("Account not save w/o Client Id Source field", True,
+                    wizard.is_incorrect_or_missing_value_message_displayed())
 
-            wizard.set_client_id_source(self.client_id_source)
-            wizard.set_id("")
-            wizard.click_save_button()
-            time.sleep(2)
-            self.verify("Account not save w/o Id", True,
-                        wizard.is_incorrect_or_missing_value_message_displayed())
+        wizard.set_client_id_source(self.client_id_source)
+        wizard.set_id("")
+        wizard.click_save_button()
+        time.sleep(2)
+        self.verify("Account not save w/o Id", True,
+                    wizard.is_incorrect_or_missing_value_message_displayed())
 
-            wizard.set_client_id_source(self.client_id_source)
-            wizard.set_id(self.id)
-            wizard.set_ext_id_client("")
-            wizard.click_save_button()
-            time.sleep(2)
-            self.verify("Account not save w/o Ext Id Client", True,
-                        wizard.is_incorrect_or_missing_value_message_displayed())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        wizard.set_client_id_source(self.client_id_source)
+        wizard.set_id(self.id)
+        wizard.set_ext_id_client("")
+        wizard.click_save_button()
+        time.sleep(2)
+        self.verify("Account not save w/o Ext Id Client", True,
+                    wizard.is_incorrect_or_missing_value_message_displayed())

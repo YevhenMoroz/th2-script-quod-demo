@@ -1,7 +1,5 @@
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.site.institution.institutions_page import InstitutionsPage
@@ -23,15 +21,9 @@ class QAP_T3585(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
-        try:
-            self.precondition()
-            side_menu = SideMenu(self.web_driver_container)
-            side_menu.open_institutions_page()
-            time.sleep(2)
-            page = InstitutionsPage(self.web_driver_container)
-            self.verify("Is new button displayed", False, page.is_new_button_displayed())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)
+        self.precondition()
+        side_menu = SideMenu(self.web_driver_container)
+        side_menu.open_institutions_page()
+        time.sleep(2)
+        page = InstitutionsPage(self.web_driver_container)
+        self.verify("Is new button displayed", False, page.is_new_button_displayed())

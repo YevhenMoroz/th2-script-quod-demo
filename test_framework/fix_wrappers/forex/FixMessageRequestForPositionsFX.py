@@ -52,6 +52,24 @@ class FixMessageRequestForPositionsFX(FixMessageRequestForPositions):
         super().change_parameters(base_parameters)
         return self
 
+    def set_params_for_ndf(self):
+        base_parameters = {
+            "PosReqID": bca.client_orderid(9),
+            "PosReqType": "0",
+            "SubscriptionRequestType": "1",
+            "TransactTime": datetime.utcnow().isoformat(),
+            "Account": self.get_data_set().get_client_by_name("client_mm_1"),
+            "Currency": self.get_data_set().get_currency_by_name("currency_usd"),
+            "ClearingBusinessDate": self.get_data_set().get_settle_date_by_name("spo_ndf"),
+            "SettlDate": self.get_data_set().get_settle_date_by_name("spo_ndf"),
+            "Instrument": {
+                "SecurityType": self.get_data_set().get_security_type_by_name("fx_ndf"),
+                "Symbol": self.get_data_set().get_symbol_by_name("symbol_ndf_1"),
+            }
+        }
+        super().change_parameters(base_parameters)
+        return self
+
     def set_params_for_all(self):
         base_parameters = {
             "PosReqID": bca.client_orderid(9),

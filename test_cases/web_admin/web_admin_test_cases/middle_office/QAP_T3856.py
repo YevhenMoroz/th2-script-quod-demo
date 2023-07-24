@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.middle_office.fees.fees_page import FeesPage
 from test_framework.web_admin_core.pages.middle_office.fees.fees_values_sub_wizard import FeesValuesSubWizard
@@ -39,31 +36,23 @@ class QAP_T3856(CommonTestCase):
 
     def test_context(self):
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page = FeesPage(self.web_driver_container)
-            main_page.click_on_new()
-            time.sleep(2)
-            value_tab = FeesValuesSubWizard(self.web_driver_container)
-            value_tab.set_description(self.description)
-            value_tab.set_exec_scope(self.exec_scope)
-            value_tab.set_misc_fee_type(self.misc_fee_type)
-            value_tab.set_exec_fee_profile(self.exec_fee_profile)
-            dimensions_tab = FeesDimensionsSubWizard(self.web_driver_container)
-            dimensions_tab.set_instr_type(self.instr_type)
-            dimensions_tab.set_venue(self.venue)
-            wizard = FeesWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
-            time.sleep(2)
-            main_page.set_description(self.description)
-            time.sleep(1)
+        main_page = FeesPage(self.web_driver_container)
+        main_page.click_on_new()
+        time.sleep(2)
+        value_tab = FeesValuesSubWizard(self.web_driver_container)
+        value_tab.set_description(self.description)
+        value_tab.set_exec_scope(self.exec_scope)
+        value_tab.set_misc_fee_type(self.misc_fee_type)
+        value_tab.set_exec_fee_profile(self.exec_fee_profile)
+        dimensions_tab = FeesDimensionsSubWizard(self.web_driver_container)
+        dimensions_tab.set_instr_type(self.instr_type)
+        dimensions_tab.set_venue(self.venue)
+        wizard = FeesWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
+        time.sleep(2)
+        main_page.set_description(self.description)
+        time.sleep(1)
 
-            self.verify("New Fees has been create", True, main_page.is_searched_entity_found(self.description))
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("New Fees has been create", True, main_page.is_searched_entity_found(self.description))

@@ -292,7 +292,7 @@ class QAP_T10534(TestCase):
         time.sleep(3)
 
         self.fix_verifier_buy.set_case_id(bca.create_event("Check that 2 rqf was canceled on trqx", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([self.ocr_1_rfq_trql_canceled, ocr_2_rfq_trql_canceled], key_parameters_list=[self.key_params_rfq_cancel, self.key_params_rfq_cancel], direction=self.FromQuod, pre_filter=self.pre_filter)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([self.ocr_1_rfq_trql_canceled, ocr_2_rfq_trql_canceled], key_parameters_list=[self.key_params_rfq_cancel, self.key_params_rfq_cancel], direction=self.FromQuod, pre_filter=self.pre_filter)
         # endregion
 
         # region Check that the 2nd dark child order was cancelled

@@ -25,6 +25,9 @@ class UsersPermissionsSubWizard(CommonPage):
     def get_perm_op(self):
         return self.get_text_by_xpath(UsersConstants.PERM_OP_AT_ROLE_SUB_WIZARD)
 
+    def set_permission_profile(self, value):
+        self.set_multiselect_field_value(UsersConstants.PERMISSION_PROFILES, value)
+
     def is_role_id_field_visible(self):
         return self.find_by_xpath(UsersConstants.ROLE_ID_AT_ROLE_SUB_WIZARD).is_displayed()
 

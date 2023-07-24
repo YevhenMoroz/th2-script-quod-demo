@@ -152,8 +152,8 @@ class QAP_T4073(TestCase):
         # endregion
 
         # region Check both childs
-        self.fix_verifier_buy.check_fix_message_sequence([self.dma_1_order, self.dma_2_order], [None, None], self.FromQuod, pre_filter=None, check_order=False)
-        self.fix_verifier_buy.check_fix_message_sequence([er_fill_dma_1_order, er_fill_dma_2_order], [None, None], self.ToQuod, pre_filter=self.pre_filter, check_order=False)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([self.dma_1_order, self.dma_2_order], [None, None], self.FromQuod, pre_filter=None, check_order=False)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([er_fill_dma_1_order, er_fill_dma_2_order], [None, None], self.ToQuod, pre_filter=self.pre_filter, check_order=False)
         # endregion
 
         # region Check fill parent order

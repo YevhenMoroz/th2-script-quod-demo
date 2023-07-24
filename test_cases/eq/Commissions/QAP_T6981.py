@@ -95,6 +95,7 @@ class QAP_T6981(TestCase):
         self.rest_commission_sender.send_post_request()
         self.manage_security_block.set_fee_exemption(True, True, False)
         self.rest_api_manager.send_post_request(self.manage_security_block)
+        time.sleep(2)
         # endregion
         # region step 1
         self.submit_request.set_default_care_limit(recipient=self.environment.get_list_fe_environment()[0].user_1,

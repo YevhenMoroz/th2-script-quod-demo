@@ -3,8 +3,10 @@ import string
 import sys
 import time
 import traceback
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.others.counterparts.counterparts_page import CounterpartsPage
 from test_framework.web_admin_core.pages.others.counterparts.counterparts_wizard import CounterpartsWizard
@@ -41,43 +43,36 @@ class QAP_T8930(CommonTestCase):
         wizard.set_name_value_at_values_tab(self.name)
         wizard.click_on_save_changes()
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page = CounterpartsPage(self.web_driver_container)
-            main_page.set_name_filter_value(self.name)
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
+        main_page = CounterpartsPage(self.web_driver_container)
+        main_page.set_name_filter_value(self.name)
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
 
-            wizard = CounterpartsWizard(self.web_driver_container)
-            wizard.click_on_plus_sub_counterparts()
-            sub_counterparts_wizard = CounterpartsSubCounterpartsSubWizard(self.web_driver_container)
-            sub_counterparts_wizard.set_name_at_sub_counterparts_tab(self.sub_counterparts_name)
-            sub_counterparts_wizard.set_party_id_at_sub_counterparts_tab(self.party_id)
-            sub_counterparts_wizard.set_ext_id_client_at_sub_counterparts_tab(self.ext_id_client)
-            sub_counterparts_wizard.set_party_sub_id_at_sub_counterparts_tab(self.party_sub_id_type)
-            wizard.click_on_check_mark()
-            wizard.click_on_save_changes()
+        wizard = CounterpartsWizard(self.web_driver_container)
+        wizard.click_on_plus_sub_counterparts()
+        sub_counterparts_wizard = CounterpartsSubCounterpartsSubWizard(self.web_driver_container)
+        sub_counterparts_wizard.set_name_at_sub_counterparts_tab(self.sub_counterparts_name)
+        sub_counterparts_wizard.set_party_id_at_sub_counterparts_tab(self.party_id)
+        sub_counterparts_wizard.set_ext_id_client_at_sub_counterparts_tab(self.ext_id_client)
+        sub_counterparts_wizard.set_party_sub_id_at_sub_counterparts_tab(self.party_sub_id_type)
+        wizard.click_on_check_mark()
+        wizard.click_on_save_changes()
 
-            main_page.set_name_filter_value(self.name)
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
+        main_page.set_name_filter_value(self.name)
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
 
-            actual_result = [sub_counterparts_wizard.get_name_value_at_sub_counterparts_tab(),
-                             sub_counterparts_wizard.get_party_id_value_at_sub_counterparts_tab(),
-                             sub_counterparts_wizard.get_ext_id_client_value_at_sub_counterparts_tab(),
-                             sub_counterparts_wizard.get_party_sub_id_type_value_at_sub_counterparts_tab()]
+        actual_result = [sub_counterparts_wizard.get_name_value_at_sub_counterparts_tab(),
+                         sub_counterparts_wizard.get_party_id_value_at_sub_counterparts_tab(),
+                         sub_counterparts_wizard.get_ext_id_client_value_at_sub_counterparts_tab(),
+                         sub_counterparts_wizard.get_party_sub_id_type_value_at_sub_counterparts_tab()]
 
-            expected_result = [self.sub_counterparts_name, self.party_id, self.ext_id_client, self.party_sub_id_type]
+        expected_result = [self.sub_counterparts_name, self.party_id, self.ext_id_client, self.party_sub_id_type]
 
-            self.verify('Sub-counterparts create correct', actual_result, expected_result)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify('Sub-counterparts create correct', actual_result, expected_result)

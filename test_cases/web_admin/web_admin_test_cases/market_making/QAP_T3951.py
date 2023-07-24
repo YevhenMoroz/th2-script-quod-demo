@@ -3,8 +3,10 @@ import string
 import sys
 import time
 import traceback
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
 from test_framework.web_admin_core.pages.market_making.auto_hedger.auto_hedger_instruments_sub_wizard import \
     AutoHedgerInstrumentsSubWizard
@@ -81,37 +83,29 @@ class QAP_T3951(CommonTestCase):
         main_page.click_on_edit()
         time.sleep(1)
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
-        try:
+        self.precondition()
+        values_sub_wizard = AutoHedgerValuesSubWizard(self.web_driver_container)
+        instruments_sub_wizard = AutoHedgerInstrumentsSubWizard(self.web_driver_container)
+        instruments_sub_wizard.click_on_edit_button()
+        time.sleep(2)
 
-            self.precondition()
-            values_sub_wizard = AutoHedgerValuesSubWizard(self.web_driver_container)
-            instruments_sub_wizard = AutoHedgerInstrumentsSubWizard(self.web_driver_container)
-            instruments_sub_wizard.click_on_edit_button()
-            time.sleep(2)
+        expected_result_values = [self.name,
+                                  self.position_book,
+                                  self.symbol,
+                                  self.long_threshold_qty,
+                                  self.hedging_strategy,
+                                  self.long_residual_qty,
+                                  self.short_threshold_qty,
+                                  self.short_residual_qty]
 
-            expected_result_values = [self.name,
-                                      self.position_book,
-                                      self.symbol,
-                                      self.long_threshold_qty,
-                                      self.hedging_strategy,
-                                      self.long_residual_qty,
-                                      self.short_threshold_qty,
-                                      self.short_residual_qty]
-
-            actual_result_values = [values_sub_wizard.get_name(),
-                                    values_sub_wizard.get_position_book(),
-                                    instruments_sub_wizard.get_symbol(),
-                                    instruments_sub_wizard.get_long_threshold_qty(),
-                                    instruments_sub_wizard.get_hedging_strategy(),
-                                    instruments_sub_wizard.get_long_residual_qty(),
-                                    instruments_sub_wizard.get_short_threshold_qty(),
-                                    instruments_sub_wizard.get_short_residual_qty()]
-            self.verify("Is values saved correctly after relogin", expected_result_values, actual_result_values)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        actual_result_values = [values_sub_wizard.get_name(),
+                                values_sub_wizard.get_position_book(),
+                                instruments_sub_wizard.get_symbol(),
+                                instruments_sub_wizard.get_long_threshold_qty(),
+                                instruments_sub_wizard.get_hedging_strategy(),
+                                instruments_sub_wizard.get_long_residual_qty(),
+                                instruments_sub_wizard.get_short_threshold_qty(),
+                                instruments_sub_wizard.get_short_residual_qty()]
+        self.verify("Is values saved correctly after relogin", expected_result_values, actual_result_values)

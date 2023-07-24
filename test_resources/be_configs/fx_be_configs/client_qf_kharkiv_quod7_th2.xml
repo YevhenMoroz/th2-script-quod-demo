@@ -120,9 +120,9 @@
                  <!--tag header="false">109</tag-->
              </tagList>
             </mapClientAccount>
-            <mapAllocAccount enabled="false" toFix="false" fromFix="true">
+            <mapAllocAccount enabled="true" toFix="false" fromFix="true">
                   <!--tag header="true">49</tag-->
-                  <tag header="false">49</tag>
+                  <tag header="true">49</tag>
             </mapAllocAccount>
 
 

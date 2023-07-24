@@ -104,3 +104,20 @@ class RestApiAutoHedgerMessages(RestApiMessages):
         self.message_type = 'DeleteAutoHedger'
         return self
 
+    def send_hedge_orders_true(self):
+        params = {
+            "sendHedgeOrders": "true",
+            "autoHedgerStatusID": "1"
+        }
+        self.set_params(params)
+        self.message_type = "ModifyAutoHedgerStatus"
+        return self
+
+    def send_hedge_orders_false(self):
+        params = {
+            "sendHedgeOrders": "false",
+            "autoHedgerStatusID": "1"
+        }
+        self.set_params(params)
+        self.message_type = "ModifyAutoHedgerStatus"
+        return self

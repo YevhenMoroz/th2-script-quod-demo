@@ -1,10 +1,7 @@
-import sys
 import time
 import random
 import string
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.users.users.users_assignments_sub_wizard import UsersAssignmentsSubWizard
@@ -63,21 +60,13 @@ class QAP_T3531(CommonTestCase):
 
     def test_context(self):
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            value_tab = UsersValuesSubWizard(self.web_driver_container)
-            value_tab.set_user_id(self.user_id)
-            value_tab.set_ext_id_client(self.new_user_ext_id)
-            wizard = UsersWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
-            time.sleep(1)
+        value_tab = UsersValuesSubWizard(self.web_driver_container)
+        value_tab.set_user_id(self.user_id)
+        value_tab.set_ext_id_client(self.new_user_ext_id)
+        wizard = UsersWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
+        time.sleep(1)
 
-            self.verify("New User is not create", True, wizard.is_request_failed_message_displayed())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("New User is not create", True, wizard.is_request_failed_message_displayed())

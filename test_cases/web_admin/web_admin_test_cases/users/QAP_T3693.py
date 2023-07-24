@@ -1,8 +1,5 @@
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.users.users.users_page import UsersPage
@@ -31,28 +28,20 @@ class QAP_T3693(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page = UsersPage(self.web_driver_container)
-            main_page.set_user_id(self.user)
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            time.sleep(1)
-            main_page.click_on_edit_at_more_actions()
-            time.sleep(2)
-            assignments_tab = UsersAssignmentsSubWizard(self.web_driver_container)
-            assignments_tab.click_on_zone_link()
-            wizard = UsersWizard(self.web_driver_container)
-            if wizard.is_confirmation_pop_displayed():
-                wizard.accept_or_cancel_confirmation(True)
-            time.sleep(2)
-            zone_wizard = ZonesWizard(self.web_driver_container)
-            self.verify("Is Zones wizard open?", True, zone_wizard.is_wizard_open())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        main_page = UsersPage(self.web_driver_container)
+        main_page.set_user_id(self.user)
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        time.sleep(1)
+        main_page.click_on_edit_at_more_actions()
+        time.sleep(2)
+        assignments_tab = UsersAssignmentsSubWizard(self.web_driver_container)
+        assignments_tab.click_on_zone_link()
+        wizard = UsersWizard(self.web_driver_container)
+        if wizard.is_confirmation_pop_displayed():
+            wizard.accept_or_cancel_confirmation(True)
+        time.sleep(2)
+        zone_wizard = ZonesWizard(self.web_driver_container)
+        self.verify("Is Zones wizard open?", True, zone_wizard.is_wizard_open())

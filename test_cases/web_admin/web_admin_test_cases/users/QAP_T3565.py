@@ -1,11 +1,8 @@
 import random
 import string
-import sys
 import time
-import traceback
 
 from stubs import ROOT_DIR
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
@@ -28,7 +25,7 @@ class QAP_T3565(CommonTestCase):
         self.new_password = 'Qwe!'.join(random.sample((string.ascii_uppercase + string.digits) * 6, 6))
         self.current_password = ""
         self.email = '2@2'
-        self.path_to_file = f'{ROOT_DIR}\\test_framework\\web_admin_core\\resourses\\password_for_QAP_T3565.txt'
+        self.path_to_file = f'{ROOT_DIR}\\test_framework\\web_admin_core\\resources\\password_for_QAP_T3565.txt'
 
     def read_password_from_file(self):
         try:
@@ -77,7 +74,7 @@ class QAP_T3565(CommonTestCase):
             self.read_password_from_file()
             values_tab.set_new_password(self.current_password)
             values_tab.set_confirm_new_password(self.current_password)
-            values_tab.click_on_change_password()
+            values_tab.accept_or_cancel_confirmation_new_password(True)
             values_tab.set_first_time_login_checkbox()
             users_wizard.click_on_save_changes()
         else:
@@ -105,22 +102,15 @@ class QAP_T3565(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
-        try:
-            self.precondition()
-            common_page = CommonPage(self.web_driver_container)
-            login_page = LoginPage(self.web_driver_container)
-            common_page.set_old_password_at_login_page(self.current_password)
-            common_page.set_new_password_at_login_page(self.new_password)
-            common_page.set_confirm_new_password(self.new_password)
-            common_page.click_on_change_password()
-            time.sleep(2)
-            login_page.login_to_web_admin(self.user_id, self.new_password)
-            time.sleep(2)
-            self.verify("User password edited correctly", True, True)
-            self.write_password_in_file()
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            pexc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.precondition()
+        common_page = CommonPage(self.web_driver_container)
+        login_page = LoginPage(self.web_driver_container)
+        common_page.set_old_password_at_login_page(self.current_password)
+        common_page.set_new_password_at_login_page(self.new_password)
+        common_page.set_confirm_new_password(self.new_password)
+        common_page.click_on_change_password_button()
+        time.sleep(2)
+        login_page.login_to_web_admin(self.user_id, self.new_password)
+        time.sleep(2)
+        self.verify("User password edited correctly", True, True)
+        self.write_password_in_file()

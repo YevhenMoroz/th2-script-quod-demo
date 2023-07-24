@@ -1,10 +1,7 @@
-import sys
 import time
-import traceback
 import random
 import string
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_page import AccountsPage
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_wizard import AccountsWizard
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_dimensions_subwizard \
@@ -51,53 +48,44 @@ class QAP_T3348(CommonTestCase):
             wizard.click_save_button()
 
     def test_context(self):
+        self.precondition()
 
-        try:
-            self.precondition()
+        main_page = AccountsPage(self.web_driver_container)
+        main_page.set_id(self.account_id)
+        time.sleep(1)
+        main_page.click_more_actions_button()
+        main_page.click_edit_entity_button()
 
-            main_page = AccountsPage(self.web_driver_container)
-            main_page.set_id(self.account_id)
-            time.sleep(1)
-            main_page.click_more_actions_button()
-            main_page.click_edit_entity_button()
+        dimensions_tab = AccountsDimensionsSubWizard(self.web_driver_container)
+        dimensions_tab.click_on_plus()
+        dimensions_tab.set_venue_account(self.venue_account)
+        dimensions_tab.set_venue(self.venue)
+        dimensions_tab.set_account_id_source(self.account_id_source)
+        dimensions_tab.set_default_route(self.dimensions_default_route)
+        dimensions_tab.set_stamp_exempt()
+        dimensions_tab.set_levy_exempt()
+        dimensions_tab.set_per_transac_exempt()
+        dimensions_tab.set_venue_client_account_name(self.venue_client_account_name)
+        dimensions_tab.click_on_checkmark_button()
 
-            dimensions_tab = AccountsDimensionsSubWizard(self.web_driver_container)
-            dimensions_tab.click_on_plus()
-            dimensions_tab.set_venue_account(self.venue_account)
-            dimensions_tab.set_venue(self.venue)
-            dimensions_tab.set_account_id_source(self.account_id_source)
-            dimensions_tab.set_default_route(self.dimensions_default_route)
-            dimensions_tab.set_stamp_exempt()
-            dimensions_tab.set_levy_exempt()
-            dimensions_tab.set_per_transac_exempt()
-            dimensions_tab.set_venue_client_account_name(self.venue_client_account_name)
-            dimensions_tab.click_on_checkmark_button()
+        actual_result = [dimensions_tab.get_stamp_exempt(), dimensions_tab.get_levy_exempt(),
+                         dimensions_tab.get_per_transac_exempt()]
 
-            actual_result = [dimensions_tab.get_stamp_exempt(), dimensions_tab.get_levy_exempt(),
-                             dimensions_tab.get_per_transac_exempt()]
+        wizard = AccountsWizard(self.web_driver_container)
+        wizard.click_save_button()
+        time.sleep(1)
+        main_page.set_id(self.account_id)
+        time.sleep(1)
+        main_page.click_more_actions_button()
+        main_page.click_edit_entity_button()
 
-            wizard = AccountsWizard(self.web_driver_container)
-            wizard.click_save_button()
-            time.sleep(1)
-            main_page.set_id(self.account_id)
-            time.sleep(1)
-            main_page.click_more_actions_button()
-            main_page.click_edit_entity_button()
+        expected_result = [dimensions_tab.get_stamp_exempt(), dimensions_tab.get_levy_exempt(),
+                           dimensions_tab.get_per_transac_exempt()]
 
-            expected_result = [dimensions_tab.get_stamp_exempt(), dimensions_tab.get_levy_exempt(),
-                               dimensions_tab.get_per_transac_exempt()]
+        self.verify("All checkboxes has been save", actual_result, expected_result)
 
-            self.verify("All checkboxes has been save", actual_result, expected_result)
+        dimensions_tab.set_venue_filter(self.venue)
+        time.sleep(1)
+        dimensions_tab.click_delete_button()
 
-            dimensions_tab.set_venue_filter(self.venue)
-            time.sleep(1)
-            dimensions_tab.click_delete_button()
-
-            wizard.click_save_button()
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        wizard.click_save_button()

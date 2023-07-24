@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.middle_office.commissions.commissions_commision_profiles_sub_wizard import \
     CommissionsCommissionProfilesSubWizard
@@ -64,18 +61,11 @@ class QAP_T3825(CommonTestCase):
 
     def test_context(self):
 
+        self.precondition()
+        commissions_profiles = CommissionsCommissionProfilesSubWizard(self.web_driver_container)
+        commissions_profiles.set_commission_profile_name_filter(self.commission_profile_name_buffer_to_delete)
         try:
-            self.precondition()
-            commissions_profiles = CommissionsCommissionProfilesSubWizard(self.web_driver_container)
-            commissions_profiles.set_commission_profile_name_filter(self.commission_profile_name_buffer_to_delete)
-            try:
-                commissions_profiles.click_on_edit()
-                self.verify("Commission profile name didn't delete", True, False)
-            except Exception:
-                self.verify("Commission profile name deleted correctly", True, True)
+            commissions_profiles.click_on_edit()
+            self.verify("Commission profile name didn't delete", True, False)
         except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+            self.verify("Commission profile name deleted correctly", True, True)

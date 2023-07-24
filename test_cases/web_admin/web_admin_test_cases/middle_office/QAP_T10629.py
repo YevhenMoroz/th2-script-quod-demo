@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.middle_office.fees.fees_wizard import FeesWizard
 from test_framework.web_admin_core.pages.middle_office.fees.fees_commission_profile_points_sub_wizard import \
@@ -46,38 +43,30 @@ class QAP_T10629(CommonTestCase):
         commission_profile_points = FeesCommissionProfilePointsSubWizard(self.web_driver_container)
         wizard = FeesWizard(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            fees_page.click_on_new()
-            fees_values_sub_wizard.click_on_manage_order_fee_profile()
-            commission_profile.click_on_plus()
-            commission_profile.set_commission_profile_name(self.commission_profile_name)
-            commission_profile.set_comm_xunit(self.comm_xunit)
-            commission_profile.set_comm_algorithm(self.comm_algorithm)
-            commission_profile_points.click_on_plus()
-            commission_profile_points.set_base_value(self.base_value)
-            commission_profile_points.click_on_checkmark()
-            commission_profile.click_on_checkmark()
-            wizard.click_on_go_back()
+        fees_page.click_on_new()
+        fees_values_sub_wizard.click_on_manage_order_fee_profile()
+        commission_profile.click_on_plus()
+        commission_profile.set_commission_profile_name(self.commission_profile_name)
+        commission_profile.set_comm_xunit(self.comm_xunit)
+        commission_profile.set_comm_algorithm(self.comm_algorithm)
+        commission_profile_points.click_on_plus()
+        commission_profile_points.set_base_value(self.base_value)
+        commission_profile_points.click_on_checkmark()
+        commission_profile.click_on_checkmark()
+        wizard.click_on_go_back()
 
-            fees_values_sub_wizard.click_on_manage_order_fee_profile()
-            commission_profile.set_commission_profile_name_filter(self.commission_profile_name)
-            time.sleep(1)
-            commission_profile.click_on_edit()
-            commission_profile.set_comm_type(self.comm_type)
-            commission_profile.click_on_checkmark()
+        fees_values_sub_wizard.click_on_manage_order_fee_profile()
+        commission_profile.set_commission_profile_name_filter(self.commission_profile_name)
+        time.sleep(1)
+        commission_profile.click_on_edit()
+        commission_profile.set_comm_type(self.comm_type)
+        commission_profile.click_on_checkmark()
 
-            commission_profile.set_commission_profile_name_filter(self.commission_profile_name)
-            time.sleep(1)
-            commission_profile.click_on_edit()
+        commission_profile.set_commission_profile_name_filter(self.commission_profile_name)
+        time.sleep(1)
+        commission_profile.click_on_edit()
 
-            self.verify("Comm Type and Comm XUnit fields data changed", [self.comm_type, self.new_comm_xunit],
-                        [commission_profile.get_comm_type(), commission_profile.get_comm_xunit()])
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("Comm Type and Comm XUnit fields data changed", [self.comm_type, self.new_comm_xunit],
+                    [commission_profile.get_comm_type(), commission_profile.get_comm_xunit()])

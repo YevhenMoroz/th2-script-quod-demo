@@ -54,6 +54,28 @@ class FixMessageQuoteRequestFX(FixMessage):
         super().change_parameters(quote_request_params)
         return self
 
+    def set_rfq_params_ndf(self):
+        quote_request_params = {
+            "QuoteReqID": bca.client_orderid(9),
+            "NoRelatedSymbols": [{
+                "Account": self.get_data_set().get_client_by_name("client_mm_1"),
+                "Side": "1",
+                "Instrument": {
+                    "Symbol": self.get_data_set().get_symbol_by_name("symbol_ndf_1"),
+                    "SecurityType": self.get_data_set().get_security_type_by_name("fx_ndf")
+                },
+                "SettlDate": self.get_data_set().get_settle_date_by_name("spo_ndf"),
+                "SettlType": self.get_data_set().get_settle_type_by_name("spot"),
+                "Currency": self.get_data_set().get_currency_by_name("currency_usd"),
+                "QuoteType": "1",
+                "OrderQty": "1000000",
+                "OrdType": "D"
+            }
+            ]
+        }
+        super().change_parameters(quote_request_params)
+        return self
+
     def set_swap_rfq_params(self):
         quote_request_swap_params = {
             "QuoteReqID": bca.client_orderid(9),

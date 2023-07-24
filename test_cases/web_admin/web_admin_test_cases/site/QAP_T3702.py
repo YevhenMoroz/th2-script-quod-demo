@@ -1,10 +1,7 @@
-import sys
 import time
-import traceback
 import random
 import string
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
@@ -53,64 +50,55 @@ class QAP_T3702(CommonTestCase):
             time.sleep(1)
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page = InstitutionsPage(self.web_driver_container)
-            main_page.click_on_more_actions()
-            time.sleep(1)
-            main_page.click_on_edit()
-            time.sleep(2)
-            value_tab = InstitutionsValuesSubWizard(self.web_driver_container)
-            value_tab.set_lei(self.new_lei)
-            wizard = InstitutionsWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
-            time.sleep(2)
-            main_page.set_lei(self.new_lei)
-            time.sleep(1)
-            self.verify("New LEI value is displayed at main page after change", True,
-                        main_page.is_searched_institution_found(self.new_lei))
+        main_page = InstitutionsPage(self.web_driver_container)
+        main_page.click_on_more_actions()
+        time.sleep(1)
+        main_page.click_on_edit()
+        time.sleep(2)
+        value_tab = InstitutionsValuesSubWizard(self.web_driver_container)
+        value_tab.set_lei(self.new_lei)
+        wizard = InstitutionsWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
+        time.sleep(2)
+        main_page.set_lei(self.new_lei)
+        time.sleep(1)
+        self.verify("New LEI value is displayed at main page after change", True,
+                    main_page.is_searched_institution_found(self.new_lei))
 
-            main_page.click_on_more_actions()
-            time.sleep(1)
-            main_page.click_on_clone()
-            time.sleep(2)
-            value_tab.set_institution_name(self.new_institution_name)
-            value_tab.set_lei(self.lei)
-            wizard.click_on_save_changes()
-            time.sleep(2)
-            main_page.set_institution_name(self.new_institution_name)
-            main_page.set_lei(self.lei)
-            time.sleep(1)
-            self.verify("Cloned Instrument is created and displayed", True,
-                        main_page.is_searched_institution_found(self.new_institution_name))
+        main_page.click_on_more_actions()
+        time.sleep(1)
+        main_page.click_on_clone()
+        time.sleep(2)
+        value_tab.set_institution_name(self.new_institution_name)
+        value_tab.set_lei(self.lei)
+        wizard.click_on_save_changes()
+        time.sleep(2)
+        main_page.set_institution_name(self.new_institution_name)
+        main_page.set_lei(self.lei)
+        time.sleep(1)
+        self.verify("Cloned Instrument is created and displayed", True,
+                    main_page.is_searched_institution_found(self.new_institution_name))
 
-            main_page.click_on_more_actions()
-            time.sleep(1)
-            main_page.click_on_edit()
-            time.sleep(2)
-            wizard.click_on_values_tab()
-            time.sleep(1)
-            self.verify("Values tab is collapsed", False, value_tab.is_tab_collapsed())
+        main_page.click_on_more_actions()
+        time.sleep(1)
+        main_page.click_on_edit()
+        time.sleep(2)
+        wizard.click_on_values_tab()
+        time.sleep(1)
+        self.verify("Values tab is collapsed", False, value_tab.is_tab_collapsed())
 
-            common_page = CommonPage(self.web_driver_container)
-            common_page.click_on_info_error_message_pop_up()
-            wizard.click_on_close()
-            if wizard.is_leave_page_confirmation_pop_up_displayed():
-                wizard.click_on_ok_button()
-            time.sleep(2)
-            main_page.click_on_download_csv()
-            time.sleep(2)
-            actual_result = False
-            for i in main_page.get_csv_context():
-                if self.new_institution_name in i.values():
-                    actual_result = True
+        common_page = CommonPage(self.web_driver_container)
+        common_page.click_on_info_error_message_pop_up()
+        wizard.click_on_close()
+        if wizard.is_leave_page_confirmation_pop_up_displayed():
+            wizard.click_on_ok_button()
+        time.sleep(2)
+        actual_result = False
+        for i in main_page.click_on_download_csv_button_and_get_content():
+            if self.new_institution_name in i.values():
+                actual_result = True
 
-            self.verify("Download CSV button is worked", True, actual_result)
-            main_page.clear_download_directory()
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("Download CSV button is worked", True, actual_result)
+        main_page.clear_download_directory()

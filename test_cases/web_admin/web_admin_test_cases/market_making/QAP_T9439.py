@@ -1,13 +1,15 @@
 import sys
 import time
 import traceback
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.market_making.quoting_sessions.quoting_sessions_page import \
     QuotingSessionsPage
 from test_framework.web_admin_core.pages.market_making.quoting_sessions.quoting_sessions_wizard import \
     QuotingSessionsWizard
-from test_framework.web_admin_core.pages.market_making.quoting_sessions.quoting_sessions_client_tier_symbols_sub_wizard\
+from test_framework.web_admin_core.pages.market_making.quoting_sessions.quoting_sessions_client_tier_symbols_sub_wizard \
     import QuotingSessionsClientTiersSymbolsSubWizard
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
@@ -31,6 +33,7 @@ class QAP_T9439(CommonTestCase):
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_quoting_sessions_page()
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
         wizard = QuotingSessionsWizard(self.web_driver_container)
         page = QuotingSessionsPage(self.web_driver_container)
@@ -42,25 +45,17 @@ class QAP_T9439(CommonTestCase):
             client_tier_symbols_tab.set_client_tier(client_tier)
             client_tier_symbols_tab.click_on_checkmark()
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            page.click_on_new()
-            add_new_client_tier_symbol(self.symbol[0], self.client_tier[0])
-            add_new_client_tier_symbol(self.symbol[0], self.client_tier[1])
-            time.sleep(1)
-            self.verify("Client Tiers Symbols with the same Symbol and different Client Tiers added",
-                        False, wizard.is_error_in_footer_displayed())
+        page.click_on_new()
+        add_new_client_tier_symbol(self.symbol[0], self.client_tier[0])
+        add_new_client_tier_symbol(self.symbol[0], self.client_tier[1])
+        time.sleep(1)
+        self.verify("Client Tiers Symbols with the same Symbol and different Client Tiers added",
+                    False, wizard.is_error_in_footer_displayed())
 
-            add_new_client_tier_symbol(self.symbol[1], self.client_tier[2])
-            add_new_client_tier_symbol(self.symbol[2], self.client_tier[2])
-            time.sleep(1)
-            self.verify("Client Tiers Symbols with different Symbol and the same Client Tiers added",
-                        False, wizard.is_error_in_footer_displayed())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        add_new_client_tier_symbol(self.symbol[1], self.client_tier[2])
+        add_new_client_tier_symbol(self.symbol[2], self.client_tier[2])
+        time.sleep(1)
+        self.verify("Client Tiers Symbols with different Symbol and the same Client Tiers added",
+                    False, wizard.is_error_in_footer_displayed())

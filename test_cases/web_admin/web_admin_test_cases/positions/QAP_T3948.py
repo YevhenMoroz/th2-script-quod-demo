@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.positions.wash_book_rules.wash_book_rules_page import WashBookRulesPage
 from test_framework.web_admin_core.pages.positions.wash_book_rules.wash_book_rules_wizard import WashBookRulesWizard
@@ -47,28 +44,20 @@ class QAP_T3948(CommonTestCase):
         wizard.set_institution(self.institution)
 
     def test_context(self):
-        try:
-            self.precondition()
-            wizard = WashBookRulesWizard(self.web_driver_container)
-            page = WashBookRulesPage(self.web_driver_container)
+        self.precondition()
+        wizard = WashBookRulesWizard(self.web_driver_container)
+        page = WashBookRulesPage(self.web_driver_container)
 
-            expected_content = [self.name, self.client, self.instr_type, self.execution_policy, self.account,
-                                self.user, self.desk]
-            self.verify("Is pdf contains values ", True,
-                        wizard.click_download_pdf_entity_button_and_check_pdf(expected_content))
-            wizard.click_on_save_changes()
-            page.set_name_at_filter(self.name)
-            time.sleep(1)
-            headers = ["Name", "Client", "Instr Type", "Execution Policy", "WashBook Account", "User", "Desk"]
-            actual_content = [page.get_name(), page.get_client(), page.get_instr_type(), page.get_execution_policy(),
-                              page.get_wash_book_account(), page.get_user(),
-                              page.get_desk()]
-            self.verify_arrays_of_data_objects("Is data saved correctly in main page", headers, expected_content,
-                                               actual_content)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        expected_content = [self.name, self.client, self.instr_type, self.execution_policy, self.account,
+                            self.user, self.desk]
+        self.verify("Is pdf contains values ", True,
+                    wizard.click_download_pdf_entity_button_and_check_pdf(expected_content))
+        wizard.click_on_save_changes()
+        page.set_name_at_filter(self.name)
+        time.sleep(1)
+        headers = ["Name", "Client", "Instr Type", "Execution Policy", "WashBook Account", "User", "Desk"]
+        actual_content = [page.get_name(), page.get_client(), page.get_instr_type(), page.get_execution_policy(),
+                          page.get_wash_book_account(), page.get_user(),
+                          page.get_desk()]
+        self.verify_arrays_of_data_objects("Is data saved correctly in main page", headers, expected_content,
+                                           actual_content)

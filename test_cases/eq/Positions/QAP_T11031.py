@@ -62,16 +62,18 @@ class QAP_T11031(TestCase):
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
         # region precondition: Set up needed configuration
-        self.db_manager.execute_query(f"DELETE FROM dailyposit WHERE accountid = '{self.washbook_acc}' AND  instrid = '{self.instrument_id}'")
-        self.db_manager.execute_query(f"DELETE FROM posit WHERE accountid = '{self.washbook_acc}' AND instrid = '{self.instrument_id}'")
+        self.db_manager.execute_query(
+            f"DELETE FROM dailyposit WHERE accountid = '{self.washbook_acc}' AND  instrid = '{self.instrument_id}'")
+        self.db_manager.execute_query(
+            f"DELETE FROM posit WHERE accountid = '{self.washbook_acc}' AND instrid = '{self.instrument_id}'")
         tree = ET.parse(self.local_path)
         quod = tree.getroot()
         quod.find("positions/maintainOnConfirmation").text = 'true'
         tree.write("temp.xml")
         self.ssh_client.send_command("~/quod/script/site_scripts/change_permission_script")
         self.ssh_client.put_file(self.remote_path, "temp.xml")
-        self.ssh_client.send_command("qrestart QUOD.ESBUYTH2TEST, QUOD.ORS QUOD.PKS")
-        time.sleep(120)
+        self.ssh_client.send_command("qrestart QUOD.ESBUYTH2TEST QUOD.ORS QUOD.PKS")
+        time.sleep(90)
         # endregion
 
         # region step 1: Create CO order:
@@ -162,8 +164,8 @@ class QAP_T11031(TestCase):
         if value.find(f"PosAmtType=DailyRealizedGrossPL PosAmt={daily_gross_pl}") == -1:
             actually_results = False
         self.ja_manager.compare_values({'DailyRealizedGrossPL_Is_Present': True},
-                                             {'DailyRealizedGrossPL_Is_Present': actually_results},
-                                             'Verify that DailyRealizedGrossPL  is present (step 10)')
+                                       {'DailyRealizedGrossPL_Is_Present': actually_results},
+                                       'Verify that DailyRealizedGrossPL  is present (step 10)')
         # endregion
 
     def _extract_cum_values_for_acc(self, acc):
@@ -182,13 +184,13 @@ class QAP_T11031(TestCase):
     def run_post_conditions(self):
         self.ssh_client.put_file(self.remote_path, self.local_path)
         self.ssh_client.send_command("qrestart QUOD.ESBUYTH2TEST QUOD.ORS QUOD.PKS")
-        time.sleep(120)
+        time.sleep(90)
         os.remove("temp.xml")
         self.ssh_client.close()
 
     def _get_logs_from_pks(self):
         self.ssh_client.send_command('cdl')
-        self.ssh_client.send_command('egrep "fix PositionReport.*.EquityWashBook" QUOD.PKS.log > logs.txt')
+        self.ssh_client.send_command(f'egrep "fix PositionReport.*.{self.washbook_acc}" QUOD.PKS.log > logs.txt')
         self.ssh_client.send_command("sed -n '$'p logs.txt > logs2.txt")
         self.ssh_client.get_file('/Logs/quod317/logs2.txt', './logs.txt')
         file = open('./logs.txt')

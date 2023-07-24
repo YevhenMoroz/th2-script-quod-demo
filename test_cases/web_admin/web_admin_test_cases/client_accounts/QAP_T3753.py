@@ -1,10 +1,7 @@
-import sys
 import time
-import traceback
 import random
 import string
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_wizard import ClientsWizard
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_values_sub_wizard \
@@ -39,29 +36,21 @@ class QAP_T3753(CommonTestCase):
         side_menu.open_clients_page()
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page = ClientsPage(self.web_driver_container)
-            main_page.click_on_new()
-            values_sub_wizard = ClientsValuesSubWizard(self.web_driver_container)
-            values_sub_wizard.set_disclose_exec(self.disclose_exec)
-            values_sub_wizard.set_id(self.id)
-            values_sub_wizard.set_ext_id_client(self.ext_id_client)
-            values_sub_wizard.set_name(self.name)
-            assignment_tab = ClientsAssignmentsSubWizard(self.web_driver_container)
-            assignment_tab.set_desk(self.desk)
-            wizard = ClientsWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
-            time.sleep(1)
+        main_page = ClientsPage(self.web_driver_container)
+        main_page.click_on_new()
+        values_sub_wizard = ClientsValuesSubWizard(self.web_driver_container)
+        values_sub_wizard.set_disclose_exec(self.disclose_exec)
+        values_sub_wizard.set_id(self.id)
+        values_sub_wizard.set_ext_id_client(self.ext_id_client)
+        values_sub_wizard.set_name(self.name)
+        assignment_tab = ClientsAssignmentsSubWizard(self.web_driver_container)
+        assignment_tab.set_desk(self.desk)
+        wizard = ClientsWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
+        time.sleep(1)
 
-            main_page.set_name(self.name)
-            time.sleep(1)
-            self.verify("New Client has been create", True, main_page.is_searched_client_found(self.name))
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        main_page.set_name(self.name)
+        time.sleep(1)
+        self.verify("New Client has been create", True, main_page.is_searched_client_found(self.name))

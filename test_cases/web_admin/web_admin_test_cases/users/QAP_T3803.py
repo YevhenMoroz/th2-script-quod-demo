@@ -1,10 +1,7 @@
-import sys
 import time
-import traceback
 import random
 import string
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.users.users.users_page import UsersPage
 from test_framework.web_admin_core.pages.users.users.users_values_sub_wizard import UsersValuesSubWizard
 from test_framework.web_admin_core.pages.users.users.users_user_details_sub_wizard import UsersUserDetailsSubWizard
@@ -64,25 +61,17 @@ class QAP_T3803(CommonTestCase):
     def test_context(self):
         main_page = UsersPage(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page.click_on_more_actions()
-            time.sleep(1)
-            main_page.click_on_edit_at_more_actions()
-            time.sleep(2)
-            values_tab = UsersValuesSubWizard(self.web_driver_container)
-            values_tab.set_ext_id_client("")
-            wizard_page = UsersWizard(self.web_driver_container)
-            wizard_page.click_on_save_changes()
-            time.sleep(1)
+        main_page.click_on_more_actions()
+        time.sleep(1)
+        main_page.click_on_edit_at_more_actions()
+        time.sleep(2)
+        values_tab = UsersValuesSubWizard(self.web_driver_container)
+        values_tab.set_ext_id_client("")
+        wizard_page = UsersWizard(self.web_driver_container)
+        wizard_page.click_on_save_changes()
+        time.sleep(1)
 
-            self.verify("Incorrect or missing values error appears", True,
-                        wizard_page.get_incorrect_or_missing_values_exception())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("Incorrect or missing values error appears", True,
+                    wizard_page.get_incorrect_or_missing_values_exception())

@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.middle_office.fees.fees_wizard import FeesWizard
 from test_framework.web_admin_core.pages.middle_office.fees.fees_commission_profile_points_sub_wizard import \
@@ -67,32 +64,24 @@ class QAP_T10639(CommonTestCase):
         fees_values_sub_wizard = FeesValuesSubWizard(self.web_driver_container)
         commission_profile = FeesOrderFeeProfileSubWizard(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            fees_values_sub_wizard.click_on_manage_order_fee_profile()
-            commission_profile.set_commission_profile_name_filter(self.profile_name[0])
-            time.sleep(0.5)
-            commission_profile.select_commission_profile(self.profile_name[0])
-            time.sleep(0.5)
-            self.verify("Profile preview appears", True, commission_profile.is_commission_profile_preview_displayed())
+        fees_values_sub_wizard.click_on_manage_order_fee_profile()
+        commission_profile.set_commission_profile_name_filter(self.profile_name[0])
+        time.sleep(0.5)
+        commission_profile.select_commission_profile(self.profile_name[0])
+        time.sleep(0.5)
+        self.verify("Profile preview appears", True, commission_profile.is_commission_profile_preview_displayed())
 
-            commission_profile.set_commission_profile_name_filter(self.profile_name[1])
-            time.sleep(0.5)
-            commission_profile.select_commission_profile(self.profile_name[1])
-            time.sleep(0.5)
-            commission_profile.set_commission_profile_name_filter(self.profile_name[0])
-            time.sleep(0.5)
-            commission_profile.click_on_delete(True)
-            commission_profile.set_commission_profile_name_filter(self.profile_name[1])
-            time.sleep(0.5)
-            commission_profile.select_commission_profile(self.profile_name[1])
-            time.sleep(0.5)
-            self.verify("Profile preview appears", True, commission_profile.is_commission_profile_preview_displayed())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        commission_profile.set_commission_profile_name_filter(self.profile_name[1])
+        time.sleep(0.5)
+        commission_profile.select_commission_profile(self.profile_name[1])
+        time.sleep(0.5)
+        commission_profile.set_commission_profile_name_filter(self.profile_name[0])
+        time.sleep(0.5)
+        commission_profile.click_on_delete(True)
+        commission_profile.set_commission_profile_name_filter(self.profile_name[1])
+        time.sleep(0.5)
+        commission_profile.select_commission_profile(self.profile_name[1])
+        time.sleep(0.5)
+        self.verify("Profile preview appears", True, commission_profile.is_commission_profile_preview_displayed())

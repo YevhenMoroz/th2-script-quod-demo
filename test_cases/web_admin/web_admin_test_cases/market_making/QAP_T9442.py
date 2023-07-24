@@ -3,8 +3,10 @@ import string
 import sys
 import time
 import traceback
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tiers_page import ClientTiersPage
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tiers_values_sub_wizard import \
     ClientTiersValuesSubWizard
@@ -35,37 +37,31 @@ class QAP_T9442(CommonTestCase):
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_client_tier_page()
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page = ClientTiersPage(self.web_driver_container)
-            main_page.click_on_new()
-            values_tab = ClientTiersValuesSubWizard(self.web_driver_container)
-            values_tab.set_name(self.name)
-            values_tab.set_core_spot_price_strategy(self.core_spot_price_strategy)
-            values_tab.set_tod_time_zone(self.tod_time_zone)
-            values_tab.set_tod_start_time(self.tod_start_time)
-            values_tab.set_tod_end_time(self.tod_end_time)
-            values_tab.select_schedule_checkbox()
-            self.schedule = random.choice(values_tab.get_all_schedules_from_drop_menu())
-            values_tab.set_schedule(self.schedule)
-            values_tab.click_on_manage_button_for_schedules()
+        main_page = ClientTiersPage(self.web_driver_container)
+        main_page.click_on_new()
+        values_tab = ClientTiersValuesSubWizard(self.web_driver_container)
+        values_tab.set_name(self.name)
+        values_tab.set_core_spot_price_strategy(self.core_spot_price_strategy)
+        values_tab.set_tod_time_zone(self.tod_time_zone)
+        values_tab.set_tod_start_time(self.tod_start_time)
+        values_tab.set_tod_end_time(self.tod_end_time)
+        values_tab.select_schedule_checkbox()
+        self.schedule = random.choice(values_tab.get_all_schedules_from_drop_menu())
+        values_tab.set_schedule(self.schedule)
+        values_tab.click_on_manage_button_for_schedules()
 
-            wizard = ClientTiersWizard(self.web_driver_container)
-            wizard.click_on_go_back_button()
-            time.sleep(2)
-            expected_result = [self.name, self.core_spot_price_strategy, self.tod_time_zone, self.tod_start_time,
-                               self.tod_end_time, True, self.schedule]
-            actual_result = [values_tab.get_name(), values_tab.get_core_spot_price_strategy(),
-                             values_tab.get_tod_time_zone(), values_tab.get_tod_start_time(),
-                             values_tab.get_tod_end_time(), values_tab.is_schedule_checkbox_selected(),
-                             values_tab.get_schedule()]
-            self.verify("Creation wizard showing all filled data for the fields", actual_result, expected_result)
+        wizard = ClientTiersWizard(self.web_driver_container)
+        wizard.click_on_go_back_button()
+        time.sleep(2)
+        expected_result = [self.name, self.core_spot_price_strategy, self.tod_time_zone, self.tod_start_time,
+                           self.tod_end_time, True, self.schedule]
+        actual_result = [values_tab.get_name(), values_tab.get_core_spot_price_strategy(),
+                         values_tab.get_tod_time_zone(), values_tab.get_tod_start_time(),
+                         values_tab.get_tod_end_time(), values_tab.is_schedule_checkbox_selected(),
+                         values_tab.get_schedule()]
+        self.verify("Creation wizard showing all filled data for the fields", actual_result, expected_result)
 
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)

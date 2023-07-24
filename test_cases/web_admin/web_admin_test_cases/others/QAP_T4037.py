@@ -3,8 +3,10 @@ import string
 import sys
 import time
 import traceback
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.others.counterparts.counterparts_page import CounterpartsPage
 from test_framework.web_admin_core.pages.others.counterparts.counterparts_party_roles_subwizard import \
@@ -71,20 +73,14 @@ class QAP_T4037(CommonTestCase):
         time.sleep(2)
         counterparts_main_menu.click_on_more_actions()
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
         counterparts_main_menu = CounterpartsPage(self.web_driver_container)
+        self.precondition()
+        time.sleep(2)
         try:
-            self.precondition()
-            time.sleep(2)
-            try:
-                counterparts_main_menu.click_on_delete_and_confirmation(True)
-                self.verify("Delete success ", True, True)
-            except Exception as e:
-                self.verify("Delete success ", True, e.__class__.__name__)
+            counterparts_main_menu.click_on_delete_and_confirmation(True)
+            self.verify("Delete success ", True, True)
+        except Exception as e:
+            self.verify("Delete success ", True, e.__class__.__name__)
 
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)

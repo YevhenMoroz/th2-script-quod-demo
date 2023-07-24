@@ -1,8 +1,10 @@
 import sys
 import time
 import traceback
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.utils.web_driver_container import WebDriverContainer
@@ -27,28 +29,21 @@ class QAP_T9113(CommonTestCase):
         side_menu = SideMenu(self.web_driver_container)
         side_menu.open_client_tier_page()
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page = ClientTiersPage(self.web_driver_container)
-            expected_result = [True, True]
-            actual_result = [self.white_theme == main_page.get_executable_text_color(),
-                             self.white_theme == main_page.get_pricing_text_color()]
-            self.verify("Text color for white theme is OK", expected_result, actual_result)
+        main_page = ClientTiersPage(self.web_driver_container)
+        expected_result = [True, True]
+        actual_result = [self.white_theme == main_page.get_executable_text_color(),
+                         self.white_theme == main_page.get_pricing_text_color()]
+        self.verify("Text color for white theme is OK", expected_result, actual_result)
 
-            common_act = CommonPage(self.web_driver_container)
-            common_act.click_on_user_icon()
-            common_act.click_on_dark_theme()
-            time.sleep(1)
-            expected_result = [True, True]
-            actual_result = [self.dark_theme == main_page.get_executable_text_color(),
-                             self.dark_theme == main_page.get_pricing_text_color()]
-            self.verify("Text color for dark theme is OK", expected_result, actual_result)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        common_act = CommonPage(self.web_driver_container)
+        common_act.click_on_user_icon()
+        common_act.click_on_dark_theme()
+        time.sleep(1)
+        expected_result = [True, True]
+        actual_result = [self.dark_theme == main_page.get_executable_text_color(),
+                         self.dark_theme == main_page.get_pricing_text_color()]
+        self.verify("Text color for dark theme is OK", expected_result, actual_result)

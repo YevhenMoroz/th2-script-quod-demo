@@ -62,7 +62,7 @@ class QAP_T7123(TestCase):
         # endregion
         # region check order ExecutionReports
         self.exec_report.set_default_filled(self.fix_message)
-        no_misc = {"MiscFeeAmt": '4', "MiscFeeCurr": self.com_cur,
+        no_misc = {"MiscFeeAmt": '2', "MiscFeeCurr": self.com_cur,
                    "MiscFeeType": "12"}
         ignored_fields = ['Currency', 'SecondaryOrderID', 'Text', 'LastMkt',
              "ReplyReceivedTime", "SettlType", "CommissionData", 'GatingRuleName', 'GatingRuleCondName']

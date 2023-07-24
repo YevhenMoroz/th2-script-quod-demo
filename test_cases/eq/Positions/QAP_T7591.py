@@ -49,8 +49,8 @@ class QAP_T7591(TestCase):
                 f"DELETE FROM dailyposit WHERE  accountid = '{self.acc2}' AND instrid = '{self.instrument_id}'")
             self._db_manager.execute_query(
                 f"DELETE FROM posit WHERE  accountid = '{self.acc2}' AND instrid = '{self.instrument_id}'")
-            self.ssh_client.send_command('qrestart all')
-            time.sleep(140)
+            self.ssh_client.send_command('qrestart QUOD.AQS, QUOD.PKS')
+            time.sleep(60)
         # endregion
 
         # region step  1-2 : Extract position for acc1 and acc2
@@ -66,7 +66,7 @@ class QAP_T7591(TestCase):
         # endregion
 
         # region step 5 : Check Position of Destination account:
-        time.sleep(2)
+        time.sleep(5)
         out = self._db_manager.execute_query(
             f"SELECT positqty FROM posit WHERE accountid = '{self.acc2}' AND instrid = '{self.instrument_id}'")
         self.ja_manager.compare_values({JavaApiFields.PositQty.value: self.qty_to_transfer},
@@ -126,7 +126,7 @@ class QAP_T7591(TestCase):
                 f"DELETE FROM dailyposit WHERE  accountid = '{self.acc2}' AND instrid = '{self.instrument_id}'")
             self._db_manager.execute_query(
                 f"DELETE FROM posit WHERE  accountid = '{self.acc2}' AND instrid = '{self.instrument_id}'")
-            self.ssh_client.send_command('qrestart all')
-            time.sleep(140)
+            self.ssh_client.send_command('qrestart QUOD.AQS, QUOD.PKS')
+            time.sleep(60)
         finally:
             self._db_manager.close_connection()

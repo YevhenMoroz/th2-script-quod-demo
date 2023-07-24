@@ -2,17 +2,13 @@ import time
 from datetime import datetime, timedelta
 from pathlib import Path
 from custom import basic_custom_actions as bca
-from stubs import Stubs
 from test_framework.core.test_case import TestCase
 from test_framework.core.try_exept_decorator import try_except
 from test_framework.data_sets.base_data_set import BaseDataSet
 from test_framework.environments.full_environment import FullEnvironment
-from test_framework.fix_wrappers.DataSet import DirectionEnum
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.forex.FixMessageMarketDataRequestFX import FixMessageMarketDataRequestFX
-from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
-    FixMessageMarketDataSnapshotFullRefreshBuyFX
 from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshSellFX import \
     FixMessageMarketDataSnapshotFullRefreshSellFX
 from test_framework.rest_api_wrappers.RestApiManager import RestApiManager
@@ -48,15 +44,15 @@ class QAP_T2403(TestCase):
                 "SecurityType": self.security_type,
                 "Product": "4", },
             "SettlType": self.settle_type, }]
-        self.bands_gbp_usd = ["1000000"]
+        self.bands_gbp_usd = ["*", "*"]
         self.time_client_1 = (datetime.now() - timedelta(hours=4))
         self.time_client_2 = (datetime.now() + timedelta(hours=4))
-        self.timestamp_client_1 = str(datetime.timestamp(self.time_client_1)).replace(".", "")[:13]
-        self.timestamp_client_2 = str(datetime.timestamp(self.time_client_2)).replace(".", "")[:13]
+        self.timestamp_client_1 = self.time_client_1.isoformat().rsplit("T")[1].rsplit(".")[0]
+        self.timestamp_client_2 = self.time_client_2.isoformat().rsplit("T")[1].rsplit(".")[0]
         self.time_instr_1 = (datetime.now() - timedelta(hours=2))
         self.time_instr_2 = (datetime.now() - timedelta(hours=1))
-        self.timestamp_instr_1 = str(datetime.timestamp(self.time_instr_1)).replace(".", "")[:13]
-        self.timestamp_instr_2 = str(datetime.timestamp(self.time_instr_2)).replace(".", "")[:13]
+        self.timestamp_instr_1 = self.time_instr_1.isoformat().rsplit("T")[1].rsplit(".")[0]
+        self.timestamp_instr_2 = self.time_instr_2.isoformat().rsplit("T")[1].rsplit(".")[0]
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -83,7 +79,8 @@ class QAP_T2403(TestCase):
             change_parameters({"SenderSubID": self.client}). \
             update_repeating_group("NoRelatedSymbols", self.no_related_symbols)
         response = self.fix_manager_gtw.send_message_and_receive_response(self.fix_subscribe, self.test_id)
-        self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands_gbp_usd, published=False, response=response[0])
+        self.fix_md_snapshot.set_params_for_md_response(self.fix_subscribe, self.bands_gbp_usd, published=False,
+                                                        response=response[0])
         self.fix_verifier.check_fix_message(self.fix_md_snapshot)
         self.fix_subscribe.set_md_uns_parameters_maker()
         self.fix_manager_gtw.send_message(self.fix_subscribe, "Unsubscribe")

@@ -3,8 +3,10 @@ import string
 import sys
 import time
 import traceback
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.others.counterparts.counterparts_page import CounterpartsPage
 from test_framework.web_admin_core.pages.others.counterparts.counterparts_party_roles_subwizard import \
@@ -69,64 +71,58 @@ class QAP_T4039(CommonTestCase):
         counterparts_wizard.click_on_check_mark()
         counterparts_wizard.click_on_save_changes()
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
-        try:
-            self.precondition()
-            sub_counterparts_wizard = CounterpartsSubCounterpartsSubWizard(self.web_driver_container)
-            counterparts_wizard = CounterpartsWizard(self.web_driver_container)
-            counterparts_main_menu = CounterpartsPage(self.web_driver_container)
-            party_roles_wizard = CounterpartsPartyRolesSubWizard(self.web_driver_container)
-            time.sleep(2)
-            counterparts_main_menu.set_name_filter_value(self.name_at_values_tab)
-            time.sleep(2)
-            counterparts_main_menu.click_on_more_actions()
-            time.sleep(1)
-            counterparts_main_menu.click_on_edit()
-            self.verify("Is field Name saved correctly", self.name_at_values_tab,
-                        counterparts_wizard.get_name_at_values_tab())
-            time.sleep(1)
-            list_of_set_sub_counterparts_value = [self.name_at_sub_counterparts,
-                                                  self.party_id,
-                                                  self.ext_id_client,
-                                                  self.party_sub_id_type]
-            list_of_get_sub_counterparts_value = [sub_counterparts_wizard.get_name_value_at_sub_counterparts_tab(),
-                                                  sub_counterparts_wizard.get_party_id_value_at_sub_counterparts_tab(),
-                                                  sub_counterparts_wizard.get_ext_id_client_value_at_sub_counterparts_tab(),
-                                                  sub_counterparts_wizard.get_party_sub_id_type_value_at_sub_counterparts_tab()]
-            time.sleep(1)
-            fields_name_at_sub_counterparts = ["Name", "party id", "Ext ID", "Party Sub"]
-            self.verify_arrays_of_data_objects("Is Sub counterparts saved correctly", fields_name_at_sub_counterparts,
-                                               list_of_set_sub_counterparts_value, list_of_get_sub_counterparts_value)
+        self.precondition()
+        sub_counterparts_wizard = CounterpartsSubCounterpartsSubWizard(self.web_driver_container)
+        counterparts_wizard = CounterpartsWizard(self.web_driver_container)
+        counterparts_main_menu = CounterpartsPage(self.web_driver_container)
+        party_roles_wizard = CounterpartsPartyRolesSubWizard(self.web_driver_container)
+        time.sleep(2)
+        counterparts_main_menu.set_name_filter_value(self.name_at_values_tab)
+        time.sleep(2)
+        counterparts_main_menu.click_on_more_actions()
+        time.sleep(1)
+        counterparts_main_menu.click_on_edit()
+        self.verify("Is field Name saved correctly", self.name_at_values_tab,
+                    counterparts_wizard.get_name_at_values_tab())
+        time.sleep(1)
+        list_of_set_sub_counterparts_value = [self.name_at_sub_counterparts,
+                                              self.party_id,
+                                              self.ext_id_client,
+                                              self.party_sub_id_type]
+        list_of_get_sub_counterparts_value = [sub_counterparts_wizard.get_name_value_at_sub_counterparts_tab(),
+                                              sub_counterparts_wizard.get_party_id_value_at_sub_counterparts_tab(),
+                                              sub_counterparts_wizard.get_ext_id_client_value_at_sub_counterparts_tab(),
+                                              sub_counterparts_wizard.get_party_sub_id_type_value_at_sub_counterparts_tab()]
+        time.sleep(1)
+        fields_name_at_sub_counterparts = ["Name", "party id", "Ext ID", "Party Sub"]
+        self.verify_arrays_of_data_objects("Is Sub counterparts saved correctly", fields_name_at_sub_counterparts,
+                                           list_of_set_sub_counterparts_value, list_of_get_sub_counterparts_value)
 
-            list_of_set_party_roles_value = [self.party_id_source,
-                                             self.venue_counterpart_id,
-                                             self.party_role,
-                                             self.ext_id_client,
-                                             self.party_role_qualifier,
-                                             self.venue]
+        list_of_set_party_roles_value = [self.party_id_source,
+                                         self.venue_counterpart_id,
+                                         self.party_role,
+                                         self.ext_id_client,
+                                         self.party_role_qualifier,
+                                         self.venue]
 
-            list_of_get_party_roles_value = [party_roles_wizard.get_party_id_source_value_at_party_roles_tab(),
-                                             party_roles_wizard.get_venue_counterpart_id_value_at_party_roles_tab(),
-                                             party_roles_wizard.get_party_role_value_at_party_roles_tab(),
-                                             party_roles_wizard.get_ext_id_client_value_at_party_roles_tab(),
-                                             party_roles_wizard.get_party_role_qualifier_value_at_party_roles_tab(),
-                                             party_roles_wizard.get_venue_value_at_party_roles_tab()]
+        list_of_get_party_roles_value = [party_roles_wizard.get_party_id_source_value_at_party_roles_tab(),
+                                         party_roles_wizard.get_venue_counterpart_id_value_at_party_roles_tab(),
+                                         party_roles_wizard.get_party_role_value_at_party_roles_tab(),
+                                         party_roles_wizard.get_ext_id_client_value_at_party_roles_tab(),
+                                         party_roles_wizard.get_party_role_qualifier_value_at_party_roles_tab(),
+                                         party_roles_wizard.get_venue_value_at_party_roles_tab()]
 
-            fields_name_at_party_roles = ["Party ID Source", "Venue Counterpart ID", "Party Role", "Ext ID Client",
-                                          "Party Role Qualifier", "Venue"]
-            self.verify_arrays_of_data_objects("Is party roles saved correctly", fields_name_at_party_roles,
-                                               list_of_set_party_roles_value, list_of_get_party_roles_value)
-            time.sleep(2)
-            counterparts_wizard.click_on_save_changes()
-            time.sleep(2)
-            counterparts_main_menu.set_name_filter_value(self.name_at_values_tab)
-            time.sleep(2)
-            counterparts_main_menu.click_on_more_actions()
-            time.sleep(1)
-            counterparts_main_menu.click_on_delete_and_confirmation(True)
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        fields_name_at_party_roles = ["Party ID Source", "Venue Counterpart ID", "Party Role", "Ext ID Client",
+                                      "Party Role Qualifier", "Venue"]
+        self.verify_arrays_of_data_objects("Is party roles saved correctly", fields_name_at_party_roles,
+                                           list_of_set_party_roles_value, list_of_get_party_roles_value)
+        time.sleep(2)
+        counterparts_wizard.click_on_save_changes()
+        time.sleep(2)
+        counterparts_main_menu.set_name_filter_value(self.name_at_values_tab)
+        time.sleep(2)
+        counterparts_main_menu.click_on_more_actions()
+        time.sleep(1)
+        counterparts_main_menu.click_on_delete_and_confirmation(True)

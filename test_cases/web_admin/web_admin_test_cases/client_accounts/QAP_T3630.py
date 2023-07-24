@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.client_lists.main_page import ClientListsPage
 from test_framework.web_admin_core.pages.clients_accounts.client_lists.wizard import ClientListsWizard
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
@@ -53,18 +50,11 @@ class QAP_T3630(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
-        try:
-            self.precondition()
-            client_list_page = ClientListsPage(self.web_driver_container)
-            expected_pdf_content = [self.name,
-                                    "CLIENT1",
-                                    "CLIENT2",
-                                    "CLIENT3"]
-            self.verify("Is client list saved correctly ", True,
-                        client_list_page.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.precondition()
+        client_list_page = ClientListsPage(self.web_driver_container)
+        expected_pdf_content = [self.name,
+                                "CLIENT1",
+                                "CLIENT2",
+                                "CLIENT3"]
+        self.verify("Is client list saved correctly ", True,
+                    client_list_page.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))

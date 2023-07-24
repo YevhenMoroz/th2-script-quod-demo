@@ -395,7 +395,7 @@ class QAP_T11194(TestCase):
 
         # region Check child DMA order on venue ITGIPA
         self.dma_itgipa_order = FixMessageNewOrderSingleAlgo(data_set=self.data_set).set_DMA_Dark_Child_Kepler_params()
-        self.dma_itgipa_order.change_parameters(dict(Account=self.account_kepler, ExDestination=self.ex_destination_itg, OrderQty=self.qty, Instrument=self.instrument))
+        self.dma_itgipa_order.change_parameters(dict(Account=self.account_kepler, ExDestination=self.ex_destination_itgipa, OrderQty=self.qty, Instrument=self.instrument))
         self.fix_verifier_buy.check_fix_message_kepler(self.dma_itgipa_order, key_parameters=self.key_params_NOS_child, message_name='Buy side NewOrderSingle Child DMA 11 order')
 
         er_pending_new_dma_itgipa_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.dma_itgipa_order, self.gateway_side_buy, self.status_pending)

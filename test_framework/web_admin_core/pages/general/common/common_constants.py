@@ -14,7 +14,7 @@ class CommonConstants:
     HELP_ICON_XPATH = '//*[@nbtooltip="Help"]'
     HELP_ICON_AT_LOGIN_PAGE_XPATH = '//*[@icon="question-mark-circle-outline"]'
     REFRESH_PAGE_BUTTON_XPATH = "//*[@data-name='refresh']"
-    USER_NAME_XPATH = '//*[@class="logged-in-user ng-star-inserted"]'
+    USER_NAME_XPATH = '//div[contains(@class, "logged-in-user")]'
     SITE_NAME_XPATH = '//span[@class="site-name"]'
     FULL_SCREEN_BUTTON_XPATH = '//*[@nbtooltip="Full Screen"]'
     EXIT_FULL_SCREEN_BUTTON_XPATH = '//*[@nbtooltip="Exit Full Screen"]'
@@ -32,4 +32,12 @@ class CommonConstants:
     INFO_POP_UP_TEXT = '//nb-toast//*[@class="title subtitle"]'
     LOADING_OVERLAY = '//*[@ref="eOverlayWrapper"]/span'
     CONFIRM_POP_UP = '(//nb-card)[2]'
+    CHANGE_PASSWORD_AT_USER_PANEL = '//*[normalize-space()="Change Password"]'
+    CHANGE_PASSWORD_POP_UP = '//div[@class="change-password"]'
+    CHANGE_PASSWORD_BUTTON_IN_POP_UP = '//button[normalize-space()="Change Password"]'
+    CURRENT_PASSWORD_IN_POP = '//input[@id="currentPassword"]'
+    NEW_PASSWORD_IN_POP_UP = '//input[@id="newPassword"]'
+    CONFIRM_NEW_PASSWORD_IN_POP_UP = '//input[@id="confirmNewPassword"]'
+    CHANGE_PASSWORD_POP_UP_ERROR_TEXT = '//div[@class="change-password"]//*[@class="alert-message ng-star-inserted"]'
+    CANCEL_BUTTON = '//button[normalize-space()="Cancel"]'
 

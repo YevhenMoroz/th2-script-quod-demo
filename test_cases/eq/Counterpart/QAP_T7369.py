@@ -108,23 +108,25 @@ class QAP_T7369(TestCase):
                                                                                        'InstrID': self.data_set.get_instrument_id_by_name(
                                                                                            "instrument_3")
                                                                                        })
-            responses = self.java_api_manager.send_message_and_receive_response(self.child_order_submit)
-            class_name.__print_message('Report after trade CHILD DMA ORDER', responses)
-            execution_report = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value, ExecutionPolicyConst.DMA.value)
-            exec_id = execution_report.get_parameters()[JavaApiFields.ExecutionReportBlock.value][JavaApiFields.ExecID.value]
+            self.java_api_manager.send_message_and_receive_response(self.child_order_submit)
+            execution_report = self.java_api_manager.get_last_message(ORSMessageType.ExecutionReport.value,
+                                                                      ExecutionPolicyConst.DMA.value)
+            exec_id = execution_report.get_parameters()[JavaApiFields.ExecutionReportBlock.value][
+                JavaApiFields.ExecID.value]
         finally:
             time.sleep(1)
             self.rule_manager.remove_rule(nos_rule)
             self.rule_manager.remove_rule(trade_rule)
 
         list_of_ignored_fields = ['SettlCurrency', 'SecondaryOrderID', 'MiscFeesGrp', 'CommissionData', 'NoMiscFees',
-                                  'PartyRoleQualifier','GatingRuleCondName', 'GatingRuleName']
+                                  'PartyRoleQualifier', 'GatingRuleCondName', 'GatingRuleName', 'PositionEffect',
+                                  'HandlInst', 'Text']
         list_of_counterparts = [
-                self.data_set.get_counterpart_id_fix('counterpart_id_gtwquod4'),
-                self.data_set.get_counterpart_id_fix('counterpart_id_market_maker_th2_route'),
-                self.data_set.get_counterpart_id_fix('counterpart_id_investment_firm_cl_counterpart_sa3'),
-                self.data_set.get_counterpart_id_fix('counterpart_id_custodian_user_2')
-            ]
+            self.data_set.get_counterpart_id_fix('counterpart_id_gtwquod4'),
+            self.data_set.get_counterpart_id_fix('counterpart_id_market_maker_th2_route'),
+            self.data_set.get_counterpart_id_fix('counterpart_id_investment_firm_cl_counterpart_sa3'),
+            self.data_set.get_counterpart_id_fix('counterpart_id_custodian_user_2')
+        ]
         parties = {
             'NoPartyIDs': list_of_counterparts
         }
@@ -147,7 +149,6 @@ class QAP_T7369(TestCase):
         self.unmatch_transfer.set_default(self.data_set, exec_id)
         self.unmatch_transfer.set_default_unmatch_and_transfer(self.data_set.get_account_by_name('client_pos_3_acc_3'))
         self.java_api_manager.send_message(self.unmatch_transfer)
-        class_name.__print_message(f"{class_name} - After UNMATCH_AND_TRANSFER", responses)
         # endregion
 
         # region Set-up parameters for ExecutionReports
@@ -182,16 +183,8 @@ class QAP_T7369(TestCase):
                 self.result = response
                 break
 
-    @staticmethod
-    def __print_message(message, responses):
-        logger.info(message)
-        for i in responses:
-            logger.info(i)
-            logger.info(i.get_parameters())
-
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
         self.ssh_client.put_file(self.remote_path, self.local_path)
         self.ssh_client.send_command("qrestart ORS")
         time.sleep(60)
-

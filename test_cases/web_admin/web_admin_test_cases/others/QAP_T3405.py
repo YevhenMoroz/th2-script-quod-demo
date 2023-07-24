@@ -3,8 +3,10 @@ import time
 import random
 import string
 import traceback
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.others.counterparts.counterparts_page import CounterpartsPage
 from test_framework.web_admin_core.pages.others.counterparts.counterparts_party_roles_subwizard import \
@@ -38,25 +40,25 @@ class QAP_T3405(CommonTestCase):
         page.click_on_new()
         time.sleep(2)
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
         party_roles_tab_wizard = CounterpartsPartyRolesSubWizard(self.web_driver_container)
         counterparts_wizard = CounterpartsWizard(self.web_driver_container)
 
+        self.precondition()
         try:
-            self.precondition()
-            try:
-                counterparts_wizard.click_on_plus_party_roles()
-                time.sleep(2)
-                party_roles_tab_wizard.set_required_fields_in_party_role_tab(self.party_id_source[0],
-                                                                             self.venue_counterpart_id[0],
-                                                                             self.party_role[0],
-                                                                             self.ext_id_client[0])
-                time.sleep(2)
-                counterparts_wizard.click_on_check_mark()
-                self.verify("\"Party roles\" item is created", self.venue_counterpart_id[0],
-                            party_roles_tab_wizard.get_venue_counterpart_id_value_at_party_roles_tab())
-            except Exception as e:
-                self.verify(f"\"Party roles\" item is not created", True, e.__class__.__name__)
+            counterparts_wizard.click_on_plus_party_roles()
+            time.sleep(2)
+            party_roles_tab_wizard.set_required_fields_in_party_role_tab(self.party_id_source[0],
+                                                                         self.venue_counterpart_id[0],
+                                                                         self.party_role[0],
+                                                                         self.ext_id_client[0])
+            time.sleep(2)
+            counterparts_wizard.click_on_check_mark()
+            self.verify("\"Party roles\" item is created", self.venue_counterpart_id[0],
+                        party_roles_tab_wizard.get_venue_counterpart_id_value_at_party_roles_tab())
+        except Exception as e:
+            self.verify(f"\"Party roles\" item is not created", True, e.__class__.__name__)
 
             try:
                 counterparts_wizard.click_on_plus_party_roles()
@@ -99,9 +101,3 @@ class QAP_T3405(CommonTestCase):
             except Exception as e:
                 self.verify(f"\"Party roles\" items set and get data different", True, e.__class__.__name__)
 
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)

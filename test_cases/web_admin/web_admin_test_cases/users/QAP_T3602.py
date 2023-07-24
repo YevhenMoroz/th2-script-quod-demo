@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.users.users.users_page import UsersPage
 from test_framework.web_admin_core.pages.users.users.users_wizard import UsersWizard
 from test_framework.web_admin_core.pages.users.users.users_values_sub_wizard import UsersValuesSubWizard
@@ -74,39 +71,31 @@ class QAP_T3602(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            login_page = LoginPage(self.web_driver_container)
-            login_page.login_to_web_admin(self.test_data['location_user']['login'],
-                                          self.test_data['location_user']['password'])
-            time.sleep(2)
-            side_menu = SideMenu(self.web_driver_container)
-            side_menu.open_users_page()
-            time.sleep(2)
-            user_page = UsersPage(self.web_driver_container)
-            user_page.set_user_id(self.test_data['user']['user_id'])
-            time.sleep(1)
-            user_page.click_on_more_actions()
-            time.sleep(1)
-            user_page.click_on_edit_at_more_actions()
-            time.sleep(2)
-            user_assignments_tab = UsersAssignmentsSubWizard(self.web_driver_container)
-            self.verify("Institution, Zone, and Location fields not displayed",
-                        [False, False, False],
-                        [user_assignments_tab.is_institution_field_displayed(),
-                         user_assignments_tab.is_zone_field_displayed(),
-                         user_assignments_tab.is_location_field_displayed()])
+        login_page = LoginPage(self.web_driver_container)
+        login_page.login_to_web_admin(self.test_data['location_user']['login'],
+                                      self.test_data['location_user']['password'])
+        time.sleep(2)
+        side_menu = SideMenu(self.web_driver_container)
+        side_menu.open_users_page()
+        time.sleep(2)
+        user_page = UsersPage(self.web_driver_container)
+        user_page.set_user_id(self.test_data['user']['user_id'])
+        time.sleep(1)
+        user_page.click_on_more_actions()
+        time.sleep(1)
+        user_page.click_on_edit_at_more_actions()
+        time.sleep(2)
+        user_assignments_tab = UsersAssignmentsSubWizard(self.web_driver_container)
+        self.verify("Institution, Zone, and Location fields not displayed",
+                    [False, False, False],
+                    [user_assignments_tab.is_institution_field_displayed(),
+                     user_assignments_tab.is_zone_field_displayed(),
+                     user_assignments_tab.is_location_field_displayed()])
 
-            user_assignments_tab.clear_assignments_tab()
-            user_wizard = UsersWizard(self.web_driver_container)
-            user_wizard.click_on_save_changes()
-            time.sleep(1)
-            self.verify("User did not save with empty Assignments tab", True, user_wizard.is_warning_displayed())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        user_assignments_tab.clear_assignments_tab()
+        user_wizard = UsersWizard(self.web_driver_container)
+        user_wizard.click_on_save_changes()
+        time.sleep(1)
+        self.verify("User did not save with empty Assignments tab", True, user_wizard.is_warning_displayed())

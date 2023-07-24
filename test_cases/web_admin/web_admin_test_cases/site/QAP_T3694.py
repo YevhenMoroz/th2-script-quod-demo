@@ -1,7 +1,5 @@
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.site.institution.institution_assignments_sub_wizard import \
@@ -37,16 +35,10 @@ class QAP_T3694(CommonTestCase):
         time.sleep(2)
 
     def test_context(self):
+        self.precondition()
+        assignments_sub_wizard = InstitutionAssignmentsSubWizard(self.web_driver_container)
         try:
-            self.precondition()
-            assignments_sub_wizard = InstitutionAssignmentsSubWizard(self.web_driver_container)
-            try:
-                assignments_sub_wizard.click_on_zones(self.zone)
-                self.verify("Zone hyperlink works correctly", True, True)
-            except Exception as e:
-                self.verify("Zone hyperlink NOT worked", True, e.__class__.__name__)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            print(traceback.format_exc() + " Search in ->  " + self.__class__.__name__)
+            assignments_sub_wizard.click_on_zones(self.zone)
+            self.verify("Zone hyperlink works correctly", True, True)
+        except Exception as e:
+            self.verify("Zone hyperlink NOT worked", True, e.__class__.__name__)

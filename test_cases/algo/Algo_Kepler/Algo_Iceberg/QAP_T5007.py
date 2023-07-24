@@ -184,8 +184,8 @@ class QAP_T5007(TestCase):
         # region Check childs
         self.fix_verifier_buy.set_case_id(bca.create_event("Check childs", self.test_id))
 
-        self.fix_verifier_buy.check_fix_message_sequence([self.dma_1_order, self.dma_2_order], [self.key_params_NOS_child, self.key_params_NOS_child], self.FromQuod, pre_filter=None)
-        self.fix_verifier_buy.check_fix_message_sequence([er_pending_new_dma_1_order_params, er_new_dma_1_order_params, er_fill_dma_1_order_params, er_pending_new_dma_2_order_params, er_new_dma_2_order_params, er_fill_dma_2_order_params], [self.key_params_ER_child, self.key_params_ER_child, self.key_params_ER_child, self.key_params_ER_child, self.key_params_ER_child, self.key_params_ER_child], self.ToQuod, pre_filter=None, check_order=False)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([self.dma_1_order, self.dma_2_order], [self.key_params_NOS_child, self.key_params_NOS_child], self.FromQuod, pre_filter=None)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([er_pending_new_dma_1_order_params, er_new_dma_1_order_params, er_fill_dma_1_order_params, er_pending_new_dma_2_order_params, er_new_dma_2_order_params, er_fill_dma_2_order_params], [self.key_params_ER_child, self.key_params_ER_child, self.key_params_ER_child, self.key_params_ER_child, self.key_params_ER_child, self.key_params_ER_child], self.ToQuod, pre_filter=None, check_order=False)
         # endregion
 
         # region Check that the parent order is filled

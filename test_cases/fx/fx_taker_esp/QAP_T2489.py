@@ -1,173 +1,161 @@
-import logging
-import time
 from datetime import datetime
-from custom import basic_custom_actions as bca, tenor_settlement_date as tsd
 from pathlib import Path
 
-from test_framework.fix_wrappers import DataSet
-from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
-    FixMessageMarketDataSnapshotFullRefreshBuyFX
-from test_framework.win_gui_wrappers.fe_trading_constant import OrderBookColumns, TimeInForce, ExecSts
-from test_framework.win_gui_wrappers.forex.fx_order_book import FXOrderBook
-from test_framework.fix_wrappers.DataSet import DirectionEnum
+from test_cases.fx.fx_wrapper.common_tools import check_value_in_db
+from test_framework.data_sets.constants import GatewaySide, Status
+from custom.tenor_settlement_date import spo
+from test_framework.core.test_case import TestCase
+from test_framework.core.try_exept_decorator import try_except
+from test_framework.data_sets.base_data_set import BaseDataSet
+from test_framework.environments.full_environment import FullEnvironment
+from custom import basic_custom_actions as bca
 from test_framework.fix_wrappers.FixManager import FixManager
 from test_framework.fix_wrappers.FixVerifier import FixVerifier
 from test_framework.fix_wrappers.forex.FixMessageExecutionReportAlgoFX import FixMessageExecutionReportAlgoFX
+from test_framework.fix_wrappers.forex.FixMessageMarketDataSnapshotFullRefreshBuyFX import \
+    FixMessageMarketDataSnapshotFullRefreshBuyFX
 from test_framework.fix_wrappers.forex.FixMessageNewOrderSingleTaker import FixMessageNewOrderSingleTaker
 
-alias_fh = "fix-fh-314-luna"
-alias_gtw = "fix-sell-esp-t-314-stand"
-symbol = 'EUR/USD'
-securitytype = 'FXSPOT'
-defaultmdsymbol_spo_barx = 'EUR/USD:SPO:REG:BARX'
-defaultmdsymbol_spo_citi = 'EUR/USD:SPO:REG:CITI'
-defaultmdsymbol_spo_hsbc = 'EUR/USD:SPO:REG:HSBC'
-# Gateway Side
 
-gateway_side_sell = DataSet.GatewaySide.Sell
-# Status
-status = DataSet.Status.Fill
-no_md_entries_spo_barx = [
-    {
-        "MDEntryType": "0",
-        "MDEntryPx": 1.18066,
-        "MDEntrySize": 5000000,
-        "MDEntryPositionNo": 1,
-        'SettlDate': tsd.spo(),
-        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-    },
-    {
-        "MDEntryType": "1",
-        "MDEntryPx": 1.18146,
-        "MDEntrySize": 5000000,
-        "MDEntryPositionNo": 1,
-        'SettlDate': tsd.spo(),
-        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-    },
-]
-no_md_entries_spo_citi = [
-    {
-        "MDEntryType": "0",
-        "MDEntryPx": 1.18075,
-        "MDEntrySize": 1000000,
-        "MDEntryPositionNo": 1,
-        "MDQuoteType": 1,
-        'SettlDate': tsd.spo(),
-        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-    },
-    {
-        "MDEntryType": "1",
-        "MDEntryPx": 1.18141,
-        "MDEntrySize": 1000000,
-        "MDEntryPositionNo": 1,
-        "MDQuoteType": 1,
-        'SettlDate': tsd.spo(),
-        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-    },
-]
-no_md_entries_spo_hsbc = [
-    {
-        "MDEntryType": "0",
-        "MDEntryPx": 1.18079,
-        "MDEntrySize": 5000000,
-        "MDEntryPositionNo": 1,
-        "MDQuoteType": 1,
-        'SettlDate': tsd.spo(),
-        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-    },
-    {
-        "MDEntryType": "1",
-        "MDEntryPx": 1.1814,
-        "MDEntrySize": 5000000,
-        "MDEntryPositionNo": 1,
-        "MDQuoteType": 1,
-        'SettlDate': tsd.spo(),
-        "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
-    },
-]
-no_strategy_parameters = [
-    {'StrategyParameterName': 'AggressiveSingleOrderOnImmediateOrCancel', 'StrategyParameterType': '13',
-     'StrategyParameterValue': 'Y'},
-    {'StrategyParameterName': 'AllowedVenues', 'StrategyParameterType': '14',
-     'StrategyParameterValue': 'CITI/BARX/HSBC'},
-    {'StrategyParameterName': 'ForbiddenVenues', 'StrategyParameterType': '14',
-     'StrategyParameterValue': 'BNP/DB/EBS-CITI/GS/JPM/MS'}]
-ob_col = OrderBookColumns
-tif = TimeInForce
-exe_sts = ExecSts
+class QAP_T2489(TestCase):
+    @try_except(test_id=Path(__file__).name[:-3])
+    def __init__(self, report_id, session_id=None, data_set: BaseDataSet = None, environment: FullEnvironment = None):
+        super().__init__(report_id, session_id, data_set, environment)
+        self.test_id = bca.create_event(Path(__file__).name[:-3], self.report_id)
+        self.esp_t_connectivity = self.environment.get_list_fix_environment()[0].buy_side_esp
+        self.fx_fh_connectivity = self.environment.get_list_fix_environment()[0].feed_handler
+        self.fix_manager = FixManager(self.esp_t_connectivity, self.test_id)
+        self.fix_verifier = FixVerifier(self.esp_t_connectivity, self.test_id)
+        self.new_order_singe = FixMessageNewOrderSingleTaker(data_set=self.data_set)
+        self.execution_report = FixMessageExecutionReportAlgoFX()
+        self.no_strategy_parameters = [{"StrategyParameterName": "AllowedVenues", "StrategyParameterType": "14",
+                                        "StrategyParameterValue": "CITI/BARX/HSBC"}]
+        self.fix_md = FixMessageMarketDataSnapshotFullRefreshBuyFX()
+        self.fix_manager_fh_314 = FixManager(self.fx_fh_connectivity, self.test_id)
+        self.eur_usd = self.data_set.get_symbol_by_name("symbol_1")
+        self.eur = self.data_set.get_currency_by_name("currency_eur")
+        self.security_type_spot = self.data_set.get_security_type_by_name("fx_spot")
+        self.settle_date_spot = self.data_set.get_settle_date_by_name("spot")
+        self.md_req_id_barx = 'EUR/USD:SPO:REG:BARX'
+        self.md_req_id_citi = 'EUR/USD:SPO:REG:CITI'
+        self.md_req_id_hsbc = 'EUR/USD:SPO:REG:HSBC'
+        self.no_md_entries_spot_barx = [
+            {
+                "MDEntryType": "0",
+                "MDEntryPx": 1.18066,
+                "MDEntrySize": 5000000,
+                "MDEntryPositionNo": 1,
+                'SettlDate': self.settle_date_spot,
+                "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+            },
+            {
+                "MDEntryType": "1",
+                "MDEntryPx": 1.18146,
+                "MDEntrySize": 5000000,
+                "MDEntryPositionNo": 1,
+                'SettlDate': self.settle_date_spot,
+                "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+            }
+        ]
+        self.no_md_entries_spot_citi = [
+            {
+                "MDEntryType": "0",
+                "MDEntryPx": 1.18075,
+                "MDEntrySize": 1000000,
+                "MDEntryPositionNo": 1,
+                "MDQuoteType": 1,
+                'SettlDate': self.settle_date_spot,
+                "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+            },
+            {
+                "MDEntryType": "1",
+                "MDEntryPx": 1.18141,
+                "MDEntrySize": 1000000,
+                "MDEntryPositionNo": 1,
+                "MDQuoteType": 1,
+                'SettlDate': self.settle_date_spot,
+                "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+            }
+        ]
+        self.no_md_entries_spot_hsbc = [
+            {
+                "MDEntryType": "0",
+                "MDEntryPx": 1.18079,
+                "MDEntrySize": 5000000,
+                "MDEntryPositionNo": 1,
+                'SettlDate': self.settle_date_spot,
+                "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+            },
+            {
+                "MDEntryType": "1",
+                "MDEntryPx": 1.1814,
+                "MDEntrySize": 5000000,
+                "MDEntryPositionNo": 1,
+                'SettlDate': self.settle_date_spot,
+                "MDEntryTime": datetime.utcnow().strftime('%Y%m%d'),
+            }
+        ]
 
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_pre_conditions_and_steps(self):
+        # region Step 1
+        self.fix_md.set_market_data().update_repeating_group("NoMDEntries", self.no_md_entries_spot_barx)
+        self.fix_md.update_MDReqID(self.md_req_id_barx, self.fx_fh_connectivity, "FX")
+        self.fix_manager_fh_314.send_message(self.fix_md)
+        self.sleep(2)
 
-def execute(report_id, session_id, data_set):
-    case_name = Path(__file__).name[:-3]
-    case_id = bca.create_event(case_name, report_id)
-    fix_manager_gtw = FixManager(alias_gtw, case_id)
-    fix_manager_fh = FixManager(alias_fh, case_id)
-    fix_verifier = FixVerifier(alias_gtw, case_id)
-    try:
+        self.fix_md.set_market_data().update_repeating_group("NoMDEntries", self.no_md_entries_spot_citi)
+        self.fix_md.update_MDReqID(self.md_req_id_citi, self.fx_fh_connectivity, "FX")
+        self.fix_manager_fh_314.send_message(self.fix_md)
+        self.sleep(2)
 
-        # Send market data to the BARX venue EUR/USD spot
-        market_data_snap_shot = FixMessageMarketDataSnapshotFullRefreshBuyFX().set_market_data() \
-            .update_repeating_group('NoMDEntries', no_md_entries_spo_barx). \
-            update_MDReqID(defaultmdsymbol_spo_barx, alias_fh, 'FX')
-        fix_manager_fh.send_message(market_data_snap_shot, "Send MD BARX EUR/USD ")
+        self.fix_md.set_market_data().update_repeating_group("NoMDEntries", self.no_md_entries_spot_hsbc)
+        self.fix_md.update_MDReqID(self.md_req_id_hsbc, self.fx_fh_connectivity, "FX")
+        self.fix_manager_fh_314.send_message(self.fix_md)
+        self.sleep(2)
+        # region 2
+        self.new_order_singe.set_default_SOR().update_repeating_group("NoStrategyParameters",
+                                                                      self.no_strategy_parameters)
+        response = self.fix_manager.send_message_and_receive_response(self.new_order_singe)
+        order_id = response[0].get_parameters()["OrderID"]
+        venue = check_value_in_db(extracting_value="destinationvenueid",
+                                     query=f"SELECT destinationvenueid FROM ordr "
+                                           f"WHERE sorparentordid = '{order_id}'")
+        self.verifier.set_parent_id(self.test_id)
+        self.verifier.set_event_name("Check Venues of Child Orders")
+        self.verifier.compare_values("Venue when price is 1.18999", "HSBC", venue)
+        # endregion
+        # region 3
+        self.execution_report.set_params_from_new_order_single(self.new_order_singe, response=response[-1])
+        self.fix_verifier.check_fix_message(self.execution_report,
+                                            ignored_fields=["GatingRuleCondName", "GatingRuleName", "trailer",
+                                                            "header"])
+        # endregion
+        self.new_order_singe.set_default_SOR().update_repeating_group("NoStrategyParameters",
+                                                                      self.no_strategy_parameters)
+        self.new_order_singe.change_parameters({"Price": "1.18"})
+        response = self.fix_manager.send_message_and_receive_response(self.new_order_singe)
+        order_id = response[0].get_parameters()["OrderID"]
+        venue = check_value_in_db(extracting_value="destinationvenueid",
+                                     query=f"SELECT destinationvenueid FROM ordr "
+                                           f"WHERE sorparentordid = '{order_id}'")
+        self.verifier.compare_values("Venue when price is 1.18", "HSBC", venue)
+        self.verifier.verify()
+        self.execution_report.set_params_from_new_order_single(self.new_order_singe, response=response[-1])
+        self.fix_verifier.check_fix_message(self.execution_report,
+                                            ignored_fields=["GatingRuleCondName", "GatingRuleName", "trailer",
+                                                            "header"])
 
-        # Send market data to the CITI venue EUR/USD spot
-        market_data_snap_shot = FixMessageMarketDataSnapshotFullRefreshBuyFX().set_market_data() \
-            .update_repeating_group('NoMDEntries', no_md_entries_spo_citi) \
-            .update_MDReqID(defaultmdsymbol_spo_citi, alias_fh, 'FX')
-        fix_manager_fh.send_message(market_data_snap_shot, "Send MD CITI EUR/USD ")
+    @try_except(test_id=Path(__file__).name[:-3])
+    def run_post_conditions(self):
+        self.fix_md.set_market_data()
+        self.fix_md.update_MDReqID(self.md_req_id_barx, self.fx_fh_connectivity, "FX")
+        self.fix_manager_fh_314.send_message(self.fix_md)
 
-        # Send market data to the HSBC venue EUR/USD spot
-        market_data_snap_shot = FixMessageMarketDataSnapshotFullRefreshBuyFX().set_market_data() \
-            .update_repeating_group('NoMDEntries', no_md_entries_spo_hsbc) \
-            .update_MDReqID(defaultmdsymbol_spo_hsbc, alias_fh, 'FX')
-        fix_manager_fh.send_message(market_data_snap_shot, "Send MD HSBC EUR/USD ")
+        self.fix_md.set_market_data()
+        self.fix_md.update_MDReqID(self.md_req_id_citi, self.fx_fh_connectivity, "FX")
+        self.fix_manager_fh_314.send_message(self.fix_md)
 
-        # STEP 1
-        new_order_sor = FixMessageNewOrderSingleTaker(data_set = data_set).set_default_SOR().change_parameters(
-            {'TimeInForce': '3', 'OrderQty': '5000000'})
-        new_order_sor.update_repeating_group('NoStrategyParameters', no_strategy_parameters)
-        fix_manager_gtw.send_message_and_receive_response(new_order_sor)
-        execution_report_filled_1 = FixMessageExecutionReportAlgoFX(). \
-            set_params_from_new_order_single(new_order_sor, gateway_side_sell, status)
-        fix_verifier.check_fix_message(fix_message=execution_report_filled_1,
-                                       direction=DirectionEnum.FromQuod)
-
-        FXOrderBook(case_id, session_id).set_filter(
-            [ob_col.order_id.value, "AO", ob_col.qty.value, "5000000", ob_col.orig.value, "FIX", ob_col.lookup.value,
-             "EUR/USD-SPO.SPO", ob_col.client_id.value, "TH2_Taker",
-             ob_col.tif.value, tif.IOC.value]).check_order_fields_list(
-            {ob_col.exec_sts.value: exe_sts.filled.value})
-        FXOrderBook(case_id, session_id).set_filter(
-            [ob_col.order_id.value, "AO", ob_col.qty.value, "5000000", ob_col.orig.value, "FIX", ob_col.lookup.value,
-             "EUR/USD-SPO.SPO", ob_col.client_id.value, "TH2_Taker",
-             ob_col.tif.value, tif.IOC.value]).check_second_lvl_fields_list(
-            {ob_col.exec_sts.value: exe_sts.filled.value, ob_col.venue.value: "HSBC",
-             ob_col.limit_price.value: "1.1814",
-             ob_col.qty.value: "5,000,000"})
-        # STEP 2
-        new_order_sor = FixMessageNewOrderSingleTaker(data_set = data_set).set_default_SOR().change_parameters(
-            {'TimeInForce': '3', 'OrderQty': '5000000', 'Side': '2', 'Price': '1.18079'})
-        new_order_sor.update_repeating_group('NoStrategyParameters', no_strategy_parameters)
-        fix_manager_gtw.send_message_and_receive_response(new_order_sor)
-        execution_report_filled_2 = FixMessageExecutionReportAlgoFX(). \
-            set_params_from_new_order_single(new_order_sor, gateway_side_sell, status)
-        fix_verifier.check_fix_message(fix_message=execution_report_filled_2,
-                                       direction=DirectionEnum.FromQuod)
-
-        FXOrderBook(case_id, session_id).set_filter(
-            [ob_col.order_id.value, "AO", ob_col.qty.value, "5000000", ob_col.orig.value, "FIX", ob_col.lookup.value,
-             "EUR/USD-SPO.SPO", ob_col.client_id.value, "TH2_Taker",
-             ob_col.tif.value, tif.IOC.value]).check_order_fields_list(
-            {ob_col.exec_sts.value: exe_sts.filled.value})
-        FXOrderBook(case_id, session_id).set_filter(
-            [ob_col.order_id.value, "AO", ob_col.qty.value, "5000000", ob_col.orig.value, "FIX", ob_col.lookup.value,
-             "EUR/USD-SPO.SPO", ob_col.client_id.value, "TH2_Taker",
-             ob_col.tif.value, tif.IOC.value]).check_second_lvl_fields_list(
-            {ob_col.exec_sts.value: exe_sts.filled.value, ob_col.venue.value: "HSBC",
-             ob_col.limit_price.value: "1.18079",
-             ob_col.qty.value: "5,000,000"})
-
-    except Exception:
-        logging.error('Error execution', exc_info=True)
-        bca.create_event('Fail test event', status='FAILED', parent_id=case_id)
+        self.fix_md.set_market_data()
+        self.fix_md.update_MDReqID(self.md_req_id_hsbc, self.fx_fh_connectivity, "FX")
+        self.fix_manager_fh_314.send_message(self.fix_md)

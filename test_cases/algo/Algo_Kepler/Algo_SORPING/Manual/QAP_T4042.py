@@ -239,7 +239,7 @@ class QAP_T4042(TestCase):
 
         # region Check that ER cancel for last child order exists
         self.fix_verifier_buy.set_case_id(bca.create_event("Check that 2 DMA orders on qdl1 were eliminated and 1 was canceled", self.test_id))
-        self.fix_verifier_buy.check_fix_message_sequence([self.er_eliminate_dma_1_order, self.er_eliminate_dma_3_order, er_cancel_dma_4_order], key_parameters_list=[None, None, None], direction=self.ToQuod, pre_filter=self.pre_filter)
+        self.fix_verifier_buy.check_fix_message_sequence_kepler([self.er_eliminate_dma_1_order, self.er_eliminate_dma_3_order, er_cancel_dma_4_order], key_parameters_list=[None, None, None], direction=self.ToQuod, pre_filter=self.pre_filter)
         # endregion
 
         er_cancel_SORPING_order_params = FixMessageExecutionReportAlgo().set_params_from_new_order_single(self.SORPING_order, self.gateway_side_sell, self.status_cancel)

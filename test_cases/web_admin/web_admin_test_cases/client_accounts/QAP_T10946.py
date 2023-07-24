@@ -1,10 +1,7 @@
-import sys
 import time
-import traceback
 import random
 import string
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.account_lists.main_page import MainPage
 from test_framework.web_admin_core.pages.clients_accounts.account_lists.wizard import Wizard
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
@@ -35,29 +32,21 @@ class QAP_T10946(CommonTestCase):
         main_page = MainPage(self.web_driver_container)
         wizard = Wizard(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page.click_on_new()
-            wizard.set_account_list_name(self.account_list_name)
-            for i in self.accounts:
-                wizard.click_on_plus()
-                wizard.set_account(i)
-                wizard.click_on_checkmark()
-            wizard.click_on_save_changes()
+        main_page.click_on_new()
+        wizard.set_account_list_name(self.account_list_name)
+        for i in self.accounts:
+            wizard.click_on_plus()
+            wizard.set_account(i)
+            wizard.click_on_checkmark()
+        wizard.click_on_save_changes()
 
-            main_page.set_name(self.account_list_name)
-            time.sleep(1)
-            self.verify("New Account List is displayed in the grid",
-                        True, main_page.is_account_list_found(self.account_list_name))
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
+        main_page.set_name(self.account_list_name)
+        time.sleep(1)
+        self.verify("New Account List is displayed in the grid",
+                    True, main_page.is_account_list_found(self.account_list_name))
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
 
-            self.verify("Added accounts are displayed correctly", self.accounts, wizard.get_all_accounts_from_table())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("Added accounts are displayed correctly", self.accounts, wizard.get_all_accounts_from_table())

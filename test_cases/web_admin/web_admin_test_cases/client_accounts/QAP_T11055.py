@@ -1,10 +1,7 @@
-import sys
 import time
-import traceback
 import random
 import string
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_page import AccountsPage
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_wizard import AccountsWizard
 from test_framework.web_admin_core.pages.clients_accounts.accounts.accounts_dimensions_subwizard \
@@ -63,22 +60,12 @@ class QAP_T11055(CommonTestCase):
         page = AccountsPage(self.web_driver_container)
         dimensions_tab = AccountsDimensionsSubWizard(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            page.set_id(self.id)
-            time.sleep(1)
-            page.click_more_actions_button()
-            page.click_edit_entity_button()
-            time.sleep(1)
-            self.verify("VenueAccount still displayed for related account",
-                        True, dimensions_tab.is_venue_account_present())
-
-        except Exception:
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            errors = f'"{[traceback.extract_tb(exc_traceback, limit=4)]}"'.replace("\\", "/")
-            basic_custom_actions.create_event(f"FAILED", self.test_case_id, status='FAILED',
-                                              body="[{\"type\": \"message\", \"data\":"+f"{errors}"+"}]")
-            traceback.print_tb(exc_traceback, limit=3, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
-
+        page.set_id(self.id)
+        time.sleep(1)
+        page.click_more_actions_button()
+        page.click_edit_entity_button()
+        time.sleep(1)
+        self.verify("VenueAccount still displayed for related account",
+                    True, dimensions_tab.is_venue_account_present())

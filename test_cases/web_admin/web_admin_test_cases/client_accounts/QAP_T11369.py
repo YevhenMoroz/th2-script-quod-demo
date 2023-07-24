@@ -1,10 +1,7 @@
-import sys
 import time
-import traceback
 import random
 import string
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_values_sub_wizard import \
     ClientsValuesSubWizard
@@ -136,14 +133,6 @@ class QAP_T11369(CommonTestCase):
                              instr_type_tab.get_instr_type_in_table(), venues_tab.get_venue_in_table(),
                              route_tab.get_route_in_table(), trade_confirm.get_email_address_in_table()]
             self.verify("Data for enabled client still displayed", expected_result, actual_result)
-
-        except Exception:
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            errors = f'"{[traceback.extract_tb(exc_traceback, limit=4)]}"'.replace("\\", "/")
-            basic_custom_actions.create_event(f"FAILED", self.test_case_id, status='FAILED',
-                                              body="[{\"type\": \"message\", \"data\":"+f"{errors}"+"}]")
-            traceback.print_tb(exc_traceback, limit=3, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
 
         finally:
             self.db_manager.my_db.execute(f"UPDATE ACCOUNTGROUP SET ALIVE = 'Y' WHERE ACCOUNTGROUPID = '{self.id}'")

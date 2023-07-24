@@ -1,8 +1,10 @@
 import sys
 import time
 import traceback
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.market_making.auto_hedger.auto_hedger_instruments_sub_wizard import \
     AutoHedgerInstrumentsSubWizard
 from test_framework.web_admin_core.pages.market_making.auto_hedger.auto_hedger_page import AutoHedgerPage
@@ -32,19 +34,13 @@ class QAP_T3710(CommonTestCase):
         page.click_on_new()
         time.sleep(2)
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
-        try:
-            self.precondition()
-            instruments_sub_wizard = AutoHedgerInstrumentsSubWizard(self.web_driver_container)
-            instruments_sub_wizard.click_on_plus_button()
-            time.sleep(2)
+        self.precondition()
+        instruments_sub_wizard = AutoHedgerInstrumentsSubWizard(self.web_driver_container)
+        instruments_sub_wizard.click_on_plus_button()
+        time.sleep(2)
 
-            self.verify("Default strategy has italic font", True, instruments_sub_wizard
-                            .is_default_execution_strategy_has_italic_font(self.strategy))
+        self.verify("Default strategy has italic font", True, instruments_sub_wizard
+                        .is_default_execution_strategy_has_italic_font(self.strategy))
 
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)

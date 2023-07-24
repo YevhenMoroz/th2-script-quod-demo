@@ -1,10 +1,6 @@
 import random
 import string
-import sys
-import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.positions.cash_positions.main_page import *
 from test_framework.web_admin_core.pages.positions.cash_positions.wizards import *
 from test_framework.web_admin_core.pages.general.common.common_page import CommonPage
@@ -56,34 +52,27 @@ class QAP_T11176(CommonTestCase):
 
         self.db_manager.my_db.execute(f"UPDATE cashaccount SET alive = 'N' WHERE cashaccountname = '{self.name}'")
         common_act.refresh_page(True)
+        time.sleep(2)
 
     def test_context(self):
         cash_positions_page = MainPage(self.web_driver_container)
         common_act = CommonPage(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            cash_positions_page.set_name(self.name)
-            time.sleep(1)
-            cash_positions_page.click_on_enable_disable_button()
-            cash_positions_page.click_on_ok_button()
-            time.sleep(2)
-            self.verify("Cash Position has been enabled", True, cash_positions_page.is_cash_position_enabled())
-            cash_positions_page.click_on_refresh_page()
-            time.sleep(2)
-            self.verify("After click on 'Refresh' button, Cash Position still enabled",
-                        True, cash_positions_page.is_cash_position_enabled())
-            common_act.refresh_page(True)
-            time.sleep(2)
-            cash_positions_page.set_name(self.name)
-            time.sleep(1)
-            self.verify("After refreshing page via browser, Cash Position still enabled",
-                        True, cash_positions_page.is_cash_position_enabled())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        cash_positions_page.set_name(self.name)
+        time.sleep(1)
+        cash_positions_page.click_on_enable_disable_button()
+        cash_positions_page.click_on_ok_button()
+        time.sleep(2)
+        self.verify("Cash Position has been enabled", True, cash_positions_page.is_cash_position_enabled())
+        cash_positions_page.click_on_refresh_page()
+        time.sleep(2)
+        self.verify("After click on 'Refresh' button, Cash Position still enabled",
+                    True, cash_positions_page.is_cash_position_enabled())
+        common_act.refresh_page(True)
+        time.sleep(2)
+        cash_positions_page.set_name(self.name)
+        time.sleep(1)
+        self.verify("After refreshing page via browser, Cash Position still enabled",
+                    True, cash_positions_page.is_cash_position_enabled())

@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.positions.cash_positions.main_page import MainPage
 from test_framework.web_admin_core.pages.positions.cash_positions.wizards import *
 
@@ -58,27 +55,19 @@ class QAP_T3342(CommonTestCase):
         main_page = MainPage(self.web_driver_container)
         common_act = CommonPage(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page.click_on_transaction()
-            time.sleep(1)
-            self.verify("Transaction POP-UP appears", True, main_page.is_transaction_pop_up_displayed())
-            main_page.click_on_cancel_button()
-            time.sleep(1)
-            self.verify("Transaction POP-UP disappears", False, main_page.is_transaction_pop_up_displayed())
-            main_page.click_on_transaction()
-            main_page.set_transaction_type(self.transaction_type)
-            main_page.set_amount(self.amount)
-            main_page.set_reference(self.reference)
-            main_page.click_on_ok_button()
-            time.sleep(5)
-            self.verify("Pop-up message appears: CashAccountTransfer change saved.",
-                        self.expected_pop_up_text, common_act.get_info_pop_up_text())
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        main_page.click_on_transaction()
+        time.sleep(1)
+        self.verify("Transaction POP-UP appears", True, main_page.is_transaction_pop_up_displayed())
+        main_page.click_on_cancel_button()
+        time.sleep(1)
+        self.verify("Transaction POP-UP disappears", False, main_page.is_transaction_pop_up_displayed())
+        main_page.click_on_transaction()
+        main_page.set_transaction_type(self.transaction_type)
+        main_page.set_amount(self.amount)
+        main_page.set_reference(self.reference)
+        main_page.click_on_ok_button()
+        time.sleep(5)
+        self.verify("Pop-up message appears: CashAccountTransfer change saved.",
+                    self.expected_pop_up_text, common_act.get_info_pop_up_text())

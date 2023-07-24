@@ -241,6 +241,7 @@ class BaseOrderBook(BaseWindow):
         For example {"Sts": "Terminated", "Owner": "QA1", etc}
         """
         actual_list = self.extract_fields_list(expected_fields, row_number)
+        print(actual_list)
         for items in expected_fields.items():
             key = list(items)[0]
             value = list(items)[1]

@@ -1,7 +1,7 @@
 <regression>
     <target_server_win></target_server_win>
-    <name>Regression 192v</name>
-    <version>5.1.180.193</version>
+    <name>Regression 194v</name>
+    <version>5.1.181.194</version>
     <product_lines>
         <product_line name="algo" run="False">
             <components>
@@ -969,69 +969,31 @@
              </components>
         </product_line>
         <product_line name="web_admin" run="True">
+            <data_set>WebAdminDataSet</data_set>
+             <environments>
+                 <web_admin_environments>
+                     <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
+                     <web_admin_environment>test_site_web_admin_chrome</web_admin_environment>
+                 </web_admin_environments>
+                 <data_base_environments>
+                     <data_base_environment>quod306_data_base</data_base_environment>>
+                     <data_base_environment>quod320_data_base</data_base_environment>>
+                 </data_base_environments>>
+             </environments>
             <components>
-                <component name="WA_General" run="True">
-                    <data_set>WebAdminDataSet</data_set>
-                    <environments>
-                        <web_admin_environments>
-                            <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
-                            <web_admin_environment>test_site_web_admin_chrome</web_admin_environment>
-                        </web_admin_environments>
-                    </environments>
-                </component>
-                <component name="WA_Site" run="True">
-                    <data_set>WebAdminDataSet</data_set>
-                    <environments>
-                        <web_admin_environments>
-                            <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
-                            <web_admin_environment>test_site_web_admin_chrome</web_admin_environment>
-                        </web_admin_environments>
-                    </environments>
-                </component>
-                <component name="WA_Users" run="True">
-                    <data_set>WebAdminDataSet</data_set>
-                    <environments>
-                        <web_admin_environments>
-                            <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
-                            <web_admin_environment>test_site_web_admin_chrome</web_admin_environment>
-                        </web_admin_environments>
-                    </environments>
-                </component>
-                <component name="WA_Markets" run="True">
-                    <data_set>WebAdminDataSet</data_set>
-                    <environments>
-                        <web_admin_environments>
-                            <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
-                            <web_admin_environment>test_site_web_admin_chrome</web_admin_environment>
-                        </web_admin_environments>
-                        <data_base_environments>
-                            <data_base_environment>quod306_data_base</data_base_environment>>
-                            <data_base_environment>quod320_data_base</data_base_environment>>
-                        </data_base_environments>>
-                    </environments>
-                </component>
-                <component name="WA_Client_Accounts" run="True">
-                    <data_set>WebAdminDataSet</data_set>
-                    <environments>
-                        <web_admin_environments>
-                            <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
-                            <web_admin_environment>test_site_web_admin_chrome</web_admin_environment>
-                        </web_admin_environments>
-                        <data_base_environments>
-                            <data_base_environment>quod306_data_base</data_base_environment>>
-                            <data_base_environment>quod320_data_base</data_base_environment>>
-                        </data_base_environments>>
-                    </environments>
-                </component>
-                <component name="WA_Order_Management" run="True">
-                    <data_set>WebAdminDataSet</data_set>
-                    <environments>
-                        <web_admin_environments>
-                            <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
-                            <web_admin_environment>test_site_web_admin_chrome</web_admin_environment>
-                        </web_admin_environments>
-                    </environments>
-                </component>
+                <component name="WA_General" run="True"> </component>
+                <component name="WA_Site" run="True"> </component>
+                <component name="WA_Users" run="True"> </component>
+                <component name="WA_Markets" run="True"> </component>
+                <component name="WA_Client_Accounts" run="True"> </component>
+                <component name="WA_Order_Management" run="True"> </component>
+                <component name="WA_Middle_Office" run="True"> </component>
+                <component name="WA_Market_Making" run="True"> </component>
+                <component name="WA_Price_Cleansing" run="True"> </component>
+                <component name="WA_Risk_Limits" run="True"> </component>
+                <component name="WA_Positions" run="True"> </component>
+                <component name="WA_Others" run="True"> </component>
+
                 <component name="WA_PALGO" run="True">
                     <data_set>WebAdminDataSet</data_set>
                     <environments>
@@ -1056,7 +1018,7 @@
                     <data_set>WebAdminDataSet</data_set>
                     <environments>
                         <web_admin_environments>
-                            <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
+                            <web_admin_environment>quod325_web_admin_venus_chrome</web_admin_environment>
                             <web_admin_environment>test_site_web_admin_chrome</web_admin_environment>
                         </web_admin_environments>
                     </environments>
@@ -1065,7 +1027,7 @@
                     <data_set>WebAdminDataSet</data_set>
                     <environments>
                         <web_admin_environments>
-                            <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
+                            <web_admin_environment>quod325_web_admin_venus_chrome</web_admin_environment>
                             <web_admin_environment>test_site_web_admin_chrome</web_admin_environment>
                         </web_admin_environments>
                     </environments>
@@ -1087,16 +1049,16 @@
                             <web_admin_environment>test_site_web_admin_chrome</web_admin_environment>
                         </web_admin_environments>
                         <data_base_environments>
-                            <data_base_environment>quod306_data_base</data_base_environment>
-                            <data_base_environment>quod320_data_base</data_base_environment>
-                        </data_base_environments>
+                            <data_base_environment>quod306_data_base</data_base_environment>>
+                            <data_base_environment>quod320_data_base</data_base_environment>>
+                        </data_base_environments>>
                     </environments>
                 </component>
                 <component name="WA_Others" run="True">
                     <data_set>WebAdminDataSet</data_set>
                     <environments>
                         <web_admin_environments>
-                            <web_admin_environment>quod306_web_admin_saturn_chrome</web_admin_environment>
+                            <web_admin_environment>quod325_web_admin_venus_chrome</web_admin_environment>
                             <web_admin_environment>test_site_web_admin_chrome</web_admin_environment>
                         </web_admin_environments>
                     </environments>

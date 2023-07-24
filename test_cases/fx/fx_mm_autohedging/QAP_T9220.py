@@ -37,7 +37,8 @@ class QAP_T9220(TestCase):
             "Symbol": self.usd_php
         }
 
-        self.exec_qty = "10000000"
+        self.exec_qty = "20000000"
+        self.ah_qty = "15000000"
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_pre_conditions_and_steps(self):
@@ -60,12 +61,14 @@ class QAP_T9220(TestCase):
         # endregion
         # region Step 4
         self.ah_exec_report.set_params_from_trade_new(self.trade_request)
-        self.ah_exec_report.change_parameter("TargetStrategy", "1005")
+        self.ah_exec_report.change_parameters(
+            {"TargetStrategy": "1005", "OrderQty": self.ah_qty, "LeavesQty": self.ah_qty})
         self.fix_drop_copy_verifier.check_fix_message(self.ah_exec_report, message_name="Check that AH send TWAP")
         # endregion
 
     @try_except(test_id=Path(__file__).name[:-3])
     def run_post_conditions(self):
+        self.sleep(10)
         self.cancel_request.set_params(self.account_int)
         self.java_api_manager.send_message(self.cancel_request)
         self.sleep(5)

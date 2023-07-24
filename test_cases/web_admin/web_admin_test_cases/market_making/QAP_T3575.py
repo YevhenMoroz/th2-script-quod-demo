@@ -3,8 +3,10 @@ import string
 import sys
 import time
 import traceback
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_instrument_values_sub_wizard import \
     ClientTierInstrumentValuesSubWizard
 from test_framework.web_admin_core.pages.market_making.client_tier.client_tier_instrument_wizard import \
@@ -52,39 +54,32 @@ class QAP_T3575(CommonTestCase):
         client_tiers_wizard.click_on_save_changes()
         time.sleep(2)
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
-        try:
-            self.precondition()
-            client_tiers_main_page = ClientTiersPage(self.web_driver_container)
-            client_tiers_instrument_wizard = ClientTierInstrumentWizard(self.web_driver_container)
-            client_tiers_instrument_values_sub_wizard = ClientTierInstrumentValuesSubWizard(self.web_driver_container)
-            client_tiers_main_page.set_name(self.name)
-            time.sleep(2)
-            client_tiers_main_page.click_on_more_actions()
-            time.sleep(3)
-            client_tier_instrument_main_page = ClientTierInstrumentsPage(self.web_driver_container)
-            client_tier_instrument_main_page.click_on_new()
-            time.sleep(2)
-            client_tiers_instrument_values_sub_wizard.set_symbol(self.symbol)
-            client_tiers_instrument_values_sub_wizard.set_tod_end_time(self.tod_end_time)
-            client_tiers_instrument_values_sub_wizard.set_rfq_response_stream_ttl(self.rfq_response_stream_ttl)
-            client_tiers_instrument_wizard.click_on_save_changes()
-            time.sleep(2)
-            client_tiers_main_page.set_name(self.name)
-            time.sleep(2)
-            client_tiers_main_page.click_on_more_actions()
-            time.sleep(12)
-            client_tier_instrument_main_page.click_on_more_actions()
-            time.sleep(2)
-            client_tier_instrument_main_page.click_on_clone()
-            time.sleep(2)
-            self.verify("Is new entity contains fields of parent entity (clone action)", self.rfq_response_stream_ttl,
-                        client_tiers_instrument_values_sub_wizard.get_rfq_response_stream_ttl())
+        self.precondition()
+        client_tiers_main_page = ClientTiersPage(self.web_driver_container)
+        client_tiers_instrument_wizard = ClientTierInstrumentWizard(self.web_driver_container)
+        client_tiers_instrument_values_sub_wizard = ClientTierInstrumentValuesSubWizard(self.web_driver_container)
+        client_tiers_main_page.set_name(self.name)
+        time.sleep(2)
+        client_tiers_main_page.click_on_more_actions()
+        time.sleep(3)
+        client_tier_instrument_main_page = ClientTierInstrumentsPage(self.web_driver_container)
+        client_tier_instrument_main_page.click_on_new()
+        time.sleep(2)
+        client_tiers_instrument_values_sub_wizard.set_symbol(self.symbol)
+        client_tiers_instrument_values_sub_wizard.set_tod_end_time(self.tod_end_time)
+        client_tiers_instrument_values_sub_wizard.set_rfq_response_stream_ttl(self.rfq_response_stream_ttl)
+        client_tiers_instrument_wizard.click_on_save_changes()
+        time.sleep(2)
+        client_tiers_main_page.set_name(self.name)
+        time.sleep(2)
+        client_tiers_main_page.click_on_more_actions()
+        time.sleep(12)
+        client_tier_instrument_main_page.click_on_more_actions()
+        time.sleep(2)
+        client_tier_instrument_main_page.click_on_clone()
+        time.sleep(2)
+        self.verify("Is new entity contains fields of parent entity (clone action)", self.rfq_response_stream_ttl,
+                    client_tiers_instrument_values_sub_wizard.get_rfq_response_stream_ttl())
 
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)

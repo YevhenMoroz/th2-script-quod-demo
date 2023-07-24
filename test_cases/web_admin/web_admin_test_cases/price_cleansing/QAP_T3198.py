@@ -3,8 +3,10 @@ import time
 import traceback
 import string
 import random
+from pathlib import Path
 
 from custom import basic_custom_actions
+from test_framework.core.try_exept_decorator import try_except
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.price_cleansing.crossed_venue_rates.crossed_venue_rates_page \
     import CrossedVenueRatesPage
@@ -58,44 +60,37 @@ class QAP_T3198(CommonTestCase):
         main_page.click_on_more_actions()
         main_page.click_on_delete(True)
 
+    @try_except(test_id=Path(__file__).name[:-3])
     def test_context(self):
+        self.precondition()
 
-        try:
-            self.precondition()
+        main_page = CrossedVenueRatesPage(self.web_driver_container)
+        main_page.set_name(self.name)
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
+        values_tab = CrossedVenueRatesValuesSubWizard(self.web_driver_container)
+        values_tab.set_name(self.new_name)
+        dimensions_tab = CrossedVenueRatesDimensionsSubWizard(self.web_driver_container)
+        dimensions_tab.set_venue(self.venue[1])
+        dimensions_tab.set_listing(self.listing[1])
+        dimensions_tab.set_instr_type(self.instr_type[1])
+        dimensions_tab.set_symbol(self.symbol[1])
+        wizard = CrossedVenueRatesWizard(self.web_driver_container)
+        wizard.click_on_save_changes()
 
-            main_page = CrossedVenueRatesPage(self.web_driver_container)
-            main_page.set_name(self.name)
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
-            values_tab = CrossedVenueRatesValuesSubWizard(self.web_driver_container)
-            values_tab.set_name(self.new_name)
-            dimensions_tab = CrossedVenueRatesDimensionsSubWizard(self.web_driver_container)
-            dimensions_tab.set_venue(self.venue[1])
-            dimensions_tab.set_listing(self.listing[1])
-            dimensions_tab.set_instr_type(self.instr_type[1])
-            dimensions_tab.set_symbol(self.symbol[1])
-            wizard = CrossedVenueRatesWizard(self.web_driver_container)
-            wizard.click_on_save_changes()
+        main_page.set_name(self.new_name)
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        main_page.click_on_edit()
 
-            main_page.set_name(self.new_name)
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            main_page.click_on_edit()
+        expected_resul = [self.venue[1], self.listing[1], self.instr_type[1], self.symbol[1]]
+        actual_result = [dimensions_tab.get_venue(), dimensions_tab.get_listing(), dimensions_tab.get_instr_type(),
+                         dimensions_tab.get_symbol()]
 
-            expected_resul = [self.venue[1], self.listing[1], self.instr_type[1], self.symbol[1]]
-            actual_result = [dimensions_tab.get_venue(), dimensions_tab.get_listing(), dimensions_tab.get_instr_type(),
-                             dimensions_tab.get_symbol()]
+        self.verify(f"Entity {self.new_name} has been modify", expected_resul, actual_result)
 
-            self.verify(f"Entity {self.new_name} has been modify", expected_resul, actual_result)
+        wizard.click_on_save_changes()
 
-            wizard.click_on_save_changes()
+        self.post_conditions()
 
-            self.post_conditions()
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)

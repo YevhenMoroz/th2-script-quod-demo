@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.root.side_menu import SideMenu
 from test_framework.web_admin_core.pages.users.users.users_page import UsersPage
@@ -80,30 +77,23 @@ class QAP_T3932(CommonTestCase):
             time.sleep(2)
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            main_page = UsersPage(self.web_driver_container)
-            main_page.set_user_id(self.user_id)
-            time.sleep(1)
-            main_page.click_on_more_actions()
-            time.sleep(1)
-            main_page.click_on_edit_at_more_actions()
-            time.sleep(2)
-            venue_trader_sub_wizard = UsersVenueTraderSubWizard(self.web_driver_container)
-            venue_trader_sub_wizard.click_on_delete_button()
-            users_wizard = UsersWizard(self.web_driver_container)
-            expected_pdf_content = [self.venue, self.venue_trader_name]
-            '''
-            expected result "Wrong item->JSE" displayed us that pdf does not contain venue, and venue trader is empty
-            '''
-            self.verify(f"Is PDF contains(Venue trader is empty) {expected_pdf_content}", "Wrong item->AMEX",
-                        users_wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
+        main_page = UsersPage(self.web_driver_container)
+        main_page.set_user_id(self.user_id)
+        time.sleep(1)
+        main_page.click_on_more_actions()
+        time.sleep(1)
+        main_page.click_on_edit_at_more_actions()
+        time.sleep(2)
+        venue_trader_sub_wizard = UsersVenueTraderSubWizard(self.web_driver_container)
+        venue_trader_sub_wizard.click_on_delete_button()
+        users_wizard = UsersWizard(self.web_driver_container)
+        expected_pdf_content = [self.venue, self.venue_trader_name]
+        '''
+        expected result "Wrong item->JSE" displayed us that pdf does not contain venue, and venue trader is empty
+        '''
+        self.verify(f"Is PDF contains(Venue trader is empty) {expected_pdf_content}", "Wrong item->AMEX",
+                    users_wizard.click_download_pdf_entity_button_and_check_pdf(expected_pdf_content))
 
-            users_wizard.click_on_save_changes()
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        users_wizard.click_on_save_changes()

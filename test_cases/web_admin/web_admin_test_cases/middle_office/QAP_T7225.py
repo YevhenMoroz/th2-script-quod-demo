@@ -1,10 +1,6 @@
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
-
 from test_framework.web_admin_core.pages.middle_office.fees.fees_order_fee_profile_sub_wizard import \
     FeesOrderFeeProfileSubWizard
 from test_framework.web_admin_core.pages.middle_office.fees.fees_page import FeesPage
@@ -36,28 +32,20 @@ class QAP_T7225(CommonTestCase):
         fees_values_sub_wizard = FeesValuesSubWizard(self.web_driver_container)
         commission_profile = FeesOrderFeeProfileSubWizard(self.web_driver_container)
 
-        try:
-            self.precondition()
+        self.precondition()
 
-            fees_page.click_on_new()
-            fees_values_sub_wizard.click_on_manage_order_fee_profile()
-            commission_profile.click_on_plus()
-            displayed_rounding_direction = commission_profile.get_all_rounding_direction_from_drop_menu()
-            self.verify(f"Rounding Direction contains all {self.rounding_direction}",
-                        sorted(self.rounding_direction), sorted(displayed_rounding_direction))
+        fees_page.click_on_new()
+        fees_values_sub_wizard.click_on_manage_order_fee_profile()
+        commission_profile.click_on_plus()
+        displayed_rounding_direction = commission_profile.get_all_rounding_direction_from_drop_menu()
+        self.verify(f"Rounding Direction contains all {self.rounding_direction}",
+                    sorted(self.rounding_direction), sorted(displayed_rounding_direction))
 
-            commission_profile.set_rounding_precision(self.rounding_precision[0])
-            time.sleep(1)
-            self.verify("Rounding Precision not contains letters", False,
-                        True if self.rounding_precision[0] in commission_profile.get_rounding_precision() else False)
-            commission_profile.set_rounding_precision(self.rounding_precision[1])
-            time.sleep(1)
-            self.verify("Rounding Precision contains digits", True,
-                        True if self.rounding_precision[1] in commission_profile.get_rounding_precision() else False)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        commission_profile.set_rounding_precision(self.rounding_precision[0])
+        time.sleep(1)
+        self.verify("Rounding Precision not contains letters", False,
+                    True if self.rounding_precision[0] in commission_profile.get_rounding_precision() else False)
+        commission_profile.set_rounding_precision(self.rounding_precision[1])
+        time.sleep(1)
+        self.verify("Rounding Precision contains digits", True,
+                    True if self.rounding_precision[1] in commission_profile.get_rounding_precision() else False)

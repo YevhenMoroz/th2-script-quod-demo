@@ -36,10 +36,12 @@ class BaseWindow:
 
     @staticmethod
     def split_fees(split_values: dict):
+        print(split_values)
         if type(list(split_values.values())[0]) == dict:
             response = BaseWindow.split_fees(list(split_values.values())[0])
             return response
         else:
+            print(split_values)
             normal_split_values_arr = list()
             for split_key, split_value in split_values.items():
                 split_sentence = split_value.split('\n')

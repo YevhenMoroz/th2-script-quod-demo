@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.login.login_page import LoginPage
 from test_framework.web_admin_core.pages.markets.routes.main_page import RoutesPage
 from test_framework.web_admin_core.pages.markets.routes.wizard import RoutesWizard
@@ -37,26 +34,19 @@ class QAP_T3973(CommonTestCase):
         routes_wizard.click_on_save_changes()
 
     def test_context(self):
-        try:
-            self.precondition()
-            routes_wizard = RoutesWizard(self.web_driver_container)
-            self.verify("Error after click on next button", "Incorrect or missing values",
-                        routes_wizard.get_actual_error_after_click_on_next_in_empty_page())
-            time.sleep(3)
-            routes_wizard.set_name_at_values_tab(self.name)
-            time.sleep(2)
-            routes_wizard.click_on_save_changes()
-            time.sleep(2)
-            routes_main_menu = RoutesPage(self.web_driver_container)
-            routes_main_menu.set_name_at_filter(self.name)
-            time.sleep(2)
-            self.verify("Correctly name saved", self.name, routes_main_menu.get_name_value())
-            time.sleep(1)
-            routes_main_menu.click_on_more_actions()
-            routes_main_menu.click_on_delete_at_more_actions()
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.precondition()
+        routes_wizard = RoutesWizard(self.web_driver_container)
+        self.verify("Error after click on next button", "Incorrect or missing values",
+                    routes_wizard.get_actual_error_after_click_on_next_in_empty_page())
+        time.sleep(3)
+        routes_wizard.set_name_at_values_tab(self.name)
+        time.sleep(2)
+        routes_wizard.click_on_save_changes()
+        time.sleep(2)
+        routes_main_menu = RoutesPage(self.web_driver_container)
+        routes_main_menu.set_name_at_filter(self.name)
+        time.sleep(2)
+        self.verify("Correctly name saved", self.name, routes_main_menu.get_name_value())
+        time.sleep(1)
+        routes_main_menu.click_on_more_actions()
+        routes_main_menu.click_on_delete_at_more_actions()

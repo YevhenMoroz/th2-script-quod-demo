@@ -1,10 +1,7 @@
-import sys
 import time
-import traceback
 import random
 import string
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_values_sub_wizard import \
     ClientsValuesSubWizard
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
@@ -43,47 +40,39 @@ class QAP_T8423(CommonTestCase):
         side_menu.open_clients_page()
 
     def test_context(self):
-        try:
-            self.precondition()
+        self.precondition()
 
-            page = ClientsPage(self.web_driver_container)
-            page.click_on_new()
-            values_tab = ClientsValuesSubWizard(self.web_driver_container)
-            values_tab.click_on_manage_external_give_up_service()
-            manage_wizard = ClientsExternalGiveUpService(self.web_driver_container)
-            manage_wizard.click_on_plus_button()
-            manage_wizard.set_name(self.external_give_up_service_name)
-            manage_wizard.set_gateway_instance(self.gateway_instance)
-            manage_wizard.click_on_save_checkmark()
-            wizard = ClientsWizard(self.web_driver_container)
-            wizard.click_on_go_back()
+        page = ClientsPage(self.web_driver_container)
+        page.click_on_new()
+        values_tab = ClientsValuesSubWizard(self.web_driver_container)
+        values_tab.click_on_manage_external_give_up_service()
+        manage_wizard = ClientsExternalGiveUpService(self.web_driver_container)
+        manage_wizard.click_on_plus_button()
+        manage_wizard.set_name(self.external_give_up_service_name)
+        manage_wizard.set_gateway_instance(self.gateway_instance)
+        manage_wizard.click_on_save_checkmark()
+        wizard = ClientsWizard(self.web_driver_container)
+        wizard.click_on_go_back()
 
-            values_tab.set_id(self.id)
-            values_tab.set_name(self.name)
-            values_tab.set_ext_id_client(self.ext_id_client)
-            values_tab.set_description(self.description)
-            values_tab.set_disclose_exec(self.disclose_exec)
-            values_tab.set_give_up_service(self.give_up_service)
-            self.verify("External Give Up service field become enable", True,
-                        values_tab.is_external_give_up_service_field_enable())
+        values_tab.set_id(self.id)
+        values_tab.set_name(self.name)
+        values_tab.set_ext_id_client(self.ext_id_client)
+        values_tab.set_description(self.description)
+        values_tab.set_disclose_exec(self.disclose_exec)
+        values_tab.set_give_up_service(self.give_up_service)
+        self.verify("External Give Up service field become enable", True,
+                    values_tab.is_external_give_up_service_field_enable())
 
-            values_tab.set_external_give_up_service(self.external_give_up_service_name)
-            assignment_tab = ClientsAssignmentsSubWizard(self.web_driver_container)
-            assignment_tab.set_desk(self.desk)
-            wizard.click_on_save_changes()
-            page.set_name(self.name)
-            time.sleep(1)
-            page.click_on_more_actions()
-            page.click_on_edit()
+        values_tab.set_external_give_up_service(self.external_give_up_service_name)
+        assignment_tab = ClientsAssignmentsSubWizard(self.web_driver_container)
+        assignment_tab.set_desk(self.desk)
+        wizard.click_on_save_changes()
+        page.set_name(self.name)
+        time.sleep(1)
+        page.click_on_more_actions()
+        page.click_on_edit()
 
-            actual_result = [values_tab.get_give_up_service(), values_tab.get_external_give_up_service()]
-            expected_result = [self.give_up_service, self.external_give_up_service_name]
+        actual_result = [values_tab.get_give_up_service(), values_tab.get_external_give_up_service()]
+        expected_result = [self.give_up_service, self.external_give_up_service_name]
 
-            self.verify("Client saved with selected External Give Up service", expected_result, actual_result)
-
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.verify("Client saved with selected External Give Up service", expected_result, actual_result)

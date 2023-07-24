@@ -1,4 +1,5 @@
 import logging
+import time
 from pathlib import Path
 
 from custom import basic_custom_actions as bca
@@ -99,6 +100,7 @@ class QAP_T9154(TestCase):
         self.ssh_client.send_command('BEGIN;SELECT eod_posit_pks();FETCH ALL IN "<unnamed portal 1>";COMMIT;')
         self.ssh_client.send_command("exit")
         self.ssh_client.send_command("qrestart AQS PKS")
+        time.sleep(50)
         result_for_washbook = self._extract_cum_values_for_washbook(self.washbook_acc)
         self.ja_manager.compare_values(exp_res, result_for_washbook, "Check Daily comm/fee")
         # endregion
@@ -112,5 +114,5 @@ class QAP_T9154(TestCase):
             get_parameters()[JavaApiFields.RequestForPositionsAckBlock.value][JavaApiFields.PositionReportBlock.value] \
             [JavaApiFields.PositionList.value][JavaApiFields.PositionBlock.value]
         for position_record in request_for_position_ack:
-            if self.instrument_id == position_record[JavaApiFields.InstrID.value]:
+            if self.instrument_id == position_record[JavaApiFields.InstrID.value] and position_record[JavaApiFields.PositionType.value] == 'N':
                 return position_record

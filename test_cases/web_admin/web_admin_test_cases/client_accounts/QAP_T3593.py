@@ -1,10 +1,7 @@
 import random
 import string
-import sys
 import time
-import traceback
 
-from custom import basic_custom_actions
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_assignments_sub_wizard import \
     ClientsAssignmentsSubWizard
 from test_framework.web_admin_core.pages.clients_accounts.clients.clients_page import ClientsPage
@@ -62,20 +59,13 @@ class QAP_T3593(CommonTestCase):
     def test_context(self):
         values_sub_wizard = ClientsValuesSubWizard(self.web_driver_container)
         assignments_sub_wizard = ClientsAssignmentsSubWizard(self.web_driver_container)
-        try:
-            self.precondition()
 
-            actual_result = [values_sub_wizard.get_id().replace("\n", " "), values_sub_wizard.get_name(),
-                             values_sub_wizard.get_disclose_exec(), assignments_sub_wizard.get_desk()]
-            time.sleep(1)
-            expected_pdf_content = ["Clients | " + self.id, self.name, self.disclose_exec, self.desk]
-            time.sleep(2)
-            self.verify("All fields have same values that was filled before saving", expected_pdf_content,
-                        actual_result)
-            time.sleep(2)
-        except Exception:
-            basic_custom_actions.create_event("TEST FAILED before or after verifier", self.test_case_id,
-                                              status='FAILED')
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_tb(exc_traceback, limit=2, file=sys.stdout)
-            print(" Search in ->  " + self.__class__.__name__)
+        self.precondition()
+
+        actual_result = [values_sub_wizard.get_id().replace("\n", " "), values_sub_wizard.get_name(),
+                         values_sub_wizard.get_disclose_exec(), assignments_sub_wizard.get_desk()]
+        time.sleep(1)
+        expected_pdf_content = ["Clients | " + self.id, self.name, self.disclose_exec, self.desk]
+        time.sleep(2)
+        self.verify("All fields have same values that was filled before saving", expected_pdf_content,
+                    actual_result)

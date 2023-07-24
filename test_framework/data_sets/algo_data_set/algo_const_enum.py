@@ -345,6 +345,13 @@ class AlgoFixInstruments(Enum):
         SecurityType='MLEG',
         SecuritySubType='PAIR',
     )
+    instrument_me = dict(
+        Symbol='ES0173516115',
+        SecurityID='ES0173516115',
+        SecurityIDSource='4',
+        SecurityExchange='XMCE',
+        SecurityType='CS'
+    )
 
 
 class AlgoFixLegInstruments(Enum):
@@ -528,6 +535,7 @@ class AlgoMic(Enum):
     mic_60 = "MCSE"   # COPENHAGENDARK
     mic_61 = "MSTO"   # STOCKHOLMDARK
     mic_62 = "TQEA"   # TQLITAUCTIONEU
+    mic_63 = "XMCE"   # MADRID
 
 
 class AlgoListingId(Enum):
@@ -600,6 +608,16 @@ class AlgoListingId(Enum):
     listing_65 = "2325020562"       # BATS UK for QUODTESTQA06
     listing_66 = "422226030"       # CITADEL [XAMS] for GB00B03MLX29
     listing_67 = "422226029"       # CITADEL [XLON] for GB00B03MLX29
+    listing_68 = "2425020564"       # Euronext Luxemburg for LU1129894801
+    listing_69 = "2425020565"       # BATS for LU1129894801
+    listing_70 = "2525020564"       # Euronext LISBON for PTSNG0AM0007
+    listing_71 = "2525020565"       # CHIX for PTSNG0AM0007
+    listing_72 = "2725020564"       # Janestreet for US3448491049
+    listing_73 = "2525020568"       # Brussel for US3448491049
+    listing_74 = "2625020564"       # Dublin for GB00BY7QYJ50
+    listing_75 = "2725020565"       # Frankfurt for GB00BY7QYJ50
+    listing_76 = "2725020566"       # Dublin for IE00BD1RP616
+    listing_77 = "2725020567"       # Frankfurt for IE00BD1RP616
     listing_dp = "890"       # DP for PARIS @ Columbia
     listing_sqi = "1130"       # SQI for PARIS @ Columbia
     listing_org = "1004"       # ORG for PARIS @ Columbia
