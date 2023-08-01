@@ -38,7 +38,7 @@ from google.protobuf.empty_pb2 import Empty
 class Simulators(Enum):
     default = {"core": Stubs.core, "sim": Stubs.simulator,
                "default_rules": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]}
-    equity = {"core": Stubs.core_equity, "sim": Stubs.simulator_equity, "default_rules": [1, 2, 3, 4]}
+    equity = {"core": Stubs.core_equity, "sim": Stubs.simulator_equity, "default_rules": [1, 2]}
     algo = {"core": Stubs.core_algo, "sim": Stubs.simulator_algo, "default_rules": [1, 2, 3]}
 
 

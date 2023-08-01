@@ -15,30 +15,30 @@ def test_run(parent_id=None):
 
         tree = ElementTree.parse(f"{ROOT_DIR}/regression_run_config.xml")
         root = tree.getroot()
-        version = '5.1.182.195'
+        version = '5.1.183.196'
 
-        if eval(root.find(".//component[@name='DMA']").attrib["run"]):
-            dma_regression.test_run(report_id, version, skip_ssh=False, only_ssh=True)
+        # if eval(root.find(".//component[@name='DMA']").attrib["run"]):
+        #     dma_regression.test_run(report_id, version, skip_ssh=False, only_ssh=True)
         if eval(root.find(".//component[@name='Care']").attrib["run"]):
-            care_regression.test_run(report_id, version, skip_ssh=False, only_ssh=True)
-        if eval(root.find(".//component[@name='Counterparts']").attrib["run"]):
-            counterparts_regression.test_run(report_id, version, skip_ssh=False, only_ssh=True)
+            care_regression.test_run(report_id, version, skip_ssh=False, only_ssh=False)
+        # if eval(root.find(".//component[@name='Counterparts']").attrib["run"]):
+        #     counterparts_regression.test_run(report_id, version, skip_ssh=False, only_ssh=True)
         if eval(root.find(".//component[@name='PostTrade']").attrib["run"]):
-            post_trade_regression.test_run(report_id, version, skip_ssh=False, only_ssh=True)
-        if eval(root.find(".//component[@name='Commissions']").attrib["run"]):
-            commission_regression.test_run(report_id, version, skip_ssh=False, only_ssh=True)
-        if eval(root.find(".//component[@name='BasketTrading']").attrib["run"]):
-            basket_regression.test_run(report_id, version, skip_ssh=False, only_ssh=True)
+            post_trade_regression.test_run(report_id, version, skip_ssh=False, only_ssh=False)
+        # if eval(root.find(".//component[@name='Commissions']").attrib["run"]):
+        #     commission_regression.test_run(report_id, version, skip_ssh=False, only_ssh=True)
+        # if eval(root.find(".//component[@name='BasketTrading']").attrib["run"]):
+        #     basket_regression.test_run(report_id, version, skip_ssh=False, only_ssh=True)
         if eval(root.find(".//component[@name='Gateway']").attrib["run"]):
-            gateway_regression.test_run(report_id, version, skip_ssh=False, only_ssh=True)
-        if eval(root.find(".//component[@name='Positions']").attrib["run"]):
-            positions_regression.test_run(report_id, version, skip_ssh=False, only_ssh=True)
+            gateway_regression.test_run(report_id, version, skip_ssh=False, only_ssh=False)
+        # if eval(root.find(".//component[@name='Positions']").attrib["run"]):
+        #     positions_regression.test_run(report_id, version, skip_ssh=False, only_ssh=True)
         if eval(root.find(".//component[@name='GatingRules']").attrib["run"]):
-            gating_rule_regression.test_run(report_id, version, skip_ssh=False, only_ssh=True)
-        if eval(root.find(".//component[@name='Bag']").attrib["run"]):
-            bag_regression.test_run(report_id, version, skip_ssh=False)
+            gating_rule_regression.test_run(report_id, version, skip_ssh=False, only_ssh=False)
+        # if eval(root.find(".//component[@name='Bag']").attrib["run"]):
+        #     bag_regression.test_run(report_id, version, skip_ssh=False)
         if eval(root.find(".//component[@name='DMA']").attrib["run"]):
-            market_making_cash_regression.test_run(report_id, version, skip_ssh=False, only_ssh=True)
+            market_making_cash_regression.test_run(report_id, version, skip_ssh=False, only_ssh=False)
 
     except Exception:
         logging.error("Error execution", exc_info=True)
